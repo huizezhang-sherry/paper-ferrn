@@ -35,14 +35,63 @@ Guided tour creates visualisation for the projections found by projection pursui
 
 ## Optimisation methods existing in tourr
 
-Because of the fact that projection pursuit index can be non-differentiable and that the projection basis is constrained to be orthonormal, the optimisation need to be a derivative-free, constrained procedure. Also, local maxima is equally interested as global maxima since it reveals distinct local structure in the data. Simulated annealing, proposed by [@posse1995projection], is widely used to optimise the projection pursuit index. Geodesic searching method is an analogue to gradient acsent with the evaluation of derivative being replaced by randomly evaluation five direction in a tiny nearby neighbourhood and then find the projection basis along the geodesic direction that maximise the projection pursuit index. [need refine and more details here!]
+Because of the fact that projection pursuit index can be non-differentiable and that the projection basis is constrained to be orthonormal, the optimisation need to be a derivative-free, constrained procedure. Also, local maxima is equally interested as global maxima since it reveals distinct local structure in the data. Posse @posse1995projection presented a random search algorithm that samples new basis in the neighbourhood of the current basis. The neighbourhood is defined via the radius of the p-dimenionsal sphere, $c$. The new basis is taken as the target basis if it has higher index value, or the sampling continues. If no basis is found to have higher index value after a certain humber of tries $n$, the radius $c$ is halved. The algorithm stops when the maximum numbere of iteration is attained or the radius $c$ is less than a pre-determined number. [Pursuit package uses this method and it works greate! But I don't think we implement this - although don't think it is too hard to do it]. 
 
+Cook @cook1995grand explained the use of a gradient ascent optimisation with the assumption that the index function is continuous and differentiable. Since some indices could be non-differentiable, the computation of derivative is replaced by a psudo-derivative of evaluating five randomly generated directions in a tiny nearby neighbourhood. Taking a step on the straight derivative direction has been modified to maximise the projection pursuit index along the geodesic direction. 
+
+Simulated annealing @lee2005projection @klein1989experiments is a non-derivative procedure based on a cooling *temperature* parametere $T_i$. Given an initial $T_0$, the temperature at iteration $i$ is defined as $T_i = \frac{T_0}{log(i + 1)}$. The simulated annealing algorithm works as follows. Given a proportion $p$ and a randomly generated orthonormal basis $B'$, a candidate basis is constructed as $(1- p)B + p B'$ where $B$ is the current basis. If the index value of the candidate basis is larger than the one of the current basis, the candidate basis becomes the target basis. If it is smaller, the candidate is accepted with probability $A = \min \left(\exp(\frac{I(B) - I(B')}{T_i}), 1 \right)$ where $I(.)$ is the index function. 
+
+    [The mathmetical expression is from Lee 2005 - without a negative in the $\exp$ but in the initial paper where SA is proposed 
+    @article{bertsimas1993simulated,
+      title={Simulated annealing},
+      author={Bertsimas, Dimitris and Tsitsiklis, John and others},
+      journal={Statistical science},
+      volume={8},
+      number={1},
+      pages={10--15},
+      year={1993},
+      publisher={Institute of Mathematical Statistics}
+    }
+    ,
+    
+    @article{kirkpatrick1983optimization,
+      title={Optimization by simulated annealing},
+      author={Kirkpatrick, Scott and Gelatt, C Daniel and Vecchi, Mario P},
+      journal={science},
+      volume={220},
+      number={4598},
+      pages={671--680},
+      year={1983},
+      publisher={American association for the advancement of science}
+    }
+    
+    and 
+    
+    @article{klein1989experiments,
+      title={Experiments in projection and clustering by simulated annealing},
+      author={Klein, Raymond W and Dubes, Richard C},
+      journal={Pattern Recognition},
+      volume={22},
+      number={2},
+      pages={213--220},
+      year={1989},
+      publisher={Elsevier}
+    }
+    
+    The definition of $T_i$ is $T_i = \exp(-\frac{\Delta I}{k T})$ - with negative in the $\exp$. It is the gibb/boltzman distribution!]
 
 
 ## problems experienced with existing versions
 
+- the simulated annealing algorithm doesn't include the acceptance probability 
 
+- is `search_geodesic` widely known in the research community - doesn't seem to find paper introducing this except (Cook, 1995). Any tools available to  better understand its searching process?
 
+- it is not understood how the index value changes during interpolation - is any interpolating basis better candidate for the next-round current basis than the target basis?
+
+- How does the projected basis found by the optim look like? Are they close to each other/ far away? Any high-d or low-d vis of the projection basis?
+
+- Do I want to introduce search_polish in this article?
 
 
 # Recording the guided tour
@@ -90,7 +139,7 @@ animation <- function(){
 
 ## Data Structure
 
-In the current implementation of the `tourr` package, while the target basis generated by the projection pursuit can be accessed later via `save_history()`, interpolating bases and those randonly nearby bases generated in the optimisation are not stored. This creates difficulties for fully understand the behaviour of the optimisation and interpolation of tour in complex scenario [needa rephrase this part]. 
+In the current implementation of the `tourr` package, while the target basis generated by the projection pursuit can be accessed later via `save_history()`, interpolating bases and those randonly nearby bases generated in the optimisation are not stored. This creates difficulties for fully understand the behaviour of the optimisation and interpolation of tour in complex scenario **[needa rephrase this part].** 
 
 The global structure consists of six columnes: `basis`, `index_val`, `tries`, `info`, `loop`, `id` and captured all the basis generated during whole tour process. The first five rows of the record of a five-variable 1d projection is printed below. 
 
