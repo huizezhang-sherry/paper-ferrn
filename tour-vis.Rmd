@@ -15,19 +15,21 @@ editor_options:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(echo = FALSE, cache= TRUE)
 library(tidyverse)
 library(ferrn)
 library(patchwork)
+library(ggrepel)
 
 load(here::here("data/temp.rda"))
 load(here::here("data/data_mult.rda"))
 load(here::here("data/holes_1d_geo.rda"))
 load(here::here("data/holes_2d_geo.rda"))
 load(here::here("data/holes_2d_better.rda"))
-
+load(here::here("data/holes_2d_better_random.rda"))
 load(here::here("data/holes_2d_geo_polish.rda"))
 load(here::here("data/holes_2d_better_polish.rda"))
+load(here::here("data/holes_2d_better_random_polish.rda"))
 
 load(here::here("data/interrupt_yes.rda"))
 load(here::here("data/interrupt_no.rda"))
@@ -176,8 +178,6 @@ holes_2d_geo %>% explore_trace_all()
 ```{r echo = TRUE}
 holes_2d_geo %>% explore_trace_interp()
 holes_2d_better %>% explore_trace_interp()
-
-interrupt_yes %>% explore_trace_interp()
 ```
 
 ## low-d representation, PCA
@@ -197,66 +197,79 @@ holes_1d_geo %>% explore_proj_pca(animate = TRUE)
 
 # Finding errors and developing improvements
 
+The visualisation methods introduced above allow us to assess the performance of each optimisation routine and thus provide improvments. 
 
 
+## Interrupt
 
-## interrupt
+The left panel of Figure \@ref(fig:interruption) presents the trace plot of the interpolated basis using `search_better` to optimise the holes index (2D projection using the larger dataset). Tour interpolates from the current basis to the target basis, which has been found to have a higher index value by projection pursuit. The target basis will then be sent to the projection pursuit as the current basis to find the next target basis. We can observe from the plot that there are basis with even higher index value on the interpolation path. These bases could be used to search for new basis in the next round. Therefore, an interruption is constructed to only take interpolated basis up to the point where the index value stops increasing and the last basis is taken as the current basis for the next round of search. After implementing the interruption, the tracing plot with the same configuration is shown on the right panel. Rather than interpolate to the target basis, the interruption interrupt the process after id = 60 and proceeds the next round of search from the interpolated basis. Taking advantage of the interpolated basis results in a higher index value in the end with fewer steps.
 
-```{r}
-p1 <- interrupt_no %>% explore_trace_interp() + ggtitle("without interruption")
 
-p2 <- interrupt_yes %>% explore_trace_interp() + ggtitle("with interruption")
+```{r interruption, fig.cap = "\\label{interruption} Trace plots of the interpolated basis with and without the interruption. The interruption stops the interpolation when the index value starts to decrease, see the difference at id being around 60. The implementation of the interuption finds an ending basis with higher index value using fewer steps. "}
+p1_anno <- interrupt_no %>% filter(info == "interpolation") %>% mutate(id = row_number()) %>% filter(id %in% c(44, 60, 62)) %>% 
+  mutate(anno = c("current basis", "interpolated basis", "target basis"))
+
+p1 <- interrupt_no %>% mutate(id = row_number() - 1) %>% explore_trace_interp() + ggtitle("without interruption") + 
+  geom_point(data = p1_anno) + 
+  geom_label_repel(data = p1_anno, aes(label = anno), box.padding = 0.5) + ylim(0.8, 0.9) + xlim(0, 80)
+  
+p2 <- interrupt_yes %>% explore_trace_interp() + ggtitle("with interruption") + ylim(0.8, 0.9) + xlim(0, 80)
 
 p1 | p2
 ```
+
+
 
 Further the case when the index function is not smooth, the interpolation may not attain -> modification
 
 
 ## Polish
 
-In principle, all the optimisation routines should present the same output on the same problem. However, as we observed, the results from using `search_better` and `search_geodesic` on our 2D projection problem are different. Although both methods have detected `x2` as an informative variable on the second column, the weights for each variable on the first column vary, which causes difference on the index value. This motivates us to create another searching function that polishes the ending basis of the previous search and achieve unity on different methods. 
+In principle, all the optimisation routines should present the same output on the same problem. In Figure \@ref(fig:trace-compare), red dots shows the trace of the interpolated basis using three different methods on the 2D projection problem. We can observe that different optimisation methods attains different ending index value. This motivates the creation of a polishing search that polishes the ending basis and achieves unity on different methods. 
 
-```{r echo = TRUE}
-holes_2d_better %>% filter(info == "interpolation") %>% tail(1) %>% pull(basis) %>% .[[1]]
-holes_2d_geo %>% filter(info == "interpolation") %>% tail(1) %>% pull(basis) %>% .[[1]]
+`search_polish` takes the ending basis of a given search as the starting basis and uses a brutal-force approach to sample a larger number of basis (`n_sample`) in the neightbourhood, controlled by `polish_alpha`. Among the `n_sample` basis, the one with the largest index value becomes the candidate. If its index value is larger than that of the starting basis, it becomes the center of the searching neightbourhood in the next round. If no basis is found to have larger index value than the starting basis, the searching neighbourhood will shrink and the search continues. The polishing search ends when one of the four stopping criteria is satisfied:
 
-holes_2d_better %>% filter(info == "interpolation") %>% tail(1) %>% pull(index_val) 
-holes_2d_geo %>% filter(info == "interpolation") %>% tail(1) %>% pull(index_val) 
-```
+1) the two basis can't be too close 
+2) the improvement can't be too small 
+3) the searching neighbourhood can't be too small
+4) the number of iteration can't exceed the max.tries
 
-**[Talk about how search_polish works]**
-
-
-
-The usage of search_polish is as follows. After the first tour, the final basis from the interpolation is extracted and supplied intoa new tour with the `start` argument and `search_polish` as teh searching function in the guided_tour. All the other arguments should remain the same. 
+The usage of search_polish is as follows. After the first tour, the final basis from the interpolation is extracted and supplied into a new tour with the `start` argument and `search_polish` as the searching function in the guided_tour. All the other arguments should remain the same. 
 
 ```{r eval = FALSE, echo = TRUE}
 set.seed(123456)
-holes_2d_geo <- animate_xy(data_mult[,c(1,2, 7:10)],
-                           tour_path = guided_tour(holes(), d = 2, 
-                                                   search_f = tourr:::search_geodesic),
+holes_2d_geo <- animate_xy(data_mult[,c(1,2, 7:10)],tour_path = 
+                             guided_tour(holes(), d = 2, 
+                                         search_f = tourr:::search_geodesic),
                            rescale = FALSE, verbose = TRUE)
 
-last_basis <- holes_2d_geo %>% filter(info == "interpolation") %>% tail(1) %>% pull(basis) %>% .[[1]]
+last_basis <- holes_2d_geo %>% filter(info == "interpolation") %>% 
+  tail(1) %>% pull(basis) %>% .[[1]]
 
 set.seed(123456)
-holes_2d_geo_polish <- animate_xy(data_mult[,c(1,2, 7:10)],
-                                     tour_path = guided_tour(holes(), d = 2, 
-                                                             search_f = tourr:::search_polish),
-                                     rescale = FALSE, verbose = TRUE, start = last_basis)
+holes_2d_geo_polish <- animate_xy(data_mult[,c(1,2, 7:10)], tour_path = 
+                                    guided_tour(holes(), d = 2, 
+                                                search_f = tourr:::search_polish),
+                                  rescale = FALSE, verbose = TRUE, 
+                                  start = last_basis)
 ```
 
-**[This example is not ideal because currently the geodesic is not doing a good job in the first place]**
+After polishing, all three methods attain the same index value as shown in Figure \@ref(fig:trace-compare). This allows us to evaluate the performance of each searching method. Search_better_random finds an ending basis with a decent high index value while search_geodesic and search_better don't and make search polish do a large proportion of the work. 
 
-```{r echo = TRUE}
-holes_2d_better_polish %>% filter(info == "polish_best") %>% tail(1) %>% pull(index_val)
-holes_2d_geo_polish %>% filter(info == "polish_best") %>% tail(1) %>% pull(index_val)
+```{r trace-compare, fig.cap="Breakdown of index value when using different searching methods in conjunction with search polish. All three methods attain the same index value after the polishing. Search better random finds a decent ending basis while search better and search geodesic don't and search polish has done a large proportion of polishing."}
+p1 <- bind_rows(holes_2d_geo, holes_2d_geo_polish) %>% 
+  explore_trace_interp(point = TRUE) + ggtitle("search_geodesic")
 
-holes_2d_better_polish %>% filter(info == "polish_best") %>% tail(1) %>% pull(basis) %>% .[[1]]
-holes_2d_geo_polish %>% filter(info == "polish_best") %>% tail(1) %>% pull(basis) %>% .[[1]]
+p2 <- bind_rows(holes_2d_better, holes_2d_better_polish) %>% 
+  explore_trace_interp(point = TRUE) + ggtitle("search_better")
 
+p3 <- bind_rows(holes_2d_better_random, holes_2d_better_random_polish) %>% 
+  explore_trace_interp(point = TRUE) + ggtitle("search_better_random")
+
+(p1 | p2 | p3) &
+  theme(legend.position = "none") 
 ```
+
 
 ## posse?
 
