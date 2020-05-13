@@ -1,0 +1,60 @@
+---
+title: "Performance of different optimisation routines on projection pursuit index"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(ferrn)
+library(patchwork)
+
+load(here::here("source/test/holes_1d_geo.rda"))
+load(here::here("source/test/holes_1d_better.rda"))
+load(here::here("source/test/holes_2d_geo.rda"))
+load(here::here("source/test/holes_2d_geo_polish.rda"))
+load(here::here("source/test/holes_2d_better.rda"))
+load(here::here("source/test/holes_2d_better_polish.rda"))
+load(here::here("source/test/holes_2d_better_max_tries.rda"))
+load(here::here("source/test/holes_2d_better_max_tries_polish.rda"))
+load(here::here("source/test/holes_2d_better_random.rda"))
+load(here::here("source/test/holes_2d_better_random_polish.rda"))
+load(here::here("source/test/holes_2d_pos.rda"))
+load(here::here("source/test/holes_2d_pos_polish.rda"))
+
+```
+
+# Holes Index 
+
+## 1D projection 
+
+```{r}
+p1 <- holes_1d_geo %>% explore_trace_interp()
+p2 <- holes_1d_better %>% explore_trace_interp()
+(p1 | p2 ) & ylim(0.74, 0.95) 
+```
+
+## 2D projection 
+
+```{r}
+p1 <- bind_rows(holes_2d_geo, holes_2d_geo_polish) %>% 
+  explore_trace_interp(point = TRUE) + ggtitle("geodesic")
+p2 <- bind_rows(holes_2d_better, holes_2d_better_polish) %>% 
+  explore_trace_interp(point = TRUE) + ggtitle("better, max.tries = 25")
+p3 <- bind_rows(holes_2d_better_max_tries, holes_2d_better_max_tries_polish) %>%
+  explore_trace_interp(point = TRUE) + ggtitle("better, max.tries = 500")
+p4 <- bind_rows(holes_2d_better_random, holes_2d_better_random_polish) %>% 
+  explore_trace_interp(point = TRUE) + ggtitle("better_random")
+p5 <- bind_rows(holes_2d_pos, holes_2d_pos_polish) %>% 
+  mutate(method = fct_relevel(method, c("search_posse", "search_polish"))) %>% 
+  explore_trace_interp(point = TRUE) + ggtitle("posse")
+
+((p1 | p4 | p5 ) / (p2 | p3 )) & 
+  theme(legend.position = "none") & 
+  ylim(0.8, 0.99)
+
+```
+
+
