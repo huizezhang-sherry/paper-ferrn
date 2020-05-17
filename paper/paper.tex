@@ -1,0 +1,638 @@
+% !TeX program = pdfLaTeX
+\documentclass[12pt]{article}
+\usepackage{amsmath}
+\usepackage{graphicx,psfrag,epsf}
+\usepackage{enumerate}
+\usepackage{natbib}
+\usepackage{textcomp}
+\usepackage[hyphens]{url} % not crucial - just used below for the URL
+\usepackage{hyperref}
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+%\pdfminorversion=4
+% NOTE: To produce blinded version, replace "0" with "1" below.
+\newcommand{\blind}{0}
+
+% DON'T change margins - should be 1 inch all around.
+\addtolength{\oddsidemargin}{-.5in}%
+\addtolength{\evensidemargin}{-.5in}%
+\addtolength{\textwidth}{1in}%
+\addtolength{\textheight}{1.3in}%
+\addtolength{\topmargin}{-.8in}%
+
+%% load any required packages here
+
+
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+
+
+
+\begin{document}
+
+
+\def\spacingset#1{\renewcommand{\baselinestretch}%
+{#1}\small\normalsize} \spacingset{1}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\if0\blind
+{
+  \title{\bf Title here}
+
+  \author{
+        Author 1 \thanks{The authors gratefully acknowledge \ldots{}} \\
+    Department of YYY, University of XXX\\
+     and \\     Author 2 \\
+    Department of ZZZ, University of WWW\\
+      }
+  \maketitle
+} \fi
+
+\if1\blind
+{
+  \bigskip
+  \bigskip
+  \bigskip
+  \begin{center}
+    {\LARGE\bf Title here}
+  \end{center}
+  \medskip
+} \fi
+
+\bigskip
+\begin{abstract}
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  check consistency of using PP for projection pursuit and PPI for
+  projection pursuit index
+\end{enumerate}
+\end{abstract}
+
+\noindent%
+{\it Keywords:} 3 to 6 keywords, that do not appear in the title
+\vfill
+
+\newpage
+\spacingset{1.45} % DON'T change the spacing!
+
+\hypertarget{introduction}{%
+\section{Introduction}\label{introduction}}
+
+\hypertarget{tour}{%
+\subsection{Tour}\label{tour}}
+
+Tour provides a way to explore multivariate data interactively via an
+established tour path. A tour path is formed by interpolating between
+randomly generated plane. Different types of tours are available depends
+on the purpose of the exploration i.e.~a grand tour is suitable for
+randomly exploring the data from different angles; a guided tour detects
+a particular structure in the data. a manual tour allows user to
+manually control the projection \citep{cook1997manual}.
+
+\hypertarget{guided-tour}{%
+\subsection{Guided tour}\label{guided-tour}}
+
+Guided tour is usually used in conjunction projection pursuit, a method
+coined by \citet{friedman1974projection} to detect ``interesting''
+low-diemsion projection of multivariate data. A projection pursuit
+requires the definition of a projection pursuit index function and an
+optimisation routine. The projection pursuit index measures the
+``interestingness'' of data defined as its departure from normality.
+Numerous indices have been proposed in the literature, including
+lengendre index \citep{friedman1974projection}, hermite index
+\citep{hall1989polynomial}, natural hermite index
+\citep{cook1993projection}, chi-square index
+\citep{posse1995projection}, LDA index \citep{lee2005projection} and PDA
+index \citep{lee2010projection}. An optimisation routine is required to
+find the projection basis (thus projection) that maximises the
+projection pursuit index. The discussion of existing optimisation
+procedure will be discussed in the next section.
+
+Guided tour creates visualisation for the projections found by
+projection pursuit by constructing a tour path. An illustration modified
+from \citep{buja2005computational} entails the geodesic interpolation
+bewteen the plane generated by projection pursuit.
+
+\includegraphics[width=7.75in]{/Users/hzha400/Documents/3.PhD/paper-tour-vis/figures/tour_path_new}
+
+\hypertarget{optimisation-methods-in-projection-pursuit-literature}{%
+\subsection{Optimisation methods in projection pursuit
+literature}\label{optimisation-methods-in-projection-pursuit-literature}}
+
+As \citet{friedman1974projection} said ``\ldots{}, the technique use for
+maximizing the (one- and two-dimensional) projection index strongly
+influences both the statistical and the com- putational aspects of the
+procedure.'' The quality of the optimisation procedure largely affect
+the tour view and thus, the interesting projection one could possibly
+observe. An ideal optimisation procedure needs to have following
+characteristics:
+
+\begin{itemize}
+\item
+  \emph{Being able to handle non-differentiable index function}: the
+  index function could be noisy and non-differentible
+\item
+  \emph{Being able to optimise with constraints}: the projection matrix
+  is restricted to an orthornormal matrix.
+\item
+  \emph{Being able to reveal both local and global maximum}: Although
+  the primary interest is to find the global maximum, distinct local
+  structures are also of our interest.
+\end{itemize}
+
+Below present three existing methods in tour.
+
+\citet{posse1995projection} presented a random search algorithm that
+samples new basis in the neighbourhood of the current basis. The
+neighbourhood is defined via the radius of the p-dimenionsal sphere,
+\(c\). The new basis is taken as the target basis if it has higher index
+value, or the sampling continues. If no basis is found to have higher
+index value after a certain humber of tries \(n\), the radius \(c\) is
+halved. The algorithm stops when the maximum numbere of iteration is
+attained or the radius \(c\) is less than a pre-determined number.
+{[}Pursuit package uses this method and it works greate! But I don't
+think we implement this - although don't think it is too hard to do
+it{]}.
+
+\citet{cook1995grand} explained the use of a gradient ascent
+optimisation with the assumption that the index function is continuous
+and differentiable. Since some indices could be non-differentiable, the
+computation of derivative is replaced by a psudo-derivative of
+evaluating five randomly generated directions in a tiny nearby
+neighbourhood. Taking a step on the straight derivative direction has
+been modified to maximise the projection pursuit index along the
+geodesic direction.
+
+Simulated annealing
+\citep[\citet{kirkpatrick1983optimization}]{bertsimas1993simulated} is a
+non-derivative procedure based on a non-increasing cooling scheme
+\(T(i)\). Given an initial \(T_0\), the temperature at iteration \(i\)
+is defined as \(T(i) = \frac{T_0}{log(i + 1)}\). The simulated annealing
+algorithm works as follows. Given a neighbourhood parameter \(\alpha\)
+and a randomly generated orthonormal basis \(B\), a candidate basis is
+constructed as \(B_j = (1- \alpha)B_i + \alpha B\) where \(B_i\) is the
+current basis. If the index value of the candidate basis is larger than
+the one of the current basis, the candidate basis becomes the target
+basis. If it is smaller, the candidate is accepted with probability
+\(A = \min \left(\exp(-\frac{I(B_j) - I(B_i)}{T(i)}), 1 \right)\) where
+\(I(.)\) is the index function.
+
+\hypertarget{problems-and-difficulties-in-pp-optimisation}{%
+\subsection{problems and difficulties in PP
+optimisation}\label{problems-and-difficulties-in-pp-optimisation}}
+
+Below listed several issues in projection pursuit optimisation. Some of
+them are general problems in optimisation literature, while others are
+more specific for PP optimisation.
+
+\begin{itemize}
+\item
+  \emph{Finding global maximum}: Although finding local maximum is
+  relatively easy with developed algorithms, it is generally hard to
+  guarantee global maximum in a problem where the objective function is
+  complex or the number of decision variables is large. Also, there are
+  discussions on how to avoid getting trapped in a local optimal in the
+  literature.
+\item
+  \emph{optimising on non-smooth function}: When the objective function
+  is non-differentiable, derivative information can not be obtained.
+  This means traditional gradient- or Hessian- based methods are not
+  feasible, stochastic optimisation method could be an alternative to
+  solve these problems.
+\item
+  \emph{computation speed}: The optimisation procedure needs to be fast
+  to compute because tours produces real-time animation of the projected
+  data.
+\item
+  \emph{consistency result in stochastic optimisation}: In stochastic
+  algorithm, researchers usually set a seed to ensure the algorithm
+  producing the same result for every run. While this practice supports
+  reproducibility, less efforts has been made to guarantee different
+  seeds will provide the same result.
+\item
+  \emph{high-dimensional decision variable}: In projection pursuit, the
+  decision variable is the entry in the projection matrix, which is
+  usually high-dimensional. Researcher would be better off if they can
+  understand the relative position of different projection matrix in the
+  high-dimensional space.
+\item
+  \emph{role of interpolation in PP optimisation}: An optimisation
+  procedure usually involves iteratively finding projection bases that
+  maximise the index function, while tour requires geodesic
+  interpolation between these bases to produce a continuous view for the
+  users. It would be interesting to see if the interpolated bases could,
+  in reverse, help the optimisation reach faster convergence.
+\end{itemize}
+
+\emph{Think about how does your pacakge help people to understand
+optimisation}
+
+\begin{itemize}
+\tightlist
+\item
+  diagnostic on stochastic optim
+\item
+  vis the prograssion of multi-parameter decision variable
+\item
+  understanding learning rate - neightbourhood parameter
+\item
+  understand where the local \& global maximum is found - trace plot -
+  see if noisy function
+\end{itemize}
+
+\hypertarget{recording-the-guided-tour}{%
+\section{Recording the guided tour}\label{recording-the-guided-tour}}
+
+\hypertarget{tour-components}{%
+\subsection{Tour components}\label{tour-components}}
+
+Guided tour, along with other types of tour, has been implemented in the
+\emph{tourr} package in R, available on the Comprehensive R Archive
+Network at \url{https://cran.r-project.org/web/packages/tourr/}
+\citep{wickham2011tourrpackage}. A tour includes two major components: a
+\emph{generator} that generating the projection basis according to
+projection pursuit and an \emph{interpolator} that performing geodesic
+interpolation between the projection basis.
+
+The psudo-code below illustrates the implementation of guided tour in
+the tourr package. Given an projection pursuit index function and a
+randomly generated projection basis (current basis), the optimisation
+procedure produces a target basis inside \texttt{generator()} Both the
+current basis and the target basis will be supplied to
+\texttt{tour\_path()} to prepare information needed for constructing a
+geodesic path. This information is then used to compute a series of
+interpolating bases inside the \texttt{tour()} function. All the basis
+will be sent to create animation for visualising the tour in the
+\texttt{animate()} function.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{animation <-}\StringTok{ }\ControlFlowTok{function}\NormalTok{()\{}
+  
+  \CommentTok{# compute projection basis }
+\NormalTok{  tour <-}\StringTok{ }\ControlFlowTok{function}\NormalTok{()\{}
+    
+    \CommentTok{# construct bases on the tour path}
+\NormalTok{    new_geodesic_path <-}\StringTok{ }\ControlFlowTok{function}\NormalTok{()\{}
+\NormalTok{      tour_path <-}\StringTok{ }\ControlFlowTok{function}\NormalTok{()\{}
+        
+        \CommentTok{# GENERATOR: generate projection basis via projection pursuit}
+\NormalTok{        guided_tour <-}\StringTok{ }\ControlFlowTok{function}\NormalTok{()\{}
+\NormalTok{          generator <-}\StringTok{ }\ControlFlowTok{function}\NormalTok{()\{}
+            
+            \CommentTok{# define projection pursuit index}
+            \CommentTok{# generate the target basis from the current basis via optimisation}
+\NormalTok{          \}}
+\NormalTok{        \}}
+        
+        \CommentTok{# prepare geodesic information needed for interpolating along the tour path}
+\NormalTok{      \}}
+\NormalTok{    \}}
+    
+    \CommentTok{# INTERPOLATOR: interpolate between the current and target basis }
+    \ControlFlowTok{function}\NormalTok{()\{}
+      \CommentTok{# generate interpolating bases on the geodesic path}
+\NormalTok{    \}}
+\NormalTok{  \}}
+  
+  \CommentTok{# animate according to different display methods}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{data-structure}{%
+\subsection{Data Structure}\label{data-structure}}
+
+In the current implementation of the \texttt{tourr} package, while the
+target basis generated by the projection pursuit can be accessed later
+via \texttt{save\_history()}, interpolating bases and those randonly
+nearby bases generated in the optimisation are not stored. This creates
+difficulties for fully understand the behaviour of the optimisation and
+interpolation of tour in complex scenario \textbf{{[}needa rephrase this
+part{]}.}
+
+Two set of simulated data are used in the demonstration of the
+visualiation and diagnostics of the tour optimisation. A small dataset
+consists of 1000 randomly simulated observations of five variables
+(\texttt{x1}, \texttt{x2}, \texttt{x8}, \texttt{x9}, \texttt{x10}).
+\texttt{x2} is the informative variable simulated from two bi-modal
+normal distribution centered at -3 and 3 with variance being 1 and the
+other four are simulated from \texttt{N(0,\ 1)}. The data has been
+scaled to ensure \texttt{x2} has variance of 1.
+
+A larger dataset contains more informative variables (\texttt{x3} to
+\texttt{x7}) of different types. \texttt{x3} takes 500 positive one and
+500 negative one. The distribution of all the variables except
+\texttt{x3} is plotted below. \emph{{[}should I introduce the dist for
+each var?{]}}
+
+\includegraphics{paper_files/figure-latex/unnamed-chunk-3-1.pdf}
+
+Once the dataset is sent to the tourr package, all the information
+generated will be stored in a global structure. The global structure
+consists of six columnes: \texttt{basis}, \texttt{index\_val},
+\texttt{tries}, \texttt{info}, \texttt{loop}, \texttt{id} and captured
+all the basis generated during whole tour process. The example below
+presents the global object of a 1D projection of the small dataset with
+geodesic seraching method.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{holes_1d_geo }\OperatorTok{%>%}\StringTok{ }\KeywordTok{head}\NormalTok{(}\DecValTok{5}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 5 x 7
+##   basis             index_val tries info              loop method             id
+##   <list>                <dbl> <dbl> <chr>            <dbl> <chr>           <int>
+## 1 <dbl[,1] [5 x 1]>     0.749     1 start               NA <NA>                1
+## 2 <dbl[,1] [5 x 1]>     0.749     1 direction_search     1 search_geodesic     2
+## 3 <dbl[,1] [5 x 1]>     0.749     1 direction_search     1 search_geodesic     3
+## 4 <dbl[,1] [5 x 1]>     0.749     1 direction_search     1 search_geodesic     4
+## 5 <dbl[,1] [5 x 1]>     0.749     1 direction_search     1 search_geodesic     5
+\end{verbatim}
+
+\texttt{tries} has an increment of one once the generator is called
+(equivalently a new target basis is generated); \texttt{info} records
+the stage the basis is in. This would include the \texttt{interpolation}
+stage and the detailed stage in the optimisation i.e.
+\texttt{direction\_search}, \texttt{best\_direction\_search},
+\texttt{line\_search}and \texttt{best\_line\_search} for geodesic
+searching (\texttt{search\_geodesic}); \texttt{random\_search} and
+\texttt{new\_basis} for simulating annealing (\texttt{search\_better}).
+\texttt{loop} is the counter used for the optimisation procedure and
+thus will be \texttt{NA} for interpolation steps. \texttt{id} creates a
+sequential order of the basis. This information will be stored and
+printed when the optimisation ends and can be turned off via
+\texttt{print\ =\ FALSE}. Additional messages during the optimisation
+can be displayed via \texttt{verbose\ =\ TRUE}. Another examples is a 2D
+projection of the larger dataset with two informative variable
+(\texttt{x2} and \texttt{x7}) using search\_better method. Notice in
+this example, the dimension of the bases becomes 6 by 2.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{holes_2d_better }\OperatorTok{%>%}\StringTok{ }\KeywordTok{head}\NormalTok{(}\DecValTok{5}\NormalTok{) }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 5 x 7
+##   basis             index_val tries info           loop method           id
+##   <list>                <dbl> <dbl> <chr>         <dbl> <chr>         <int>
+## 1 <dbl[,2] [6 x 2]>     0.804     1 start            NA <NA>              1
+## 2 <dbl[,2] [6 x 2]>     0.793     1 random_search     1 search_better     2
+## 3 <dbl[,2] [6 x 2]>     0.784     1 random_search     2 search_better     3
+## 4 <dbl[,2] [6 x 2]>     0.773     1 random_search     3 search_better     4
+## 5 <dbl[,2] [6 x 2]>     0.795     1 random_search     4 search_better     5
+\end{verbatim}
+
+\hypertarget{visual-methods}{%
+\section{Visual methods}\label{visual-methods}}
+
+\hypertarget{add-something-about-general-vis}{%
+\subsection{add something about general
+vis}\label{add-something-about-general-vis}}
+
+The creation of the global object facilitates the diagnostics of the
+optimisation in the projection pursuit guided tourr. Different
+diagnostic plots could be made to understand the optimisation
+\textbf{{[}pretty cheesy here{]}}
+
+\emph{The examples and results below still need to be modified as the
+development / modification of both ferrn and tourr package}.
+
+\hypertarget{index-vs-time-plots}{%
+\subsection{index vs time plots}\label{index-vs-time-plots}}
+
+The tracing plot is useful to explore the index value. Given a global
+object created, \texttt{explore\_trace\_all()} plots the index value of
+all the bases.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{holes_2d_geo }\OperatorTok{%>%}\StringTok{ }\KeywordTok{explore_trace_all}\NormalTok{(}\DataTypeTok{magnify =} \OtherTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{paper_files/figure-latex/unnamed-chunk-7-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{holes_2d_geo }\OperatorTok{%>%}\StringTok{ }\KeywordTok{explore_trace_interp}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{paper_files/figure-latex/unnamed-chunk-7-2.pdf}
+
+\hypertarget{target-basis-vs-interpolation-steps-index-vs-time}{%
+\subsection{target basis vs interpolation steps, index vs
+time}\label{target-basis-vs-interpolation-steps-index-vs-time}}
+
+\hypertarget{low-d-representation-pca}{%
+\subsection{low-d representation, PCA}\label{low-d-representation-pca}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{holes_1d_geo }\OperatorTok{%>%}\StringTok{ }\KeywordTok{explore_proj_pca}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: The `x` argument of `as_tibble.matrix()` must have column names if `.name_repair` is omitted as of tibble 2.0.0.
+## Using compatibility `.name_repair`.
+## This warning is displayed once every 8 hours.
+## Call `lifecycle::last_warnings()` to see where this warning was generated.
+\end{verbatim}
+
+\includegraphics{paper_files/figure-latex/unnamed-chunk-8-1.pdf}
+
+\hypertarget{animating-plots}{%
+\section{Animating plots}\label{animating-plots}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{holes_1d_geo }\OperatorTok{%>%}\StringTok{ }\KeywordTok{explore_proj_pca}\NormalTok{(}\DataTypeTok{animate =} \OtherTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{finding-errors-and-developing-improvements}{%
+\section{Finding errors and developing
+improvements}\label{finding-errors-and-developing-improvements}}
+
+The visualisation methods introduced above allow us to assess the
+performance of each optimisation routine and thus provide improvments.
+
+\hypertarget{interrupt}{%
+\subsection{Interrupt}\label{interrupt}}
+
+The left panel of Figure @ref(fig:interruption) presents the trace plot
+of the interpolated basis using \texttt{search\_better} to optimise the
+holes index (2D projection using the larger dataset). Tour interpolates
+from the current basis to the target basis, which has been found to have
+a higher index value by projection pursuit. The target basis will then
+be sent to the projection pursuit as the current basis to find the next
+target basis. We can observe from the plot that there are basis with
+even higher index value on the interpolation path. These bases could be
+used to search for new basis in the next round. Therefore, an
+interruption is constructed to only take interpolated basis up to the
+point where the index value stops increasing and the last basis is taken
+as the current basis for the next round of search. After implementing
+the interruption, the tracing plot with the same configuration is shown
+on the right panel. Rather than interpolate to the target basis, the
+interruption interrupt the process after id = 60 and proceeds the next
+round of search from the interpolated basis. Taking advantage of the
+interpolated basis results in a higher index value in the end with fewer
+steps.
+
+\begin{figure}
+\centering
+\includegraphics{paper_files/figure-latex/interruption-1.pdf}
+\caption{\label{interruption} Trace plots of the interpolated basis with
+and without the interruption. The interruption stops the interpolation
+when the index value starts to decrease, see the difference at id being
+around 60. The implementation of the interuption finds an ending basis
+with higher index value using fewer steps.}
+\end{figure}
+
+Further the case when the index function is not smooth, the
+interpolation may not attain -\textgreater{} modification
+
+\hypertarget{polish}{%
+\subsection{Polish}\label{polish}}
+
+In principle, all the optimisation routines should present the same
+output on the same problem. In Figure @ref(fig:trace-compare), red dots
+shows the trace of the interpolated basis using
+\texttt{search\_geodesic} and \texttt{search\_better} (with max.tries =
+100), respectively, on the 2D projection problem. We can observe that
+they attain slightly different ending index value, which is not ideal.
+This motivates the creation of a polishing search that polishes the
+ending basis and achieves unity on different methods.
+
+\includegraphics{paper_files/figure-latex/unnamed-chunk-10-1.pdf}
+
+\texttt{search\_polish} takes the ending basis of a given search as the
+starting basis and uses a brutal-force approach to sample a larger
+number of basis (\texttt{n\_sample}) in the neightbourhood, controlled
+by \texttt{polish\_alpha}. Among the \texttt{n\_sample} basis, the one
+with the largest index value becomes the candidate. If its index value
+is larger than that of the starting basis, it becomes the center of the
+searching neightbourhood in the next round. If no basis is found to have
+larger index value than the starting basis, the searching neighbourhood
+will shrink and the search continues. The polishing search ends when one
+of the four stopping criteria is satisfied:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi})}
+\tightlist
+\item
+  the two basis can't be too close
+\item
+  the improvement can't be too small
+\item
+  the searching neighbourhood can't be too small
+\item
+  the number of iteration can't exceed the max.tries
+\end{enumerate}
+
+The usage of search\_polish is as follows. After the first tour, the
+final basis from the interpolation is extracted and supplied into a new
+tour with the \texttt{start} argument and \texttt{search\_polish} as the
+searching function in the guided\_tour. All the other arguments should
+remain the same.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{set.seed}\NormalTok{(}\DecValTok{123456}\NormalTok{)}
+\NormalTok{holes_2d_geo <-}\StringTok{ }\KeywordTok{animate_xy}\NormalTok{(data_mult[,}\KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{2}\NormalTok{, }\DecValTok{7}\OperatorTok{:}\DecValTok{10}\NormalTok{)],}\DataTypeTok{tour_path =} 
+                             \KeywordTok{guided_tour}\NormalTok{(}\KeywordTok{holes}\NormalTok{(), }\DataTypeTok{d =} \DecValTok{2}\NormalTok{, }
+                                         \DataTypeTok{search_f =}\NormalTok{ tourr}\OperatorTok{:::}\NormalTok{search_geodesic),}
+                           \DataTypeTok{rescale =} \OtherTok{FALSE}\NormalTok{, }\DataTypeTok{verbose =} \OtherTok{TRUE}\NormalTok{)}
+
+\NormalTok{last_basis <-}\StringTok{ }\NormalTok{holes_2d_geo }\OperatorTok{%>%}\StringTok{ }\KeywordTok{filter}\NormalTok{(info }\OperatorTok{==}\StringTok{ "interpolation"}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{tail}\NormalTok{(}\DecValTok{1}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }\KeywordTok{pull}\NormalTok{(basis) }\OperatorTok{%>%}\StringTok{ }\NormalTok{.[[}\DecValTok{1}\NormalTok{]]}
+
+\KeywordTok{set.seed}\NormalTok{(}\DecValTok{123456}\NormalTok{)}
+\NormalTok{holes_2d_geo_polish <-}\StringTok{ }\KeywordTok{animate_xy}\NormalTok{(data_mult[,}\KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{2}\NormalTok{, }\DecValTok{7}\OperatorTok{:}\DecValTok{10}\NormalTok{)], }\DataTypeTok{tour_path =} 
+                                    \KeywordTok{guided_tour}\NormalTok{(}\KeywordTok{holes}\NormalTok{(), }\DataTypeTok{d =} \DecValTok{2}\NormalTok{, }
+                                                \DataTypeTok{search_f =}\NormalTok{ tourr}\OperatorTok{:::}\NormalTok{search_polish),}
+                                  \DataTypeTok{rescale =} \OtherTok{FALSE}\NormalTok{, }\DataTypeTok{verbose =} \OtherTok{TRUE}\NormalTok{, }
+                                  \DataTypeTok{start =}\NormalTok{ last_basis)}
+\end{Highlighting}
+\end{Shaded}
+
+The following example conducted a 2D projection on the larger dataset
+using search better with different configurations. \texttt{max.tries} is
+a hyperparameter that controls the maximum number of try without
+improvement and its default value is 25. As shown in Figure
+@ref(fig:trace-compare), after polishing, both trials attain the same
+index value. However, a small \texttt{max.tries} of 25 is not sufficient
+for the algorithm to find the true maximum. This is because 25 tries is
+not sufficient for the 2D searching space.
+
+\begin{figure}
+\centering
+\includegraphics{paper_files/figure-latex/trace-compare-1.pdf}
+\caption{Breakdown of index value when using different max.tries in
+search better in conjunction with search polish. Both attain the same
+final index value after the polishing while using a max.tries 25 is not
+sufficient to find the ture maximum.}
+\end{figure}
+
+\hypertarget{posse}{%
+\subsection{posse?}\label{posse}}
+
+search\_better annd search\_geodesic methods are not doing good on 2d
+projection -\textgreater{} see the simple case above: abs best is 0.96
+while they only get to 0.88-ish. Would be worse for higher dimension.
+thus search\_posse. get 0.95 and then polish to 0.96 :)
+
+\bibliographystyle{agsm}
+\bibliography{biblio.bib}
+
+\end{document}
