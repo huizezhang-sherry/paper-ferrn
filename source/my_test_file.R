@@ -28,6 +28,14 @@ holes_1d_geo <- animate_dist(data, tour_path = guided_tour(holes(), d = 1,
 
 devtools::load_all()
 set.seed(123456)
+holes_1d_geo_polish <- animate_dist(data, tour_path = guided_tour(holes(), d = 1,
+                                                                  search_f =  tourr:::search_polish),
+                                    rescale = FALSE, verbose = TRUE, start = last_basis)
+
+
+
+devtools::load_all()
+set.seed(123456)
 holes_1d_better <- animate_dist(data, tour_path = guided_tour(holes(), d = 1,
                                                            search_f =  tourr:::search_better),
                              rescale = FALSE, verbose = TRUE)
@@ -109,6 +117,7 @@ holes_2d_better_random_polish <- animate_xy(data_mult[,c(1,2, 7:10)], tour_path 
 
 ###############################
 save(holes_1d_geo, file = "source/test/holes_1d_geo.rda")
+save(holes_1d_geo_polish, file = "source/test/holes_1d_geo_polish.rda")
 save(holes_1d_better, file = "source/test/holes_1d_better.rda")
 save(holes_2d_geo, file = "source/test/holes_2d_geo.rda")
 save(holes_2d_geo_polish, file = "source/test/holes_2d_geo_polish.rda")
