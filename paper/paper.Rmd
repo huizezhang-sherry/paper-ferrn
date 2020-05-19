@@ -30,6 +30,7 @@ library(ggrepel)
 load(here::here("data/temp.rda"))
 load(here::here("data/data_mult.rda"))
 load(here::here("data/holes_1d_geo.rda"))
+load(here::here("data/holes_1d_geo_polish.rda"))
 load(here::here("data/holes_2d_geo.rda"))
 load(here::here("data/holes_2d_better.rda"))
 load(here::here("data/holes_2d_better_max_tries.rda"))
@@ -311,6 +312,13 @@ EXAMPLE: polishing - add method : compare with max.tries and without for search_
 
 EXAMPLE: add alpha: compare the cooling system of the neighbourhood parameter in serach_better & search_posse.
 
+
+```{r echo = TRUE}
+nrow(holes_2d_better_max_tries)
+nrow(holes_2d_pos)
+```
+
+
 ```{r}
 dt <- holes_2d_better_max_tries %>%
   filter(info != "interpolation") %>% 
@@ -339,12 +347,22 @@ p1 | p2
 
 ## Explore matrix parameter
 
-
+The variable or object to explore could sometimes be a more than a scale, for example, in a tour, we would also be interested to explore the relative position of the projection basis in the vector space. This imposes difficulties in visualisation since as human, we are bounded to preceive at most three dimensions. Dimension reduction is reuqired to summarise the projection matrix to a managable number of variable to map to a plot. Principal copmonent analysis is used to extract the direction that reflects most variation in the data. 
 
 
 ```{r echo = TRUE}
-holes_1d_geo %>% explore_proj_pca()
+holes_1d_geo %>% explore_proj_pca() 
 ```
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -434,14 +434,14 @@ geodesic seraching method.
 \end{Shaded}
 
 \begin{verbatim}
-## # A tibble: 5 x 7
-##   basis             index_val tries info              loop method             id
-##   <list>                <dbl> <dbl> <chr>            <dbl> <chr>           <int>
-## 1 <dbl[,1] [5 x 1]>     0.749     1 start               NA <NA>                1
-## 2 <dbl[,1] [5 x 1]>     0.749     1 direction_search     1 search_geodesic     2
-## 3 <dbl[,1] [5 x 1]>     0.749     1 direction_search     1 search_geodesic     3
-## 4 <dbl[,1] [5 x 1]>     0.749     1 direction_search     1 search_geodesic     4
-## 5 <dbl[,1] [5 x 1]>     0.749     1 direction_search     1 search_geodesic     5
+## # A tibble: 5 x 8
+##   basis           index_val tries info            loop method        alpha    id
+##   <list>              <dbl> <dbl> <chr>          <dbl> <chr>         <dbl> <int>
+## 1 <dbl[,1] [5 x ~     0.749     1 start             NA <NA>            0.5     1
+## 2 <dbl[,1] [5 x ~     0.749     1 direction_sea~     1 search_geode~  NA       2
+## 3 <dbl[,1] [5 x ~     0.749     1 direction_sea~     1 search_geode~  NA       3
+## 4 <dbl[,1] [5 x ~     0.749     1 direction_sea~     1 search_geode~  NA       4
+## 5 <dbl[,1] [5 x ~     0.749     1 direction_sea~     1 search_geode~  NA       5
 \end{verbatim}
 
 \texttt{tries} has an increment of one once the generator is called
@@ -622,14 +622,43 @@ search\_better.
 EXAMPLE: add alpha: compare the cooling system of the neighbourhood
 parameter in serach\_better \& search\_posse.
 
-\includegraphics{paper_files/figure-latex/unnamed-chunk-8-1.pdf}
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{nrow}\NormalTok{(holes_2d_better_max_tries)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 1531
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{nrow}\NormalTok{(holes_2d_pos)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 959
+\end{verbatim}
+
+\includegraphics{paper_files/figure-latex/unnamed-chunk-9-1.pdf}
 
 \hypertarget{explore-matrix-parameter}{%
 \subsection{Explore matrix parameter}\label{explore-matrix-parameter}}
 
+The variable or object to explore could sometimes be a more than a
+scale, for example, in a tour, we would also be interested to explore
+the relative position of the projection basis in the vector space. This
+imposes difficulties in visualisation since as human, we are bounded to
+preceive at most three dimensions. Dimension reduction is reuqired to
+summarise the projection matrix to a managable number of variable to map
+to a plot. Principal copmonent analysis is used to extract the direction
+that reflects most variation in the data.
+
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{holes_1d_geo }\OperatorTok{%>%}\StringTok{ }\KeywordTok{explore_proj_pca}\NormalTok{()}
+\NormalTok{holes_1d_geo }\OperatorTok{%>%}\StringTok{ }\KeywordTok{explore_proj_pca}\NormalTok{() }
 \end{Highlighting}
 \end{Shaded}
 
@@ -640,7 +669,7 @@ parameter in serach\_better \& search\_posse.
 ## Call `lifecycle::last_warnings()` to see where this warning was generated.
 \end{verbatim}
 
-\includegraphics{paper_files/figure-latex/unnamed-chunk-9-1.pdf}
+\includegraphics{paper_files/figure-latex/unnamed-chunk-10-1.pdf}
 
 \hypertarget{animating-plots}{%
 \section{Animating plots}\label{animating-plots}}
@@ -705,7 +734,7 @@ they attain slightly different ending index value, which is not ideal.
 This motivates the creation of a polishing search that polishes the
 ending basis and achieves unity on different methods.
 
-\includegraphics{paper_files/figure-latex/unnamed-chunk-11-1.pdf}
+\includegraphics{paper_files/figure-latex/unnamed-chunk-12-1.pdf}
 
 \texttt{search\_polish} takes the ending basis of a given search as the
 starting basis and uses a brutal-force approach to sample a larger
