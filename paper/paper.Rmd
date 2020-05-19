@@ -1,26 +1,22 @@
 ---
 title: Title here
-
-# to produce blinded version set to 1
 blinded: 0
-
 authors: 
+  
 - name: Author 1
   thanks: The authors gratefully acknowledge ...
   affiliation: Department of YYY, University of XXX
-  
 - name: Author 2
   affiliation: Department of ZZZ, University of WWW
-
 keywords:
 - 3 to 6 keywords
 - that do not appear in the title
-
 abstract: |
   1. check consistency of using PP for projection pursuit and PPI for projection pursuit index 
-
 bibliography: biblio.bib
 output: rticles::asa_article
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE}
@@ -42,6 +38,7 @@ load(here::here("data/holes_2d_geo_polish.rda"))
 load(here::here("data/holes_2d_better_polish.rda"))
 load(here::here("data/holes_2d_better_max_tries_polish.rda"))
 load(here::here("data/holes_2d_better_random_polish.rda"))
+load(here::here("data/holes_2d_pos.rda"))
 load(here::here("data/interrupt_yes.rda"))
 load(here::here("data/interrupt_no.rda"))
 
@@ -116,7 +113,7 @@ Below listed several issues in projection pursuit optimisation. Some are general
 
 
 
-# Recording the guided tour
+# Iterative algorithm and its diagnostics
 
 ## Tour components
 
@@ -157,6 +154,19 @@ animation <- function(){
   # animate according to different display methods
 }
 ```
+
+## Diagnostics 
+
+Visualisatioin has been widely used for exploring and understanding data. Visualisation presents information in a graphicial manner and often allows people to see information they would otherwise not seen in the reporting of numerical summarisation. Visual diagnostics can be real-time or post-run. Real time diagnostic directly uses the data produced in the algorithm to produce visual representation and thus doesn't need to store the data.   This section focuses on the definition and production of post-run diagnoistics and the next section discusses real-time diagnostics.
+
+Post-run diagnostics requires the data produced during the algorithm to be stored/ saved in order to produce plot diagnostics. 
+
+
+The graphical system in R is established based on the conception gramma of graphic [@wickham2010layered], where a graphic is defined using stacked layers in a coordination system.  A layer includes 1) the dataset that powers the plot; 2) a geometric object that represents the visual shape of the plot and 3) relevant statistical transformation if needed. An important concept in the gramma of graphic is *aesthetic mapping*. Aesthetic mapping links the variable in a dataset to information needed to produce a geometric object. For example, we map one variable on the x-axis and another on the y-axis to create a scatterplot. To create a boxplot, we first map one variable on the x-axis and then map the five point summary of another variable on the y-axis. This computation of five point summary from the origin variable is statistical transformation. This definition of graphic through layers provides advantages to produce complex plots since all the plots, however complex, can be decomposed into basic geometric objects shaped by the variable supplied.
+
+This idea of decompositing a graph to basic elements inspires me to characterise the diagnostics of iterative algorithm in a similar fashion. The optimisation in many machine learning algorithms these days is iterative in nature, while remains as a black box. Being able to diagnose it visually allows researchers to have the tool to unfold the myth and thus provides more understand to the algorithm. 
+
+The concept of gramma of graphic requires a dataset to be supplied in making a plot, thus a global object needs to be created in the iterative algorithm. The variables will be mapped into element of a graphic to explore and thus should contain all the parameters of interest. The next section shows how a global object is created in projection pursuit guided tour.
 
 
 ## Data Structure
@@ -205,28 +215,132 @@ holes_2d_better %>% head(5)
 
 # Visual methods
 
-## add something about general vis 
+Given all the information of interest in a global object, the next thing is to design its visual representation that can diagnose our algorithm. In an iterative algorithm, one would be interested to know how one parameter changes as the algorithm iterates. The parameter could be could be the decision variable, the value of the optimisation function or other parameter that facilitate the algorithm. In projectio pursuit guided tour, apart from the decision variable projection basis, the value of index function (`index_val`), we are also interested to explore the effect the different searching methods, the neighbourhood parameter alpha, and the stage a particular observation is in (`info`). These are the variables that will be mapped into the diagnostic plot. The global object also has its time series nature since the observations are recorded as the algorithm progresses and thus can't be switch in rows. This time series structure is always hierachical and nested since each row can be labelled with the smallest unit `id` and up by the iterative structure of the algorithm. Take our example, in the global object, each row has an `id` label which is the smallest unit the observation is ordered. A larger ordering unit is `tries` since it is updated everytime a new target basis is found. A nested ordering unit is `loop`, which increases by one as searching method iterates and starts over at a new `tries`. These features explain the definition of the global object for projection pursuit guided tour in Figure \@ref(fig:glb-obj).
 
+```{r glb-obj, out.width= "100%", out.height="20%", fig.cap="this is xxxx"}
+knitr::include_graphics(path = here::here("figures/global_obj.png"))
+```
 
-
-The creation of the global object facilitates the diagnostics of the optimisation in the projection pursuit guided tourr. Different diagnostic plots could be made to understand the optimisation **[pretty cheesy here]**
 
 *The examples and results below still need to be modified as the development / modification of both ferrn and tourr package*.
 
 
-## index vs time plots
+## Explore scalar parameters
 
-The tracing plot is useful to explore the index value. Given a global object created, `explore_trace_all()` plots the index value of all the bases. 
+The most interesting parameter to explore is the value of objective function. Given the structure of projection pursuit guided tour algorithm, whatever searching method we use, we could roughly divide the observation into three category: searching, updating and interpolating points. 
 
-```{r echo = TRUE}
-holes_2d_geo %>% explore_trace_all(magnify = TRUE)
-holes_2d_geo %>% explore_trace_interp()
+- *Searching points* include the observations that ones recorded during the trials and errors in the searching algorithm to find the target basis. In one `tries`, there could be only a few searching points while towards the end of the algorithm, they can easily go to hundreds.
+
+- *Updating points* are the observations for the target points and there are only one points per `tries`. We use "all searching points" to refer to the collection of both searching and updating points. 
+
+- *interpolation points* exist specifically in the guided tour in order to provide continuous animated view from one target basis to another, thus they are not included in the searching procedure. There are multiple points in one tries but it doesn't have `loop` value.
+
+### Explore all searching points 
+
+As mentioned previously, the largest feature of exploring searching points is its uncertainty in the number per `tries`. This makes it difficult to map `id` on the x-axis since the first few tries that can be informative to the evolving of the algorithm occupies a small number of points on the graph while the large less informative search points towards the end occupies the vast majority of the plot space. 
+
+This motivates the use of summarised statistics. At each iteration, rather than knowing the value of *every* points, we are more interested to know a general summary of all the points and more importantly, the point with the largest `index_val` since it is the one that prescribe the interpolation and future search. Therefore, boxplot is a suitable candidate. 
+
+However, boxplot doesn't tells us the number of point in each box. By showing boxplot for all `tries`, we lose information on how long it takes for the search to find the target basis. We may still want to show the exact points of every point if there are only a few points. Therefore a cutoff point is placed as an argument to decise when to switch from point geometry to boxplot geometry. 
+
+This design is easy to implement with the concept of gramma of graphic. With the idea of layed gramma, we only need to subset the data and map it onto the either a point geometry or boxplot geometry. We can also add a layer with line geometry that connect the points with the largest `index_val` in each tries. This would show us which `tries` has the largest improvement.
+
+A comparison of using scatter plot (all point geometry) and my new design is shown in Figure \@ref(fig:explore-all-search). As we can see the points for the first few tries on hte scatter plot are all squeezed in a tiny region, being nearly unseeable. While the plot on the right balances out the points in each `tries`. By linking the updating points for each `tries`, we observe that the largest improvement occurs in `tries = 5` where the number of searching points dramastically increased from 11 points in `tries = 4` to 86 points in `tries = 5`.
+
+```{r explore-all-search, fig.cap="This is xxx"}
+dt <- holes_2d_better_max_tries %>%
+  filter(info != "interpolation") %>% 
+  mutate(id = row_number())
+
+p1 <- dt %>% 
+  ggplot(aes(x = id, y = index_val, col = as.factor(tries))) + 
+  geom_point()  +
+  geom_line(data = dt %>% group_by(tries) %>% filter(index_val == max(index_val)),
+            aes(group = 1)) 
+  #theme(legend.position = "none")
+
+dt_count <- dt %>%
+  group_by(as.factor(tries)) %>%
+  count() %>%
+  rename(tries = `as.factor(tries)`)
+
+p2 <- dt %>%
+  ggplot(aes(x = as.factor(tries), y = index_val, col = as.factor(tries))) +
+  geom_boxplot(data = dt %>% filter(tries %in% which(dt_count$n > 15))) +
+  geom_point(data = dt%>% filter(tries %in% which(dt_count$n < 15))) +
+  geom_line(data = dt %>% group_by(tries) %>% filter(index_val == max(index_val)),
+            aes(group = 1)) 
+  #theme(legend.position = "none")
+
+(p1 | p2) & theme(legend.position = "bottom")
+
+```
+
+### Explore only interpolation points
+
+While mapping `tries` to the x axis allows for viewing the magnitude of the interpolation and also its density, we can't really see the curvature of the interpolated path. Think this would be important when the index is no longer smooth and the interpolation will jump up and down. Thus the geom_point + geom_line specification is still preferred.
+
+EXAMPLE: prevention on the decrese of interpolated value - interruption
+
+EXAMPLE: comparison of interpolation in noisy index function 
+
+<!-- The tracing plot is useful to explore the index value. Given a global object created, `explore_trace_all()` plots the index value of all the bases.  -->
+
+```{r}
+# points is always included in the newest version
+p1 <- holes_2d_better %>% 
+  filter(info == "interpolation") %>% 
+  ggplot(aes(x = tries, y = index_val, col = as.factor(tries))) +
+  geom_point() + 
+  geom_line(aes(group = 1))
+
+p2 <- holes_2d_better %>% explore_trace_interp() + geom_point(aes(col = as.factor(tries)))
+
+(p1 | p2)  &
+  theme(legend.position = "bottom") 
+
 ```
 
 
-## target basis vs interpolation steps, index vs time
 
-## low-d representation, PCA
+### Adding more variables to the mapping
+
+For now we only include the iterator and `index_val` in the mapping of the plot, while more paramters of interest could be added to explore the effect their effect.
+
+EXAMPLE: polishing - add method : compare with max.tries and without for search_better.
+
+EXAMPLE: add alpha: compare the cooling system of the neighbourhood parameter in serach_better & search_posse.
+
+```{r}
+dt <- holes_2d_better_max_tries %>%
+  filter(info != "interpolation") %>% 
+  mutate(id = row_number())
+
+p1 <- dt %>%
+  ggplot(aes(x = as.factor(tries), y = alpha, col = as.factor(alpha))) +
+  geom_jitter() +
+  geom_line(data = dt %>% group_by(tries) %>% filter(index_val == max(index_val)),
+            aes(group = 1)) + 
+  theme(legend.position = "none")
+
+dt <- holes_2d_pos %>%
+  filter(info != "interpolation") %>% 
+  mutate(id = row_number())
+
+p2 <- dt %>%
+  ggplot(aes(x = as.factor(tries), y = alpha, col = as.factor(alpha))) +
+  geom_jitter() +
+  geom_line(data = dt %>% group_by(tries) %>% filter(index_val == max(index_val)),
+            aes(group = 1))  + 
+  theme(legend.position = "none")
+
+p1 | p2
+```
+
+## Explore matrix parameter
+
+
+
 
 ```{r echo = TRUE}
 holes_1d_geo %>% explore_proj_pca()

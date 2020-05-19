@@ -224,9 +224,9 @@ basis. If it is smaller, the candidate is accepted with probability
 \subsection{problems and difficulties in PP
 optimisation}\label{problems-and-difficulties-in-pp-optimisation}}
 
-Below listed several issues in projection pursuit optimisation. Some of
-them are general problems in optimisation literature, while others are
-more specific for PP optimisation.
+Below listed several issues in projection pursuit optimisation. Some are
+general optimisation problems, while others are more specific for PP
+optimisation.
 
 \begin{itemize}
 \item
@@ -237,31 +237,31 @@ more specific for PP optimisation.
   discussions on how to avoid getting trapped in a local optimal in the
   literature.
 \item
-  \emph{optimising on non-smooth function}: When the objective function
-  is non-differentiable, derivative information can not be obtained.
-  This means traditional gradient- or Hessian- based methods are not
-  feasible, stochastic optimisation method could be an alternative to
+  \emph{optimising non-smooth function}: When the objective function is
+  non-differentiable, derivative information can not be obtained, which
+  means traditional gradient- or Hessian- based methods are not
+  feasible. Stochastic optimisation method could be an alternative to
   solve these problems.
 \item
   \emph{computation speed}: The optimisation procedure needs to be fast
-  to compute because tours produces real-time animation of the projected
+  to compute since tours produces real-time animation of the projected
   data.
 \item
   \emph{consistency result in stochastic optimisation}: In stochastic
   algorithm, researchers usually set a seed to ensure the algorithm
-  producing the same result for every run. While this practice supports
-  reproducibility, less efforts has been made to guarantee different
-  seeds will provide the same result.
+  producing the same result for every run. This practice supports
+  reproducibility, while less efforts has been made to guarantee
+  different seeds will provide the same result.
 \item
   \emph{high-dimensional decision variable}: In projection pursuit, the
-  decision variable is the entry in the projection matrix, which is
-  usually high-dimensional. Researcher would be better off if they can
+  decision variable includes all the entries in the projection matrix,
+  which is high-dimensional. Researcher would be better off if they can
   understand the relative position of different projection matrix in the
   high-dimensional space.
 \item
   \emph{role of interpolation in PP optimisation}: An optimisation
   procedure usually involves iteratively finding projection bases that
-  maximise the index function, while tour requires geodesic
+  maximises the index function, while tour requires geodesic
   interpolation between these bases to produce a continuous view for the
   users. It would be interesting to see if the interpolated bases could,
   in reverse, help the optimisation reach faster convergence.
@@ -283,8 +283,9 @@ optimisation}
   see if noisy function
 \end{itemize}
 
-\hypertarget{recording-the-guided-tour}{%
-\section{Recording the guided tour}\label{recording-the-guided-tour}}
+\hypertarget{iterative-algorithm-and-its-diagnostics}{%
+\section{Iterative algorithm and its
+diagnostics}\label{iterative-algorithm-and-its-diagnostics}}
 
 \hypertarget{tour-components}{%
 \subsection{Tour components}\label{tour-components}}
@@ -342,6 +343,53 @@ will be sent to create animation for visualising the tour in the
 \NormalTok{\}}
 \end{Highlighting}
 \end{Shaded}
+
+\hypertarget{diagnostics}{%
+\subsection{Diagnostics}\label{diagnostics}}
+
+Visualisatioin has been widely used for exploring and understanding
+data. Visualisation presents information in a graphicial manner and
+often allows people to see information they would otherwise not seen in
+the reporting of numerical summarisation. Visual diagnostics can be
+real-time or post-run. Real time diagnostic directly uses the data
+produced in the algorithm to produce visual representation and thus
+doesn't need to store the data. This section focuses on the definition
+and production of post-run diagnoistics and the next section discusses
+real-time diagnostics.
+
+Post-run diagnostics requires the data produced during the algorithm to
+be stored/ saved in order to produce plot diagnostics.
+
+The graphical system in R is established based on the conception gramma
+of graphic \citep{wickham2010layered}, where a graphic is defined using
+stacked layers in a coordination system. A layer includes 1) the dataset
+that powers the plot; 2) a geometric object that represents the visual
+shape of the plot and 3) relevant statistical transformation if needed.
+An important concept in the gramma of graphic is \emph{aesthetic
+mapping}. Aesthetic mapping links the variable in a dataset to
+information needed to produce a geometric object. For example, we map
+one variable on the x-axis and another on the y-axis to create a
+scatterplot. To create a boxplot, we first map one variable on the
+x-axis and then map the five point summary of another variable on the
+y-axis. This computation of five point summary from the origin variable
+is statistical transformation. This definition of graphic through layers
+provides advantages to produce complex plots since all the plots,
+however complex, can be decomposed into basic geometric objects shaped
+by the variable supplied.
+
+This idea of decompositing a graph to basic elements inspires me to
+characterise the diagnostics of iterative algorithm in a similar
+fashion. The optimisation in many machine learning algorithms these days
+is iterative in nature, while remains as a black box. Being able to
+diagnose it visually allows researchers to have the tool to unfold the
+myth and thus provides more understand to the algorithm.
+
+The concept of gramma of graphic requires a dataset to be supplied in
+making a plot, thus a global object needs to be created in the iterative
+algorithm. The variables will be mapped into element of a graphic to
+explore and thus should contain all the parameters of interest. The next
+section shows how a global object is created in projection pursuit
+guided tour.
 
 \hypertarget{data-structure}{%
 \subsection{Data Structure}\label{data-structure}}
@@ -434,47 +482,150 @@ this example, the dimension of the bases becomes 6 by 2.
 \hypertarget{visual-methods}{%
 \section{Visual methods}\label{visual-methods}}
 
-\hypertarget{add-something-about-general-vis}{%
-\subsection{add something about general
-vis}\label{add-something-about-general-vis}}
+Given all the information of interest in a global object, the next thing
+is to design its visual representation that can diagnose our algorithm.
+In an iterative algorithm, one would be interested to know how one
+parameter changes as the algorithm iterates. The parameter could be
+could be the decision variable, the value of the optimisation function
+or other parameter that facilitate the algorithm. In projectio pursuit
+guided tour, apart from the decision variable projection basis, the
+value of index function (\texttt{index\_val}), we are also interested to
+explore the effect the different searching methods, the neighbourhood
+parameter alpha, and the stage a particular observation is in
+(\texttt{info}). These are the variables that will be mapped into the
+diagnostic plot. The global object also has its time series nature since
+the observations are recorded as the algorithm progresses and thus can't
+be switch in rows. This time series structure is always hierachical and
+nested since each row can be labelled with the smallest unit \texttt{id}
+and up by the iterative structure of the algorithm. Take our example, in
+the global object, each row has an \texttt{id} label which is the
+smallest unit the observation is ordered. A larger ordering unit is
+\texttt{tries} since it is updated everytime a new target basis is
+found. A nested ordering unit is \texttt{loop}, which increases by one
+as searching method iterates and starts over at a new \texttt{tries}.
+These features explain the definition of the global object for
+projection pursuit guided tour in Figure @ref(fig:glb-obj).
 
-The creation of the global object facilitates the diagnostics of the
-optimisation in the projection pursuit guided tourr. Different
-diagnostic plots could be made to understand the optimisation
-\textbf{{[}pretty cheesy here{]}}
+\begin{figure}
+\includegraphics[width=1\linewidth,height=0.2\textheight]{/Users/hzha400/Documents/3.PhD/paper-tour-vis/figures/global_obj} \caption{this is xxxx}\label{fig:glb-obj}
+\end{figure}
 
 \emph{The examples and results below still need to be modified as the
 development / modification of both ferrn and tourr package}.
 
-\hypertarget{index-vs-time-plots}{%
-\subsection{index vs time plots}\label{index-vs-time-plots}}
+\hypertarget{explore-scalar-parameters}{%
+\subsection{Explore scalar parameters}\label{explore-scalar-parameters}}
 
-The tracing plot is useful to explore the index value. Given a global
-object created, \texttt{explore\_trace\_all()} plots the index value of
-all the bases.
+The most interesting parameter to explore is the value of objective
+function. Given the structure of projection pursuit guided tour
+algorithm, whatever searching method we use, we could roughly divide the
+observation into three category: searching, updating and interpolating
+points.
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{holes_2d_geo }\OperatorTok{%>%}\StringTok{ }\KeywordTok{explore_trace_all}\NormalTok{(}\DataTypeTok{magnify =} \OtherTok{TRUE}\NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
+\begin{itemize}
+\item
+  \emph{Searching points} include the observations that ones recorded
+  during the trials and errors in the searching algorithm to find the
+  target basis. In one \texttt{tries}, there could be only a few
+  searching points while towards the end of the algorithm, they can
+  easily go to hundreds.
+\item
+  \emph{Updating points} are the observations for the target points and
+  there are only one points per \texttt{tries}. We use ``all searching
+  points'' to refer to the collection of both searching and updating
+  points.
+\item
+  \emph{interpolation points} exist specifically in the guided tour in
+  order to provide continuous animated view from one target basis to
+  another, thus they are not included in the searching procedure. There
+  are multiple points in one tries but it doesn't have \texttt{loop}
+  value.
+\end{itemize}
+
+\hypertarget{explore-all-searching-points}{%
+\subsubsection{Explore all searching
+points}\label{explore-all-searching-points}}
+
+As mentioned previously, the largest feature of exploring searching
+points is its uncertainty in the number per \texttt{tries}. This makes
+it difficult to map \texttt{id} on the x-axis since the first few tries
+that can be informative to the evolving of the algorithm occupies a
+small number of points on the graph while the large less informative
+search points towards the end occupies the vast majority of the plot
+space.
+
+This motivates the use of summarised statistics. At each iteration,
+rather than knowing the value of \emph{every} points, we are more
+interested to know a general summary of all the points and more
+importantly, the point with the largest \texttt{index\_val} since it is
+the one that prescribe the interpolation and future search. Therefore,
+boxplot is a suitable candidate.
+
+However, boxplot doesn't tells us the number of point in each box. By
+showing boxplot for all \texttt{tries}, we lose information on how long
+it takes for the search to find the target basis. We may still want to
+show the exact points of every point if there are only a few points.
+Therefore a cutoff point is placed as an argument to decise when to
+switch from point geometry to boxplot geometry.
+
+This design is easy to implement with the concept of gramma of graphic.
+With the idea of layed gramma, we only need to subset the data and map
+it onto the either a point geometry or boxplot geometry. We can also add
+a layer with line geometry that connect the points with the largest
+\texttt{index\_val} in each tries. This would show us which
+\texttt{tries} has the largest improvement.
+
+A comparison of using scatter plot (all point geometry) and my new
+design is shown in Figure @ref(fig:explore-all-search). As we can see
+the points for the first few tries on hte scatter plot are all squeezed
+in a tiny region, being nearly unseeable. While the plot on the right
+balances out the points in each \texttt{tries}. By linking the updating
+points for each \texttt{tries}, we observe that the largest improvement
+occurs in \texttt{tries\ =\ 5} where the number of searching points
+dramastically increased from 11 points in \texttt{tries\ =\ 4} to 86
+points in \texttt{tries\ =\ 5}.
+
+\begin{figure}
+\centering
+\includegraphics{paper_files/figure-latex/explore-all-search-1.pdf}
+\caption{This is xxx}
+\end{figure}
+
+\hypertarget{explore-only-interpolation-points}{%
+\subsubsection{Explore only interpolation
+points}\label{explore-only-interpolation-points}}
+
+While mapping \texttt{tries} to the x axis allows for viewing the
+magnitude of the interpolation and also its density, we can't really see
+the curvature of the interpolated path. Think this would be important
+when the index is no longer smooth and the interpolation will jump up
+and down. Thus the geom\_point + geom\_line specification is still
+preferred.
+
+EXAMPLE: prevention on the decrese of interpolated value - interruption
+
+EXAMPLE: comparison of interpolation in noisy index function
 
 \includegraphics{paper_files/figure-latex/unnamed-chunk-7-1.pdf}
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{holes_2d_geo }\OperatorTok{%>%}\StringTok{ }\KeywordTok{explore_trace_interp}\NormalTok{()}
-\end{Highlighting}
-\end{Shaded}
+\hypertarget{adding-more-variables-to-the-mapping}{%
+\subsubsection{Adding more variables to the
+mapping}\label{adding-more-variables-to-the-mapping}}
 
-\includegraphics{paper_files/figure-latex/unnamed-chunk-7-2.pdf}
+For now we only include the iterator and \texttt{index\_val} in the
+mapping of the plot, while more paramters of interest could be added to
+explore the effect their effect.
 
-\hypertarget{target-basis-vs-interpolation-steps-index-vs-time}{%
-\subsection{target basis vs interpolation steps, index vs
-time}\label{target-basis-vs-interpolation-steps-index-vs-time}}
+EXAMPLE: polishing - add method : compare with max.tries and without for
+search\_better.
 
-\hypertarget{low-d-representation-pca}{%
-\subsection{low-d representation, PCA}\label{low-d-representation-pca}}
+EXAMPLE: add alpha: compare the cooling system of the neighbourhood
+parameter in serach\_better \& search\_posse.
+
+\includegraphics{paper_files/figure-latex/unnamed-chunk-8-1.pdf}
+
+\hypertarget{explore-matrix-parameter}{%
+\subsection{Explore matrix parameter}\label{explore-matrix-parameter}}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -489,7 +640,7 @@ time}\label{target-basis-vs-interpolation-steps-index-vs-time}}
 ## Call `lifecycle::last_warnings()` to see where this warning was generated.
 \end{verbatim}
 
-\includegraphics{paper_files/figure-latex/unnamed-chunk-8-1.pdf}
+\includegraphics{paper_files/figure-latex/unnamed-chunk-9-1.pdf}
 
 \hypertarget{animating-plots}{%
 \section{Animating plots}\label{animating-plots}}
@@ -554,7 +705,7 @@ they attain slightly different ending index value, which is not ideal.
 This motivates the creation of a polishing search that polishes the
 ending basis and achieves unity on different methods.
 
-\includegraphics{paper_files/figure-latex/unnamed-chunk-10-1.pdf}
+\includegraphics{paper_files/figure-latex/unnamed-chunk-11-1.pdf}
 
 \texttt{search\_polish} takes the ending basis of a given search as the
 starting basis and uses a brutal-force approach to sample a larger
