@@ -1,0 +1,215 @@
+---
+title: "explore_basis"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+
+library(tidyverse)
+library(ferrn)
+
+load(here::here("data/holes_1d_geo.rda"))
+load(here::here("data/holes_1d_geo_polish.rda"))
+load(here::here("data/holes_2d_geo.rda"))
+load(here::here("data/holes_2d_geo_polish.rda"))
+```
+
+*Explore the first two principle component along with info*
+
+This helps to graphically illustrate the geodesic searching algorithm
+
+```{r}
+holes_1d_geo %>% explore_proj_pca() 
+```
+
+
+*Explore the first two principle component along with method*
+
+It doesn't seem that the polishing seraching is very efficient - the space is too large. We could color by alpha in the polish to see it better. 
+
+```{r}
+glb_obj <- bind_rows(holes_1d_geo, holes_1d_geo_polish)
+
+num_col <- ncol(glb_obj$basis[[1]])
+num_row <- nrow(glb_obj$basis[[1]])
+
+basis <- purrr::flatten_dbl(glb_obj$basis)  %>% matrix(ncol = num_row * num_col, byrow = TRUE)
+
+loadings <- basis %>%
+  stats::prcomp() %>%
+  stats::predict() %>%
+  tibble::as_tibble()
+
+combined <- tibble::as_tibble(basis) %>%
+  dplyr::bind_cols(loadings) %>%
+  dplyr::bind_cols(glb_obj %>% dplyr::select(-basis))
+
+combined %>% 
+  ggplot(aes(x = PC1, y = PC2, col = method)) +
+  geom_point() +
+  geom_point(data = combined %>% filter(method == "search_geodesic")) +
+  #stat_density(aes(fill = after_stat(nlevel)), geom = "polygon", alpha = 0.5) +
+  theme(aspect.ratio = 1)
+```
+
+*Explore the first two principle component along with alpha*
+
+We can indeed see that an init of 0.5 for alpha is too big and unnecessary. What about the projection distant between the last two target basis in the search geodesic? Their distance is only 0.02! Filter for alpha < 0.02
+
+```{r}
+combined %>% 
+  ggplot(aes(x = PC1, y = PC2, col = as.factor(alpha))) +
+  geom_point() +
+  geom_point(data = combined %>% filter(method == "search_geodesic")) +
+  #stat_density(aes(fill = after_stat(nlevel)), geom = "polygon", alpha = 0.5) +
+  theme(aspect.ratio = 1)
+```
+
+
+```{r echo = TRUE}
+last_two <- holes_1d_geo %>% filter(info == "best_line_search") %>% tail(2) %>% pull(basis)
+last_two_dist <- tourr::proj_dist(last_two[[1]], last_two[[2]])
+last_two_dist
+```
+
+```{r}
+combined %>% filter(alpha < 0.03) %>% 
+  ggplot(aes(x = PC1, y = PC2, col = as.factor(alpha))) +
+  geom_point() +
+  geom_point(data = combined %>% filter(method == "search_geodesic")) +
+  #stat_density(aes(fill = after_stat(nlevel)), geom = "polygon", alpha = 0.5) +
+  theme(aspect.ratio = 1)
+```
+
+```{r}
+combined %>% filter(info == "polish_best") %>% dplyr::select(index_val, alpha, loop)
+```
+
+*Conclusion*
+
+This flow of analysis shows that an init value of 0.5 for alpha is not ideal. A value based on the distance of the last two target basis would be a better option.
+
+
+*Explore the first two principle component along with index_val*
+
+The problem of mapping index_val to color is that human eyes can only preceive the cahnge of index_val, but not its magnitude. We can't see how fast it increases! That's why I think it is indeed necessary to create a 3D plot, but just to make the plot fancy but because both the principal compoennt and index_val need to be mapped to axis for us to preceive the changes.
+
+```{r}
+glb_obj <- holes_1d_geo #%>% filter(info == "interpolation")
+
+num_col <- ncol(glb_obj$basis[[1]])
+num_row <- nrow(glb_obj$basis[[1]])
+
+basis <- purrr::flatten_dbl(glb_obj$basis)  %>% matrix(ncol = num_row * num_col, byrow = TRUE)
+
+loadings <- basis %>%
+  stats::prcomp() %>%
+  stats::predict() %>%
+  tibble::as_tibble()
+
+combined <- tibble::as_tibble(basis) %>%
+  dplyr::bind_cols(loadings) %>%
+  dplyr::bind_cols(glb_obj %>% dplyr::select(-basis))
+
+combined %>% 
+  ggplot(aes(x = PC1, y = PC2, col = index_val)) +
+  geom_point() +
+  geom_point(data = combined %>% filter(method == "search_geodesic")) +
+  #stat_density(aes(fill = after_stat(nlevel)), geom = "polygon", alpha = 0.5) +
+  theme(aspect.ratio = 1)
+```
+
+Haven't seen an option to do 3D graph in ggplot - the best I can find is plotly. Now it feels much like a hill climbing. tries 12, the last tries is not doing that good tho. The largest improvement happens around tries = 7/8. 
+
+```{r}
+library(plotly)
+plot_ly(combined, x = ~PC1, y = ~PC2, z = ~index_val) %>%
+  add_markers(color = ~tries) %>% 
+  layout(scene = list(aspectratio = list(x = 1,y = 1, z= 1)))
+
+```
+
+
+*A 2D example*
+
+We did the PCA for both columns and take the first PC of both. Again, mapping index_val to color doesn't show much info. 
+
+```{r}
+glb_obj <- holes_2d_geo
+num_col <- ncol(glb_obj$basis[[1]])
+num_row <- nrow(glb_obj$basis[[1]])
+
+basis <- purrr::flatten_dbl(glb_obj$basis)  %>% matrix(ncol = num_row * num_col, byrow = TRUE)
+
+v1 <- stats::prcomp(basis[,1:num_row]) %>%
+  stats::predict() %>%
+  tibble::as_tibble() %>%
+  dplyr::select(PC1)
+
+v2 <- stats::prcomp(basis[,(num_row + 1):(2*num_row)]) %>%
+  stats::predict() %>%
+  tibble::as_tibble() %>%
+  dplyr::select(PC1) %>% rename(PC2 = PC1)
+
+combined <- tibble::as_tibble(basis) %>%
+  dplyr::bind_cols(v1) %>%
+  dplyr::bind_cols(v2) %>%
+  dplyr::bind_cols(glb_obj %>% dplyr::select(-basis))
+
+combined %>% 
+  ggplot(aes(x = PC1, y = PC2)) +
+  geom_point(aes(col = index_val)) +
+  #stat_density(aes(fill = after_stat(nlevel)), geom = "polygon", alpha = 0.5) +
+  theme(aspect.ratio = 1)
+  
+```
+
+Using plotly, we can preceive the changes better - there seems to be a local optimum somewhere and an only way to get to the higher hill. 
+
+```{r}
+library(plotly)
+plot_ly(combined, x = ~PC1, y = ~PC2, z = ~index_val, hoverlabel = ~tries) %>%
+  add_markers(color = ~tries) %>% 
+  layout(scene = list(size = 0.5, aspectratio = list(x = 1,y = 1, z = 1)))
+```
+
+
+Filter only the interpolation points and repeat the process again, this time we can see much more. The searching gets a bit stucked at index_val between 0.85 - 0.9 and then proceeds to the upper hill.
+
+
+```{r}
+glb_obj <- holes_2d_geo %>% filter(info == "interpolation")
+
+num_col <- ncol(glb_obj$basis[[1]])
+num_row <- nrow(glb_obj$basis[[1]])
+
+basis <- purrr::flatten_dbl(glb_obj$basis)  %>% matrix(ncol = num_row * num_col, byrow = TRUE)
+
+v1 <- stats::prcomp(basis[,1:num_row]) %>%
+  stats::predict() %>%
+  tibble::as_tibble() %>%
+  dplyr::select(PC1)
+
+v2 <- stats::prcomp(basis[,(num_row + 1):(2*num_row)]) %>%
+  stats::predict() %>%
+  tibble::as_tibble() %>%
+  dplyr::select(PC1) %>% rename(PC2 = PC1)
+
+combined <- tibble::as_tibble(basis) %>%
+  dplyr::bind_cols(v1) %>%
+  dplyr::bind_cols(v2) %>%
+  dplyr::bind_cols(glb_obj %>% dplyr::select(-basis))
+```
+
+```{r}
+library(plotly)
+plot_ly(combined, x = ~PC1, y = ~PC2, z = ~index_val, hoverlabel = ~tries) %>%
+  add_markers(color = ~tries) %>% 
+  layout(scene = list(width = 2, aspectratio = list(x = 1,y = 1, z= 1)))
+```
+
+
+
