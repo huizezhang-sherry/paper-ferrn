@@ -81,7 +81,7 @@ holes_2d_better_max_tries_polish <- animate_xy(data_mult[,c(1,2, 7:10)], tour_pa
 devtools::load_all()
 set.seed(123456)
 holes_2d_pos <- animate_xy(data_mult[,c(1,2, 7:10)], tour_path = guided_tour(holes(), d = 2,
-                                                                             search_f = search_posse, max.tries = 1000),
+                                                                             search_f = search_posse, max.tries = 500),
                            rescale = FALSE, verbose = TRUE)
 
 last_basis <- holes_2d_pos %>% filter(info == "interpolation") %>% tail(1) %>% pull(basis) %>% .[[1]]
