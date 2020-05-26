@@ -417,7 +417,7 @@ A larger dataset contains more informative variables (\texttt{x3} to
 \texttt{x3} is plotted below. \emph{{[}should I introduce the dist for
 each var?{]}}
 
-\includegraphics{paper_files/figure-latex/unnamed-chunk-3-1.pdf}
+\includegraphics{paper_files/figure-latex/origin-data-1.pdf}
 
 Once the dataset is sent to the tourr package, all the information
 generated will be stored in a global structure. The global structure
@@ -469,18 +469,19 @@ this example, the dimension of the bases becomes 6 by 2.
 \end{Shaded}
 
 \begin{verbatim}
-## # A tibble: 5 x 7
-##   basis             index_val tries info           loop method           id
-##   <list>                <dbl> <dbl> <chr>         <dbl> <chr>         <int>
-## 1 <dbl[,2] [6 x 2]>     0.804     1 start            NA <NA>              1
-## 2 <dbl[,2] [6 x 2]>     0.793     1 random_search     1 search_better     2
-## 3 <dbl[,2] [6 x 2]>     0.784     1 random_search     2 search_better     3
-## 4 <dbl[,2] [6 x 2]>     0.773     1 random_search     3 search_better     4
-## 5 <dbl[,2] [6 x 2]>     0.795     1 random_search     4 search_better     5
+## # A tibble: 5 x 8
+##   basis             index_val tries info           loop method       alpha    id
+##   <list>                <dbl> <dbl> <chr>         <dbl> <chr>        <dbl> <int>
+## 1 <dbl[,2] [6 x 2]>     0.804     1 start            NA <NA>           0.5     1
+## 2 <dbl[,2] [6 x 2]>     0.793     1 random_search     1 search_bett~   0.5     2
+## 3 <dbl[,2] [6 x 2]>     0.784     1 random_search     2 search_bett~   0.5     3
+## 4 <dbl[,2] [6 x 2]>     0.773     1 random_search     3 search_bett~   0.5     4
+## 5 <dbl[,2] [6 x 2]>     0.795     1 random_search     4 search_bett~   0.5     5
 \end{verbatim}
 
-\hypertarget{visual-methods}{%
-\section{Visual methods}\label{visual-methods}}
+\hypertarget{post-run-static-diagnostics-plots}{%
+\section{Post-run static diagnostics
+plots}\label{post-run-static-diagnostics-plots}}
 
 Given all the information of interest in a global object, the next thing
 is to design its visual representation that can diagnose our algorithm.
@@ -504,14 +505,11 @@ smallest unit the observation is ordered. A larger ordering unit is
 found. A nested ordering unit is \texttt{loop}, which increases by one
 as searching method iterates and starts over at a new \texttt{tries}.
 These features explain the definition of the global object for
-projection pursuit guided tour in Figure @ref(fig:glb-obj).
+projection pursuit guided tour in Figure \ref{fig:glb-obj}.
 
 \begin{figure}
-\includegraphics[width=1\linewidth,height=0.2\textheight]{/Users/hzha400/Documents/3.PhD/paper-tour-vis/figures/global_obj} \caption{this is xxxx}\label{fig:glb-obj}
+\includegraphics[width=1\linewidth,height=0.2\textheight]{/Users/hzha400/Documents/3.PhD/paper-tour-vis/figures/global_obj} \caption{\label{glb-obj}this is xxxx}\label{fig:glb-obj}
 \end{figure}
-
-\emph{The examples and results below still need to be modified as the
-development / modification of both ferrn and tourr package}.
 
 \hypertarget{explore-scalar-parameters}{%
 \subsection{Explore scalar parameters}\label{explore-scalar-parameters}}
@@ -576,19 +574,19 @@ a layer with line geometry that connect the points with the largest
 \texttt{tries} has the largest improvement.
 
 A comparison of using scatter plot (all point geometry) and my new
-design is shown in Figure @ref(fig:explore-all-search). As we can see
-the points for the first few tries on hte scatter plot are all squeezed
-in a tiny region, being nearly unseeable. While the plot on the right
-balances out the points in each \texttt{tries}. By linking the updating
-points for each \texttt{tries}, we observe that the largest improvement
-occurs in \texttt{tries\ =\ 5} where the number of searching points
-dramastically increased from 11 points in \texttt{tries\ =\ 4} to 86
-points in \texttt{tries\ =\ 5}.
+design is shown in Figure \ref{fig:points}. As we can see the points for
+the first few tries on hte scatter plot are all squeezed in a tiny
+region, being nearly unseeable. While the plot on the right balances out
+the points in each \texttt{tries}. By linking the updating points for
+each \texttt{tries}, we observe that the largest improvement occurs in
+\texttt{tries\ =\ 5} where the number of searching points dramastically
+increased from 11 points in \texttt{tries\ =\ 4} to 86 points in
+\texttt{tries\ =\ 5}.
 
 \begin{figure}
 \centering
-\includegraphics{paper_files/figure-latex/explore-all-search-1.pdf}
-\caption{This is xxx}
+\includegraphics{paper_files/figure-latex/points-1.pdf}
+\caption{\label{points} This is xxx}
 \end{figure}
 
 \hypertarget{explore-only-interpolation-points}{%
@@ -602,11 +600,38 @@ when the index is no longer smooth and the interpolation will jump up
 and down. Thus the geom\_point + geom\_line specification is still
 preferred.
 
-EXAMPLE: prevention on the decrese of interpolated value - interruption
+\emph{Example 1: Interruption} The left panel of Figure
+\ref{fig:interruption} presents the trace plot of the interpolated basis
+using \texttt{search\_better} to optimise the holes index (2D projection
+using the larger dataset). Tour interpolates from the current basis to
+the target basis, which has been found to have a higher index value by
+projection pursuit. The target basis will then be sent to the projection
+pursuit as the current basis to find the next target basis. We can
+observe from the plot that there are basis with even higher index value
+on the interpolation path. These bases could be used to search for new
+basis in the next round. Therefore, an interruption is constructed to
+only take interpolated basis up to the point where the index value stops
+increasing and the last basis is taken as the current basis for the next
+round of search. After implementing the interruption, the tracing plot
+with the same configuration is shown on the right panel. Rather than
+interpolate to the target basis, the interruption interrupt the process
+after id = 60 and proceeds the next round of search from the
+interpolated basis. Taking advantage of the interpolated basis results
+in a higher index value in the end with fewer steps.
 
-EXAMPLE: comparison of interpolation in noisy index function
+\begin{figure}
+\centering
+\includegraphics{paper_files/figure-latex/interruption-1.pdf}
+\caption{\label{interruption}Trace plots of the interpolated basis with
+and without the interruption. The interruption stops the interpolation
+when the index value starts to decrease, see the difference at id being
+around 60. The implementation of the interuption finds an ending basis
+with higher index value using fewer steps.}
+\end{figure}
 
-\includegraphics{paper_files/figure-latex/unnamed-chunk-7-1.pdf}
+\emph{Example 2: Noisy index function} Add an example on noisy function
+
+\includegraphics{paper_files/figure-latex/interpolation-1.pdf}
 
 \hypertarget{adding-more-variables-to-the-mapping}{%
 \subsubsection{Adding more variables to the
@@ -616,125 +641,16 @@ For now we only include the iterator and \texttt{index\_val} in the
 mapping of the plot, while more paramters of interest could be added to
 explore the effect their effect.
 
-EXAMPLE: polishing - add method : compare with max.tries and without for
-search\_better.
+\emph{Example 3: Polish} In principle, all the optimisation routines
+should present the same output on the same problem. In Figure
+\ref{fig:trace-compare}, red dots shows the trace of the interpolated
+basis using \texttt{search\_geodesic} and \texttt{search\_better} (with
+max.tries = 100), respectively, on the 2D projection problem. We can
+observe that they attain slightly different ending index value, which is
+not ideal. This motivates the creation of a polishing search that
+polishes the ending basis and achieves unity on different methods.
 
-EXAMPLE: add alpha: compare the cooling system of the neighbourhood
-parameter in serach\_better \& search\_posse.
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\KeywordTok{nrow}\NormalTok{(holes_2d_better_max_tries)}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-## [1] 1531
-\end{verbatim}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\KeywordTok{nrow}\NormalTok{(holes_2d_pos)}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-## [1] 959
-\end{verbatim}
-
-\includegraphics{paper_files/figure-latex/unnamed-chunk-9-1.pdf}
-
-\hypertarget{explore-matrix-parameter}{%
-\subsection{Explore matrix parameter}\label{explore-matrix-parameter}}
-
-The variable or object to explore could sometimes be a more than a
-scale, for example, in a tour, we would also be interested to explore
-the relative position of the projection basis in the vector space. This
-imposes difficulties in visualisation since as human, we are bounded to
-preceive at most three dimensions. Dimension reduction is reuqired to
-summarise the projection matrix to a managable number of variable to map
-to a plot. Principal copmonent analysis is used to extract the direction
-that reflects most variation in the data.
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{holes_1d_geo }\OperatorTok{%>%}\StringTok{ }\KeywordTok{explore_proj_pca}\NormalTok{() }
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-## Warning: The `x` argument of `as_tibble.matrix()` must have column names if `.name_repair` is omitted as of tibble 2.0.0.
-## Using compatibility `.name_repair`.
-## This warning is displayed once every 8 hours.
-## Call `lifecycle::last_warnings()` to see where this warning was generated.
-\end{verbatim}
-
-\includegraphics{paper_files/figure-latex/unnamed-chunk-10-1.pdf}
-
-\hypertarget{animating-plots}{%
-\section{Animating plots}\label{animating-plots}}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{holes_1d_geo }\OperatorTok{%>%}\StringTok{ }\KeywordTok{explore_proj_pca}\NormalTok{(}\DataTypeTok{animate =} \OtherTok{TRUE}\NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
-
-\hypertarget{finding-errors-and-developing-improvements}{%
-\section{Finding errors and developing
-improvements}\label{finding-errors-and-developing-improvements}}
-
-The visualisation methods introduced above allow us to assess the
-performance of each optimisation routine and thus provide improvments.
-
-\hypertarget{interrupt}{%
-\subsection{Interrupt}\label{interrupt}}
-
-The left panel of Figure @ref(fig:interruption) presents the trace plot
-of the interpolated basis using \texttt{search\_better} to optimise the
-holes index (2D projection using the larger dataset). Tour interpolates
-from the current basis to the target basis, which has been found to have
-a higher index value by projection pursuit. The target basis will then
-be sent to the projection pursuit as the current basis to find the next
-target basis. We can observe from the plot that there are basis with
-even higher index value on the interpolation path. These bases could be
-used to search for new basis in the next round. Therefore, an
-interruption is constructed to only take interpolated basis up to the
-point where the index value stops increasing and the last basis is taken
-as the current basis for the next round of search. After implementing
-the interruption, the tracing plot with the same configuration is shown
-on the right panel. Rather than interpolate to the target basis, the
-interruption interrupt the process after id = 60 and proceeds the next
-round of search from the interpolated basis. Taking advantage of the
-interpolated basis results in a higher index value in the end with fewer
-steps.
-
-\begin{figure}
-\centering
-\includegraphics{paper_files/figure-latex/interruption-1.pdf}
-\caption{\label{interruption} Trace plots of the interpolated basis with
-and without the interruption. The interruption stops the interpolation
-when the index value starts to decrease, see the difference at id being
-around 60. The implementation of the interuption finds an ending basis
-with higher index value using fewer steps.}
-\end{figure}
-
-Further the case when the index function is not smooth, the
-interpolation may not attain -\textgreater{} modification
-
-\hypertarget{polish}{%
-\subsection{Polish}\label{polish}}
-
-In principle, all the optimisation routines should present the same
-output on the same problem. In Figure @ref(fig:trace-compare), red dots
-shows the trace of the interpolated basis using
-\texttt{search\_geodesic} and \texttt{search\_better} (with max.tries =
-100), respectively, on the 2D projection problem. We can observe that
-they attain slightly different ending index value, which is not ideal.
-This motivates the creation of a polishing search that polishes the
-ending basis and achieves unity on different methods.
-
-\includegraphics{paper_files/figure-latex/unnamed-chunk-12-1.pdf}
+\includegraphics{paper_files/figure-latex/polish-1.pdf}
 
 \texttt{search\_polish} takes the ending basis of a given search as the
 starting basis and uses a brutal-force approach to sample a larger
@@ -790,7 +706,7 @@ The following example conducted a 2D projection on the larger dataset
 using search better with different configurations. \texttt{max.tries} is
 a hyperparameter that controls the maximum number of try without
 improvement and its default value is 25. As shown in Figure
-@ref(fig:trace-compare), after polishing, both trials attain the same
+\ref{fig:trace-compare}, after polishing, both trials attain the same
 index value. However, a small \texttt{max.tries} of 25 is not sufficient
 for the algorithm to find the true maximum. This is because 25 tries is
 not sufficient for the 2D searching space.
@@ -798,19 +714,76 @@ not sufficient for the 2D searching space.
 \begin{figure}
 \centering
 \includegraphics{paper_files/figure-latex/trace-compare-1.pdf}
-\caption{Breakdown of index value when using different max.tries in
-search better in conjunction with search polish. Both attain the same
-final index value after the polishing while using a max.tries 25 is not
-sufficient to find the ture maximum.}
+\caption{\label{trace-compare}Breakdown of index value when using
+different max.tries in search better in conjunction with search polish.
+Both attain the same final index value after the polishing while using a
+max.tries 25 is not sufficient to find the ture maximum.}
 \end{figure}
 
-\hypertarget{posse}{%
-\subsection{posse?}\label{posse}}
+\emph{Example 4: The neighbourhood parameter alpha} Add an example on
+comparing the neighbourhood parameter in serach\_better \&
+search\_posse.
 
-search\_better annd search\_geodesic methods are not doing good on 2d
-projection -\textgreater{} see the simple case above: abs best is 0.96
-while they only get to 0.88-ish. Would be worse for higher dimension.
-thus search\_posse. get 0.95 and then polish to 0.96 :)
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{nrow}\NormalTok{(holes_2d_better_max_tries)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 1529
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{nrow}\NormalTok{(holes_2d_pos)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 1056
+\end{verbatim}
+
+\includegraphics{paper_files/figure-latex/alpha-1.pdf}
+
+\hypertarget{explore-matrix-parameter}{%
+\subsection{Explore matrix parameter}\label{explore-matrix-parameter}}
+
+The variable or object to explore could sometimes be a more than a
+scale, for example, in a tour, we would also be interested to explore
+the relative position of the projection basis in the vector space. This
+imposes difficulties in visualisation since as human, we are bounded to
+preceive at most three dimensions. Dimension reduction is reuqired to
+summarise the projection matrix to a managable number of variable to map
+to a plot. Principal copmonent analysis is used to extract the direction
+that reflects most variation in the data.
+
+\emph{Example 5 PCA} refine the example of matrix parameter exploration
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{holes_1d_geo }\OperatorTok{%>%}\StringTok{ }\KeywordTok{explore_proj_pca}\NormalTok{(}\DataTypeTok{col =}\NormalTok{ info) }
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{paper_files/figure-latex/pca-1.pdf}
+
+\hypertarget{real-time-animated-diagnostic-plots}{%
+\section{Real-time animated diagnostic
+plots}\label{real-time-animated-diagnostic-plots}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{holes_1d_geo }\OperatorTok{%>%}\StringTok{ }\KeywordTok{explore_proj_pca}\NormalTok{(}\DataTypeTok{animate =} \OtherTok{TRUE}\NormalTok{, }\DataTypeTok{col =}\NormalTok{ info)}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{vis-package}{%
+\section{Vis package}\label{vis-package}}
+
+Everything is coded up in a package.
+
+\clearpage
 
 \bibliographystyle{agsm}
 \bibliography{biblio.bib}
