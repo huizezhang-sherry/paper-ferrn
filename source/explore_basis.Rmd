@@ -13,6 +13,7 @@ library(ferrn)
 
 load(here::here("data/holes_1d_geo.rda"))
 load(here::here("data/holes_1d_geo_polish.rda"))
+load(here::here("data/holes_1d_geo_polish_default_alpha.rda"))
 load(here::here("data/holes_2d_geo.rda"))
 load(here::here("data/holes_2d_geo_polish.rda"))
 ```
@@ -22,7 +23,7 @@ load(here::here("data/holes_2d_geo_polish.rda"))
 This helps to graphically illustrate the geodesic searching algorithm
 
 ```{r}
-holes_1d_geo %>% explore_proj_pca() 
+holes_1d_geo %>% explore_proj_pca(col = info) 
 ```
 
 
@@ -31,28 +32,8 @@ holes_1d_geo %>% explore_proj_pca()
 It doesn't seem that the polishing seraching is very efficient - the space is too large. We could color by alpha in the polish to see it better. 
 
 ```{r}
-glb_obj <- bind_rows(holes_1d_geo, holes_1d_geo_polish)
-
-num_col <- ncol(glb_obj$basis[[1]])
-num_row <- nrow(glb_obj$basis[[1]])
-
-basis <- purrr::flatten_dbl(glb_obj$basis)  %>% matrix(ncol = num_row * num_col, byrow = TRUE)
-
-loadings <- basis %>%
-  stats::prcomp() %>%
-  stats::predict() %>%
-  tibble::as_tibble()
-
-combined <- tibble::as_tibble(basis) %>%
-  dplyr::bind_cols(loadings) %>%
-  dplyr::bind_cols(glb_obj %>% dplyr::select(-basis))
-
-combined %>% 
-  ggplot(aes(x = PC1, y = PC2, col = method)) +
-  geom_point() +
-  geom_point(data = combined %>% filter(method == "search_geodesic")) +
-  #stat_density(aes(fill = after_stat(nlevel)), geom = "polygon", alpha = 0.5) +
-  theme(aspect.ratio = 1)
+bind_rows(holes_1d_geo, holes_1d_geo_polish_default_alpha) %>% 
+  explore_proj_pca(col = method)
 ```
 
 *Explore the first two principle component along with alpha*
@@ -60,12 +41,8 @@ combined %>%
 We can indeed see that an init of 0.5 for alpha is too big and unnecessary. What about the projection distant between the last two target basis in the search geodesic? Their distance is only 0.02! Filter for alpha < 0.02
 
 ```{r}
-combined %>% 
-  ggplot(aes(x = PC1, y = PC2, col = as.factor(alpha))) +
-  geom_point() +
-  geom_point(data = combined %>% filter(method == "search_geodesic")) +
-  #stat_density(aes(fill = after_stat(nlevel)), geom = "polygon", alpha = 0.5) +
-  theme(aspect.ratio = 1)
+bind_rows(holes_1d_geo, holes_1d_geo_polish_default_alpha) %>% 
+  explore_proj_pca(col = as.factor(alpha))
 ```
 
 
@@ -76,17 +53,10 @@ last_two_dist
 ```
 
 ```{r}
-combined %>% filter(alpha < 0.03) %>% 
-  ggplot(aes(x = PC1, y = PC2, col = as.factor(alpha))) +
-  geom_point() +
-  geom_point(data = combined %>% filter(method == "search_geodesic")) +
-  #stat_density(aes(fill = after_stat(nlevel)), geom = "polygon", alpha = 0.5) +
-  theme(aspect.ratio = 1)
+bind_rows(holes_1d_geo, holes_1d_geo_polish) %>% 
+  explore_proj_pca(col = as.factor(alpha))
 ```
 
-```{r}
-combined %>% filter(info == "polish_best") %>% dplyr::select(index_val, alpha, loop)
-```
 
 *Conclusion*
 
