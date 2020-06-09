@@ -1,0 +1,30 @@
+---
+title: "geozoo"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(geozoo)
+
+files <- paste0("data/", list.files(here::here("data")))
+purrr::walk(.x = files, ~load(here::here(.x), env = globalenv()))
+
+```
+
+
+```{r}
+pca <- holes_1d_geo %>% ferrn::compute_pca()
+
+interp <- pca$combined %>% filter(info == "interpolation") %>% dplyr::select(V1:V5) %>% as.matrix()
+
+a <- sphere.hollow(p = 5, n = 1000)
+a$points <- a$points %>% rbind(interp)
+color <- c(rep("black", 1000), rep("red", nrow(interp)))
+print(a, col = color)
+```
+
