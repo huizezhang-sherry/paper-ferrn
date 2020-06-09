@@ -11,8 +11,7 @@ authors:
 keywords:
 - 3 to 6 keywords
 - that do not appear in the title
-abstract: |
-  1. check consistency of using PP for projection pursuit and PPI for projection pursuit index 
+abstract: 
 bibliography: biblio.bib
 output: rticles::asa_article
 editor_options: 
@@ -41,16 +40,16 @@ source(here::here("source/sim_data.r"))
 
 ## Derivative free optimisation
 
-Given an objective function $f$, one way of optimising it is to equate its gradient to zero. In modern optimisation problems, gradient information can be hard to evaluate or sometimes even impossible and Derivative-Free Optimisation (DFO) methods can be useful to approach these problems. The two most common methods in DFO are *direct-search methods* and *model-based methods* and this paper dedicates to the discussion of direct-search methods, which gains its popularity due to its simplicity in use and reliability in complicated practical problem. Coined by @hooke1961direct, direct search methods don't require any gradient or hessian information and evaluate $f$ directly. A well-known example of it is the Nelder-Mead algorithm [@nelder1965simplex] and it enjoys the popularity due to its simplicity and reliability. [feel like this sentence can be expanded to include more information. xxx]. Further, direct search methods can be classified as *stochastic* and *deterministic* depends on whether a random sample is used in the search. The stochastic version of  direct-search method is the focus of this paper. 
+Given an objective function $f$, one way of optimising it is to equate its gradient to zero. In modern optimisation problems, gradient information can be hard to evaluate or sometimes even impossible and Derivative-Free Optimisation (DFO) methods can be useful to approach these problems. The two most common methods in DFO are *direct-search methods* and *model-based methods* and this paper dedicates to the discussion of direct-search methods, which gains its popularity due to its simplicity in use and reliability in complicated practical problem. Coined by @hooke1961direct, direct search methods don't require any gradient or Hessian information and evaluate $f$ directly. A well-known example of it is the Nelder-Mead algorithm [@nelder1965simplex] and it enjoys the popularity due to its simplicity and reliability. [feel like this sentence can be expanded to include more information. xxx]. Further, direct search methods can be classified as *stochastic* and *deterministic* depends on whether a random sample is used in the search. The stochastic version of  direct-search method is the focus of this paper. 
 
 
 ## Projection pursuit guided tour
 
-The optimisation problem we're interested in is in the context of projection pursuit. Coined by @friedman1974projection, projection pursuit is a method that detects the interesting structure (i.e. clustering, outliers and skewness) of multivariate data via projecting it in lower dimensions. A Projection Pursuit Index (PPI) is a function of the projection matrix (a.k.a projection angle, projection basis) measuring the "interestingness" of data and we refer the value of PPI function as *index value*. In the literature, the indices being proposed include lengendre index [@friedman1974projection], hermite index [@hall1989polynomial], natural hermite index [@cook1993projection], chi-square index [@posse1995projection], LDA index [@lee2005projection] and PDA index [@lee2010projection]. [Any literature on holes index? xxx] 
+The optimisation problem we're interested in is in the context of projection pursuit. Coined by @friedman1974projection, projection pursuit is a method that detects the interesting structure (i.e. clustering, outliers and skewness) of multivariate data via projecting it in lower dimensions. A Projection Pursuit Index (PPI) is a function of the projection matrix (a.k.a projection angle, projection basis) measuring the "interestingness" of data and we refer the value of PPI function as *index value*. In the literature, the indices being proposed include Legendre index [@friedman1974projection], hermite index [@hall1989polynomial], natural hermite index [@cook1993projection], chi-square index [@posse1995projection], LDA index [@lee2005projection] and PDA index [@lee2010projection]. [Any literature on holes index? xxx] 
 
  As @friedman1974projection noted "..., the technique use for maximising the projection index strongly influences both the statistical and the computational aspects of the procedure." A suitable optimisation procedure is needed to find the projection angle that maximises the PPI and the quality of the optimisation largely affect the interesting projections one could possibly observe.
 
-Projection pursuit is usually used in conjunction with a tour method called *guided tour*. Tour explores the multivariate data *interactively* via playing a series of projections, that form a *tour path*, like movie frames in real time.  Starting from a randomly generated projection basis, projection pursuit searches for a target basis with higher index value and guided tour interpolates geodesically between the initial basis and the target basis.  This series of bases forms a tour path and the projection of the data on these bases is played in real time.  This search-and-interpolateprocess is repeated until no basis can be found with higher index value. Modified from @buja2005computational, Figure \ref{tour-path} vividly depicts the tour path in guided tour. Guided tour, along with other types of tour, has been implemented in the *tourr* package in R, available on the Comprehensive R Archive Network at [https://cran.r-project.org/web/packages/tourr/](https://cran.r-project.org/web/packages/tourr/) [@wickham2011tourrpackage]. 
+Projection pursuit is usually used in conjunction with a tour method called *guided tour*. Tour explores the multivariate data *interactively* via playing a series of projections, that form a *tour path*, like movie frames in real time.  Starting from a randomly generated projection basis, projection pursuit searches for a target basis with higher index value and guided tour interpolates geodesically between the initial basis and the target basis.  This series of bases forms a tour path and the projection of the data on these bases is played in real time.  This search-and-interpolate process is repeated until no basis can be found with higher index value. Modified from @buja2005computational, Figure \ref{tour-path} vividly depicts the tour path in guided tour. Guided tour, along with other types of tour, has been implemented in the *tourr* package in R, available on the Comprehensive R Archive Network at [https://cran.r-project.org/web/packages/tourr/](https://cran.r-project.org/web/packages/tourr/) [@wickham2011tourrpackage]. 
 
 ```{r tour-path, out.width="100%", out.height="60%", fig.cap="\\label{tour-path}An illustration of the tour path"}
 knitr::include_graphics(path = here::here("figures/tour_path_increasing.png"))
@@ -110,7 +109,7 @@ Below listed several features characterise the optimisation procedures needed in
 
 - *Being able to optimise with constraints*: The constraint comes from projection matrix being an orthonormal matrix. 
 
-- *Being able to find both local and global maximum*: Although the primary interest is to find the global maximum, local maximum could also reeal structures in the data that are of our interest. 
+- *Being able to find both local and global maximum*: Although the primary interest is to find the global maximum, local maximum could also reveal structures in the data that are of our interest. 
 
 [thinking if the following three should be presented as algorithms or plain description is fine. xxx]
 
@@ -159,19 +158,19 @@ Below listed several issues in projection pursuit optimisation. Some are general
 <!-- Visualisation has been widely used for exploring and understanding data. Presenting information in a graphical manner often allows people to see information they would otherwise not seen. -->
 
 
-Random search methods has a black-box machinism and focuses solely on finding the global maximum point, while the projection pursuit problem we have is aiming at *exploring* the data and thus is interested in how the algorithm finds its maximum. This motivates us **to develop a visual diagnostic system for exploring the optimisation searching path**. 
+Random search methods has a black-box mechanism and focuses solely on finding the global maximum point, while the projection pursuit problem we have aims at *exploring* the data and thus is interested in how the algorithm finds its maximum. This motivates us **to develop a visual diagnostic system for exploring the optimisation searching path**. 
 
-The necessity of developing such a system rather than simply producing different diagnostic plots is because there is always needs to develop a function specific for diagnosing one particular variables and these functions developed are not reusable at all. Thus we want to establish a set of rules that prescribe the diagnostic of iterative algorithms systematically. 
+The necessity of developing such a system rather than simply producing different diagnostic plots is because the diagnostics of each variable requires a different function and these functions can't be scaled to other problems. Thus we want to establish a set of rules that can generalise the diagnostic of iterative algorithms. 
 
-The idea of unifying all the diagnostic plots under one framework is inspired by the concept of *gramma of graphic*[@wickham2010layered], which powers the primary graphical system in R, ggplot2 [@ggplot2]. In gramma of graphic, plots are not defined by its appearance (i.e. boxplot, histogram, scatter plot etc) but by "stacked layers". By this design, ggplot doesn't need to develop a gazillion of functions that each produces a different type of plot, instead, it defines layers and allow users to specify the plot through these defined layers.
+The idea of generalising all the diagnostic plots under one framework is inspired by the concept of *grammar of graphic*[@wickham2010layered], which powers the primary graphical system in R, ggplot2 [@ggplot2]. In grammar of graphic, plots are not defined by its appearance (i.e. boxplot, histogram, scatter plot etc) but by "stacked layers". By this design, ggplot doesn't need to develop a gazillion of functions that each produces a different type of plot. Instead, it creates aesthetic mapping from the variables to the geometric objects and builds the plot through different layers.
 
-[Do I need this paragraph to details the gramma of graphic? xxx]
+[Do I need this paragraph to details the grammar of graphic? xxx]
 <!-- A layer includes 1) the data that powers the plot; 2) a geometric object that represents the visual shape of the data and 3) relevant statistical transformation that transform the information in the data to the information used to draw the geometric object. An important concept in the grammar of graphic is *aesthetic mapping*. Aesthetic mapping links the variable in a dataset to information needed to produce a geometric object. For example, we map one variable on the x-axis and another on the y-axis to create a scatterplot. Another example of creating a boxplot involves 1) mapping one variable on the x-axis and 2) transforming another variable to its five-point-summary and mapping the five-point-summary to the y-axis.  -->
 
 
-## Glocal object
+## Global object
 
-Ggplot prescribes how to make a graphic but it doesn't prescribe how to run a diagnostic. [need to have a paragraph or two here to describe how I come up with the design of four components in the global object - need to related to the component in optimisation. xxx].
+Ggplot requires a data frame that contains all the variables to plot and a *global object* is constructed as the data frame supplied to the visual diagnostic plots to better suit the characters of iterative optimisation algorithms. Given an optimisation algorithm, two primary variables of interest are the *decision variable* and the *value of the objective function*. *iterators* indexes the data collected and this order has time series feature that prescribes the progression of the optimisation. Given the complexity of the algorithm, there could be multiple iterators. There are other parameters that can't be classified as one of the three categories but are also of our interest. They are defined under the fourth category: *other parameter of interest*. This could include variables that are specific for one particular algorithm. Below we show an example of defining the global object of projection pursuit guided tour.
 
 
 <!-- The concept of grammar of graphic requires a dataset to be supplied in making a plot, thus a global object needs to be created in the iterative algorithm. The variables will be mapped into element of a graphic to explore and thus should contain all the parameters of interest. The next section shows how a global object is created in projection pursuit guided tour. -->
@@ -179,8 +178,8 @@ Ggplot prescribes how to make a graphic but it doesn't prescribe how to run a di
 
 <!-- In the current implementation of the `tourr` package, while the target basis generated by the projection pursuit can be accessed later via `save_history()`, interpolating bases and those randomly nearby bases generated in the optimisation are not stored. This creates difficulties for fully understand the behaviour of the optimisation and interpolation of tour in complex scenario **[need a rephrase this part].**  -->
 
+In the projection pursuit guided tour, the decision variable is the projection matrix, the value of objective function is the index value. There are three iterators: `id` is the smallest ordering unit that increases by one for each observation; `tries` is updated once a search-and-interpolate step is finished. A third iterator `loop` is used to record the number of repetition in the search step and starts over from one at the beginning of a new `tries`. Three other parameters of our interest includes `method`, `alpha` and `info`.  `method` identifies the name of the searching method used and we are interested in comparing the performance between different algorithms under direct search. The neighbourhood parameter `alpha` controls the size of the sampling space and we are interested to understand how the searching space shrinks as the algorithm progresses. `info` labels different stages in the searching process. A sketch of the global object for projection pursuit guided tour is presented in Figure \ref{fig:glb-obj}. 
 
-A global object used for diagnosing an optimisation is defined with four components: decision variable, value of objective function, iterators and other parameter of interest. In the projection pursuit guided tour, the decision variable is the projection matrix, the value of objective function is index value. There are three iterators: `id` is the smallest ordering unit that increases by one for each observatoin; `tries` is a larger order unit, which is updated once a search-and-interpolate step is finished. A third iterator `loop` is used to record the number of repitition in the search step and starts over from one at the beginning of a new `tries`. Since there are different methods used in the projection pursuit guided tour, we are interested to compare between different methods, thus `method` is created as another parameter of interest. The neighbourhood parameter alpha is always interested in the direct search methods since it controls the size of the sampling space, thus `alpha` is another parameter of interest. `info` is created to label different stage in the searching process and it is the third parameter of interest. A sketch of the global object for projection pursuit guided tour is presented in Figure \ref{fig:glb-obj}.
 
 ```{r glb-obj, out.width= "100%", out.height="20%", fig.cap="\\label{glb-obj}The global object in projection pursuit guided tour."}
 knitr::include_graphics(path = here::here("figures/global_obj.png"))
@@ -192,11 +191,11 @@ knitr::include_graphics(path = here::here("figures/global_obj.png"))
 
 ## Simulated data
 
-Two set of simulated data are used in the demo of the visual diagnostics in projection pursuit guided tour. A small dataset consists of 1000 randomly simulated observations of five variables (`x1`, `x2`, `x8`, `x9`, `x10`). `x2` is the informative variable simulated from two bi-modal normal distribution centred at -3 and 3 with variance of one and the other four are simulated from non-informative standard random normal distributions. The data has been scaled to ensure `x2` has variance of 1. The goal is to find the 1D projection of bi-modal shape, which correspondes to the projection matrix (vector) of `[0, 1, 0, 0, 0]`. 
+Two set of simulated data are used in the demo of the visual diagnostics in projection pursuit guided tour. A small dataset consists of 1000 randomly simulated observations of five variables (`x1`, `x2`, `x8`, `x9`, `x10`). `x2` is the informative variable simulated from two bi-modal normal distribution centred at -3 and 3 with variance of one and the other four are simulated from non-informative standard random normal distributions. The data has been scaled to ensure `x2` has variance of 1. The goal is to find the 1D projection of bi-modal shape, which corresponds to the projection matrix (vector) of `[0, 1, 0, 0, 0]`. 
 
-A larger dataset contains more informative variables (`x3` to `x7`) of different types. The distribution of all the variables except `x3` is plotted below and `x3` takes 500 positive one and 500 negative one. [should I introduce the dist for each var? xxx] [also feel like we don't really use `x3` to `x6`, should we not mention about these? xxx]
+A larger dataset contains more informative variables (`x3` to `x7`) of different types. The distribution of all the variables except `x3` is plotted in Figure \ref{origin-data} and `x3` takes 500 positive one and 500 negative one. [should I introduce the dist for each var? xxx] [also feel like we don't really use `x3` to `x6`, should we not mention about these? xxx]
 
-```{r origin-data}
+```{r origin-data, fig.cap="\\label{origin-data} The distribution of simulated data except x3"}
 origin_dt_bi <- data_mult %>% 
   dplyr::select(-x3) %>% 
   gather(names, values) %>%
@@ -209,7 +208,7 @@ origin_dt_bi %>%
   facet_wrap(vars(names), ncol = 3)
 ```
 
-Once the dataset is sent to the tourr package, all the information generated will be stored in a global structure. The global structure consists of six columns: `basis`, `index_val`, `tries`, `info`, `loop`, `id` and captured all the basis generated during whole tour process. The example below presents the global object of a 1D projection of the small dataset with geodesic searching method. 
+In tour, when the optimisation ends the global object will be stored and printed and can be turned off via `print = FALSE`. Additional messages during the optimisation can be displayed via `verbose = TRUE`. Below presented the global object of the 1D projection using the small dataset. [the printing is not ideal as it doesn't show all the columns. xxx]
 
 ```{r code, eval = FALSE}
 set.seed(123456)
@@ -220,35 +219,35 @@ holes_1d_geo <- animate_dist(data, tour_path = guided_tour(holes(), d = 1,
 #save(temp, file = here::here("vignettes", "data", "temp.rda"))
 ```
 
-```{r glb-obj-1, echo = TRUE}
+```{r glb-obj-1}
 holes_1d_geo %>% head(5)
 ```
 
-`tries` has an increment of one once the generator is called (equivalently a new target basis is generated); `info` records the stage the basis is in. This would include the `interpolation` stage and the detailed stage in the optimisation i.e. `direction_search`, `best_direction_search`, `line_search`and `best_line_search` for geodesic searching (`search_geodesic`); `random_search` and `new_basis` for simulating annealing (`search_better`). `loop` is the counter used for the optimisation procedure and thus will be `NA` for interpolation steps. `id` creates a sequential order of the basis. This information will be stored and printed when the optimisation ends and can be turned off via `print = FALSE`. Additional messages during the optimisation can be displayed via `verbose = TRUE`. Another examples is a 2D projection of the larger dataset with two informative variable (`x2` and `x7`) using search_better method. Notice in this example, the dimension of the bases becomes 6 by 2.
+<!-- `tries` has an increment of one once the generator is called (equivalently a new target basis is generated); `info` records the stage the basis is in. This would include the `interpolation` stage and the detailed stage in the optimisation i.e. `direction_search`, `best_direction_search`, `line_search`and `best_line_search` for geodesic searching (`search_geodesic`); `random_search` and `new_basis` for simulating annealing (`search_better`). `loop` is the counter used for the optimisation procedure and thus will be `NA` for interpolation steps. `id` creates a sequential order of the basis.  -->
+
+<!--  Another examples is a 2D projection of the larger dataset with two informative variable (`x2` and `x7`) using search_better method. Notice in this example, the dimension of the bases becomes 6 by 2. -->
 
 
-```{r glb-obj-2, echo = TRUE}
-holes_2d_better %>% head(5) 
-```
+<!-- ```{r glb-obj-2, echo = TRUE} -->
+<!-- holes_2d_better %>% head(5)  -->
+<!-- ``` -->
 
 
 ## Explore scalar parameters
 
-The most interesting parameter to explore is the value of objective function. The points recorded in the global object can be divided into two broad categories: searching points and interpolating points
+In tour, all the points recorded in the global object can be divided into two broad categories: searching points and interpolating points
 
-- *Searching points* include the observations that are recorded in the searching algorithm in order to find the target basis. The points for target bases is also included in the searching points and there is one such point per `tries`.
+- *Searching points* include the observations recorded in the searching algorithm to find the target basis. The points for target bases is also included in the searching points and there is one such point per `tries`.
 
 - *interpolating points* exist in the guided tour to produce continuous animated view from one target basis to another and it doesn't have `loop` value.
 
 ### Explore searching points 
 
-As mentioned previously, the largest difficulties of exploring searching points is its unknown number of observations per `tries`. Mapping `id` on the x-axis will leave the `tries` with few observations a small space in the plot, while those `tries` with large number of search points towards the end occupying the vast majority of the space in the plot. 
+The largest difficulties of exploring searching points is its unknown number of observations per `tries`. Mapping `id` on the x-axis will leave the `tries` with few observations a small space in the plot, while those `tries` with large number of search points (usually towards the end) occupy the vast majority of the plot space. This motivates to summarise the points in each `tries`. At each iteration, rather than knowing the index value of *every* points, we are more interested to know a general summary of all the points and more importantly, the point with the largest `index_val` since it prescribes the geodesic interpolation and future searches. 
 
-This motivates the use of summarised statistics. At each iteration, rather than knowing the index value of *every* points, we are more interested to know a general summary of all the points and more importantly, the point with the largest `index_val` since it prescribes the geodesic interpolation and future searches. 
+Boxplot is a suitable candidate that provides five points summary of the data, however it has one drawback: it doesn't report the number of point in each box. We may risk losing information on how many points it takes to find the target basis by displaying the boxplot alone for all `tries`. Thus, the number of point for each `tries` is displayed at the bottom of each box and we provide options to switch `tries` with small number of points to a point geometry, which is achieved via the `cutoff` argument. A line geometry is also added to link the points with the largest index value in each `tries`. This helps to visualise the improvement made by each `tries`. 
 
-Boxplot is a suitable candidate that provides five points summary of the data, while it has one drawback: it doesn't report the number of point in each box. We may risk losing information on how long it takes for the search to find the target basis by displaying the boxplot alone for all `tries`. Thus, the number of point for each `tries` is displayed at the bottom of each box and we provide options to switch `tries` with small number of points to a point geometry. This is achieved via the `cutoff` argument. A line geometry is also added to link the points with the largest index value for each `tries`. This helps to visualise the improvement made by each `tries`. 
-
-*Example: exploring searching points* The data is sourced from a 2D projection of the larger dataset and `search_better` is used with `max.tries = 500`. In Figure \ref{fig:points-id} and \ref{fig:points}, a comparison has been made on visualising the searching points with `id` and `tries` on the x-axis, colored by `tries`. In Figure \ref{fig:points-id}, the searching points of the first few `tries` are squeezed in a small width leaving the large uninteresting searching points in the last three `tries` taking a vast majority of the plotting space. While in Figure \ref{fig:points} the data is spaced by `tries` evenly in the plot. Label at the bottom indicates the number of observations in each tries and facilitates the choice of cutoff to switch from point geometry to boxplot geometry (`cutoff = 15`). The line geometry suggest the largest improvement happens at `tries = 5`. 
+*Example: exploring searching points* The larger dataset is used for 2D projection with `search_better` and `max.tries = 500`. In Figure \ref{points}, the searching points with `id` and `tries` on the x-axis, colored by `tries`. Label at the bottom indicates the number of observations in each tries and facilitates the choice of cutoff to switch from point geometry to boxplot geometry (`cutoff = 15`). The line geometry suggests the largest improvement happens at `tries = 5`. 
 
 ```{r points-tries,fig.asp=0.5, fig.cap="\\label{points}A comparison of plotting the same search points with different plot designs. The left plot doesn't efficiently use the plot space to convey information from the plot while the right plot provides good summarisation of data and number of points in each tries."}
 
@@ -262,7 +261,7 @@ dt %>% explore_trace_search()
 
 ### Explore interpolating points
 
-Plotting the interpolating points as time series data allows us to diagnose characteristics of different configurations and index functions. Here we present two examples of using  plots to diagnose the tour algorithm and different index functions. 
+Plotting the interpolating points as time series data allows us to diagnose characteristics of different configurations and index functions. Here we present two examples of using  plots to diagnose tour algorithms and different index functions. 
 
 ```{r interpolation}
 # points is always included in the newest version
@@ -279,9 +278,9 @@ Plotting the interpolating points as time series data allows us to diagnose char
 
 ```
 
-*Example: Interruption* This examples uses `search_better` for a 2D projection on the larger dataset using the `holes` index. As mentioned previously, the interpolation starts from the current basis to the target basis, which has been found by the projection pursuit algorithm to have a higher index value. After the interpolation, the target basis will become the current basis and send back to the projection pursuit algorithm to find the next target basis. From figure \ref{fig:interruption}, it is possible that there are bases with index value higher than the target basis on the interpolation path and these bases could be used to search for new basis in the next iteration. 
+*Example: Interruption* This examples uses `search_better` for a 2D projection on the larger dataset using the `holes` index. In the interpolation stage, continuous frames will be constructed to bridge the project on the current basis to the target basis.  The target basis will become the current basis in the next iteration and the searching stage continues to find the next target basis. In the left panel of Figure \ref{interruption}, we observe that  there are interpolating bases with higher index values than the target basis and these bases could be used to search for new basis in the next searching stage. 
 
-Thus an interruption is constructed to accept the interpolating bases up to the one with the larger index value on the interpolation path, and that basis is taken as the current basis for the next iteration. After implementing this interruption, the tracing plot with the same configuration is shown on the lower panel. We can observe that rather than interpolating to the target basis at `id = 62`, the interpolation stops before the index value starts to decrease at `id = 60`. This implementation results in a higher index value in the end with fewer steps.
+An interruption is then constructed to accept the interpolating bases up to the one with the largest index value and use that basis as the current basis for the next searching stage. After implementing this interruption, the tracing plot with the same configuration is shown on the right panel of Figure \ref{interruption}. In the third `tries`, rather than interpolating fully to the target basis at `id = 62`, it stops before the index value starts to decrease at `id = 60`. This implementation results in a higher index value in the end with fewer steps.
 
 ```{r interruption,fig.asp=0.5, fig.cap = "\\label{interruption}Trace plots of the interpolated basis with and without the interruption. The interruption stops the interpolation when the index value starts to decrease at id = 60. The implementation of the interuption finds an ending basis with higher index value using fewer steps. "}
 p1_anno <- interrupt_no %>% filter(info == "interpolation") %>% mutate(id = row_number()) %>% filter(id %in% c(44, 60, 62)) %>% 
@@ -300,11 +299,11 @@ p1 | p2
 ```
 
 
-*Example: Noisy index function* The interpolation path of holes index, as seen in Figure \ref{fig:interruption}, is smooth, while this may not be the case for more complicated index function. `kol_cdf` index, an index function based on Kolmogorov test, compares the difference between a projection matrix and a randomly generated normal distribution based on cumulated distribution function (CDF). Several visualisations below shows some characteristic of this index function. 
+*Example: Noisy index function* The interpolation path of holes index, as seen in Figure \ref{interruption}, is smooth, while this may not be the case for more complicated index functions. `kol_cdf` index, an index function based on Kolmogorov test, compares the difference between a projection matrix and a randomly generated normal distribution based on cumulated distribution function (CDF). Several diagnostic visualisations below show the characteristic of this index function. 
 
-Figure \ref{fig:geodesic-better} compares the tracing plot of the interpolating points for `search_geodesic` and `search_better`. Rather than a smooth interpolation, the interpolation path for `kol_cdf` shows a zig-zag pattern. Polishing step has done much more work to reach the final index value for `search_geodesic` than `search_better` and this indicates that noisy index's favour of a random search method than ascent method.
+Figure \ref{kol-cdf} compares the tracing plot of the interpolating points for `search_geodesic` and `search_better` on 1D projection for `kol_cdf` index and the interpolation path shows a zig-zag pattern. Polishing step has done much more work to reach the final index value for `search_geodesic` than `search_better` and this indicates that noisy index's favour of a random search method than ascent method [the order of the examples needs to be rearranged since I haven't introduced polishing here. xxx].
 
-```{r geodesic-better,  fig.asp=0.5, fig.cap = "Comparison of two different searching methods: search_geodesic and search_better on 1D projection problem for a noisy index: kol_cdf. The geodesic search rely heavily on the polishing step to find the final index value while search better works well."}
+```{r kol-cdf,fig.asp=0.5, fig.cap = "\\label{kol-cdf}Comparison of two different searching methods: search_geodesic and search_better on 1D projection problem for a noisier index: kol_cdf. The geodesic search rely heavily on the polishing step to find the final index value while search better works well."}
 p1 <- bind_rows(kol_cdf_1d_geodesic, kol_cdf_1d_geodesic_polish) %>% explore_trace_interp(col = method)  + ggtitle("search_geodesic")
 
 p2 <- bind_rows(kol_cdf_1d_better, kol_cdf_1d_better_polish) %>% explore_trace_interp(col = method) + ggtitle("search_better")
@@ -312,16 +311,17 @@ p2 <- bind_rows(kol_cdf_1d_better, kol_cdf_1d_better_polish) %>% explore_trace_i
 (p1 | p2 ) & theme(legend.position = "bottom") & ylim(0, 0.23)
 ```
 
-Moving from a 1D projection on a dataset with only one informative variable, we now introduce another informative variable in the data and remain 1D projection. In this problem, there are two local maximum being `r calc_kol_cdf(matrix(c(0, 1, 0 ,0, 0, 0)), data = data_mult[,c(1,2,7:10)])` when the projection matrix is $[0, 1, 0, 0, 0, 0]$ and `r calc_kol_cdf(matrix(c(0, 0, 1 ,0, 0, 0)), data = data_mult[,c(1,2,7:10)])` when the projection matrix is $[0, 0, 1 ,0, 0, 0]$. As in Figure \ref{fig:1d-2var-different-seeds}, using `search_better` with different seeds, both local maximum can be found. A simulated annealing algorithm, `search_better_random` in Figure \ref{fig:1d-2var-better-random}, can always find the global maximum at a cost of a large number of `tries`. 
 
-```{r 1d-2var-different-seeds,  fig.asp=0.5, fig.cap="The trace plot search better in a 1D projection problem with two informative variables using different seeds (without polishing). Since there are two informative variables, setting different value for seed will lead search better to find either of the local maximum."}
+The second example for `kol_cdf` index uses 1D projection on the larger dataset. Since there are two informative variables and the projection is 1D, there are two local maximum  when the projection matrix at $[0, 1, 0, 0, 0, 0]$ and $[0, 0, 1 ,0, 0, 0]$. As in Figure \ref{1d-2var-different-seeds}, different local maximum can be found using `search_better` with different seeds while `search_better_random` can always find the global maximum, as in Figure \ref{1d-2var-better-random}, although at a high cost of number of points evaluated. 
+
+```{r 1d-2var-different-seeds,  fig.asp=0.5, fig.cap="\\label{1d-2var-different-seeds}The trace plot search better in a 1D projection problem with two informative variables using different seeds (without polishing). Since there are two informative variables, setting different value for seed will lead search better to find either of the local maximum."}
 p5 <- kol_cdf_1d_2var_better %>% explore_trace_interp() + ggtitle("search_better, seed 123456")
 p6 <- kol_cdf_1d_2var_better_2 %>% explore_trace_interp() +  ggtitle("search_better, seed 12345")
 
 (p5 | p6) & theme(legend.position = "none") & ylim(0, 0.25)
 ```
 
-```{r 1d-2var-better-random, fig.asp=0.5, fig.cap = "Using search better random for the problem above will result in finding the global maximum but much larger number of iteration is needed."}
+```{r 1d-2var-better-random, fig.asp=0.5, fig.cap = "\\label{1d-2var-better-random}Using search better random for the problem above will result in finding the global maximum but much larger number of iteration is needed."}
 kol_cdf_1d_2var_better_random %>% 
   explore_trace_interp() + 
   ylim(0, 0.25) + 
@@ -332,16 +332,20 @@ kol_cdf_1d_2var_better_random %>%
 
 ### Adding more variables to the mapping
 
-At previous two sections, only the iterator and the index value are mapped onto the x and y aesthetics of the plot; while more aesthetics i.e. color, could be added to compare other parameters in the global object. Two examples are shown below to explore and compare different searching methods and neighbourhood parameter alpha. 
+<!-- In the previous two sections, only the iterator and the index value are mapped onto the x and y aesthetics of the plot; while more aesthetics i.e. color, could be added to compare other parameters in the global object. -->
 
-*Example: Polish* In principle, all the optimisation routines should result in the same output on the same problem while this may not be the case in real application. This motivates the creation of a polishing search that polishes the ending basis and achieves unity on different methods. 
+<!-- Two examples are shown below to explore and compare different searching methods and neighbourhood parameter alpha.  -->
 
-`search_polish` takes the ending basis of a given search as the current basis and uses a brutal-force approach to sample a large number of basis (`n_sample`) in the neighbourhood, whose radius is controlled by `polish_alpha`. Among the `n_sample` basis, the one with the largest index value becomes the candidate. If its index value of the candidate basis is larger than that of the current basis, it becomes the current basis in the next iteration. If no basis is found to have larger index value than the current basis, the searching neighbourhood will be shrunk and the search continues. The polishing search ends when one of the four stopping criteria is satisfied:
+*Example: Polish* In principle, all the optimisation routines should result in the same output on the same problem while this may not be true in real application. This motivates the creation of a polishing search that polishes the ending basis and achieves unity on different methods. 
+
+`search_polish` takes the ending basis of a given search as the current basis and uses a brutal-force approach to sample a large number of basis (`n_sample`) in the neighbourhood, whose radius is controlled by `polish_alpha`. Among the `n_sample` basis, the one with the largest index value becomes the candidate basis. If its index value of the candidate basis is larger than that of the current basis, it becomes the current basis in the next iteration. If no basis is found to have larger index value than the current basis, the searching neighbourhood will be shrunk and the search continues. The polishing search ends when one of the four stopping criteria is satisfied:
 
 1) the two basis can't be too close 
 2) the percentage improvement of the index function can't be too small 
 3) the searching neighbourhood can't be too small
 4) the number of iteration can't exceed the `max.tries`
+
+[should the stopping criteria be more detailed? xxx]
 
 The usage of search_polish is as follows. After the first tour, the final basis from the interpolation is extracted and supplied into a new tour with the `start` argument and `search_polish` as the searching function in the guided_tour. All the other arguments should remain the same. 
 
@@ -363,7 +367,7 @@ holes_2d_geo_polish <- animate_xy(data_mult[,c(1,2, 7:10)], tour_path =
                                   start = last_basis)
 ```
 
-The following example conducted a 2D projection on the larger dataset using search better with different configurations. `max.tries` is a hyperparameter that controls the maximum number of try without improvement and its default value is 25. As shown in Figure \ref{fig:trace-compare}, after polishing, both trials attain the same index value. However, a small `max.tries` of 25 is not sufficient for the algorithm to find the true maximum. This is because 25 tries is not sufficient for the 2D searching space.  
+The following example conducted a 2D projection on the larger dataset using search better with different configurations. `max.tries` is a hyperparameter that controls the maximum number of try without improvement and its default value is 25. As shown in Figure \ref{trace-compare}, both trials attain the same index value after polishing while a small `max.tries` of 25 is not sufficient for `search_better` to find the global maximum. The `max.tries` argument needs to be adjusted to ensure it is sufficient to explore the parameter space.
 
 ```{r polish, fig.asp=0.5,fig.cap="\\label{trace-compare}Breakdown of index value when using different max.tries in search better in conjunction with search polish. Both attain the same final index value after the polishing while using a max.tries 25 is not sufficient to find the ture maximum."}
 
@@ -378,39 +382,39 @@ p2 <- bind_rows(holes_2d_better_max_tries, holes_2d_better_max_tries_polish) %>%
 ```
 
 
-*Example: The neighbourhood parameter alpha* Add an example on comparing the neighbourhood parameter in search_better & search_posse.
+<!-- *Example: The neighbourhood parameter alpha* Add an example on comparing the neighbourhood parameter in search_better & search_posse. -->
 
 
-```{r nrow, echo = TRUE}
-# nrow(holes_2d_better_max_tries)
-# nrow(holes_2d_pos)
-```
+<!-- ```{r nrow, echo = TRUE} -->
+<!-- # nrow(holes_2d_better_max_tries) -->
+<!-- # nrow(holes_2d_pos) -->
+<!-- ``` -->
 
 
-```{r alpha, fig.asp=0.5,eval = FALSE}
-p1 <- holes_2d_better_max_tries %>%
-  filter(info != "interpolation") %>%
-  mutate(id = row_number()) %>%
-  explore_trace_parameter(var = alpha) +
-  ylim(0.46, 0.505) + ggtitle("search_better")
+<!-- ```{r alpha, fig.asp=0.5,eval = FALSE} -->
+<!-- p1 <- holes_2d_better_max_tries %>% -->
+<!--   filter(info != "interpolation") %>% -->
+<!--   mutate(id = row_number()) %>% -->
+<!--   explore_trace_parameter(var = alpha) + -->
+<!--   ylim(0.46, 0.505) + ggtitle("search_better") -->
 
-p3 <- holes_2d_better_max_tries %>% explore_trace_interp(col = alpha) + ylim(0.8, 0.96)
+<!-- p3 <- holes_2d_better_max_tries %>% explore_trace_interp(col = alpha) + ylim(0.8, 0.96) -->
 
-p2 <- holes_2d_pos %>%
-  filter(info != "interpolation") %>%
-  mutate(id = row_number()) %>%
-  explore_trace_parameter(var = alpha) + ylim(0.46, 0.505) + ggtitle("search_posse")
+<!-- p2 <- holes_2d_pos %>% -->
+<!--   filter(info != "interpolation") %>% -->
+<!--   mutate(id = row_number()) %>% -->
+<!--   explore_trace_parameter(var = alpha) + ylim(0.46, 0.505) + ggtitle("search_posse") -->
 
-p4 <- holes_2d_pos %>% explore_trace_interp(col = alpha) + ylim(0.8, 0.96)
+<!-- p4 <- holes_2d_pos %>% explore_trace_interp(col = alpha) + ylim(0.8, 0.96) -->
 
-(p1 | p2) / (p3 | p4) + plot_layout(guides = "collect")
-```
+<!-- (p1 | p2) / (p3 | p4) + plot_layout(guides = "collect") -->
+<!-- ``` -->
 
 ## Explore matrix parameter
 
-Sometimes, a parameter to explore could be a vector or matrix instead of scalar, for example, in tour, we are interested to explore the projection basis in the vector space.  This imposes difficulties in visualisation since we are bounded to perceive at most three dimensions. Thus, principal component analysis is used to reduce the dimension of projection bases and the first two principal components are mapped to the x and y axis of the plot. Additional variable of interest could be mapped to the color aesthetics to for exploration. 
+The parameter to explore can be a vector or matrix instead of scalar, for example, the projection basis in tour. This imposes difficulties in visualisation since humans are bounded to perceive at most three dimensions in a plot. Thus, principal component analysis is used to reduce the dimension of projection bases and the first two principal components are mapped to the x and y axis of the plot. Additional variable of interest could be mapped to the color aesthetics for exploration. 
 
-*Example: understand search_geodesic via mapping `info` to color* `search_geodesic` is a two-stage ascending algorithm with four different stages in the search and a PCA plot useful to understand how the algorithm works. Starting from the start basis, a directional search is conducted in a narrow neighbourhood on five random directions. The best one is picked and a line search is then run on the geodesic direction to find the target basis. The starting and target basis are then interpolated. In the next iteration, the target basis becomes the current basis and then procedures continues. [should probably reword this part with info levels xxx]
+*Example: understand search_geodesic* [feel like this example is merely explaining search geodesic algorithm, so maybe introduce the animated plot here? xxx] `search_geodesic` is a two-stage ascending algorithm with four different stages in the search and a PCA plot useful to understand how the algorithm progresses and the relative position of each basis in the PCA projected 2D space. Starting from the start basis, a directional search is conducted in a narrow neighbourhood on five random directions. The best one is picked and a line search is then run on the geodesic direction to find the target basis. The starting and target bases are then interpolated. In the next iteration, the target basis becomes the current basis and then procedures continues. 
 
 ```{r pca, fig.cap = "\\label{pca}PCA plot of search geodesic Coloring by info allows for better understanding of each stage in the geodesic search"}
 
@@ -420,12 +424,10 @@ holes_1d_geo %>% explore_proj_pca(col = info) +
 #xxx the info level need to be reorder to show the start and directional search points better.
 ```
 
-*Example: initial value for polishing alpha in search geodesic* `search_polish` is a brutal-force algorithm that evaluate 1000 points in the neighbourhood at each loop. Setting an appropriate initial value for polish_alpha would avoid wasting search on large vector space that are not likely to produce higher index value. A default initial value for polishing step is 0.5 and we are interested in whether this is an appropriate initial value. The problem is a 1D projection of the small dataset using `search_geodesic` and followed by `search_polish`. Figure \ref{fig:polish-alpha} display all projection bases on the first two principal components, colored by the `polish_alpha` parameter in the polishing step. Rather than concentrating on the ending basis from `search_geodesic` as what polishing step is designed, it searches a much larger vector space that are unnecessary. Thus a user-supplied smaller initial value for `polish_alpha` would be ideal.
-
-On the right panel of Figure \ref{fig:polish-alpha-tracing}, the `polish_alpha` is initialised as the projection distance between the last two target bases and we observe a concentrated searching space near the ending basis. With the supplied initial value for `polish_alpha`, the algorithm reaches the same ending index value with fewer iterations.
+*Example: initial value for polishing alpha* `search_polish` is a brutal-force algorithm that evaluate 1000 points in the neighbourhood at each loop. Setting an appropriate initial value for polish_alpha would avoid wasting search on large vector space that are not likely to produce higher index value. The default initial value for polishing step is 0.5 and we are interested in whether this is an appropriate initial value to use after `search_geodesic`. The problem is a 1D projection of the small dataset using `search_geodesic` and followed by `search_polish`. The top-left panel of Figure \ref{polish-alpha} displays all the projection bases on the first two principal components, colored by the `polish_alpha`. We can observe that rather than concentrating on the ending basis from `search_geodesic` as what polishing step is designed, `search_polish` searches a much larger vector space, which is unnecessary. Thus a customised smaller initial value for `polish_alpha` would be ideal. One way to do this is to initialised `polish_alpha` as the projection distance between the last two target bases. The top-right panel of Figure \ref{polish-alpha} shows a more desirable concentrated searching space near the ending basis. Both specifications of initial value allow the searches to reach the same ending index values. 
 
 
-```{r polish-alpha, fig.cap = "PCA plot of two different polish alpha initialisations. A default polish alpha = 0.5 searches a larger space that is unncessary while a small customised initial value of polish alpha will search near the ending basis."}
+```{r polish-alpha, fig.cap = "\\label{polish-alpha}PCA plot of two different polish alpha initialisations. A default polish alpha = 0.5 searches a larger space that is unncessary while a small customised initial value of polish alpha will search near the ending basis. Both intialisations reach the same ending index values. "}
 p1 <- bind_rows(holes_1d_geo, holes_1d_geo_polish_default_alpha) %>% 
   explore_proj_pca(col = as.factor(alpha))
 
@@ -438,17 +440,12 @@ p3 <- bind_rows(holes_1d_geo, holes_1d_geo_polish_default_alpha) %>%
 p4 <- bind_rows(holes_1d_geo, holes_1d_geo_polish) %>% 
   explore_trace_interp(col = method) +  ylim(0.75, 0.95)
 
-(p1 | p2) & theme(legend.position = "none") 
-
-```
-
-```{r polish-alpha-tracing, fig.asp = 0.5,fig.cap="Comparing the trace of two different polish alpha initialisations. Both intialisations reach the same ending index values "}
-(p3 | p4) & theme(legend.position = "none") 
+((p1 | p2) /(p3 | p4)) +  plot_layout(heights = c(2, 1)) & theme(legend.position = "none") 
 
 ```
 
 
-# Real-time animated diagnostic plots
+# Animated diagnostic plots
 
 ```{r pca-animated, echo = TRUE, eval = FALSE}
 holes_1d_geo %>% explore_proj_pca(animate = TRUE, col = info) + 

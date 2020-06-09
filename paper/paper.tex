@@ -102,13 +102,7 @@
 
 \bigskip
 \begin{abstract}
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
-\tightlist
-\item
-  check consistency of using PP for projection pursuit and PPI for
-  projection pursuit index
-\end{enumerate}
+
 \end{abstract}
 
 \noindent%
@@ -134,7 +128,7 @@ these problems. The two most common methods in DFO are
 paper dedicates to the discussion of direct-search methods, which gains
 its popularity due to its simplicity in use and reliability in
 complicated practical problem. Coined by \citet{hooke1961direct}, direct
-search methods don't require any gradient or hessian information and
+search methods don't require any gradient or Hessian information and
 evaluate \(f\) directly. A well-known example of it is the Nelder-Mead
 algorithm \citep{nelder1965simplex} and it enjoys the popularity due to
 its simplicity and reliability. {[}feel like this sentence can be
@@ -155,7 +149,7 @@ projecting it in lower dimensions. A Projection Pursuit Index (PPI) is a
 function of the projection matrix (a.k.a projection angle, projection
 basis) measuring the ``interestingness'' of data and we refer the value
 of PPI function as \emph{index value}. In the literature, the indices
-being proposed include lengendre index \citep{friedman1974projection},
+being proposed include Legendre index \citep{friedman1974projection},
 hermite index \citep{hall1989polynomial}, natural hermite index
 \citep{cook1993projection}, chi-square index
 \citep{posse1995projection}, LDA index \citep{lee2005projection} and PDA
@@ -177,7 +171,7 @@ randomly generated projection basis, projection pursuit searches for a
 target basis with higher index value and guided tour interpolates
 geodesically between the initial basis and the target basis. This series
 of bases forms a tour path and the projection of the data on these bases
-is played in real time. This search-and-interpolateprocess is repeated
+is played in real time. This search-and-interpolate process is repeated
 until no basis can be found with higher index value. Modified from
 \citet{buja2005computational}, Figure \ref{tour-path} vividly depicts
 the tour path in guided tour. Guided tour, along with other types of
@@ -210,7 +204,7 @@ needed in projection pursuit
 \item
   \emph{Being able to find both local and global maximum}: Although the
   primary interest is to find the global maximum, local maximum could
-  also reeal structures in the data that are of our interest.
+  also reveal structures in the data that are of our interest.
 \end{itemize}
 
 {[}thinking if the following three should be presented as algorithms or
@@ -319,59 +313,64 @@ optimisation}
 \hypertarget{visual-diagnostics}{%
 \subsection{Visual diagnostics}\label{visual-diagnostics}}
 
-Random search methods has a black-box machinism and focuses solely on
+Random search methods has a black-box mechanism and focuses solely on
 finding the global maximum point, while the projection pursuit problem
-we have is aiming at \emph{exploring} the data and thus is interested in
-how the algorithm finds its maximum. This motivates us \textbf{to
-develop a visual diagnostic system for exploring the optimisation
-searching path}.
+we have aims at \emph{exploring} the data and thus is interested in how
+the algorithm finds its maximum. This motivates us \textbf{to develop a
+visual diagnostic system for exploring the optimisation searching path}.
 
 The necessity of developing such a system rather than simply producing
-different diagnostic plots is because there is always needs to develop a
-function specific for diagnosing one particular variables and these
-functions developed are not reusable at all. Thus we want to establish a
-set of rules that prescribe the diagnostic of iterative algorithms
-systematically.
+different diagnostic plots is because the diagnostics of each variable
+requires a different function and these functions can't be scaled to
+other problems. Thus we want to establish a set of rules that can
+generalise the diagnostic of iterative algorithms.
 
-The idea of unifying all the diagnostic plots under one framework is
-inspired by the concept of \emph{gramma of
+The idea of generalising all the diagnostic plots under one framework is
+inspired by the concept of \emph{grammar of
 graphic}\citep{wickham2010layered}, which powers the primary graphical
-system in R, ggplot2 \citep{ggplot2}. In gramma of graphic, plots are
+system in R, ggplot2 \citep{ggplot2}. In grammar of graphic, plots are
 not defined by its appearance (i.e.~boxplot, histogram, scatter plot
 etc) but by ``stacked layers''. By this design, ggplot doesn't need to
 develop a gazillion of functions that each produces a different type of
-plot, instead, it defines layers and allow users to specify the plot
-through these defined layers.
+plot. Instead, it creates aesthetic mapping from the variables to the
+geometric objects and builds the plot through different layers.
 
-{[}Do I need this paragraph to details the gramma of graphic? xxx{]}
+{[}Do I need this paragraph to details the grammar of graphic? xxx{]}
 
-\hypertarget{glocal-object}{%
-\subsection{Glocal object}\label{glocal-object}}
+\hypertarget{global-object}{%
+\subsection{Global object}\label{global-object}}
 
-Ggplot prescribes how to make a graphic but it doesn't prescribe how to
-run a diagnostic. {[}need to have a paragraph or two here to describe
-how I come up with the design of four components in the global object -
-need to related to the component in optimisation. xxx{]}.
+Ggplot requires a data frame that contains all the variables to plot and
+a \emph{global object} is constructed as the data frame supplied to the
+visual diagnostic plots to better suit the characters of iterative
+optimisation algorithms. Given an optimisation algorithm, two primary
+variables of interest are the \emph{decision variable} and the
+\emph{value of the objective function}. \emph{iterators} indexes the
+data collected and this order has time series feature that prescribes
+the progression of the optimisation. Given the complexity of the
+algorithm, there could be multiple iterators. There are other parameters
+that can't be classified as one of the three categories but are also of
+our interest. They are defined under the fourth category: \emph{other
+parameter of interest}. This could include variables that are specific
+for one particular algorithm. Below we show an example of defining the
+global object of projection pursuit guided tour.
 
-A global object used for diagnosing an optimisation is defined with four
-components: decision variable, value of objective function, iterators
-and other parameter of interest. In the projection pursuit guided tour,
-the decision variable is the projection matrix, the value of objective
-function is index value. There are three iterators: \texttt{id} is the
-smallest ordering unit that increases by one for each observatoin;
-\texttt{tries} is a larger order unit, which is updated once a
-search-and-interpolate step is finished. A third iterator \texttt{loop}
-is used to record the number of repitition in the search step and starts
-over from one at the beginning of a new \texttt{tries}. Since there are
-different methods used in the projection pursuit guided tour, we are
-interested to compare between different methods, thus \texttt{method} is
-created as another parameter of interest. The neighbourhood parameter
-alpha is always interested in the direct search methods since it
-controls the size of the sampling space, thus \texttt{alpha} is another
-parameter of interest. \texttt{info} is created to label different stage
-in the searching process and it is the third parameter of interest. A
-sketch of the global object for projection pursuit guided tour is
-presented in Figure \ref{fig:glb-obj}.
+In the projection pursuit guided tour, the decision variable is the
+projection matrix, the value of objective function is the index value.
+There are three iterators: \texttt{id} is the smallest ordering unit
+that increases by one for each observation; \texttt{tries} is updated
+once a search-and-interpolate step is finished. A third iterator
+\texttt{loop} is used to record the number of repetition in the search
+step and starts over from one at the beginning of a new \texttt{tries}.
+Three other parameters of our interest includes \texttt{method},
+\texttt{alpha} and \texttt{info}. \texttt{method} identifies the name of
+the searching method used and we are interested in comparing the
+performance between different algorithms under direct search. The
+neighbourhood parameter \texttt{alpha} controls the size of the sampling
+space and we are interested to understand how the searching space
+shrinks as the algorithm progresses. \texttt{info} labels different
+stages in the searching process. A sketch of the global object for
+projection pursuit guided tour is presented in Figure \ref{fig:glb-obj}.
 
 \begin{figure}
 \includegraphics[width=1\linewidth,height=0.2\textheight]{/Users/hzha400/Documents/3.PhD/paper-tour-vis/figures/global_obj} \caption{\label{glb-obj}The global object in projection pursuit guided tour.}\label{fig:glb-obj}
@@ -391,31 +390,30 @@ informative variable simulated from two bi-modal normal distribution
 centred at -3 and 3 with variance of one and the other four are
 simulated from non-informative standard random normal distributions. The
 data has been scaled to ensure \texttt{x2} has variance of 1. The goal
-is to find the 1D projection of bi-modal shape, which correspondes to
-the projection matrix (vector) of \texttt{{[}0,\ 1,\ 0,\ 0,\ 0{]}}.
+is to find the 1D projection of bi-modal shape, which corresponds to the
+projection matrix (vector) of \texttt{{[}0,\ 1,\ 0,\ 0,\ 0{]}}.
 
 A larger dataset contains more informative variables (\texttt{x3} to
 \texttt{x7}) of different types. The distribution of all the variables
-except \texttt{x3} is plotted below and \texttt{x3} takes 500 positive
-one and 500 negative one. {[}should I introduce the dist for each var?
-xxx{]} {[}also feel like we don't really use \texttt{x3} to \texttt{x6},
-should we not mention about these? xxx{]}
+except \texttt{x3} is plotted in Figure \ref{origin-data} and
+\texttt{x3} takes 500 positive one and 500 negative one. {[}should I
+introduce the dist for each var? xxx{]} {[}also feel like we don't
+really use \texttt{x3} to \texttt{x6}, should we not mention about
+these? xxx{]}
 
+\begin{figure}
+\centering
 \includegraphics{paper_files/figure-latex/origin-data-1.pdf}
+\caption{\label{origin-data} The distribution of simulated data except
+x3}
+\end{figure}
 
-Once the dataset is sent to the tourr package, all the information
-generated will be stored in a global structure. The global structure
-consists of six columns: \texttt{basis}, \texttt{index\_val},
-\texttt{tries}, \texttt{info}, \texttt{loop}, \texttt{id} and captured
-all the basis generated during whole tour process. The example below
-presents the global object of a 1D projection of the small dataset with
-geodesic searching method.
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{holes_1d_geo }\OperatorTok{%>%}\StringTok{ }\KeywordTok{head}\NormalTok{(}\DecValTok{5}\NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
+In tour, when the optimisation ends the global object will be stored and
+printed and can be turned off via \texttt{print\ =\ FALSE}. Additional
+messages during the optimisation can be displayed via
+\texttt{verbose\ =\ TRUE}. Below presented the global object of the 1D
+projection using the small dataset. {[}the printing is not ideal as it
+doesn't show all the columns. xxx{]}
 
 \begin{verbatim}
 ## # A tibble: 5 x 8
@@ -428,54 +426,18 @@ geodesic searching method.
 ## 5 <dbl[,1] [5 x ~     0.749     1 direction_sea~     1 search_geode~  NA       5
 \end{verbatim}
 
-\texttt{tries} has an increment of one once the generator is called
-(equivalently a new target basis is generated); \texttt{info} records
-the stage the basis is in. This would include the \texttt{interpolation}
-stage and the detailed stage in the optimisation i.e.
-\texttt{direction\_search}, \texttt{best\_direction\_search},
-\texttt{line\_search}and \texttt{best\_line\_search} for geodesic
-searching (\texttt{search\_geodesic}); \texttt{random\_search} and
-\texttt{new\_basis} for simulating annealing (\texttt{search\_better}).
-\texttt{loop} is the counter used for the optimisation procedure and
-thus will be \texttt{NA} for interpolation steps. \texttt{id} creates a
-sequential order of the basis. This information will be stored and
-printed when the optimisation ends and can be turned off via
-\texttt{print\ =\ FALSE}. Additional messages during the optimisation
-can be displayed via \texttt{verbose\ =\ TRUE}. Another examples is a 2D
-projection of the larger dataset with two informative variable
-(\texttt{x2} and \texttt{x7}) using search\_better method. Notice in
-this example, the dimension of the bases becomes 6 by 2.
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{holes_2d_better }\OperatorTok{%>%}\StringTok{ }\KeywordTok{head}\NormalTok{(}\DecValTok{5}\NormalTok{) }
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-## # A tibble: 5 x 8
-##   basis             index_val tries info           loop method       alpha    id
-##   <list>                <dbl> <dbl> <chr>         <dbl> <chr>        <dbl> <int>
-## 1 <dbl[,2] [6 x 2]>     0.804     1 start            NA <NA>           0.5     1
-## 2 <dbl[,2] [6 x 2]>     0.793     1 random_search     1 search_bett~   0.5     2
-## 3 <dbl[,2] [6 x 2]>     0.784     1 random_search     2 search_bett~   0.5     3
-## 4 <dbl[,2] [6 x 2]>     0.773     1 random_search     3 search_bett~   0.5     4
-## 5 <dbl[,2] [6 x 2]>     0.795     1 random_search     4 search_bett~   0.5     5
-\end{verbatim}
-
 \hypertarget{explore-scalar-parameters}{%
 \subsection{Explore scalar parameters}\label{explore-scalar-parameters}}
 
-The most interesting parameter to explore is the value of objective
-function. The points recorded in the global object can be divided into
-two broad categories: searching points and interpolating points
+In tour, all the points recorded in the global object can be divided
+into two broad categories: searching points and interpolating points
 
 \begin{itemize}
 \item
-  \emph{Searching points} include the observations that are recorded in
-  the searching algorithm in order to find the target basis. The points
-  for target bases is also included in the searching points and there is
-  one such point per \texttt{tries}.
+  \emph{Searching points} include the observations recorded in the
+  searching algorithm to find the target basis. The points for target
+  bases is also included in the searching points and there is one such
+  point per \texttt{tries}.
 \item
   \emph{interpolating points} exist in the guided tour to produce
   continuous animated view from one target basis to another and it
@@ -486,29 +448,37 @@ two broad categories: searching points and interpolating points
 \subsubsection{Explore searching
 points}\label{explore-searching-points}}
 
-As mentioned previously, the largest difficulties of exploring searching
-points is its unknown number of observations per \texttt{tries}. Mapping
-\texttt{id} on the x-axis will leave the \texttt{tries} with few
-observations a small space in the plot, while those \texttt{tries} with
-large number of search points towards the end occupying the vast
-majority of the space in the plot.
-
-This motivates the use of summarised statistics. At each iteration,
-rather than knowing the index value of \emph{every} points, we are more
-interested to know a general summary of all the points and more
-importantly, the point with the largest \texttt{index\_val} since it
-prescribes the geodesic interpolation and future searches.
+The largest difficulties of exploring searching points is its unknown
+number of observations per \texttt{tries}. Mapping \texttt{id} on the
+x-axis will leave the \texttt{tries} with few observations a small space
+in the plot, while those \texttt{tries} with large number of search
+points (usually towards the end) occupy the vast majority of the plot
+space. This motivates to summarise the points in each \texttt{tries}. At
+each iteration, rather than knowing the index value of \emph{every}
+points, we are more interested to know a general summary of all the
+points and more importantly, the point with the largest
+\texttt{index\_val} since it prescribes the geodesic interpolation and
+future searches.
 
 Boxplot is a suitable candidate that provides five points summary of the
-data, while it has one drawback: it doesn't report the number of point
-in each box. We may risk losing information on how long it takes for the
-search to find the target basis by displaying the boxplot alone for all
+data, however it has one drawback: it doesn't report the number of point
+in each box. We may risk losing information on how many points it takes
+to find the target basis by displaying the boxplot alone for all
 \texttt{tries}. Thus, the number of point for each \texttt{tries} is
 displayed at the bottom of each box and we provide options to switch
-\texttt{tries} with small number of points to a point geometry. This is
+\texttt{tries} with small number of points to a point geometry, which is
 achieved via the \texttt{cutoff} argument. A line geometry is also added
-to link the points with the largest index value for each \texttt{tries}.
+to link the points with the largest index value in each \texttt{tries}.
 This helps to visualise the improvement made by each \texttt{tries}.
+
+\emph{Example: exploring searching points} The larger dataset is used
+for 2D projection with \texttt{search\_better} and
+\texttt{max.tries\ =\ 500}. In Figure \ref{points}, the searching points
+with \texttt{id} and \texttt{tries} on the x-axis, colored by
+\texttt{tries}. Label at the bottom indicates the number of observations
+in each tries and facilitates the choice of cutoff to switch from point
+geometry to boxplot geometry (\texttt{cutoff\ =\ 15}). The line geometry
+suggests the largest improvement happens at \texttt{tries\ =\ 5}.
 
 \begin{figure}
 \centering
@@ -519,51 +489,35 @@ plot space to convey information from the plot while the right plot
 provides good summarisation of data and number of points in each tries.}
 \end{figure}
 
-\emph{Example: exploring searching points} The data is sourced from a 2D
-projection of the larger dataset and \texttt{search\_better} is used
-with \texttt{max.tries\ =\ 500}. In Figure \ref{fig:points-id} and
-\ref{fig:points}, a comparison has been made on visualising the
-searching points with \texttt{id} and \texttt{tries} on the x-axis,
-colored by \texttt{tries}. In Figure \ref{fig:points-id}, the searching
-points of the first few \texttt{tries} are squeezed in a small width
-leaving the large uninteresting searching points in the last three
-\texttt{tries} taking a vast majority of the plotting space. While in
-Figure \ref{fig:points} the data is spaced by \texttt{tries} evenly in
-the plot. Label at the bottom indicates the number of observations in
-each tries and facilitates the choice of cutoff to switch from point
-geometry to boxplot geometry (\texttt{cutoff\ =\ 15}). The line geometry
-suggest the largest improvement happens at \texttt{tries\ =\ 5}.
-
 \hypertarget{explore-interpolating-points}{%
 \subsubsection{Explore interpolating
 points}\label{explore-interpolating-points}}
 
 Plotting the interpolating points as time series data allows us to
 diagnose characteristics of different configurations and index
-functions. Here we present two examples of using plots to diagnose the
-tour algorithm and different index functions.
+functions. Here we present two examples of using plots to diagnose tour
+algorithms and different index functions.
 
 \emph{Example: Interruption} This examples uses \texttt{search\_better}
 for a 2D projection on the larger dataset using the \texttt{holes}
-index. As mentioned previously, the interpolation starts from the
-current basis to the target basis, which has been found by the
-projection pursuit algorithm to have a higher index value. After the
-interpolation, the target basis will become the current basis and send
-back to the projection pursuit algorithm to find the next target basis.
-From figure \ref{fig:interruption}, it is possible that there are bases
-with index value higher than the target basis on the interpolation path
-and these bases could be used to search for new basis in the next
-iteration.
+index. In the interpolation stage, continuous frames will be constructed
+to bridge the project on the current basis to the target basis. The
+target basis will become the current basis in the next iteration and the
+searching stage continues to find the next target basis. In the left
+panel of Figure \ref{interruption}, we observe that there are
+interpolating bases with higher index values than the target basis and
+these bases could be used to search for new basis in the next searching
+stage.
 
-Thus an interruption is constructed to accept the interpolating bases up
-to the one with the larger index value on the interpolation path, and
-that basis is taken as the current basis for the next iteration. After
-implementing this interruption, the tracing plot with the same
-configuration is shown on the lower panel. We can observe that rather
-than interpolating to the target basis at \texttt{id\ =\ 62}, the
-interpolation stops before the index value starts to decrease at
-\texttt{id\ =\ 60}. This implementation results in a higher index value
-in the end with fewer steps.
+An interruption is then constructed to accept the interpolating bases up
+to the one with the largest index value and use that basis as the
+current basis for the next searching stage. After implementing this
+interruption, the tracing plot with the same configuration is shown on
+the right panel of Figure \ref{interruption}. In the third
+\texttt{tries}, rather than interpolating fully to the target basis at
+\texttt{id\ =\ 62}, it stops before the index value starts to decrease
+at \texttt{id\ =\ 60}. This implementation results in a higher index
+value in the end with fewer steps.
 
 \begin{figure}
 \centering
@@ -576,82 +530,78 @@ fewer steps.}
 \end{figure}
 
 \emph{Example: Noisy index function} The interpolation path of holes
-index, as seen in Figure \ref{fig:interruption}, is smooth, while this
-may not be the case for more complicated index function.
-\texttt{kol\_cdf} index, an index function based on Kolmogorov test,
-compares the difference between a projection matrix and a randomly
-generated normal distribution based on cumulated distribution function
-(CDF). Several visualisations below shows some characteristic of this
-index function.
+index, as seen in Figure \ref{interruption}, is smooth, while this may
+not be the case for more complicated index functions. \texttt{kol\_cdf}
+index, an index function based on Kolmogorov test, compares the
+difference between a projection matrix and a randomly generated normal
+distribution based on cumulated distribution function (CDF). Several
+diagnostic visualisations below show the characteristic of this index
+function.
 
-Figure \ref{fig:geodesic-better} compares the tracing plot of the
-interpolating points for \texttt{search\_geodesic} and
-\texttt{search\_better}. Rather than a smooth interpolation, the
-interpolation path for \texttt{kol\_cdf} shows a zig-zag pattern.
-Polishing step has done much more work to reach the final index value
-for \texttt{search\_geodesic} than \texttt{search\_better} and this
-indicates that noisy index's favour of a random search method than
-ascent method.
+Figure \ref{kol-cdf} compares the tracing plot of the interpolating
+points for \texttt{search\_geodesic} and \texttt{search\_better} on 1D
+projection for \texttt{kol\_cdf} index and the interpolation path shows
+a zig-zag pattern. Polishing step has done much more work to reach the
+final index value for \texttt{search\_geodesic} than
+\texttt{search\_better} and this indicates that noisy index's favour of
+a random search method than ascent method {[}the order of the examples
+needs to be rearranged since I haven't introduced polishing here.
+xxx{]}.
 
 \begin{figure}
 \centering
-\includegraphics{paper_files/figure-latex/geodesic-better-1.pdf}
-\caption{Comparison of two different searching methods: search\_geodesic
-and search\_better on 1D projection problem for a noisy index: kol\_cdf.
-The geodesic search rely heavily on the polishing step to find the final
-index value while search better works well.}
+\includegraphics{paper_files/figure-latex/kol-cdf-1.pdf}
+\caption{\label{kol-cdf}Comparison of two different searching methods:
+search\_geodesic and search\_better on 1D projection problem for a
+noisier index: kol\_cdf. The geodesic search rely heavily on the
+polishing step to find the final index value while search better works
+well.}
 \end{figure}
 
-Moving from a 1D projection on a dataset with only one informative
-variable, we now introduce another informative variable in the data and
-remain 1D projection. In this problem, there are two local maximum being
-0.17 when the projection matrix is \([0, 1, 0, 0, 0, 0]\) and 0.228 when
-the projection matrix is \([0, 0, 1 ,0, 0, 0]\). As in Figure
-\ref{fig:1d-2var-different-seeds}, using \texttt{search\_better} with
-different seeds, both local maximum can be found. A simulated annealing
-algorithm, \texttt{search\_better\_random} in Figure
-\ref{fig:1d-2var-better-random}, can always find the global maximum at a
-cost of a large number of \texttt{tries}.
+The second example for \texttt{kol\_cdf} index uses 1D projection on the
+larger dataset. Since there are two informative variables and the
+projection is 1D, there are two local maximum when the projection matrix
+at \([0, 1, 0, 0, 0, 0]\) and \([0, 0, 1 ,0, 0, 0]\). As in Figure
+\ref{1d-2var-different-seeds}, different local maximum can be found
+using \texttt{search\_better} with different seeds while
+\texttt{search\_better\_random} can always find the global maximum, as
+in Figure \ref{1d-2var-better-random}, although at a high cost of number
+of points evaluated.
 
 \begin{figure}
 \centering
 \includegraphics{paper_files/figure-latex/1d-2var-different-seeds-1.pdf}
-\caption{The trace plot search better in a 1D projection problem with
-two informative variables using different seeds (without polishing).
-Since there are two informative variables, setting different value for
-seed will lead search better to find either of the local maximum.}
+\caption{\label{1d-2var-different-seeds}The trace plot search better in
+a 1D projection problem with two informative variables using different
+seeds (without polishing). Since there are two informative variables,
+setting different value for seed will lead search better to find either
+of the local maximum.}
 \end{figure}
 
 \begin{figure}
 \centering
 \includegraphics{paper_files/figure-latex/1d-2var-better-random-1.pdf}
-\caption{Using search better random for the problem above will result in
-finding the global maximum but much larger number of iteration is
-needed.}
+\caption{\label{1d-2var-better-random}Using search better random for the
+problem above will result in finding the global maximum but much larger
+number of iteration is needed.}
 \end{figure}
 
 \hypertarget{adding-more-variables-to-the-mapping}{%
 \subsubsection{Adding more variables to the
 mapping}\label{adding-more-variables-to-the-mapping}}
 
-At previous two sections, only the iterator and the index value are
-mapped onto the x and y aesthetics of the plot; while more aesthetics
-i.e.~color, could be added to compare other parameters in the global
-object. Two examples are shown below to explore and compare different
-searching methods and neighbourhood parameter alpha.
-
 \emph{Example: Polish} In principle, all the optimisation routines
 should result in the same output on the same problem while this may not
-be the case in real application. This motivates the creation of a
-polishing search that polishes the ending basis and achieves unity on
-different methods.
+be true in real application. This motivates the creation of a polishing
+search that polishes the ending basis and achieves unity on different
+methods.
 
 \texttt{search\_polish} takes the ending basis of a given search as the
 current basis and uses a brutal-force approach to sample a large number
 of basis (\texttt{n\_sample}) in the neighbourhood, whose radius is
 controlled by \texttt{polish\_alpha}. Among the \texttt{n\_sample}
-basis, the one with the largest index value becomes the candidate. If
-its index value of the candidate basis is larger than that of the
+basis, the one with the largest index value becomes the candidate basis.
+If its index value of the candidate basis is larger than that of the
 current basis, it becomes the current basis in the next iteration. If no
 basis is found to have larger index value than the current basis, the
 searching neighbourhood will be shrunk and the search continues. The
@@ -670,6 +620,8 @@ satisfied:
 \item
   the number of iteration can't exceed the \texttt{max.tries}
 \end{enumerate}
+
+{[}should the stopping criteria be more detailed? xxx{]}
 
 The usage of search\_polish is as follows. After the first tour, the
 final basis from the interpolation is extracted and supplied into a new
@@ -701,10 +653,11 @@ The following example conducted a 2D projection on the larger dataset
 using search better with different configurations. \texttt{max.tries} is
 a hyperparameter that controls the maximum number of try without
 improvement and its default value is 25. As shown in Figure
-\ref{fig:trace-compare}, after polishing, both trials attain the same
-index value. However, a small \texttt{max.tries} of 25 is not sufficient
-for the algorithm to find the true maximum. This is because 25 tries is
-not sufficient for the 2D searching space.
+\ref{trace-compare}, both trials attain the same index value after
+polishing while a small \texttt{max.tries} of 25 is not sufficient for
+\texttt{search\_better} to find the global maximum. The
+\texttt{max.tries} argument needs to be adjusted to ensure it is
+sufficient to explore the parameter space.
 
 \begin{figure}
 \centering
@@ -715,39 +668,30 @@ Both attain the same final index value after the polishing while using a
 max.tries 25 is not sufficient to find the ture maximum.}
 \end{figure}
 
-\emph{Example: The neighbourhood parameter alpha} Add an example on
-comparing the neighbourhood parameter in search\_better \&
-search\_posse.
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{# nrow(holes_2d_better_max_tries)}
-\CommentTok{# nrow(holes_2d_pos)}
-\end{Highlighting}
-\end{Shaded}
-
 \hypertarget{explore-matrix-parameter}{%
 \subsection{Explore matrix parameter}\label{explore-matrix-parameter}}
 
-Sometimes, a parameter to explore could be a vector or matrix instead of
-scalar, for example, in tour, we are interested to explore the
-projection basis in the vector space. This imposes difficulties in
-visualisation since we are bounded to perceive at most three dimensions.
-Thus, principal component analysis is used to reduce the dimension of
-projection bases and the first two principal components are mapped to
-the x and y axis of the plot. Additional variable of interest could be
-mapped to the color aesthetics to for exploration.
+The parameter to explore can be a vector or matrix instead of scalar,
+for example, the projection basis in tour. This imposes difficulties in
+visualisation since humans are bounded to perceive at most three
+dimensions in a plot. Thus, principal component analysis is used to
+reduce the dimension of projection bases and the first two principal
+components are mapped to the x and y axis of the plot. Additional
+variable of interest could be mapped to the color aesthetics for
+exploration.
 
-\emph{Example: understand search\_geodesic via mapping \texttt{info} to
-color} \texttt{search\_geodesic} is a two-stage ascending algorithm with
-four different stages in the search and a PCA plot useful to understand
-how the algorithm works. Starting from the start basis, a directional
-search is conducted in a narrow neighbourhood on five random directions.
-The best one is picked and a line search is then run on the geodesic
-direction to find the target basis. The starting and target basis are
-then interpolated. In the next iteration, the target basis becomes the
-current basis and then procedures continues. {[}should probably reword
-this part with info levels xxx{]}
+\emph{Example: understand search\_geodesic} {[}feel like this example is
+merely explaining search geodesic algorithm, so maybe introduce the
+animated plot here? xxx{]} \texttt{search\_geodesic} is a two-stage
+ascending algorithm with four different stages in the search and a PCA
+plot useful to understand how the algorithm progresses and the relative
+position of each basis in the PCA projected 2D space. Starting from the
+start basis, a directional search is conducted in a narrow neighbourhood
+on five random directions. The best one is picked and a line search is
+then run on the geodesic direction to find the target basis. The
+starting and target bases are then interpolated. In the next iteration,
+the target basis becomes the current basis and then procedures
+continues.
 
 \begin{figure}
 \centering
@@ -756,48 +700,40 @@ this part with info levels xxx{]}
 for better understanding of each stage in the geodesic search}
 \end{figure}
 
-\emph{Example: initial value for polishing alpha in search geodesic}
+\emph{Example: initial value for polishing alpha}
 \texttt{search\_polish} is a brutal-force algorithm that evaluate 1000
 points in the neighbourhood at each loop. Setting an appropriate initial
 value for polish\_alpha would avoid wasting search on large vector space
-that are not likely to produce higher index value. A default initial
+that are not likely to produce higher index value. The default initial
 value for polishing step is 0.5 and we are interested in whether this is
-an appropriate initial value. The problem is a 1D projection of the
-small dataset using \texttt{search\_geodesic} and followed by
-\texttt{search\_polish}. Figure \ref{fig:polish-alpha} display all
-projection bases on the first two principal components, colored by the
-\texttt{polish\_alpha} parameter in the polishing step. Rather than
-concentrating on the ending basis from \texttt{search\_geodesic} as what
-polishing step is designed, it searches a much larger vector space that
-are unnecessary. Thus a user-supplied smaller initial value for
-\texttt{polish\_alpha} would be ideal.
-
-On the right panel of Figure \ref{fig:polish-alpha-tracing}, the
-\texttt{polish\_alpha} is initialised as the projection distance between
-the last two target bases and we observe a concentrated searching space
-near the ending basis. With the supplied initial value for
-\texttt{polish\_alpha}, the algorithm reaches the same ending index
-value with fewer iterations.
+an appropriate initial value to use after \texttt{search\_geodesic}. The
+problem is a 1D projection of the small dataset using
+\texttt{search\_geodesic} and followed by \texttt{search\_polish}. The
+top-left panel of Figure \ref{polish-alpha} displays all the projection
+bases on the first two principal components, colored by the
+\texttt{polish\_alpha}. We can observe that rather than concentrating on
+the ending basis from \texttt{search\_geodesic} as what polishing step
+is designed, \texttt{search\_polish} searches a much larger vector
+space, which is unnecessary. Thus a customised smaller initial value for
+\texttt{polish\_alpha} would be ideal. One way to do this is to
+initialised \texttt{polish\_alpha} as the projection distance between
+the last two target bases. The top-right panel of Figure
+\ref{polish-alpha} shows a more desirable concentrated searching space
+near the ending basis. Both specifications of initial value allow the
+searches to reach the same ending index values.
 
 \begin{figure}
 \centering
 \includegraphics{paper_files/figure-latex/polish-alpha-1.pdf}
-\caption{PCA plot of two different polish alpha initialisations. A
-default polish alpha = 0.5 searches a larger space that is unncessary
-while a small customised initial value of polish alpha will search near
-the ending basis.}
+\caption{\label{polish-alpha}PCA plot of two different polish alpha
+initialisations. A default polish alpha = 0.5 searches a larger space
+that is unncessary while a small customised initial value of polish
+alpha will search near the ending basis. Both intialisations reach the
+same ending index values.}
 \end{figure}
 
-\begin{figure}
-\centering
-\includegraphics{paper_files/figure-latex/polish-alpha-tracing-1.pdf}
-\caption{Comparing the trace of two different polish alpha
-initialisations. Both intialisations reach the same ending index values}
-\end{figure}
-
-\hypertarget{real-time-animated-diagnostic-plots}{%
-\section{Real-time animated diagnostic
-plots}\label{real-time-animated-diagnostic-plots}}
+\hypertarget{animated-diagnostic-plots}{%
+\section{Animated diagnostic plots}\label{animated-diagnostic-plots}}
 
 \begin{Shaded}
 \begin{Highlighting}[]
