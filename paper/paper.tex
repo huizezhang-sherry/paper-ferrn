@@ -7,6 +7,7 @@
 \usepackage{textcomp}
 \usepackage[hyphens]{url} % not crucial - just used below for the URL
 \usepackage{hyperref}
+\usepackage{todonotes}
 \providecommand{\tightlist}{%
   \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
 
@@ -115,9 +116,23 @@
 \hypertarget{introduction}{%
 \section{Introduction}\label{introduction}}
 
+In an optimization problem the goal is to find the best solution
+within the space of all feasible solutions which typically is represented
+by a set of constraints. The problem consists on optimizing an objective
+function $f: S \rightarrow \Re$ with $S \in \Re^n$ in a reduced spaced given
+by the problem constraints to either minimize or maximize a function.... Gradient based
+optimization has been typically used to solve such problems.
+However, there are many situations where derivatives
+of an objective function are unavailable or unreliable and therefore
+traditional methods based on derivatives are not the best option to solve an optimization problem....
+\todo[inline]{Intro to optimization to set the scene for the paper?}
+
 \hypertarget{derivative-free-optimisation}{%
 \subsection{Derivative free
 optimisation}\label{derivative-free-optimisation}}
+
+
+\todo[inline]{How about adding more details into derivative free methods?}
 
 Given an objective function \(f\), one way of optimising it is to equate
 its gradient to zero. In modern optimisation problems, gradient
@@ -140,6 +155,7 @@ version of direct-search method is the focus of this paper.
 \hypertarget{projection-pursuit-guided-tour}{%
 \subsection{Projection pursuit guided
 tour}\label{projection-pursuit-guided-tour}}
+
 
 The optimisation problem we're interested in is in the context of
 projection pursuit. Coined by \citet{friedman1974projection}, projection
@@ -180,15 +196,23 @@ on the Comprehensive R Archive Network at
 \url{https://cran.r-project.org/web/packages/tourr/}
 \citep{wickham2011tourrpackage}.
 
-\begin{figure}
-\includegraphics[width=1\linewidth,height=0.6\textheight]{/Users/hzha400/Documents/3.PhD/paper-tour-vis/figures/tour_path_increasing} \caption{\label{tour-path}An illustration of the tour path}\label{fig:tour-path}
-\end{figure}
+%\begin{figure}
+% \includegraphics[width=1\linewidth,height=0.6\textheight]{/Users/hzha400/paper-tour-vis/figures/tour_path_increasing} \caption{\label{tour-path}An illustration of the tour path}\label{fig:tour-path}
+\todo[inline]{I commented out the figure: Can you please update the path above to be a relative path instead?Thanks!}
+%\end{figure}
 
 {[}doubt if I need the following. xxx{]}
 
 \hypertarget{optimisation-in-projection-pursuit}{%
 \subsection{Optimisation in projection
 pursuit}\label{optimisation-in-projection-pursuit}}
+
+
+\todo[inline]{Are we using  projection pursuit/guided tour to better understand
+the convergency of optimization algorithms visually in combination with the
+algorithms discussed below? Or we are focusing on the optimisation problem
+only within the project pursuit context? Some of the problems listed below
+are also applicable to optimization problem in general too }
 
 Below listed several features characterise the optimisation procedures
 needed in projection pursuit
@@ -310,6 +334,7 @@ optimisation}
 \hypertarget{visual-diagnostic-system}{%
 \section{Visual diagnostic system}\label{visual-diagnostic-system}}
 
+\todo[inline]{I would expland this section more as the core contribution}
 \hypertarget{visual-diagnostics}{%
 \subsection{Visual diagnostics}\label{visual-diagnostics}}
 
@@ -382,6 +407,9 @@ projection pursuit guided tour is presented in Figure \ref{fig:glb-obj}.
 \hypertarget{simulated-data}{%
 \subsection{Simulated data}\label{simulated-data}}
 
+\todo[inline]{I would add the maths here to describe the
+simulations}
+
 Two set of simulated data are used in the demo of the visual diagnostics
 in projection pursuit guided tour. A small dataset consists of 1000
 randomly simulated observations of five variables (\texttt{x1},
@@ -428,6 +456,10 @@ doesn't show all the columns. xxx{]}
 
 \hypertarget{explore-scalar-parameters}{%
 \subsection{Explore scalar parameters}\label{explore-scalar-parameters}}
+
+\todo[inline]{I was wondering if it would be worth to talk
+with a bit more detail about the tour for the audience that might
+not be familiar with it?}
 
 In tour, all the points recorded in the global object can be divided
 into two broad categories: searching points and interpolating points
@@ -632,7 +664,7 @@ remain the same.
 \begin{Shaded}
 \begin{Highlighting}[]
 \KeywordTok{set.seed}\NormalTok{(}\DecValTok{123456}\NormalTok{)}
-\NormalTok{holes_2d_geo <-}\StringTok{ }\KeywordTok{animate_xy}\NormalTok{(data_mult[,}\KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{2}\NormalTok{, }\DecValTok{7}\OperatorTok{:}\DecValTok{10}\NormalTok{)],}\DataTypeTok{tour_path =} 
+\NormalTok{holes_2d_geo <-}\StringTok{ }\KeywordTok{animate_xy}\NormalTok{(data_mult[,}\KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{2}\NormalTok{, }\DecValTok{7}\OperatorTok{:}\DecValTok{10}\NormalTok{)],}\DataTypeTok{tour_path =}
                              \KeywordTok{guided_tour}\NormalTok{(}\KeywordTok{holes}\NormalTok{(), }\DataTypeTok{d =} \DecValTok{2}\NormalTok{, }
                                          \DataTypeTok{search_f =}\NormalTok{ tourr}\OperatorTok{:::}\NormalTok{search_geodesic),}
                            \DataTypeTok{rescale =} \OtherTok{FALSE}\NormalTok{, }\DataTypeTok{verbose =} \OtherTok{TRUE}\NormalTok{)}
@@ -641,7 +673,7 @@ remain the same.
 \StringTok{  }\KeywordTok{tail}\NormalTok{(}\DecValTok{1}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }\KeywordTok{pull}\NormalTok{(basis) }\OperatorTok{%>%}\StringTok{ }\NormalTok{.[[}\DecValTok{1}\NormalTok{]]}
 
 \KeywordTok{set.seed}\NormalTok{(}\DecValTok{123456}\NormalTok{)}
-\NormalTok{holes_2d_geo_polish <-}\StringTok{ }\KeywordTok{animate_xy}\NormalTok{(data_mult[,}\KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{2}\NormalTok{, }\DecValTok{7}\OperatorTok{:}\DecValTok{10}\NormalTok{)], }\DataTypeTok{tour_path =} 
+\NormalTok{holes_2d_geo_polish <-}\StringTok{ }\KeywordTok{animate_xy}\NormalTok{(data_mult[,}\KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{2}\NormalTok{, }\DecValTok{7}\OperatorTok{:}\DecValTok{10}\NormalTok{)], }\DataTypeTok{tour_path =}
                                     \KeywordTok{guided_tour}\NormalTok{(}\KeywordTok{holes}\NormalTok{(), }\DataTypeTok{d =} \DecValTok{2}\NormalTok{, }
                                                 \DataTypeTok{search_f =}\NormalTok{ tourr}\OperatorTok{:::}\NormalTok{search_polish),}
                                   \DataTypeTok{rescale =} \OtherTok{FALSE}\NormalTok{, }\DataTypeTok{verbose =} \OtherTok{TRUE}\NormalTok{, }
