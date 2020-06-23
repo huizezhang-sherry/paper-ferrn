@@ -44,10 +44,10 @@ source(here::here("source/sim_data.r"))
 
 In an optimization problem the goal is to find the best solution within the space of all feasible solutions which typically is represented by a set of constraints. The problem consists on optimizing an objective function $f: S \rightarrow \Re$ with $S \in \Re^n$ in a reduced spaced given by the problem constraints to either minimize or maximize a function.... Gradient based optimization has been typically used to solve such problems. However, there are many situations where derivatives of an objective function are unavailable or unreliable and therefore traditional methods based on derivatives are not the best option to solve an optimization problem.
 
-Derivative free methods provides another option to optimise the objective function without evaluating any gradient or hessian information and a parciular class of methods: direct search, has gained its popularity through its conceptual simplicity.  However, the whole searching process in the algorithm remains a black-box. Plots are usually used to evaluate and compare the performance of different algorithms but it can easily become tedious because the code will have to be modified significantly when comparing different parameters in the algorithms. For example, a categorical variable with 5 levels can be easily mapped onto color while mapping another categorical variable with 30 levels will not make the plot informative. Thus the plot needs to be re-designed to better suits the characteristics of the parameter (whether the parameter is a scalar or a matrix? whether the parameter is quantitative or categorical? If categorical, how many levels does the parameter have?). This motivates the  design of a visual diagnostic framework for optimisation algorithms based on the idea of a *global object*. 
+Derivative free methods provides another option to optimise the objective function without evaluating any gradient or Hessian information and a particular class of methods: direct search, has gained its popularity through its conceptual simplicity.  However, the whole searching process in the algorithm remains a black-box. Plots are usually used to evaluate and compare the performance of different algorithms but it can easily become tedious because the code will have to be modified significantly when comparing different parameters in the algorithms. For example, a categorical variable with 5 levels can be easily mapped onto color while mapping another categorical variable with 30 levels will not make the plot informative. Thus the plot needs to be re-designed to better suits the characteristics of the parameter (whether the parameter is a scalar or a matrix? whether the parameter is quantitative or categorical? If categorical, how many levels does the parameter have?). This motivates the  design of a visual diagnostic framework for optimisation algorithms based on the idea of a *global object*. 
 
 The paper is organised as follows. Section \ref{DFO} gives a general literature review of optimisation, specifically derivative free optimisation. Section \ref{vis-diag} presents the new idea of constructing a
-systematic visual framework that diagnoses the components of an optimisation procedure (parameters, searching path, etc). The rest of the paper serves as a comprehensive example of using the visual diagnostics on one particular problem: *projection pursuit guided tour*. Some background knowledge of projection pursuit guided tour is provided in Section \ref{tour}. Section \ref{apply} applys the concepts proposed in section \ref{vis-diag} in the tour problem and sets up the data. The last section, Section \ref{plots}, presents the visual diagnostic plots and explains how they can help to understand different aspects of the optimisation in tour.
+systematic visual framework that diagnoses the components of an optimisation procedure (parameters, searching path, etc). The rest of the paper serves as a comprehensive example of using the visual diagnostics on one particular problem: *projection pursuit guided tour*. Some background knowledge of projection pursuit guided tour is provided in Section \ref{tour}. Section \ref{apply} applies the concepts proposed in section \ref{vis-diag} in the tour problem and sets up the data. The last section, Section \ref{plots}, presents the visual diagnostic plots and explains how they can help to understand different aspects of the optimisation in tour.
 
 
 # Derivative free optimisation {#DFO}
@@ -70,7 +70,7 @@ Given an objective function $f$, one way of optimising it is to equate its gradi
 
 ## Difficulties
 
-[Are we using  projection pursuit/guided tour to better understand the convergency of optimization algorithms visually in combination with the algorithms discussed below? Or we are focusing on the optimisation problem only within the project pursuit context? Some of the problems listed below are also applicable to optimization problem in general too. ppp] 
+[Are we using  projection pursuit/guided tour to better understand the convergence of optimization algorithms visually in combination with the algorithms discussed below? Or we are focusing on the optimisation problem only within the project pursuit context? Some of the problems listed below are also applicable to optimization problem in general too. ppp] 
 
 Below listed several issues in projection pursuit optimisation. Some are general optimisation problems, while others are more specific for PP optimisation. 
 
@@ -101,7 +101,7 @@ Below listed several issues in projection pursuit optimisation. Some are general
 
 # Visual diagnostic system {#vis-diag}
 
-[I would expland this section more as the core contribution. ppp]
+[I would expand this section more as the core contribution. ppp]
 
 ## Visual diagnostics 
 <!-- Visual diagnostics can be real-time or post-run. Real time diagnostic directly uses the data produced in the algorithm to produce visual representation and thus doesn't need to store the data.   This section focuses on the definition and production of post-run diagnostics and the next section discusses real-time diagnostics. -->
