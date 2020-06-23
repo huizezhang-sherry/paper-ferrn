@@ -261,8 +261,8 @@ optimisation}
 
 {[}I would expand this section more as the core contribution. ppp{]}
 
-\hypertarget{visual-diagnostics}{%
-\subsection{Visual diagnostics}\label{visual-diagnostics}}
+\hypertarget{origin-idea}{%
+\subsection{Origin idea}\label{origin-idea}}
 
 Random search methods has a black-box mechanism and focuses solely on
 finding the global maximum point, while the projection pursuit problem
@@ -304,8 +304,97 @@ parameter of interest}. This could include variables that are specific
 for one particular algorithm. Below we show an example of defining the
 global object of projection pursuit guided tour.
 
+An optimisation procedure can easily generate hundreds or thousands
+sampling points and the question becomes what are the points we want to
+explore\ldots{} {[}the classification of searching or updating points
+goes here and people should be clear what part of the points goes to the
+plot - this is the data part not the plot part. {]}
+
+In tour, all the points recorded in the global object can be divided
+into two broad categories: searching points and interpolating points
+
+\begin{itemize}
+\item
+  \emph{Searching points} include the observations recorded in the
+  searching algorithm to find the target basis. The points for target
+  bases is also included in the searching points and there is one such
+  point per \texttt{tries}.
+\item
+  \emph{interpolating points} exist in the guided tour to produce
+  continuous animated view from one target basis to another and it
+  doesn't have \texttt{loop} value.
+\end{itemize}
+
+\hypertarget{visual-diagnostics}{%
+\subsection{Visual diagnostics}\label{visual-diagnostics}}
+
+Follow the research question we raised earlier, the purpose of visual
+diagnostics is to understand
+
+\begin{itemize}
+\item
+  Whether the procedure has provided an optimum and how the value of the
+  objective function changes through the optimisation.
+\item
+  How does the searching space look like, that is, geometrically, where
+  are the points located in the space.
+\end{itemize}
+
+Overall, the first question can be answered using a static plot with
+x-axis showing the progression of the optimisation and y-axis showing
+the value of the objective function. The second question can be
+addressed via visualising the rotating high dimensional space. This
+seems to be a hard task to see beyond 3D, but the fact is that we never
+really see all the six faces of a cube at one time. The way humans
+understand the dimension of a 3D object is either through rotating the
+physical 3D object or using shade and line type to annotate the 3D
+object in a paper or electronically. Thus we can do a similar rotation
+on the screen to precieve even higher dimension. {[}there is likely to
+be a learning curve - remember when learning geometry in school, it
+takes a while to get used to see 3D cube on a paper{]}. Thus animated
+visualisation is needed to preceive the optimisation path in the
+searching space.
+
+The plot design of visual diagnostics depends on the characteristics of
+the variables to plot. If the searching points are of interest {[}point
+geom is not good; need summarise. While updating points are more
+manageable -\textgreater{} point geom{]}. However, one must realise that
+with hundreds or thousands of searching points, exploring the sample
+space in animation could be slow and this is because of the time it
+takes to render hundreds point. {[}stratefy may help? - may need more
+work here.{]}
+
+Exploring the value of an objective function is cna be a simple task.
+Because the iterator has a time series ordering feature, it goes onto
+the x-axis as convention. The value of hte objective function goes to
+the y-axis. Other parameter of interest can be represented using color
+to present more information. {[}This is the case for our purpose with
+method, but when the level goes higher or the parameter is quantitative,
+color may not be a good option. {]}
+
+An option to explore of the searching space is to explore a reduced
+projection 2D space via principle component analysis or other
+dimensional reduction methods. In this way, the first two principle
+components will take up the x and y axis and all the other information
+will be mapped using other aesthetic attribution. {[}need to think
+further about how different type of variables can be shown{]}. While
+explore the reduced space is an initial attempt to understand the
+searching space, there are existing technology for rotating a higher
+dimensional space for visualisation. Geozoo is an option. It generates
+random points on the high dimensional space and we can overlay it with
+the points on the optimisation path to visualise the spread of it on the
+high-D sphere.
+
 \hypertarget{tour}{%
 \section{Projection pursuit guided tour}\label{tour}}
+
+From Section \ref{tour}, we presents a comprehensive case study on how
+to use the visual diagnostics to explore the optimisation in a specific
+problem: projection pursuit guided tour. Section \ref{tour} aims to
+provide non-experts with an overview of the problem content and the
+existing optimisation procedures used in projection pursuit guided tour.
+For those who are already familiar with the technique, this section can
+be skipped.
 
 The optimisation problem we're interested in is in the context of
 projection pursuit. Coined by \citet{friedman1974projection}, projection
@@ -415,6 +504,9 @@ needed in projection pursuit
 \hypertarget{apply}{%
 \section{Visual diagnostic in guided tour}\label{apply}}
 
+In this section, we present the simulated data along with how the global
+object can be applied in guided tour.
+
 \hypertarget{global-object-1}{%
 \subsection{Global object}\label{global-object-1}}
 
@@ -491,27 +583,21 @@ doesn't show all the columns. xxx{]}
 \hypertarget{plots}{%
 \section{Diagnostics plots}\label{plots}}
 
-\hypertarget{explore-scalar-parameters}{%
-\subsection{Explore scalar parameters}\label{explore-scalar-parameters}}
+Below we will present several examples to diagnose different aspect of
+the tour optimisation. We will first provide examples on producing 1)
+static plots to explore the value of objective function and 2) animated
+plots to explore the searching space and then a more sophisticated
+example that combines both to understand how to optimise a noisy and
+complex index function. In both section, we will first provide a toy
+example that is easy to grasp and one or two examples that help us
+understand the optimisation algorithm and parameter choice better.
 
-In tour, all the points recorded in the global object can be divided
-into two broad categories: searching points and interpolating points
+\hypertarget{static}{%
+\subsection{Explore the value of objective function}\label{static}}
 
-\begin{itemize}
-\item
-  \emph{Searching points} include the observations recorded in the
-  searching algorithm to find the target basis. The points for target
-  bases is also included in the searching points and there is one such
-  point per \texttt{tries}.
-\item
-  \emph{interpolating points} exist in the guided tour to produce
-  continuous animated view from one target basis to another and it
-  doesn't have \texttt{loop} value.
-\end{itemize}
-
-\hypertarget{explore-searching-points}{%
-\subsubsection{Explore searching
-points}\label{explore-searching-points}}
+\hypertarget{toy-example-exploring-searching-points}{%
+\subsubsection{Toy example: exploring searching
+points}\label{toy-example-exploring-searching-points}}
 
 The largest difficulties of exploring searching points is its unknown
 number of observations per \texttt{tries}. Mapping \texttt{id} on the
@@ -554,14 +640,10 @@ plot space to convey information from the plot while the right plot
 provides good summarisation of data and number of points in each tries.}
 \end{figure}
 
-\hypertarget{explore-interpolating-points}{%
-\subsubsection{Explore interpolating
-points}\label{explore-interpolating-points}}
-
-Plotting the interpolating points as time series data allows us to
-diagnose characteristics of different configurations and index
-functions. Here we present two examples of using plots to diagnose tour
-algorithms and different index functions.
+\hypertarget{a-more-complex-example-adding-an-interruption-in-the-interpolation-stage}{%
+\subsubsection{A more complex example: adding an interruption in the
+interpolation
+stage}\label{a-more-complex-example-adding-an-interruption-in-the-interpolation-stage}}
 
 \emph{Example: Interruption} This examples uses \texttt{search\_better}
 for a 2D projection on the larger dataset using the \texttt{holes}
@@ -594,66 +676,9 @@ of the interuption finds an ending basis with higher index value using
 fewer steps.}
 \end{figure}
 
-\emph{Example: Noisy index function} The interpolation path of holes
-index, as seen in Figure \ref{interruption}, is smooth, while this may
-not be the case for more complicated index functions. \texttt{kol\_cdf}
-index, an index function based on Kolmogorov test, compares the
-difference between a projection matrix and a randomly generated normal
-distribution based on cumulated distribution function (CDF). Several
-diagnostic visualisations below show the characteristic of this index
-function.
-
-Figure \ref{kol-cdf} compares the tracing plot of the interpolating
-points for \texttt{search\_geodesic} and \texttt{search\_better} on 1D
-projection for \texttt{kol\_cdf} index and the interpolation path shows
-a zig-zag pattern. Polishing step has done much more work to reach the
-final index value for \texttt{search\_geodesic} than
-\texttt{search\_better} and this indicates that noisy index's favour of
-a random search method than ascent method {[}the order of the examples
-needs to be rearranged since I haven't introduced polishing here.
-xxx{]}.
-
-\begin{figure}
-\centering
-\includegraphics{paper_files/figure-latex/kol-cdf-1.pdf}
-\caption{\label{kol-cdf}Comparison of two different searching methods:
-search\_geodesic and search\_better on 1D projection problem for a
-noisier index: kol\_cdf. The geodesic search rely heavily on the
-polishing step to find the final index value while search better works
-well.}
-\end{figure}
-
-The second example for \texttt{kol\_cdf} index uses 1D projection on the
-larger dataset. Since there are two informative variables and the
-projection is 1D, there are two local maximum when the projection matrix
-at \([0, 1, 0, 0, 0, 0]\) and \([0, 0, 1 ,0, 0, 0]\). As in Figure
-\ref{1d-2var-different-seeds}, different local maximum can be found
-using \texttt{search\_better} with different seeds while
-\texttt{search\_better\_random} can always find the global maximum, as
-in Figure \ref{1d-2var-better-random}, although at a high cost of number
-of points evaluated.
-
-\begin{figure}
-\centering
-\includegraphics{paper_files/figure-latex/1d-2var-different-seeds-1.pdf}
-\caption{\label{1d-2var-different-seeds}The trace plot search better in
-a 1D projection problem with two informative variables using different
-seeds (without polishing). Since there are two informative variables,
-setting different value for seed will lead search better to find either
-of the local maximum.}
-\end{figure}
-
-\begin{figure}
-\centering
-\includegraphics{paper_files/figure-latex/1d-2var-better-random-1.pdf}
-\caption{\label{1d-2var-better-random}Using search better random for the
-problem above will result in finding the global maximum but much larger
-number of iteration is needed.}
-\end{figure}
-
-\hypertarget{adding-more-variables-to-the-mapping}{%
-\subsubsection{Adding more variables to the
-mapping}\label{adding-more-variables-to-the-mapping}}
+\hypertarget{another-example-polishing-the-final-projection-basis}{%
+\subsubsection{Another example: polishing the final projection
+basis}\label{another-example-polishing-the-final-projection-basis}}
 
 \emph{Example: Polish} In principle, all the optimisation routines
 should result in the same output on the same problem while this may not
@@ -733,8 +758,8 @@ Both attain the same final index value after the polishing while using a
 max.tries 25 is not sufficient to find the ture maximum.}
 \end{figure}
 
-\hypertarget{explore-matrix-parameter}{%
-\subsection{Explore matrix parameter}\label{explore-matrix-parameter}}
+\hypertarget{animated}{%
+\subsection{Explore searching space}\label{animated}}
 
 The parameter to explore can be a vector or matrix instead of scalar,
 for example, the projection basis in tour. This imposes difficulties in
@@ -744,6 +769,10 @@ reduce the dimension of projection bases and the first two principal
 components are mapped to the x and y axis of the plot. Additional
 variable of interest could be mapped to the color aesthetics for
 exploration.
+
+\hypertarget{a-toy-example-understand-different-stage-of-search_geodesic}{%
+\subsubsection{A toy example: understand different stage of
+search\_geodesic}\label{a-toy-example-understand-different-stage-of-search_geodesic}}
 
 \emph{Example: understand search\_geodesic} {[}feel like this example is
 merely explaining search geodesic algorithm, so maybe introduce the
@@ -764,6 +793,11 @@ continues.
 \caption{\label{pca}PCA plot of search geodesic Coloring by info allows
 for better understanding of each stage in the geodesic search}
 \end{figure}
+
+\hypertarget{a-more-complex-example-choosing-the-initial-value-for-polishing-parameter}{%
+\subsubsection{A more complex example: Choosing the initial value for
+polishing
+parameter}\label{a-more-complex-example-choosing-the-initial-value-for-polishing-parameter}}
 
 \emph{Example: initial value for polishing alpha}
 \texttt{search\_polish} is a brutal-force algorithm that evaluate 1000
@@ -797,15 +831,66 @@ alpha will search near the ending basis. Both intialisations reach the
 same ending index values.}
 \end{figure}
 
-\hypertarget{animated-diagnostic-plots}{%
-\section{Animated diagnostic plots}\label{animated-diagnostic-plots}}
+\hypertarget{a-comprehensive-example-of-diagnosing-noisy-index-function}{%
+\subsection{A comprehensive example of diagnosing noisy index
+function}\label{a-comprehensive-example-of-diagnosing-noisy-index-function}}
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{holes_1d_geo }\OperatorTok{%>%}\StringTok{ }\KeywordTok{explore_proj_pca}\NormalTok{(}\DataTypeTok{animate =} \OtherTok{TRUE}\NormalTok{, }\DataTypeTok{col =}\NormalTok{ info) }\OperatorTok{+}\StringTok{ }
-\StringTok{  }\KeywordTok{theme}\NormalTok{(}\DataTypeTok{legend.position =} \StringTok{"bottom"}\NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
+\emph{Example: Noisy index function} The interpolation path of holes
+index, as seen in Figure \ref{interruption}, is smooth, while this may
+not be the case for more complicated index functions. \texttt{kol\_cdf}
+index, an index function based on Kolmogorov test, compares the
+difference between a projection matrix and a randomly generated normal
+distribution based on cumulated distribution function (CDF). Several
+diagnostic visualisations below show the characteristic of this index
+function.
+
+Figure \ref{kol-cdf} compares the tracing plot of the interpolating
+points for \texttt{search\_geodesic} and \texttt{search\_better} on 1D
+projection for \texttt{kol\_cdf} index and the interpolation path shows
+a zig-zag pattern. Polishing step has done much more work to reach the
+final index value for \texttt{search\_geodesic} than
+\texttt{search\_better} and this indicates that noisy index's favour of
+a random search method than ascent method {[}the order of the examples
+needs to be rearranged since I haven't introduced polishing here.
+xxx{]}.
+
+\begin{figure}
+\centering
+\includegraphics{paper_files/figure-latex/kol-cdf-1.pdf}
+\caption{\label{kol-cdf}Comparison of two different searching methods:
+search\_geodesic and search\_better on 1D projection problem for a
+noisier index: kol\_cdf. The geodesic search rely heavily on the
+polishing step to find the final index value while search better works
+well.}
+\end{figure}
+
+The second example for \texttt{kol\_cdf} index uses 1D projection on the
+larger dataset. Since there are two informative variables and the
+projection is 1D, there are two local maximum when the projection matrix
+at \([0, 1, 0, 0, 0, 0]\) and \([0, 0, 1 ,0, 0, 0]\). As in Figure
+\ref{1d-2var-different-seeds}, different local maximum can be found
+using \texttt{search\_better} with different seeds while
+\texttt{search\_better\_random} can always find the global maximum, as
+in Figure \ref{1d-2var-better-random}, although at a high cost of number
+of points evaluated.
+
+\begin{figure}
+\centering
+\includegraphics{paper_files/figure-latex/1d-2var-different-seeds-1.pdf}
+\caption{\label{1d-2var-different-seeds}The trace plot search better in
+a 1D projection problem with two informative variables using different
+seeds (without polishing). Since there are two informative variables,
+setting different value for seed will lead search better to find either
+of the local maximum.}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics{paper_files/figure-latex/1d-2var-better-random-1.pdf}
+\caption{\label{1d-2var-better-random}Using search better random for the
+problem above will result in finding the global maximum but much larger
+number of iteration is needed.}
+\end{figure}
 
 \hypertarget{vis-package}{%
 \section{Vis package}\label{vis-package}}

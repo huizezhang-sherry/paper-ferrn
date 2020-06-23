@@ -2,18 +2,21 @@
 \BOOKMARK [1][-]{section.2}{Derivative free optimisation}{}% 2
 \BOOKMARK [2][-]{subsection.2.1}{Difficulties}{section.2}% 3
 \BOOKMARK [1][-]{section.3}{Visual diagnostic system}{}% 4
-\BOOKMARK [2][-]{subsection.3.1}{Visual diagnostics}{section.3}% 5
+\BOOKMARK [2][-]{subsection.3.1}{Origin idea}{section.3}% 5
 \BOOKMARK [2][-]{subsection.3.2}{Global object}{section.3}% 6
-\BOOKMARK [1][-]{section.4}{Projection pursuit guided tour}{}% 7
-\BOOKMARK [2][-]{subsection.4.1}{Optimisation in projection pursuit}{section.4}% 8
-\BOOKMARK [1][-]{section.5}{Visual diagnostic in guided tour}{}% 9
-\BOOKMARK [2][-]{subsection.5.1}{Global object}{section.5}% 10
-\BOOKMARK [2][-]{subsection.5.2}{Simulated data}{section.5}% 11
-\BOOKMARK [1][-]{section.6}{Diagnostics plots}{}% 12
-\BOOKMARK [2][-]{subsection.6.1}{Explore scalar parameters}{section.6}% 13
-\BOOKMARK [3][-]{subsubsection.6.1.1}{Explore searching points}{subsection.6.1}% 14
-\BOOKMARK [3][-]{subsubsection.6.1.2}{Explore interpolating points}{subsection.6.1}% 15
-\BOOKMARK [3][-]{subsubsection.6.1.3}{Adding more variables to the mapping}{subsection.6.1}% 16
-\BOOKMARK [2][-]{subsection.6.2}{Explore matrix parameter}{section.6}% 17
-\BOOKMARK [1][-]{section.7}{Animated diagnostic plots}{}% 18
-\BOOKMARK [1][-]{section.8}{Vis package}{}% 19
+\BOOKMARK [2][-]{subsection.3.3}{Visual diagnostics}{section.3}% 7
+\BOOKMARK [1][-]{section.4}{Projection pursuit guided tour}{}% 8
+\BOOKMARK [2][-]{subsection.4.1}{Optimisation in projection pursuit}{section.4}% 9
+\BOOKMARK [1][-]{section.5}{Visual diagnostic in guided tour}{}% 10
+\BOOKMARK [2][-]{subsection.5.1}{Global object}{section.5}% 11
+\BOOKMARK [2][-]{subsection.5.2}{Simulated data}{section.5}% 12
+\BOOKMARK [1][-]{section.6}{Diagnostics plots}{}% 13
+\BOOKMARK [2][-]{subsection.6.1}{Explore the value of objective function}{section.6}% 14
+\BOOKMARK [3][-]{subsubsection.6.1.1}{Toy example: exploring searching points}{subsection.6.1}% 15
+\BOOKMARK [3][-]{subsubsection.6.1.2}{A more complex example: adding an interruption in the interpolation stage}{subsection.6.1}% 16
+\BOOKMARK [3][-]{subsubsection.6.1.3}{Another example: polishing the final projection basis}{subsection.6.1}% 17
+\BOOKMARK [2][-]{subsection.6.2}{Explore searching space}{section.6}% 18
+\BOOKMARK [3][-]{subsubsection.6.2.1}{A toy example: understand different stage of search\137geodesic}{subsection.6.2}% 19
+\BOOKMARK [3][-]{subsubsection.6.2.2}{A more complex example: Choosing the initial value for polishing parameter}{subsection.6.2}% 20
+\BOOKMARK [2][-]{subsection.6.3}{A comprehensive example of diagnosing noisy index function}{section.6}% 21
+\BOOKMARK [1][-]{section.7}{Vis package}{}% 22
