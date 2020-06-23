@@ -38,9 +38,18 @@ source(here::here("source/sim_data.r"))
 
 # Introduction
 
+*In an optimization problem the goal is to find the best solution within the space of all feasible solutions which typically is represented by a set of constraints. The problem consists on optimizing an objective function $f: S \rightarrow \Re$ with $S \in \Re^n$ in a reduced spaced given by the problem constraints to either minimize or maximize a function.... Gradient based optimization has been typically used to solve such problems. However, there are many situations where derivatives of an objective function are unavailable or unreliable and therefore traditional methods based on derivatives are not the best option to solve an optimization problem....*
+
+[Intro to optimization to set the scene for the paper? ppp]
+
+
+
+
 ## Derivative free optimisation
 
 Given an objective function $f$, one way of optimising it is to equate its gradient to zero. In modern optimisation problems, gradient information can be hard to evaluate or sometimes even impossible and Derivative-Free Optimisation (DFO) methods can be useful to approach these problems. The two most common methods in DFO are *direct-search methods* and *model-based methods* and this paper dedicates to the discussion of direct-search methods, which gains its popularity due to its simplicity in use and reliability in complicated practical problem. Coined by @hooke1961direct, direct search methods don't require any gradient or Hessian information and evaluate $f$ directly. A well-known example of it is the Nelder-Mead algorithm [@nelder1965simplex] and it enjoys the popularity due to its simplicity and reliability. [feel like this sentence can be expanded to include more information. xxx]. Further, direct search methods can be classified as *stochastic* and *deterministic* depends on whether a random sample is used in the search. The stochastic version of  direct-search method is the focus of this paper. 
+
+[How about adding more details into derivative free methods? ppp]
 
 
 ## Projection pursuit guided tour
