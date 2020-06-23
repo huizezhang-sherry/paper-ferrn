@@ -78,6 +78,7 @@ section 5: plots
 
 ## Motivation to visaul diagnostics
 
+[Are we using  projection pursuit/guided tour to better understand the convergency of optimization algorithms visually in combination with the algorithms discussed below? Or we are focusing on the optimisation problem only within the project pursuit context? Some of the problems listed below are also applicable to optimization problem in general too. ppp] 
 
 Below listed several issues in projection pursuit optimisation. Some are general optimisation problems, while others are more specific for PP optimisation. 
 
@@ -107,6 +108,8 @@ Below listed several issues in projection pursuit optimisation. Some are general
 
 
 # Visual diagnostic system
+
+[I would expland this section more as the core contribution. ppp]
 
 ## Visual diagnostics 
 <!-- Visual diagnostics can be real-time or post-run. Real time diagnostic directly uses the data produced in the algorithm to produce visual representation and thus doesn't need to store the data.   This section focuses on the definition and production of post-run diagnostics and the next section discusses real-time diagnostics. -->
@@ -226,6 +229,7 @@ knitr::include_graphics(path = here::here("figures/global_obj.png"))
 
 ## Simulated data
 
+[I would add the maths here to describe the simulations. ppp]
 
 Two set of simulated data are used in the demo of the visual diagnostics in projection pursuit guided tour. A small dataset consists of 1000 randomly simulated observations of five variables (`x1`, `x2`, `x8`, `x9`, `x10`). `x2` is the informative variable simulated from two bi-modal normal distribution centred at -3 and 3 with variance of one and the other four are simulated from non-informative standard random normal distributions. The data has been scaled to ensure `x2` has variance of 1. The goal is to find the 1D projection of bi-modal shape, which corresponds to the projection matrix (vector) of `[0, 1, 0, 0, 0]`. 
 
