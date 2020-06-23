@@ -42,16 +42,17 @@ source(here::here("source/sim_data.r"))
 
 # Introduction
 
-*In an optimization problem the goal is to find the best solution within the space of all feasible solutions which typically is represented by a set of constraints. The problem consists on optimizing an objective function $f: S \rightarrow \Re$ with $S \in \Re^n$ in a reduced spaced given by the problem constraints to either minimize or maximize a function.... Gradient based optimization has been typically used to solve such problems. However, there are many situations where derivatives of an objective function are unavailable or unreliable and therefore traditional methods based on derivatives are not the best option to solve an optimization problem....*
+In an optimization problem the goal is to find the best solution within the space of all feasible solutions which typically is represented by a set of constraints. The problem consists on optimizing an objective function $f: S \rightarrow \Re$ with $S \in \Re^n$ in a reduced spaced given by the problem constraints to either minimize or maximize a function.... Gradient based optimization has been typically used to solve such problems. However, there are many situations where derivatives of an objective function are unavailable or unreliable and therefore traditional methods based on derivatives are not the best option to solve an optimization problem.
 
-[Intro to optimization to set the scene for the paper? ppp]
+Derivative free methods provides another option to optimise the objective function without evaluating any gradient or hessian information and a parciular class of methods: direct search, has gained its popularity through its conceptual simplicity.  However, the whole searching process in the algorithm remains a black-box. Plots are usually used to evaluate and compare the performance of different algorithms but it can easily become tedious because the code will have to be modified significantly when comparing different parameters in the algorithms. For example, a categorical variable with 5 levels can be easily mapped onto color while mapping another categorical variable with 30 levels will not make the plot informative. Thus the plot needs to be re-designed to better suits the characteristics of the parameter (whether the parameter is a scalar or a matrix? whether the parameter is quantitative or categorical? If categorical, how many levels does the parameter have?). This motivates the  design of a visual diagnostic framework for optimisation algorithms based on the idea of a *global object*. 
+
+The paper is organised as follows. Section \ref{DFO} gives a general literature review of optimisation, specifically derivative free optimisation. Section \ref{vis-diag} presents the new idea of constructing a
+systematic visual framework that diagnoses the components of an optimisation procedure (parameters, searching path, etc). The rest of the paper serves as a comprehensive example of using the visual diagnostics on one particular problem: *projection pursuit guided tour*. Some background knowledge of projection pursuit guided tour is provided in Section \ref{tour}. Section \ref{apply} applys the concepts proposed in section \ref{vis-diag} in the tour problem and sets up the data. The last section, Section \ref{plots}, presents the visual diagnostic plots and explains how they can help to understand different aspects of the optimisation in tour.
 
 
+# Derivative free optimisation {#DFO}
 
-
-## Derivative free optimisation
-
-Given an objective function $f$, one way of optimising it is to equate its gradient to zero. In modern optimisation problems, gradient information can be hard to evaluate or sometimes even impossible and Derivative-Free Optimisation (DFO) methods can be useful to approach these problems. One common class of methods in DFO is *Direcct-search methods*. Coined by @hooke1961direct, direct search methods don't require any gradient or Hessian information and has gained its popularity through its simplicity in use and reliability in solving complicated practical problems. Depends on whether a random sample is used in the search, this class of methods can be further classified as *stochastic* or *deterministic*.  The stochastic version of the direct-search methods will be the main optimisation procedure analysed in this paper.
+Given an objective function $f$, one way of optimising it is to equate its gradient to zero. In modern optimisation problems, gradient information can be hard to evaluate or sometimes even impossible and Derivative-Free Optimisation (DFO) methods can be useful to approach these problems. One common class of methods in DFO is *Direct-search methods*. Coined by @hooke1961direct, direct search methods don't require any gradient or Hessian information and has gained its popularity through its simplicity in use and reliability in solving complicated practical problems. Depends on whether a random sample is used in the search, this class of methods can be further classified as *stochastic* or *deterministic*.  The stochastic version of the direct-search methods will be the main optimisation procedure analysed in this paper.
 
 [How about adding more details into derivative free methods? ppp]
 
@@ -62,21 +63,12 @@ Given an objective function $f$, one way of optimising it is to equate its gradi
 <!-- A well-known example of it is the Nelder-Mead algorithm [@nelder1965simplex] and it enjoys the popularity due to its simplicity and reliability. [feel like this sentence can be expanded to include more information. xxx]. -->
 
 
-section 1: DFO
-
-section 2: idea of diagnostic system & global object 
-
-section 3: general intro to tourr 
-
-section 4: apply diagnostic system + simulated data 
-
-section 5: plots 
 
 
 
 
 
-## Motivation to visaul diagnostics
+## Difficulties
 
 [Are we using  projection pursuit/guided tour to better understand the convergency of optimization algorithms visually in combination with the algorithms discussed below? Or we are focusing on the optimisation problem only within the project pursuit context? Some of the problems listed below are also applicable to optimization problem in general too. ppp] 
 
@@ -107,7 +99,7 @@ Below listed several issues in projection pursuit optimisation. Some are general
  - understand where the local & global maximum is found - trace plot - see if noisy function
 
 
-# Visual diagnostic system
+# Visual diagnostic system {#vis-diag}
 
 [I would expland this section more as the core contribution. ppp]
 
@@ -138,7 +130,7 @@ Ggplot requires a data frame that contains all the variables to plot and a *glob
 
 <!-- In the current implementation of the `tourr` package, while the target basis generated by the projection pursuit can be accessed later via `save_history()`, interpolating bases and those randomly nearby bases generated in the optimisation are not stored. This creates difficulties for fully understand the behaviour of the optimisation and interpolation of tour in complex scenario **[need a rephrase this part].**  -->
 
-# Projection pursuit guided tour
+# Projection pursuit guided tour {#tour}
 
 The optimisation problem we're interested in is in the context of projection pursuit. Coined by @friedman1974projection, projection pursuit is a method that detects the interesting structure (i.e. clustering, outliers and skewness) of multivariate data via projecting it in lower dimensions. A Projection Pursuit Index (PPI) is a function of the projection matrix (a.k.a projection angle, projection basis) measuring the "interestingness" of data and we refer the value of PPI function as *index value*. In the literature, the indices being proposed include Legendre index [@friedman1974projection], hermite index [@hall1989polynomial], natural hermite index [@cook1993projection], chi-square index [@posse1995projection], LDA index [@lee2005projection] and PDA index [@lee2010projection]. [Any literature on holes index? xxx] 
 
@@ -215,7 +207,7 @@ Below listed several features characterise the optimisation procedures needed in
 
 - *Being able to find both local and global maximum*: Although the primary interest is to find the global maximum, local maximum could also reveal structures in the data that are of our interest. 
 
-# Visual diagnostic in guided tour
+# Visual diagnostic in guided tour {#apply}
 
 ## Global object 
 
@@ -273,8 +265,7 @@ holes_1d_geo %>% head(5)
 <!-- ``` -->
 
 
-# Diagnostics plots
-
+# Diagnostics plots {#plots}
 
 
 

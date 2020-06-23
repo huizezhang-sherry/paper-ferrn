@@ -7,7 +7,6 @@
 \usepackage{textcomp}
 \usepackage[hyphens]{url} % not crucial - just used below for the URL
 \usepackage{hyperref}
-\usepackage{todonotes}
 \providecommand{\tightlist}{%
   \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
 
@@ -126,110 +125,58 @@ implement this diagnostic system.
 \hypertarget{introduction}{%
 \section{Introduction}\label{introduction}}
 
-In an optimization problem the goal is to find the best solution
-within the space of all feasible solutions which typically is represented
-by a set of constraints. The problem consists on optimizing an objective
-function $f: S \rightarrow \Re$ with $S \in \Re^n$ in a reduced spaced given
-by the problem constraints to either minimize or maximize a function.... Gradient based
-optimization has been typically used to solve such problems.
-However, there are many situations where derivatives
-of an objective function are unavailable or unreliable and therefore
-traditional methods based on derivatives are not the best option to solve an optimization problem....
-\todo[inline]{Intro to optimization to set the scene for the paper?}
+In an optimization problem the goal is to find the best solution within
+the space of all feasible solutions which typically is represented by a
+set of constraints. The problem consists on optimizing an objective
+function \(f: S \rightarrow \Re\) with \(S \in \Re^n\) in a reduced
+spaced given by the problem constraints to either minimize or maximize a
+function\ldots{}. Gradient based optimization has been typically used to
+solve such problems. However, there are many situations where
+derivatives of an objective function are unavailable or unreliable and
+therefore traditional methods based on derivatives are not the best
+option to solve an optimization problem.
 
-\hypertarget{derivative-free-optimisation}{%
-\subsection{Derivative free
-optimisation}\label{derivative-free-optimisation}}
+Derivative free methods provides another option to optimise the
+objective function without evaluating any gradient or hessian
+information and a parciular class of methods: direct search, has gained
+its popularity through its conceptual simplicity. However, the whole
+searching process in the algorithm remains a black-box. Plots are
+usually used to evaluate and compare the performance of different
+algorithms but it can easily become tedious because the code will have
+to be modified significantly when comparing different parameters in the
+algorithms. For example, a categorical variable with 5 levels can be
+easily mapped onto color while mapping another categorical variable with
+30 levels will not make the plot informative. Thus the plot needs to be
+re-designed to better suits the characteristics of the parameter
+(whether the parameter is a scalar or a matrix? whether the parameter is
+quantitative or categorical? If categorical, how many levels does the
+parameter have?). This motivates the design of a visual diagnostic
+framework for optimisation algorithms based on the idea of a
+\emph{global object}.
 
+The paper is organised as follows. Section \ref{DFO} gives a general
+literature review of optimisation, specifically derivative free
+optimisation. Section \ref{vis-diag} presents the new idea of
+constructing a systematic visual framework that diagnoses the components
+of an optimisation procedure (parameters, searching path, etc). The rest
+of the paper serves as a comprehensive example of using the visual
+diagnostics on one particular problem: \emph{projection pursuit guided
+tour}. Some background knowledge of projection pursuit guided tour is
+provided in Section \ref{tour}. Section \ref{apply} applys the concepts
+proposed in section \ref{vis-diag} in the tour problem and sets up the
+data. The last section, Section \ref{plots}, presents the visual
+diagnostic plots and explains how they can help to understand different
+aspects of the optimisation in tour.
 
-\todo[inline]{How about adding more details into derivative free methods?}
+\hypertarget{DFO}{%
+\section{Derivative free optimisation}\label{DFO}}
 
 Given an objective function \(f\), one way of optimising it is to equate
 its gradient to zero. In modern optimisation problems, gradient
 information can be hard to evaluate or sometimes even impossible and
 Derivative-Free Optimisation (DFO) methods can be useful to approach
-<<<<<<< Updated upstream
-these problems. The two most common methods in DFO are
-\emph{direct-search methods} and \emph{model-based methods} and this
-paper dedicates to the discussion of direct-search methods, which gains
-its popularity due to its simplicity in use and reliability in
-complicated practical problem. Coined by \citet{hooke1961direct}, direct
-search methods don't require any gradient or Hessian information and
-evaluate \(f\) directly. A well-known example of it is the Nelder-Mead
-algorithm \citep{nelder1965simplex} and it enjoys the popularity due to
-its simplicity and reliability. {[}feel like this sentence can be
-expanded to include more information. xxx{]}. Further, direct search
-methods can be classified as \emph{stochastic} and \emph{deterministic}
-depends on whether a random sample is used in the search. The stochastic
-version of direct-search method is the focus of this paper.
-
-\hypertarget{projection-pursuit-guided-tour}{%
-\subsection{Projection pursuit guided
-tour}\label{projection-pursuit-guided-tour}}
-
-
-The optimisation problem we're interested in is in the context of
-projection pursuit. Coined by \citet{friedman1974projection}, projection
-pursuit is a method that detects the interesting structure
-(i.e.~clustering, outliers and skewness) of multivariate data via
-projecting it in lower dimensions. A Projection Pursuit Index (PPI) is a
-function of the projection matrix (a.k.a projection angle, projection
-basis) measuring the ``interestingness'' of data and we refer the value
-of PPI function as \emph{index value}. In the literature, the indices
-being proposed include Legendre index \citep{friedman1974projection},
-hermite index \citep{hall1989polynomial}, natural hermite index
-\citep{cook1993projection}, chi-square index
-\citep{posse1995projection}, LDA index \citep{lee2005projection} and PDA
-index \citep{lee2010projection}. {[}Any literature on holes index?
-xxx{]}
-
-As \citet{friedman1974projection} noted ``\ldots{}, the technique use
-for maximising the projection index strongly influences both the
-statistical and the computational aspects of the procedure.'' A suitable
-optimisation procedure is needed to find the projection angle that
-maximises the PPI and the quality of the optimisation largely affect the
-interesting projections one could possibly observe.
-
-Projection pursuit is usually used in conjunction with a tour method
-called \emph{guided tour}. Tour explores the multivariate data
-\emph{interactively} via playing a series of projections, that form a
-\emph{tour path}, like movie frames in real time. Starting from a
-randomly generated projection basis, projection pursuit searches for a
-target basis with higher index value and guided tour interpolates
-geodesically between the initial basis and the target basis. This series
-of bases forms a tour path and the projection of the data on these bases
-is played in real time. This search-and-interpolate process is repeated
-until no basis can be found with higher index value. Modified from
-\citet{buja2005computational}, Figure \ref{tour-path} vividly depicts
-the tour path in guided tour. Guided tour, along with other types of
-tour, has been implemented in the \emph{tourr} package in R, available
-on the Comprehensive R Archive Network at
-\url{https://cran.r-project.org/web/packages/tourr/}
-\citep{wickham2011tourrpackage}.
-
-%\begin{figure}
-% \includegraphics[width=1\linewidth,height=0.6\textheight]{/Users/hzha400/paper-tour-vis/figures/tour_path_increasing} \caption{\label{tour-path}An illustration of the tour path}\label{fig:tour-path}
-\todo[inline]{I commented out the figure: Can you please update the path above to be a relative path instead?Thanks!}
-%\end{figure}
-
-{[}doubt if I need the following. xxx{]}
-
-\hypertarget{optimisation-in-projection-pursuit}{%
-\subsection{Optimisation in projection
-pursuit}\label{optimisation-in-projection-pursuit}}
-
-
-\todo[inline]{Are we using  projection pursuit/guided tour to better understand
-the convergency of optimization algorithms visually in combination with the
-algorithms discussed below? Or we are focusing on the optimisation problem
-only within the project pursuit context? Some of the problems listed below
-are also applicable to optimization problem in general too }
-
-Below listed several features characterise the optimisation procedures
-needed in projection pursuit
-=======
 these problems. One common class of methods in DFO is
-\emph{Direcct-search methods}. Coined by \citet{hooke1961direct}, direct
+\emph{Direct-search methods}. Coined by \citet{hooke1961direct}, direct
 search methods don't require any gradient or Hessian information and has
 gained its popularity through its simplicity in use and reliability in
 solving complicated practical problems. Depends on whether a random
@@ -237,21 +184,18 @@ sample is used in the search, this class of methods can be further
 classified as \emph{stochastic} or \emph{deterministic}. The stochastic
 version of the direct-search methods will be the main optimisation
 procedure analysed in this paper.
->>>>>>> Stashed changes
 
-section 1: DFO
+{[}How about adding more details into derivative free methods? ppp{]}
 
-section 2: idea of diagnostic system \& global object
+\hypertarget{difficulties}{%
+\subsection{Difficulties}\label{difficulties}}
 
-section 3: general intro to tourr
-
-section 4: apply diagnostic system + simulated data
-
-section 5: plots
-
-\hypertarget{problems-and-difficulties-in-pp-optimisation}{%
-\subsection{problems and difficulties in PP
-optimisation}\label{problems-and-difficulties-in-pp-optimisation}}
+{[}Are we using projection pursuit/guided tour to better understand the
+convergency of optimization algorithms visually in combination with the
+algorithms discussed below? Or we are focusing on the optimisation
+problem only within the project pursuit context? Some of the problems
+listed below are also applicable to optimization problem in general too.
+ppp{]}
 
 Below listed several issues in projection pursuit optimisation. Some are
 general optimisation problems, while others are more specific for PP
@@ -312,10 +256,11 @@ optimisation}
   see if noisy function
 \end{itemize}
 
-\hypertarget{visual-diagnostic-system}{%
-\section{Visual diagnostic system}\label{visual-diagnostic-system}}
+\hypertarget{vis-diag}{%
+\section{Visual diagnostic system}\label{vis-diag}}
 
-\todo[inline]{I would expland this section more as the core contribution}
+{[}I would expland this section more as the core contribution. ppp{]}
+
 \hypertarget{visual-diagnostics}{%
 \subsection{Visual diagnostics}\label{visual-diagnostics}}
 
@@ -338,10 +283,8 @@ system in R, ggplot2 \citep{ggplot2}. In grammar of graphic, plots are
 not defined by its appearance (i.e.~boxplot, histogram, scatter plot
 etc) but by ``stacked layers''. By this design, ggplot doesn't need to
 develop a gazillion of functions that each produces a different type of
-plot. Instead, it creates aesthetic mapping from the variables to the
-geometric objects and builds the plot through different layers.
-
-{[}Do I need this paragraph to details the grammar of graphic? xxx{]}
+plot. Instead, it aesthetically maps the variables to the geometric
+objects and builds the plot through different layers.
 
 \hypertarget{global-object}{%
 \subsection{Global object}\label{global-object}}
@@ -361,9 +304,8 @@ parameter of interest}. This could include variables that are specific
 for one particular algorithm. Below we show an example of defining the
 global object of projection pursuit guided tour.
 
-\hypertarget{projection-pursuit-guided-tour}{%
-\section{Projection pursuit guided
-tour}\label{projection-pursuit-guided-tour}}
+\hypertarget{tour}{%
+\section{Projection pursuit guided tour}\label{tour}}
 
 The optimisation problem we're interested in is in the context of
 projection pursuit. Coined by \citet{friedman1974projection}, projection
@@ -408,7 +350,9 @@ on the Comprehensive R Archive Network at
 \includegraphics[width=1\linewidth,height=0.6\textheight]{/Users/hzha400/Documents/3.PhD/paper-tour-vis/figures/tour_path_increasing} \caption{\label{tour-path}An illustration of the tour path}\label{fig:tour-path}
 \end{figure}
 
-{[}doubt if I need the following. xxx{]}
+{[}doubt if I need the following. xxx - maybe an algorithmatic version
+of guide tour would be helpful for non-expert to understand the
+method?{]}
 
 \hypertarget{optimisation-in-projection-pursuit}{%
 \subsection{Optimisation in projection
@@ -468,9 +412,8 @@ needed in projection pursuit
   also reveal structures in the data that are of our interest.
 \end{itemize}
 
-\hypertarget{visual-diagnostic-in-guided-tour}{%
-\section{Visual diagnostic in guided
-tour}\label{visual-diagnostic-in-guided-tour}}
+\hypertarget{apply}{%
+\section{Visual diagnostic in guided tour}\label{apply}}
 
 \hypertarget{global-object-1}{%
 \subsection{Global object}\label{global-object-1}}
@@ -499,8 +442,7 @@ projection pursuit guided tour is presented in Figure \ref{fig:glb-obj}.
 \hypertarget{simulated-data}{%
 \subsection{Simulated data}\label{simulated-data}}
 
-\todo[inline]{I would add the maths here to describe the
-simulations}
+{[}I would add the maths here to describe the simulations. ppp{]}
 
 Two set of simulated data are used in the demo of the visual diagnostics
 in projection pursuit guided tour. A small dataset consists of 1000
@@ -546,15 +488,11 @@ doesn't show all the columns. xxx{]}
 ## 5 <dbl[,1] [5 x ~     0.749     1 direction_sea~     1 search_geode~  NA       5
 \end{verbatim}
 
-\hypertarget{diagnostics-plots}{%
-\section{Diagnostics plots}\label{diagnostics-plots}}
+\hypertarget{plots}{%
+\section{Diagnostics plots}\label{plots}}
 
 \hypertarget{explore-scalar-parameters}{%
 \subsection{Explore scalar parameters}\label{explore-scalar-parameters}}
-
-\todo[inline]{I was wondering if it would be worth to talk
-with a bit more detail about the tour for the audience that might
-not be familiar with it?}
 
 In tour, all the points recorded in the global object can be divided
 into two broad categories: searching points and interpolating points
@@ -759,7 +697,7 @@ remain the same.
 \begin{Shaded}
 \begin{Highlighting}[]
 \KeywordTok{set.seed}\NormalTok{(}\DecValTok{123456}\NormalTok{)}
-\NormalTok{holes_2d_geo <-}\StringTok{ }\KeywordTok{animate_xy}\NormalTok{(data_mult[,}\KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{2}\NormalTok{, }\DecValTok{7}\OperatorTok{:}\DecValTok{10}\NormalTok{)],}\DataTypeTok{tour_path =}
+\NormalTok{holes_2d_geo <-}\StringTok{ }\KeywordTok{animate_xy}\NormalTok{(data_mult[,}\KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{2}\NormalTok{, }\DecValTok{7}\OperatorTok{:}\DecValTok{10}\NormalTok{)],}\DataTypeTok{tour_path =} 
                              \KeywordTok{guided_tour}\NormalTok{(}\KeywordTok{holes}\NormalTok{(), }\DataTypeTok{d =} \DecValTok{2}\NormalTok{, }
                                          \DataTypeTok{search_f =}\NormalTok{ tourr}\OperatorTok{:::}\NormalTok{search_geodesic),}
                            \DataTypeTok{rescale =} \OtherTok{FALSE}\NormalTok{, }\DataTypeTok{verbose =} \OtherTok{TRUE}\NormalTok{)}
@@ -768,7 +706,7 @@ remain the same.
 \StringTok{  }\KeywordTok{tail}\NormalTok{(}\DecValTok{1}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }\KeywordTok{pull}\NormalTok{(basis) }\OperatorTok{%>%}\StringTok{ }\NormalTok{.[[}\DecValTok{1}\NormalTok{]]}
 
 \KeywordTok{set.seed}\NormalTok{(}\DecValTok{123456}\NormalTok{)}
-\NormalTok{holes_2d_geo_polish <-}\StringTok{ }\KeywordTok{animate_xy}\NormalTok{(data_mult[,}\KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{2}\NormalTok{, }\DecValTok{7}\OperatorTok{:}\DecValTok{10}\NormalTok{)], }\DataTypeTok{tour_path =}
+\NormalTok{holes_2d_geo_polish <-}\StringTok{ }\KeywordTok{animate_xy}\NormalTok{(data_mult[,}\KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{2}\NormalTok{, }\DecValTok{7}\OperatorTok{:}\DecValTok{10}\NormalTok{)], }\DataTypeTok{tour_path =} 
                                     \KeywordTok{guided_tour}\NormalTok{(}\KeywordTok{holes}\NormalTok{(), }\DataTypeTok{d =} \DecValTok{2}\NormalTok{, }
                                                 \DataTypeTok{search_f =}\NormalTok{ tourr}\OperatorTok{:::}\NormalTok{search_polish),}
                                   \DataTypeTok{rescale =} \OtherTok{FALSE}\NormalTok{, }\DataTypeTok{verbose =} \OtherTok{TRUE}\NormalTok{, }
