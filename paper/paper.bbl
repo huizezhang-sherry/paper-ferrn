@@ -57,11 +57,6 @@ Lee, E.-K. \harvardand\ Cook, D.  \harvardyearleft 2010\harvardyearright , `A
   projection pursuit index for large p small n data', {\em Statistics and
   Computing} {\bf 20}(3),~381--392.
 
-\harvarditem{Nelder \harvardand\ Mead}{1965}{nelder1965simplex}
-Nelder, J.~A. \harvardand\ Mead, R.  \harvardyearleft 1965\harvardyearright ,
-  `A simplex method for function minimization', {\em The computer journal} {\bf
-  7}(4),~308--313.
-
 \harvarditem{Posse}{1995}{posse1995projection}
 Posse, C.  \harvardyearleft 1995\harvardyearright , `Projection pursuit
   exploratory data analysis', {\em Computational Statistics \& data analysis}

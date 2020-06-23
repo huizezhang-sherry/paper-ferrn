@@ -103,11 +103,21 @@
 
 \bigskip
 \begin{abstract}
-
+Friedman \& Tukey commented on their intial paper on projection pursuit
+in 1974 that ``the technique use for maximising the projection index
+strongly influences both the statistical and the computational aspects
+of the procedure.'' While many projection pursuit indices have been
+proposed in the literature, few concerns the optimisation procedure. In
+this paper, we developed a system of diagnostics aiming to visually
+learn how the optimisation procedures find its way towards the optimum.
+This diagnostic system can be applied to more general to help
+practitioner to unveil the black-box in randomised iteartive
+(optimisation) algorithms. An R package, ferrn, has been created to
+implement this diagnostic system.
 \end{abstract}
 
 \noindent%
-{\it Keywords:} 3 to 6 keywords, that do not appear in the title
+{\it Keywords:} optimisation, projection pursuit, guided tourr, visual, diagnostics, R
 \vfill
 
 \newpage
@@ -138,6 +148,7 @@ Given an objective function \(f\), one way of optimising it is to equate
 its gradient to zero. In modern optimisation problems, gradient
 information can be hard to evaluate or sometimes even impossible and
 Derivative-Free Optimisation (DFO) methods can be useful to approach
+<<<<<<< Updated upstream
 these problems. The two most common methods in DFO are
 \emph{direct-search methods} and \emph{model-based methods} and this
 paper dedicates to the discussion of direct-search methods, which gains
@@ -216,57 +227,27 @@ are also applicable to optimization problem in general too }
 
 Below listed several features characterise the optimisation procedures
 needed in projection pursuit
+=======
+these problems. One common class of methods in DFO is
+\emph{Direcct-search methods}. Coined by \citet{hooke1961direct}, direct
+search methods don't require any gradient or Hessian information and has
+gained its popularity through its simplicity in use and reliability in
+solving complicated practical problems. Depends on whether a random
+sample is used in the search, this class of methods can be further
+classified as \emph{stochastic} or \emph{deterministic}. The stochastic
+version of the direct-search methods will be the main optimisation
+procedure analysed in this paper.
+>>>>>>> Stashed changes
 
-\begin{itemize}
-\item
-  \emph{Being able to handle non-differentiable PPI function}: The PPI
-  function could be non-differentiable, thus derivative free methods are
-  preferred.
-\item
-  \emph{Being able to optimise with constraints}: The constraint comes
-  from projection matrix being an orthonormal matrix.
-\item
-  \emph{Being able to find both local and global maximum}: Although the
-  primary interest is to find the global maximum, local maximum could
-  also reveal structures in the data that are of our interest.
-\end{itemize}
+section 1: DFO
 
-{[}thinking if the following three should be presented as algorithms or
-plain description is fine. xxx{]}
+section 2: idea of diagnostic system \& global object
 
-There are three existing methods for optimisating PPI function and we
-review them below. \citet{posse1995projection} used a stochastic direct
-search method, a random search algorithm to sample new bases in the
-neighbourhood of the current basis defined by the radius of the
-p-dimensional sphere, \(c\). The new basis is taken as the target basis
-if it has higher index value, or the sampling continues. If no basis is
-found to have higher index value after a certain number of tries \(n\),
-the radius \(c\) is halved. The algorithm stops when the maximum number
-of iteration is attained or the radius \(c\) is less than a
-pre-determined number.
+section 3: general intro to tourr
 
-\citet{cook1995grand} explained the use of a gradient ascent
-optimisation with the assumption that the index function is continuous
-and differentiable. Since some indices could be non-differentiable, the
-computation of derivative is replaced by a pseudo-derivative of
-evaluating five randomly generated directions in a tiny nearby
-neighbourhood. Taking a step on the straight derivative direction has
-been modified to maximise the projection pursuit index along the
-geodesic direction.
+section 4: apply diagnostic system + simulated data
 
-Simulated annealing
-\citep[\citet{kirkpatrick1983optimization}]{bertsimas1993simulated} is a
-non-derivative procedure based on a non-increasing cooling scheme
-\(T(i)\). Given an initial \(T_0\), the temperature at iteration \(i\)
-is defined as \(T(i) = \frac{T_0}{log(i + 1)}\). The simulated annealing
-algorithm works as follows. Given a neighbourhood parameter \(\alpha\)
-and a randomly generated orthonormal basis \(B\), a candidate basis is
-constructed as \(B_j = (1- \alpha)B_i + \alpha B\) where \(B_i\) is the
-current basis. If the index value of the candidate basis is larger than
-the one of the current basis, the candidate basis becomes the target
-basis. If it is smaller, the candidate is accepted with probability
-\(A = \min \left(\exp(-\frac{I(B_j) - I(B_i)}{T(i)}), 1 \right)\) where
-\(I(.)\) is the index function.
+section 5: plots
 
 \hypertarget{problems-and-difficulties-in-pp-optimisation}{%
 \subsection{problems and difficulties in PP
@@ -380,6 +361,120 @@ parameter of interest}. This could include variables that are specific
 for one particular algorithm. Below we show an example of defining the
 global object of projection pursuit guided tour.
 
+\hypertarget{projection-pursuit-guided-tour}{%
+\section{Projection pursuit guided
+tour}\label{projection-pursuit-guided-tour}}
+
+The optimisation problem we're interested in is in the context of
+projection pursuit. Coined by \citet{friedman1974projection}, projection
+pursuit is a method that detects the interesting structure
+(i.e.~clustering, outliers and skewness) of multivariate data via
+projecting it in lower dimensions. A Projection Pursuit Index (PPI) is a
+function of the projection matrix (a.k.a projection angle, projection
+basis) measuring the ``interestingness'' of data and we refer the value
+of PPI function as \emph{index value}. In the literature, the indices
+being proposed include Legendre index \citep{friedman1974projection},
+hermite index \citep{hall1989polynomial}, natural hermite index
+\citep{cook1993projection}, chi-square index
+\citep{posse1995projection}, LDA index \citep{lee2005projection} and PDA
+index \citep{lee2010projection}. {[}Any literature on holes index?
+xxx{]}
+
+As \citet{friedman1974projection} noted ``\ldots{}, the technique use
+for maximising the projection index strongly influences both the
+statistical and the computational aspects of the procedure.'' A suitable
+optimisation procedure is needed to find the projection angle that
+maximises the PPI and the quality of the optimisation largely affect the
+interesting projections one could possibly observe.
+
+Projection pursuit is usually used in conjunction with a tour method
+called \emph{guided tour}. Tour explores the multivariate data
+\emph{interactively} via playing a series of projections, that form a
+\emph{tour path}, like movie frames in real time. Starting from a
+randomly generated projection basis, projection pursuit searches for a
+target basis with higher index value and guided tour interpolates
+geodesically between the initial basis and the target basis. This series
+of bases forms a tour path and the projection of the data on these bases
+is played in real time. This search-and-interpolate process is repeated
+until no basis can be found with higher index value. Modified from
+\citet{buja2005computational}, Figure \ref{tour-path} vividly depicts
+the tour path in guided tour. Guided tour, along with other types of
+tour, has been implemented in the \emph{tourr} package in R, available
+on the Comprehensive R Archive Network at
+\url{https://cran.r-project.org/web/packages/tourr/}
+\citep{wickham2011tourrpackage}.
+
+\begin{figure}
+\includegraphics[width=1\linewidth,height=0.6\textheight]{/Users/hzha400/Documents/3.PhD/paper-tour-vis/figures/tour_path_increasing} \caption{\label{tour-path}An illustration of the tour path}\label{fig:tour-path}
+\end{figure}
+
+{[}doubt if I need the following. xxx{]}
+
+\hypertarget{optimisation-in-projection-pursuit}{%
+\subsection{Optimisation in projection
+pursuit}\label{optimisation-in-projection-pursuit}}
+
+{[}thinking if the following three should be presented as algorithms or
+plain description is fine. xxx{]}
+
+There are three existing methods for optimisating PPI function and we
+review them below. \citet{posse1995projection} used a stochastic direct
+search method, a random search algorithm to sample new bases in the
+neighbourhood of the current basis defined by the radius of the
+p-dimensional sphere, \(c\). The new basis is taken as the target basis
+if it has higher index value, or the sampling continues. If no basis is
+found to have higher index value after a certain number of tries \(n\),
+the radius \(c\) is halved. The algorithm stops when the maximum number
+of iteration is attained or the radius \(c\) is less than a
+pre-determined number.
+
+\citet{cook1995grand} explained the use of a gradient ascent
+optimisation with the assumption that the index function is continuous
+and differentiable. Since some indices could be non-differentiable, the
+computation of derivative is replaced by a pseudo-derivative of
+evaluating five randomly generated directions in a tiny nearby
+neighbourhood. Taking a step on the straight derivative direction has
+been modified to maximise the projection pursuit index along the
+geodesic direction.
+
+Simulated annealing
+\citep[\citet{kirkpatrick1983optimization}]{bertsimas1993simulated} is a
+non-derivative procedure based on a non-increasing cooling scheme
+\(T(i)\). Given an initial \(T_0\), the temperature at iteration \(i\)
+is defined as \(T(i) = \frac{T_0}{log(i + 1)}\). The simulated annealing
+algorithm works as follows. Given a neighbourhood parameter \(\alpha\)
+and a randomly generated orthonormal basis \(B\), a candidate basis is
+constructed as \(B_j = (1- \alpha)B_i + \alpha B\) where \(B_i\) is the
+current basis. If the index value of the candidate basis is larger than
+the one of the current basis, the candidate basis becomes the target
+basis. If it is smaller, the candidate is accepted with probability
+\(A = \min \left(\exp(-\frac{I(B_j) - I(B_i)}{T(i)}), 1 \right)\) where
+\(I(.)\) is the index function.
+
+Below listed several features characterise the optimisation procedures
+needed in projection pursuit
+
+\begin{itemize}
+\item
+  \emph{Being able to handle non-differentiable PPI function}: The PPI
+  function could be non-differentiable, thus derivative free methods are
+  preferred.
+\item
+  \emph{Being able to optimise with constraints}: The constraint comes
+  from projection matrix being an orthonormal matrix.
+\item
+  \emph{Being able to find both local and global maximum}: Although the
+  primary interest is to find the global maximum, local maximum could
+  also reveal structures in the data that are of our interest.
+\end{itemize}
+
+\hypertarget{visual-diagnostic-in-guided-tour}{%
+\section{Visual diagnostic in guided
+tour}\label{visual-diagnostic-in-guided-tour}}
+
+\hypertarget{global-object-1}{%
+\subsection{Global object}\label{global-object-1}}
+
 In the projection pursuit guided tour, the decision variable is the
 projection matrix, the value of objective function is the index value.
 There are three iterators: \texttt{id} is the smallest ordering unit
@@ -400,9 +495,6 @@ projection pursuit guided tour is presented in Figure \ref{fig:glb-obj}.
 \begin{figure}
 \includegraphics[width=1\linewidth,height=0.2\textheight]{/Users/hzha400/Documents/3.PhD/paper-tour-vis/figures/global_obj} \caption{\label{glb-obj}The global object in projection pursuit guided tour.}\label{fig:glb-obj}
 \end{figure}
-
-\hypertarget{diagnostics-plots}{%
-\section{Diagnostics plots}\label{diagnostics-plots}}
 
 \hypertarget{simulated-data}{%
 \subsection{Simulated data}\label{simulated-data}}
@@ -453,6 +545,9 @@ doesn't show all the columns. xxx{]}
 ## 4 <dbl[,1] [5 x ~     0.749     1 direction_sea~     1 search_geode~  NA       4
 ## 5 <dbl[,1] [5 x ~     0.749     1 direction_sea~     1 search_geode~  NA       5
 \end{verbatim}
+
+\hypertarget{diagnostics-plots}{%
+\section{Diagnostics plots}\label{diagnostics-plots}}
 
 \hypertarget{explore-scalar-parameters}{%
 \subsection{Explore scalar parameters}\label{explore-scalar-parameters}}
