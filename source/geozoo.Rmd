@@ -10,6 +10,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 library(tidyverse)
 library(geozoo)
+library(ferrn)
 
 files <- paste0("data/", list.files(here::here("data")))
 purrr::walk(.x = files, ~load(here::here(.x), env = globalenv()))
@@ -18,13 +19,171 @@ purrr::walk(.x = files, ~load(here::here(.x), env = globalenv()))
 
 
 ```{r}
+vis <- function(data, color = NULL, ...){
+  
+  row <- data$basis[[1]] %>% nrow()
+  col <- data$basis[[1]] %>% ncol()
+  dim <- row * col
+  
+  path <- data %>% pull(basis) %>% purrr::flatten_dbl() %>% matrix(ncol = dim, byrow = TRUE)
+  
+  a <- sphere.hollow(p = dim, n = 1000)
+  a$points <- a$points %>% rbind(path)
+  
+  if(is.null(color)){
+    color <- c(rep("grey", 1000), rep("red", nrow(data) - 1), "green")
+  }
+  
+  print(a, col = color)
+  
+}
+```
+
+
+1. 1D projection using search_geodesic 
+
+- The final projection is colored green, with rotation, it is always posed on the opposite direction of V2 with same magnitude.
+
+```{r}
+# final basis 
+holes_1d_geo %>% filter(info == "interpolation") %>% tail(1) %>% pull(basis)
+# final basis after polish
+holes_1d_geo_polish %>% tail(1) %>% pull(basis)
+
+
+
+dt <- holes_1d_geo %>% filter(info == "interpolation")
+color <-  c(rep("grey", 1000), rep("red", nrow(dt) - 1), "green")
+vis(dt, color = color)
+
+
+interp <- holes_1d_geo %>% filter(info == "interpolation")
+polish <- holes_1d_geo_polish %>% filter(info == "loop_best")
+dt_bind <- bind_rows(interp,polish) 
+
+color <- c(rep("grey", 1000), rep("red", nrow(interp) - 1),"green", rep("blue", nrow(polish)))
+vis(dt_bind, color = color)
+
+```
+
+2. Comparing two search better paths
+
+```{r}
+# a small example 
+interp1 %>% tail(1) %>% pull(basis)
+interp2 %>% tail(1) %>% pull(basis)
+
+# different seeds lead to different variables found
+interp1 <- kol_cdf_1d_2var_better %>% filter(info == "interpolation")
+interp2 <- kol_cdf_1d_2var_better_2 %>% filter(info == "interpolation")
+dt_bind <- bind_rows(interp1, interp2)
+
+
+color_hex <- RColorBrewer::brewer.pal(4, "Dark2")
+color <- c(rep("grey", 1000), 
+           rep(color_hex[[1]], nrow(interp1)-1), color_hex[[3]],
+           rep(color_hex[[2]], nrow(interp2)-1), color_hex[[3]])
+
+vis(dt_bind, color)
+```
+
+```{r}
+# better random finds global 
+
+# explore the full parameter space 
+interp1 <- kol_cdf_1d_2var_better %>% filter(info == "interpolation")
+interp2 <- kol_cdf_1d_2var_better_2 %>% filter(info == "interpolation")
+interp3 <- kol_cdf_1d_2var_better_random %>% filter(info == "interpolation")
+
+polish1 <- kol_cdf_1d_2var_better_polish %>% filter(info == "polish_best")
+polish2 <- kol_cdf_1d_2var_better_2_polish %>% filter(info == "polish_best")
+polish3 <- kol_cdf_1d_2var_better_random_polish %>% filter(info == "polish_best")
+
+dt_bind <- bind_rows(interp1, polish1, 
+                     interp2, polish2,
+                     interp3, polish3)
+
+color_hex <- RColorBrewer::brewer.pal(8, "Dark2")
+color <- c(rep("grey", 1000), 
+           rep(color_hex[[1]], nrow(interp1) + nrow(polish1)-1), "green",
+           rep(color_hex[[2]], nrow(interp2) + nrow(polish2)-1), "green",
+           rep(color_hex[[3]], nrow(interp3) + nrow(polish3)-1), "green"
+           ) 
+
+vis(dt_bind, color)
+
+
+# explore the reduced 2D space via PCAs
+interp1 <- kol_cdf_1d_2var_better 
+interp2 <- kol_cdf_1d_2var_better_2
+interp3 <- kol_cdf_1d_2var_better_random 
+
+pca <- bind_rows(interp1, interp2, interp3) %>% 
+  mutate(algorithm = c(rep("better1", nrow(interp1)), 
+                       rep("better2", nrow(interp2)), 
+                       rep("better_random", nrow(interp3)))) %>% 
+  ferrn::compute_pca()
+
+pca$combined %>% 
+  ggplot(aes(x = PC1, y = PC2, color = algorithm)) + 
+  geom_point() + 
+  theme(aspect.ratio = 1)
+
+interp3 %>% filter(tries > 40) %>% explore_trace_search()
+interp3 %>% explore_trace_search()
+```
+
+
+```{r}
+# finds V8
+holes_2d_better %>% filter(info == "interpolation") %>% tail(1) %>% pull(basis)
+# finds V3 and V8
+holes_2d_better_max_tries %>% filter(info == "interpolation")%>% tail(1) %>% pull(basis)
+
+interp1 <- holes_2d_better %>% filter(info == "interpolation")
+polish1 <- holes_2d_better_polish %>% filter(info == "polish_best")
+interp2 <- holes_2d_better_max_tries %>% filter(info == "interpolation")
+polish2 <- holes_2d_better_max_tries_polish %>% filter(info == "polish_best")
+dt_bind <- bind_rows(interp1, 
+                     polish1, 
+                     interp2, 
+                     polish2
+                     )
+
+color_hex <- scales::brewer_pal(palette = "Dark2")(8)
+scales::show_col(color_hex)
+# color <- c(rep("grey", 1000), 
+#            rep(color_hex[1], nrow(interp1)-1), color_hex[2], rep(color_hex[3], nrow(polish1)-1), color_hex[4],
+#            rep(color_hex[5], nrow(interp2)-1), color_hex[6], rep(color_hex[7], nrow(polish2)-1), color_hex[8]
+#            )
+
+color <- c(rep("grey", 1000), 
+           rep(color_hex[1], nrow(interp1)-1), "green", rep("red", nrow(polish1)-1), "blue",
+           rep(color_hex[5], nrow(interp2)-1), "green", rep("lightblue", nrow(polish2)-1), "blue"
+           )
+
+dt_bind <- bind_rows(interp2, polish2)
+color <- c(rep("grey", 1000), 
+           rep(color_hex[1], nrow(interp2)), rep("red", nrow(polish2)-1), "blue")
+vis(dt_bind, color)
+
+
+
+```
+
+
+
+
+```{r}
 pca <- holes_1d_geo %>% ferrn::compute_pca()
 
-interp <- pca$combined %>% filter(info == "interpolation") %>% dplyr::select(V1:V5) %>% as.matrix()
+interp <- pca$combined %>% dplyr::select(V1:V5) %>% as.matrix()
 
 a <- sphere.hollow(p = 5, n = 1000)
 a$points <- a$points %>% rbind(interp)
-color <- c(rep("black", 1000), rep("red", nrow(interp)))
+color <- c(rep("black", 1000), "green",rep("red", nrow(interp)-1))
 print(a, col = color)
 ```
 
+
+$\mathcal{S}_{p-1}$ minus one because 
