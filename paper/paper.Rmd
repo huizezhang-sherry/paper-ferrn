@@ -99,63 +99,6 @@ Below listed several issues in projection pursuit optimisation. Some are general
  - understand where the local & global maximum is found - trace plot - see if noisy function
 
 
-# Visual diagnostic system {#vis-diag}
-
-[I would expand this section more as the core contribution. ppp]
-
-## Origin idea
-<!-- Visual diagnostics can be real-time or post-run. Real time diagnostic directly uses the data produced in the algorithm to produce visual representation and thus doesn't need to store the data.   This section focuses on the definition and production of post-run diagnostics and the next section discusses real-time diagnostics. -->
-
-
-<!-- Visualisation has been widely used for exploring and understanding data. Presenting information in a graphical manner often allows people to see information they would otherwise not seen. -->
-
-
-Random search methods has a black-box mechanism and focuses solely on finding the global maximum point, while the projection pursuit problem we have aims at *exploring* the data and thus is interested in how the algorithm finds its maximum. This motivates us **to develop a visual diagnostic system for exploring the optimisation searching path**. 
-
-The necessity of developing such a system rather than simply producing different diagnostic plots is because the diagnostics of each variable requires a different function and these functions can't be scaled to other problems. Thus we want to establish a set of rules that can generalise the diagnostic of iterative algorithms. 
-
-The idea of generalising all the diagnostic plots under one framework is inspired by the concept of *grammar of graphic*[@wickham2010layered], which powers the primary graphical system in R, ggplot2 [@ggplot2]. In grammar of graphic, plots are not defined by its appearance (i.e. boxplot, histogram, scatter plot etc) but by "stacked layers". By this design, ggplot doesn't need to develop a gazillion of functions that each produces a different type of plot. Instead, it aesthetically maps the variables to the geometric objects and builds the plot through different layers.
-
-<!-- [Do I need this paragraph to details the grammar of graphic? xxx - don't think so; not particularly relevant - assume most people know it roughly] -->
-<!-- A layer includes 1) the data that powers the plot; 2) a geometric object that represents the visual shape of the data and 3) relevant statistical transformation that transform the information in the data to the information used to draw the geometric object. An important concept in the grammar of graphic is *aesthetic mapping*. Aesthetic mapping links the variable in a dataset to information needed to produce a geometric object. For example, we map one variable on the x-axis and another on the y-axis to create a scatterplot. Another example of creating a boxplot involves 1) mapping one variable on the x-axis and 2) transforming another variable to its five-point-summary and mapping the five-point-summary to the y-axis.  -->
-
-
-## Global object
-
-Ggplot requires a data frame that contains all the variables to plot and a *global object* is constructed as the data frame supplied to the visual diagnostic plots to better suit the characters of iterative optimisation algorithms. Given an optimisation algorithm, two primary variables of interest are the *decision variable* and the *value of the objective function*. *iterators* indexes the data collected and this order has time series feature that prescribes the progression of the optimisation. Given the complexity of the algorithm, there could be multiple iterators. There are other parameters that can't be classified as one of the three categories but are also of our interest. They are defined under the fourth category: *other parameter of interest*. This could include variables that are specific for one particular algorithm. Below we show an example of defining the global object of projection pursuit guided tour.
-
-An optimisation procedure can easily generate hundreds or thousands sampling points and the question becomes what are the points we want to explore... [the classification of searching or updating points goes here and people should be clear what part of the points goes to the plot - this is the data part not the plot part. ]
-
-
-
-In tour, all the points recorded in the global object can be divided into two broad categories: searching points and interpolating points
-
-- *Searching points* include the observations recorded in the searching algorithm to find the target basis. The points for target bases is also included in the searching points and there is one such point per `tries`.
-
-- *interpolating points* exist in the guided tour to produce continuous animated view from one target basis to another and it doesn't have `loop` value.
-
-<!-- The concept of grammar of graphic requires a dataset to be supplied in making a plot, thus a global object needs to be created in the iterative algorithm. The variables will be mapped into element of a graphic to explore and thus should contain all the parameters of interest. The next section shows how a global object is created in projection pursuit guided tour. -->
-
-
-<!-- In the current implementation of the `tourr` package, while the target basis generated by the projection pursuit can be accessed later via `save_history()`, interpolating bases and those randomly nearby bases generated in the optimisation are not stored. This creates difficulties for fully understand the behaviour of the optimisation and interpolation of tour in complex scenario **[need a rephrase this part].**  -->
-
-## Visual diagnostics
-
-Follow the research question we raised earlier, the purpose of visual diagnostics is to understand 
-
-- Whether the procedure has provided an optimum and how the value of the objective function changes through the optimisation.  
-
-- How does the searching space look like, that is, geometrically, where are the points located in the space.
-
-Overall, the first question can be answered using a static plot with x-axis showing the progression of the optimisation and y-axis showing the value of the objective function. The second question can be addressed via visualising the rotating high dimensional space. This seems to be a hard task to see beyond 3D, but the fact is that we never really see all the six faces of a cube at one time. The way humans understand the dimension of a 3D object is either through rotating the physical 3D object or using shade and line type to annotate the 3D object in a paper or electronically. Thus we can do a similar rotation on the screen to precieve even higher dimension. [there is likely to be a learning curve - remember when learning geometry in school, it takes a while to get used to see 3D cube on a paper]. Thus animated visualisation is needed to preceive the optimisation path in the searching space.
-
-The plot design of visual diagnostics depends on the characteristics of the variables to plot. If the searching points are of interest [point geom is not good; need summarise. While updating points are more manageable -> point geom]. However, one must realise that with hundreds or thousands of searching points, exploring the sample space in animation could be slow and this is because of the time it takes to render hundreds point. [stratefy may help? - may need more work here.]
-
-Exploring the value of an objective function is cna be a simple task. Because the iterator has a time series ordering feature, it goes onto the x-axis as convention. The value of hte objective function goes to the y-axis. Other parameter of interest can be represented using color to present more information. [This is the case for our purpose with method, but when the level goes higher or the parameter is quantitative, color may not be a good option. ]
-
-An option to explore of the searching space is to explore a reduced projection 2D space via principle component analysis or other dimensional reduction methods. In this way, the first two principle components will take up the x and y axis and all the other information will be mapped using other aesthetic attribution. [need to think further about how different type of variables can be shown]. While explore the reduced space is an initial attempt to understand the searching space, there are existing technology for rotating a higher dimensional space for visualisation. Geozoo is an option. It generates random points on the high dimensional space and we can overlay it with the points on the optimisation path to visualise the spread of it on the high-D sphere.
-
-
 # Projection pursuit guided tour {#tour}
 
 From Section \ref{tour}, we presents a comprehensive case study on how to use the visual diagnostics to explore the optimisation in a specific problem: projection pursuit guided tour. Section \ref{tour} aims to provide non-experts with an overview of the problem content and the existing optimisation procedures used in projection pursuit guided tour. For those who are already familiar with the technique, this section can be skipped. 
@@ -235,11 +178,46 @@ Below listed several features characterise the optimisation procedures needed in
 
 - *Being able to find both local and global maximum*: Although the primary interest is to find the global maximum, local maximum could also reveal structures in the data that are of our interest. 
 
-# Visual diagnostic in guided tour {#apply}
 
-In this section, we present the simulated data along with how the global object can be applied in guided tour.
+# Visual diagnostic system {#vis-diag}
 
-## Global object 
+[I would expand this section more as the core contribution. ppp]
+
+## Origin idea
+<!-- Visual diagnostics can be real-time or post-run. Real time diagnostic directly uses the data produced in the algorithm to produce visual representation and thus doesn't need to store the data.   This section focuses on the definition and production of post-run diagnostics and the next section discusses real-time diagnostics. -->
+
+
+<!-- Visualisation has been widely used for exploring and understanding data. Presenting information in a graphical manner often allows people to see information they would otherwise not seen. -->
+
+
+Random search methods has a black-box mechanism and focuses solely on finding the global maximum point, while the projection pursuit problem we have aims at *exploring* the data and thus is interested in how the algorithm finds its maximum. This motivates us **to develop a visual diagnostic system for exploring the optimisation searching path**. 
+
+The necessity of developing such a system rather than simply producing different diagnostic plots is because the diagnostics of each variable requires a different function and these functions can't be scaled to other problems. Thus we want to establish a set of rules that can generalise the diagnostic of iterative algorithms. 
+
+The idea of generalising all the diagnostic plots under one framework is inspired by the concept of *grammar of graphic*[@wickham2010layered], which powers the primary graphical system in R, ggplot2 [@ggplot2]. In grammar of graphic, plots are not defined by its appearance (i.e. boxplot, histogram, scatter plot etc) but by "stacked layers". By this design, ggplot doesn't need to develop a gazillion of functions that each produces a different type of plot. Instead, it aesthetically maps the variables to the geometric objects and builds the plot through different layers.
+
+<!-- [Do I need this paragraph to details the grammar of graphic? xxx - don't think so; not particularly relevant - assume most people know it roughly] -->
+<!-- A layer includes 1) the data that powers the plot; 2) a geometric object that represents the visual shape of the data and 3) relevant statistical transformation that transform the information in the data to the information used to draw the geometric object. An important concept in the grammar of graphic is *aesthetic mapping*. Aesthetic mapping links the variable in a dataset to information needed to produce a geometric object. For example, we map one variable on the x-axis and another on the y-axis to create a scatterplot. Another example of creating a boxplot involves 1) mapping one variable on the x-axis and 2) transforming another variable to its five-point-summary and mapping the five-point-summary to the y-axis.  -->
+
+
+## Global object
+
+Ggplot requires a data frame that contains all the variables to plot and a *global object* is constructed as the data frame supplied to the visual diagnostic plots to better suit the characters of iterative optimisation algorithms. Given an optimisation algorithm, two primary variables of interest are the *decision variable* and the *value of the objective function*. *iterators* indexes the data collected and this order has time series feature that prescribes the progression of the optimisation. Given the complexity of the algorithm, there could be multiple iterators. There are other parameters that can't be classified as one of the three categories but are also of our interest. They are defined under the fourth category: *other parameter of interest*. This could include variables that are specific for one particular algorithm. Below we show an example of defining the global object of projection pursuit guided tour.
+
+An optimisation procedure can easily generate hundreds or thousands sampling points and the question becomes what are the points we want to explore... [the classification of searching or updating points goes here and people should be clear what part of the points goes to the plot - this is the data part not the plot part. ]
+
+
+
+In tour, all the points recorded in the global object can be divided into two broad categories: searching points and interpolating points
+
+- *Searching points* include the observations recorded in the searching algorithm to find the target basis. The points for target bases is also included in the searching points and there is one such point per `tries`.
+
+- *interpolating points* exist in the guided tour to produce continuous animated view from one target basis to another and it doesn't have `loop` value.
+
+<!-- The concept of grammar of graphic requires a dataset to be supplied in making a plot, thus a global object needs to be created in the iterative algorithm. The variables will be mapped into element of a graphic to explore and thus should contain all the parameters of interest. The next section shows how a global object is created in projection pursuit guided tour. -->
+
+
+<!-- In the current implementation of the `tourr` package, while the target basis generated by the projection pursuit can be accessed later via `save_history()`, interpolating bases and those randomly nearby bases generated in the optimisation are not stored. This creates difficulties for fully understand the behaviour of the optimisation and interpolation of tour in complex scenario **[need a rephrase this part].**  -->
 
 In the projection pursuit guided tour, the decision variable is the projection matrix, the value of objective function is the index value. There are three iterators: `id` is the smallest ordering unit that increases by one for each observation; `tries` is updated once a search-and-interpolate step is finished. A third iterator `loop` is used to record the number of repetition in the search step and starts over from one at the beginning of a new `tries`. Three other parameters of our interest includes `method`, `alpha` and `info`.  `method` identifies the name of the searching method used and we are interested in comparing the performance between different algorithms under direct search. The neighbourhood parameter `alpha` controls the size of the sampling space and we are interested to understand how the searching space shrinks as the algorithm progresses. `info` labels different stages in the searching process. A sketch of the global object for projection pursuit guided tour is presented in Figure \ref{fig:glb-obj}. 
 
@@ -249,7 +227,7 @@ knitr::include_graphics(path = here::here("figures/global_obj.png"))
 ```
 
 
-## Simulated data
+### Simulated data
 
 [I would add the maths here to describe the simulations. ppp]
 
@@ -295,13 +273,26 @@ holes_1d_geo %>% head(5)
 <!-- ``` -->
 
 
-# Diagnostics plots {#plots}
+
+
+## Visual diagnostics
 
 Below we will present several examples to diagnose different aspect of the tour optimisation. We will first provide examples on producing 1) static plots to explore the value of objective function and 2) animated plots to explore the searching space and then a more sophisticated example that combines both to understand how to optimise a noisy and complex index function. In both section, we will first provide a toy example that is easy to grasp and one or two examples that help us understand the optimisation algorithm and parameter choice better.
 
-## Explore the value of objective function {#static}
 
-### Toy example: exploring searching points 
+Follow the research question we raised earlier, the purpose of visual diagnostics is to understand 
+
+- Whether the procedure has provided an optimum and how the value of the objective function changes through the optimisation.  
+
+- How does the searching space look like, that is, geometrically, where are the points located in the space.
+
+Overall, the first question can be answered using a static plot with x-axis showing the progression of the optimisation and y-axis showing the value of the objective function. The second question can be addressed via visualising the rotating high dimensional space. This seems to be a hard task to see beyond 3D, but the fact is that we never really see all the six faces of a cube at one time. The way humans understand the dimension of a 3D object is either through rotating the physical 3D object or using shade and line type to annotate the 3D object in a paper or electronically. Thus we can do a similar rotation on the screen to precieve even higher dimension. [there is likely to be a learning curve - remember when learning geometry in school, it takes a while to get used to see 3D cube on a paper]. Thus animated visualisation is needed to preceive the optimisation path in the searching space.
+
+The plot design of visual diagnostics depends on the characteristics of the variables to plot. If the searching points are of interest [point geom is not good; need summarise. While updating points are more manageable -> point geom]. However, one must realise that with hundreds or thousands of searching points, exploring the sample space in animation could be slow and this is because of the time it takes to render hundreds point. [stratefy may help? - may need more work here.]
+
+### Explore the value of objective function {#static}
+
+#### Toy example: exploring searching points 
 
 The largest difficulties of exploring searching points is its unknown number of observations per `tries`. Mapping `id` on the x-axis will leave the `tries` with few observations a small space in the plot, while those `tries` with large number of search points (usually towards the end) occupy the vast majority of the plot space. This motivates to summarise the points in each `tries`. At each iteration, rather than knowing the index value of *every* points, we are more interested to know a general summary of all the points and more importantly, the point with the largest `index_val` since it prescribes the geodesic interpolation and future searches. 
 
@@ -319,7 +310,7 @@ dt %>% explore_trace_search()
 
 ```
 
-### A more complex example: adding an interruption in the interpolation stage
+#### A more complex example: adding an interruption in the interpolation stage
 
 ```{r interpolation}
 #points is always included in the newest version
@@ -356,7 +347,7 @@ p1 | p2
 #xxx up and down plot allows for displaying time series features while left and right display makes it easier for comparison? The same problem for plot of comparing between different searching methods
 ```
 
-### Another example: polishing the final projection basis
+#### Another example: polishing the final projection basis
 
 <!-- In the previous two sections, only the iterator and the index value are mapped onto the x and y aesthetics of the plot; while more aesthetics i.e. color, could be added to compare other parameters in the global object. -->
 
@@ -437,11 +428,22 @@ p2 <- bind_rows(holes_2d_better_max_tries, holes_2d_better_max_tries_polish) %>%
 <!-- ``` -->
 
 
-## Explore searching space {#animated}
+
+Exploring the value of an objective function is cna be a simple task. Because the iterator has a time series ordering feature, it goes onto the x-axis as convention. The value of hte objective function goes to the y-axis. Other parameter of interest can be represented using color to present more information. [This is the case for our purpose with method, but when the level goes higher or the parameter is quantitative, color may not be a good option. ]
+
+An option to explore of the searching space is to explore a reduced projection 2D space via principle component analysis or other dimensional reduction methods. In this way, the first two principle components will take up the x and y axis and all the other information will be mapped using other aesthetic attribution. [need to think further about how different type of variables can be shown]. While explore the reduced space is an initial attempt to understand the searching space, there are existing technology for rotating a higher dimensional space for visualisation. Geozoo is an option. It generates random points on the high dimensional space and we can overlay it with the points on the optimisation path to visualise the spread of it on the high-D sphere.
+
+
+
+
+
+
+
+### Explore searching space {#animated}
 
 The parameter to explore can be a vector or matrix instead of scalar, for example, the projection basis in tour. This imposes difficulties in visualisation since humans are bounded to perceive at most three dimensions in a plot. Thus, principal component analysis is used to reduce the dimension of projection bases and the first two principal components are mapped to the x and y axis of the plot. Additional variable of interest could be mapped to the color aesthetics for exploration. 
 
-### A toy example: understand different stage of search_geodesic
+#### A toy example: understand different stage of search_geodesic
 
 *Example: understand search_geodesic* [feel like this example is merely explaining search geodesic algorithm, so maybe introduce the animated plot here? xxx] `search_geodesic` is a two-stage ascending algorithm with four different stages in the search and a PCA plot useful to understand how the algorithm progresses and the relative position of each basis in the PCA projected 2D space. Starting from the start basis, a directional search is conducted in a narrow neighbourhood on five random directions. The best one is picked and a line search is then run on the geodesic direction to find the target basis. The starting and target bases are then interpolated. In the next iteration, the target basis becomes the current basis and then procedures continues. 
 
@@ -453,7 +455,7 @@ holes_1d_geo %>% explore_proj_pca(col = info) +
 #xxx the info level need to be reorder to show the start and directional search points better.
 ```
 
-### A more complex example: Choosing the initial value for polishing parameter
+#### A more complex example: Choosing the initial value for polishing parameter
 
 
 *Example: initial value for polishing alpha* `search_polish` is a brutal-force algorithm that evaluate 1000 points in the neighbourhood at each loop. Setting an appropriate initial value for polish_alpha would avoid wasting search on large vector space that are not likely to produce higher index value. The default initial value for polishing step is 0.5 and we are interested in whether this is an appropriate initial value to use after `search_geodesic`. The problem is a 1D projection of the small dataset using `search_geodesic` and followed by `search_polish`. The top-left panel of Figure \ref{polish-alpha} displays all the projection bases on the first two principal components, colored by the `polish_alpha`. We can observe that rather than concentrating on the ending basis from `search_geodesic` as what polishing step is designed, `search_polish` searches a much larger vector space, which is unnecessary. Thus a customised smaller initial value for `polish_alpha` would be ideal. One way to do this is to initialised `polish_alpha` as the projection distance between the last two target bases. The top-right panel of Figure \ref{polish-alpha} shows a more desirable concentrated searching space near the ending basis. Both specifications of initial value allow the searches to reach the same ending index values. 
@@ -484,7 +486,7 @@ p4 <- bind_rows(holes_1d_geo, holes_1d_geo_polish) %>%
 <!--   theme(legend.position = "bottom") -->
 <!-- ``` -->
 
-## A comprehensive example of diagnosing a noisy index function
+### A comprehensive example of diagnosing a noisy index function
 
 *Example: Noisy index function* The interpolation path of holes index, as seen in Figure \ref{interruption}, is smooth, while this may not be the case for more complicated index functions. `kol_cdf` index, an index function based on Kolmogorov test, compares the difference between a projection matrix and a randomly generated normal distribution based on cumulated distribution function (CDF). Several diagnostic visualisations below show the characteristic of this index function. 
 
@@ -518,9 +520,10 @@ kol_cdf_1d_2var_better_random %>%
 
 
 
-# Vis package
+# Implementation: Ferrn pacakge
 
-Everything is coded up in a package.
+Everything is coded up in a package. Package structure
 
+# Conclusion
 
 \clearpage
