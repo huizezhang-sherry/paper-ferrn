@@ -299,13 +299,9 @@ interesting projections one could possibly observe.
 Projection pursuit is usually used in conjunction with a tour method
 called \emph{guided tour}. Tour explores the multivariate data
 \emph{interactively} via playing a series of projections, that form a
-\emph{tour path}, like movie frames in real time. Starting from a
-randomly generated projection basis, projection pursuit searches for a
-target basis with higher index value and guided tour interpolates
-geodesically between the initial basis and the target basis. This series
-of bases forms a tour path and the projection of the data on these bases
-is played in real time. This search-and-interpolate process is repeated
-until no basis can be found with higher index value. Modified from
+\emph{tour path} and guided tour uses the path that is geodesically the
+shortest. Details of the mathematical construction of a tour path can be
+found in \citet{buja2005computational}. Modified from
 \citet{buja2005computational}, Figure \ref{tour-path} vividly depicts
 the tour path in guided tour. Guided tour, along with other types of
 tour, has been implemented in the \emph{tourr} package in R, available
@@ -327,6 +323,22 @@ pursuit}\label{optimisation-in-projection-pursuit}}
 
 {[}thinking if the following three should be presented as algorithms or
 plain description is fine. xxx{]}
+
+Now we formulate the problem in mathmetical notation. Projection pursuit
+finds the projection basis
+\(A^J = [\mathbf{a}_1, \cdots, \mathbf{a}_d]\), where \(\mathbf{a}_i\)
+is a \(p \times 1\) vector, satisfying the following optimisation
+problem:
+
+\begin{align}
+I &= \arg \max_{A \in \mathcal{A}^{p \times d}} f(A) \\
+s.t. & \mathcal{A} = \{ \forall \mathbf{a}_i \in A: \lVert \mathbf{a}_i \rVert = 1 \}
+\end{align}
+
+via an iterative search: \(\{A^1, A^2, \cdots \cdots A^J\}\). Guided
+tour interpolates geodesically between each basis found by projection
+pursuit \(A^j\) to form a tour path:
+\[\{A^1, A^1_1, A^1_2,\cdots, A^1_{k_1}, A^2, A^2_1, A^2_2, \cdots A^2_{k_2}, A^3, \cdots, A^{J-1}, A^{J-1}_{1}, \cdots A^{J-1}_{k_m} ,A^J  \}\]
 
 There are three existing methods for optimisating PPI function and we
 review them below. \citet{posse1995projection} used a stochastic direct
