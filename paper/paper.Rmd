@@ -19,6 +19,7 @@ abstract: Friedman & Tukey commented on their intial paper on projection pursuit
 bibliography: biblio.bib
 preamble: >
   \usepackage{amssymb}
+  \usepackage[ruled,vlined, linesnumbered]{algorithm2e}
 output: rticles::asa_article
 editor_options: 
   chunk_output_type: console
@@ -174,16 +175,84 @@ s.t. & \mathcal{A} = \{ \forall \mathbf{a}_i \in A: \lVert \mathbf{a}_i \rVert =
 
 via an iterative search: $\{A^1, A^2, \cdots \cdots A^J\}$. Guided tour interpolates geodesically between each basis found by projection pursuit $A^j$ to form a tour path: $$\{A^1, A^1_1, A^1_2,\cdots, A^1_{k_1}, A^2, A^2_1, A^2_2, \cdots A^2_{k_2}, A^3, \cdots, A^{J-1}, A^{J-1}_{1}, \cdots A^{J-1}_{k_m} ,A^J  \}$$
 
+There are three existing methods for optimisating PPI function and we review them below. 
 
+@posse1995projection used a stochastic direct search method, a random search algorithm to sample a candidate bases $A^{(j +1)}$ in the neighbourhood of the current basis $A^j$ defined by the radius of the p-dimensional sphere, $\alpha$. If the candidate basis has a higher index value than the current basis, it is outputed as the target basis $A^{j + 1}$ along with other metadata and the algorithm stops. If no basis is found to have higher index value after the maximum number of tries $i_{max}$, the algorithm stops with nothing outputted. $h$ is the halfing parameter meaning if $h > 30$, the nieghbourhood parameter $\alpha$ will be reduced by half in the next iteration of the random search. The algorithm for a random search is summarised in Algorithm \ref{random-search}.
 
-
-There are three existing methods for optimisating PPI function and we review them below. @posse1995projection used a stochastic direct search method,  a random search algorithm to sample new bases in the neighbourhood of the current basis defined by the radius of the p-dimensional sphere, $c$. The new basis is taken as the target basis if it has higher index value, or the sampling continues. If no basis is found to have higher index value after a certain number of tries $n$, the radius $c$ is halved. The algorithm stops when the maximum number of iteration is attained or the radius $c$ is less than a pre-determined number. 
+\newpage
+\begin{algorithm}[H]
+\SetAlgoLined
+  initialisation: $h = 0$, $loop = 1, i_{max}$\;
+  \While{$i < i_{max}$}{
+    $A^{(j + 1)} = A^{j} + \alpha A_{rand}$\;
+    $I^{(j + 1)} = f(A^{(j+1)})$\;
+    \eIf{$I^{(j+1)} > I^{j}$}{
+      $A^{j+1} = A^{(j+1)}$\;
+      }{
+      $h = h + 1$\;
+      }
+    $i = i + 1$\;
+  }
+  \caption{random search: my first algorithm}
+  \label{random-search}
+\end{algorithm}
 
 @cook1995grand explained the use of a gradient ascent optimisation with the assumption that the index function is continuous and differentiable. Since some indices could be non-differentiable, the computation of derivative is replaced by a pseudo-derivative of evaluating five randomly generated directions in a tiny nearby neighbourhood. Taking a step on the straight derivative direction has been modified to maximise the projection pursuit index along the geodesic direction. 
 
-Simulated annealing [@bertsimas1993simulated, @kirkpatrick1983optimization] is a non-derivative procedure based on a non-increasing cooling scheme $T(i)$. Given an initial $T_0$, the temperature at iteration $i$ is defined as $T(i) = \frac{T_0}{log(i + 1)}$. The simulated annealing algorithm works as follows. Given a neighbourhood parameter $\alpha$ and a randomly generated orthonormal basis $B$, a candidate basis is constructed as $B_j = (1- \alpha)B_i + \alpha B$ where $B_i$ is the current basis. If the index value of the candidate basis is larger than the one of the current basis, the candidate basis becomes the target basis. If it is smaller, the candidate is accepted with probability $A = \min \left(\exp(-\frac{I(B_j) - I(B_i)}{T(i)}), 1 \right)$ where $I(.)$ is the index function. 
+\newpage
+\begin{algorithm}[H]
+\SetAlgoLined
+  initialisation: $loop = 1, i_{max}$\;
+  \While{$i < i_{max}$}{
+    Generate $\{A^{(j_1)}: A^{(1)}, \cdots A^{(5)}\}$\;
+    Find $A^{(J_1)}$ where $J_1 \in j_1$ such that $\{A^{(J_1)}: \arg \max I(A^{(j_1)})\}$\;
+    Denote $F_a = A^j$ and $F_z = A^{(J_1)}$\;
+    Conduct singular value decomposition (SVD) for $F_a$ and $F_z$ such that $F_{a}^{T}F_z = V_a\Lambda V_z^T$\;
+    Compute $G_a = F_aV_a$, $G_z = F_zV_z$ and $\tau = \arccos(\Lambda)$\;
+    ...\;
+    Find $A^{(J_2)}$ satisfying $A^{J_2}$ on the interpolation path such that $\{A^{(J_2)}: \arg \max I(A^{(j_2)})\}$\;
+    Compute $I^{(J_2)} = f(A^{(J_2)})$, $p_{diff} = (I^{(J_2)} - I^{j})/I^j$\;
+      \If{$p_{diff} > 0.001$}{
+        $A^{j+1} = A^{(J_2)}$\;
+        $I^{j+1} = I^{(J_2)}$\;
+        \KwOut{$A^{j+1}$, $I^{j+1}$, $i$ and relevant metadata}
+      }
+    $i = i + 1$\;
+  }
+  \caption{searchgeodesic}
+  \label{search_geodesic}
+\end{algorithm}
 
 
+
+Simulated annealing [@bertsimas1993simulated, @kirkpatrick1983optimization] is a non-derivative procedure based on a non-increasing cooling scheme $T(i)$. Given an initial $T_0$, the temperature at iteration $i$ is defined as $T(i) = \frac{T_0}{log(i + 1)}$. The simulated annealing algorithm works as follows. Given a neighbourhood parameter $\alpha$ and a randomly generated orthonormal basis $A_{rand}$, a candidate basis is constructed as $A^{(j+1)} = (1 - \alpha)A^{j} + \alpha A_{rand}$. If the index value of the candidate basis is larger than the one of the current basis, the candidate basis becomes the target basis. If it is smaller, the candidate is accepted with probability $\text{prob} = \min\left\{\exp\left[\frac{I^j - I^{(j+1)}}{T(i)}\right],1\right\}$ where $I^j$ and $I^{(j+1)}$ are the index value of the current and candidate basis respectively. The algorithm can be summarised as in Algorithm \ref{simulated_annealing}.
+
+\newpage
+\begin{algorithm}[H]
+\SetAlgoLined
+  initialisation: $T_0$, $\alpha$\;
+  \While{$i < i_{max}$}{
+    $A^{(j+1)} = (1 - \alpha)A^{j} + \alpha A_{rand}$ s.t. $\lVert\mathbf{a_i} \rVert = 1$\;
+    $I^{(j+1)} = f(A^{(j+1)})$\;
+    $T(i) = \frac{T_0}{\log(i + 1)}$\;
+      \eIf{$I^{(j+1)} > I^{j}$}{
+        $A^{j+1} = A^{(j+1)}$\;
+        $I^{j+1} = I^{(j+1)}$\;
+        \KwOut{$A^{j+1}$, $I^{j+1}$,$i$ and relevant metadata}
+      }{
+        $\text{prob} = \min\left\{\exp\left[\frac{I^j - I^{(j+1)}}{T(i)}\right],1\right\}$\;
+        Draw $\text{rand} \sim \text{Unif(0, 1)}$\;
+        \If{$\text{prob} > \text{rand}$}{
+          \KwOut{$A^{j+1}$, $I^{j+1}$, $i$ and relevant metadata}
+        }
+      }
+    $i = i + 1$\;
+  }
+  \caption{simulated annealing}
+  \label{simulated_annealing}
+\end{algorithm}
+
+\newpage
 
 Below listed several features characterise the optimisation procedures needed in projection pursuit
 
