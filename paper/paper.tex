@@ -22,7 +22,7 @@
 \addtolength{\topmargin}{-.8in}%
 
 %% load any required packages here
-
+\usepackage{amssymb}
 
 \usepackage{color}
 \usepackage{fancyvrb}
@@ -264,19 +264,26 @@ to use the visual diagnostics to explore the optimisation in a specific
 problem: projection pursuit guided tour. Section \ref{tour} aims to
 provide non-experts with an overview of the problem content and the
 existing optimisation procedures used in projection pursuit guided tour.
-For those who are already familiar with the technique, this section can
-be skipped.
+For those who are already familiar with the techniques, feel free to
+skip this section.
 
 The optimisation problem we're interested in is in the context of
 projection pursuit. Coined by \citet{friedman1974projection}, projection
 pursuit is a method that detects the interesting structure
 (i.e.~clustering, outliers and skewness) of multivariate data via
-projecting it in lower dimensions. A Projection Pursuit Index (PPI) is a
-function of the projection matrix (a.k.a projection angle, projection
-basis) measuring the ``interestingness'' of data and we refer the value
-of PPI function as \emph{index value}. In the literature, the indices
-being proposed include Legendre index \citep{friedman1974projection},
-hermite index \citep{hall1989polynomial}, natural hermite index
+projecting it in lower dimensions. Let \(D_{n \times p}\) be a data
+matrix, an n-d projection can be seen as a linear transformation:
+\(T: \mathbb{R}^p \mapsto \mathbb{R}^d\) defined by \(P = D \cdot A\),
+where \(A_{p\times d}\) is the projection basis and \(P_{n \times p}\)
+is the projected data. Define
+\(f: \mathbb{R}^{p \times d} \mapsto \mathbb{R}\) be an index function
+that maps the projection basis \(A\) onto a scalar value \(I\), this
+function is commonly known as the projection pursuit index (PPI)
+function, or indice function, that can be used to measure the
+``interestingness'' of the projection. A number of indice functions have
+been proposed in the literature and this includes Legendre index
+\citep{friedman1974projection}, hermite index
+\citep{hall1989polynomial}, natural hermite index
 \citep{cook1993projection}, chi-square index
 \citep{posse1995projection}, LDA index \citep{lee2005projection} and PDA
 index \citep{lee2010projection}. {[}Any literature on holes index?
