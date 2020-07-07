@@ -165,33 +165,35 @@ knitr::include_graphics(path = here::here("figures/tour_path_increasing.png"))
 
 [thinking if the following three should be presented as algorithms or plain description is fine. xxx]
 
-Now we formulate the problem in mathmetical notation. Projection pursuit finds the projection basis $A^J = [\mathbf{a}_1, \cdots, \mathbf{a}_d]$, where $\mathbf{a}_i$ is a $p \times 1$ vector, satisfying the following optimisation problem: 
+Now we formulate the problem in mathmetical notation. Projection pursuit finds the projection basis $\mathbf{A}^J = [\mathbf{a}_1, \cdots, \mathbf{a}_d]$, where $\mathbf{a}_i$ is a $p \times 1$ vector, satisfying the following optimisation problem: 
 
 
 \begin{align}
-I &= \arg \max_{A \in \mathcal{A}^{p \times d}} f(A) \\
-s.t. & \mathcal{A} = \{ \forall \mathbf{a}_i \in A: \lVert \mathbf{a}_i \rVert = 1 \}
+I &= \arg \max_{\mathbf{A} \in \mathcal{A}^{p \times d}} f(\mathbf{A}) \\
+s.t. & \mathcal{A} = \{ \forall \mathbf{a}_i \in \mathbf{A}: \lVert \mathbf{a}_i \rVert = 1 \}
 \end{align}
 
-via an iterative search: $\{A^1, A^2, \cdots \cdots A^J\}$. Guided tour interpolates geodesically between each basis found by projection pursuit $A^j$ to form a tour path: $$\{A^1, A^1_1, A^1_2,\cdots, A^1_{k_1}, A^2, A^2_1, A^2_2, \cdots A^2_{k_2}, A^3, \cdots, A^{J-1}, A^{J-1}_{1}, \cdots A^{J-1}_{k_m} ,A^J  \}$$
+via an iterative search: $\{\mathbf{A}^j: \mathbf{A}^1, \mathbf{A}^2, \cdots \cdots \mathbf{A}^J\}$. Guided tour interpolates geodesically between each basis found by projection pursuit $A^j$ to form a tour path: $$\{\mathbf{A}^1, {}_{1}\mathbf{A}^1, {}_{2}\mathbf{A}^1,\cdots, {}_{k_1}\mathbf{A}^1, A^2, {}_{1}\mathbf{A}^2, {}_{2}\mathbf{A}^2, \cdots {}_{k_2}\mathbf{A}^2, \cdots, A^{J-1}, {}_{1}A^{J-1}, \cdots {}_{k_m}A^{J-1} ,A^J \}$$
+
+Here we use left subscript for the index of the interpolation at each iteration i,e, ${}_{2}\mathbf{A}^1$ means the second interpolation basis in the first iteration. The right subcript is reserved for the index of searching points in the optimisation algorithm.
 
 There are three existing methods for optimisating PPI function and we review them below. 
 
-@posse1995projection used a stochastic direct search method, a random search algorithm to sample a candidate bases $A^{(j +1)}$ in the neighbourhood of the current basis $A^j$ defined by the radius of the p-dimensional sphere, $\alpha$. If the candidate basis has a higher index value than the current basis, it is outputed as the target basis $A^{j + 1}$ along with other metadata and the algorithm stops. If no basis is found to have higher index value after the maximum number of tries $i_{max}$, the algorithm stops with nothing outputted. $h$ is the halfing parameter meaning if $h > 30$, the nieghbourhood parameter $\alpha$ will be reduced by half in the next iteration of the random search. The algorithm for a random search is summarised in Algorithm \ref{random-search}.
+@posse1995projection used a stochastic direct search method, a random search algorithm to sample a candidate bases $A^{j +1}_l$ in the neighbourhood of the current basis $A^j$ defined by the radius of the p-dimensional sphere, $\alpha$. If the candidate basis has a higher index value than the current basis, it is outputed as the target basis $A^{j + 1}$ along with other metadata and the algorithm stops. If no basis is found to have higher index value after the maximum number of tries $l_{\max}$, the algorithm stops with nothing outputted. $c$ is the halfing parameter meaning if $c > 30$, the nieghbourhood parameter $\alpha$ will be reduced by half in the next iteration of the random search. The algorithm for a random search is summarised in Algorithm \ref{random-search}.
 
 \newpage
 \begin{algorithm}[H]
 \SetAlgoLined
-  initialisation: $h = 0$, $loop = 1, i_{max}$\;
-  \While{$i < i_{max}$}{
-    $A^{(j + 1)} = A^{j} + \alpha A_{rand}$\;
-    $I^{(j + 1)} = f(A^{(j+1)})$\;
-    \eIf{$I^{(j+1)} > I^{j}$}{
-      $A^{j+1} = A^{(j+1)}$\;
+  initialisation: $c = 0$, $l = 1$ $l_{\max}$, $\mathbf{A}^{j}$\;
+  \While{$l < l_{\max}$}{
+    $\mathbf{A}^{j+1}_{l} = \mathbf{A}^{j} + \alpha \mathbf{A}_{rand}$\;
+    $I^{j+1}_l = f(\mathbf{A}^{j+1}_l)$\;
+    \eIf{$I^{j+1}_l > I^{j}$}{
+      $\mathbf{A}^{j+1} = \mathbf{A}^{j+1}_{l}$\;
       }{
-      $h = h + 1$\;
+      $c = c + 1$\;
       }
-    $i = i + 1$\;
+    $l = l + 1$\;
   }
   \caption{random search: my first algorithm}
   \label{random-search}
@@ -202,10 +204,10 @@ There are three existing methods for optimisating PPI function and we review the
 \newpage
 \begin{algorithm}[H]
 \SetAlgoLined
-  initialisation: $loop = 1, i_{max}$\;
-  \While{$i < i_{max}$}{
+  initialisation: $l_{\max}$, $\alpha$, $l_{\max}$,$\mathbf{A}^j$\;
+  \While{$l < l_{\max}$}{
     Generate $\{A^{(j_1)}: A^{(1)}, \cdots A^{(5)}\}$\;
-    Find $A^{(J_1)}$ where $J_1 \in j_1$ such that $\{A^{(J_1)}: \arg \max I(A^{(j_1)})\}$\;
+    Find $A^{J_1}_l$ where $J_1 \in j_1$ such that $\{A^{(J_1)}: \arg \max I(A^{(j_1)})\}$\;
     Denote $F_a = A^j$ and $F_z = A^{(J_1)}$\;
     Conduct singular value decomposition (SVD) for $F_a$ and $F_z$ such that $F_{a}^{T}F_z = V_a\Lambda V_z^T$\;
     Compute $G_a = F_aV_a$, $G_z = F_zV_z$ and $\tau = \arccos(\Lambda)$\;
@@ -219,34 +221,34 @@ There are three existing methods for optimisating PPI function and we review the
       }
     $i = i + 1$\;
   }
-  \caption{searchgeodesic}
+  \caption{searchgeodesic: this part has problem!}
   \label{search_geodesic}
 \end{algorithm}
 
 
 
-Simulated annealing [@bertsimas1993simulated, @kirkpatrick1983optimization] is a non-derivative procedure based on a non-increasing cooling scheme $T(i)$. Given an initial $T_0$, the temperature at iteration $i$ is defined as $T(i) = \frac{T_0}{log(i + 1)}$. The simulated annealing algorithm works as follows. Given a neighbourhood parameter $\alpha$ and a randomly generated orthonormal basis $A_{rand}$, a candidate basis is constructed as $A^{(j+1)} = (1 - \alpha)A^{j} + \alpha A_{rand}$. If the index value of the candidate basis is larger than the one of the current basis, the candidate basis becomes the target basis. If it is smaller, the candidate is accepted with probability $\text{prob} = \min\left\{\exp\left[\frac{I^j - I^{(j+1)}}{T(i)}\right],1\right\}$ where $I^j$ and $I^{(j+1)}$ are the index value of the current and candidate basis respectively. The algorithm can be summarised as in Algorithm \ref{simulated_annealing}.
+Simulated annealing [@bertsimas1993simulated, @kirkpatrick1983optimization] is a non-derivative procedure based on a non-increasing cooling scheme $T(l)$. Given an initial $T_0$, the temperature at iteration $l$ is defined as $T(l) = \frac{T_0}{log(l + 1)}$. The simulated annealing algorithm works as follows. Given a neighbourhood parameter $\alpha$ and a randomly generated orthonormal basis $A_{rand}$, a candidate basis is constructed as $A^{j+1}_l = (1 - \alpha)A^{j} + \alpha A_{rand}$. If the index value of the candidate basis is larger than the one of the current basis, the candidate basis becomes the target basis. If it is smaller, the candidate is accepted with probability $\text{prob} = \\min\left\{\exp\left[\frac{I^j - I^{j+1}_l}{T(l)}\right],1\right\}$ where $I^j$ and $I^{j+1}_l$ are the index value of the current and candidate basis respectively. The algorithm can be summarised as in Algorithm \ref{simulated_annealing}.
 
 \newpage
 \begin{algorithm}[H]
 \SetAlgoLined
-  initialisation: $T_0$, $\alpha$\;
-  \While{$i < i_{max}$}{
-    $A^{(j+1)} = (1 - \alpha)A^{j} + \alpha A_{rand}$ s.t. $\lVert\mathbf{a_i} \rVert = 1$\;
-    $I^{(j+1)} = f(A^{(j+1)})$\;
-    $T(i) = \frac{T_0}{\log(i + 1)}$\;
-      \eIf{$I^{(j+1)} > I^{j}$}{
-        $A^{j+1} = A^{(j+1)}$\;
-        $I^{j+1} = I^{(j+1)}$\;
-        \KwOut{$A^{j+1}$, $I^{j+1}$,$i$ and relevant metadata}
+  initialisation: $T_0$, $\alpha$, $l_{\max}$,$\mathbf{A}^j$\;
+  \While{$l < l_{\max}$}{
+    $\mathbf{A}^{j+1}_{l} = (1 - \alpha)\mathbf{A}^{j} + \alpha \mathbf{A}_{rand}$ s.t. $\lVert\mathbf{a_i} \rVert = 1$\;
+    $I^{j+1}_l = f(\mathbf{A}^{j+1}_{l})$\;
+    $T(l) = \frac{T_0}{\log(l + 1)}$\;
+      \eIf{$I^{j+1}_l > I^{j}$}{
+        $\mathbf{A}^{j+1} = \mathbf{A}^{j+1}_{l}$\;
+        $I^{j+1} = I^{j+1}_l$\;
+        \KwOut{$\mathbf{A}^{j+1}$, $I^{j+1}$,$l$ and relevant metadata}
       }{
-        $\text{prob} = \min\left\{\exp\left[\frac{I^j - I^{(j+1)}}{T(i)}\right],1\right\}$\;
+        $\text{prob} = \min\left\{\exp\left[\frac{I^j - I^{j+1}_l}{T(l)}\right],1\right\}$\;
         Draw $\text{rand} \sim \text{Unif(0, 1)}$\;
         \If{$\text{prob} > \text{rand}$}{
-          \KwOut{$A^{j+1}$, $I^{j+1}$, $i$ and relevant metadata}
+          \KwOut{$\mathbf{A}^{j+1}$, $I^{j+1}$, $l$ and relevant metadata}
         }
       }
-    $i = i + 1$\;
+    $l = l + 1$\;
   }
   \caption{simulated annealing}
   \label{simulated_annealing}
@@ -288,21 +290,24 @@ The idea of generalising all the diagnostic plots under one framework is inspire
 
 Ggplot requires a data frame that contains all the variables to plot and a *global object* is constructed as the data frame supplied to the visual diagnostic plots to better suit the characters of iterative optimisation algorithms. Given an optimisation algorithm, two primary variables of interest are the *decision variable* and the *value of the objective function*. To align with the notation used previously for projection pursuit, we denote the decision variable to be $\mathbf{A}$, which are matrices in projection pursuit algorithms and value of the objective function to be $I$, the index function. 
 
-*Iterators* indexes the data collected and it has a time series feature that prescribes the progression of the optimisation. Given the complexity of the algorithm, there could be multiple iterators. The simpliest iterator: *index per observation*, is a unique identifier for each observation in the data. For each level of iteration, we design two indices: *index per iteration* is fixed for each observations in one iteration and has an increment of one once a new iteration starts. *index within iteration* has an increment of one for each observation in an iteartion and starts over from one once a new iteration starts. Depend on the number of iteration level ($L$), the total number of iterators will differ and can be calculated as $1 + 2L$. In projection pursuit optimisation algorithms, there is only one level of iteartion and hence exists three iterators: $t_1$, $t_2$ and $t_3$. A sketch of the design of iterators is provided in Figure \ref{iterators}.
- 
- 
-There could exist other parameters that are also of our interest but can't be classified as one of the three categories. They are defined under the fourth category: *other parameter of interest: $O$*. This could include variables that are specific for one particular algorithm. Below we show an example of defining the global object of projection pursuit guided tour.
-
-Now we formulate the idea of global object in terms of mathmetical notation. Superscript $j$ is used to denote the number of iteration. Candidate basis are denoted using subscript on the right and interpolation basis are denoted using subscript on the left. The output basis doesn't have subscript. For example, $\mathbf{A}^1_{2}$ means the second candidate basis in the first iteration and ${}_{2}\mathbf{A}^1$ means the second interpolation basis that forms the tour path from the current basis $\mathbf{A}^0$ to the target basis $\mathbf{A}^1$. In the next iteration (iteration 2), $\mathbf{A}^1$ becomes the current basis, projection pursuit searches through $\mathbf{A}^2_{1}, \mathbf{A}^2_{2}, \cdots, \mathbf{A}^2_{l_2}$ to find the target basis $\mathbf{A}^2$ and the tour path from $\mathbf{A}^1$ to $\mathbf{A}^2$ is constructed using the interpolation bases ${}_{1}\mathbf{A}^2, {}_{2}\mathbf{A}^2, \cdots, {}_{k_2}\mathbf{A}^2$. Below we arrange all the bases in a format that each coloumn represents an iteration in Equation \ref{eq:matrixA}. 
-
-When aggregated with information of index value and other interesting parameter, it is easier to write the basis as a column vector with its natual ordering as in Equation \ref{eq:vectorA}. Hence the full data structure can be written as in Equation \ref{eq:data-structure}
-
-
+*Iterators* indexes the data collected and has a time series feature that prescribes the its natural ordering. Given the complexity of the algorithm, there could be multiple iterators. The simpliest iterator: *index per observation*, is a unique identifier for each observation in the data. For each level of iteration, we design two indices: *index per iteration* is fixed for each observations in one iteration and has an increment of one once a new iteration starts. *index within iteration* has an increment of one for each observation in an iteartion and starts over from one once a new iteration starts. A sketch of the difference between these three iterators is provided in Figure \ref{iterators}. Depend on the number of iteration level ($L$), the total number of iterators will differ and can be calculated as $1 + 2L$. 
 
 ```{r iterators, out.width = "100%", out.height = "25%", fig.cap = "\\label{iterators} A sketch of the design of iterators in iterative algorithms."}
 knitr::include_graphics(here::here("figures", "iterators.png"))
 ```
 
+In projection pursuit optimisation algorithms, there is one level of iteartion and hence exists three iterators: `id` indices each observation by a unique number; `tries` is the index per iteration iterator that gets updated once a search-and-interpolate step is finished; and `loop` is the index within iteration iterator and starts over from one at the beginning of a new `tries`.
+
+There could exist other parameters that are also of our interest but can't be classified as one of the three categories. They are defined under the fourth category: *other parameter of interest: $O$*. In projection pursuit, three other parameters of our interest includes `method`, `alpha` and `info`.  `method` identifies the name of the searching method used and we are interested in comparing the performance between different algorithms under direct search. The neighbourhood parameter `alpha` controls the size of the sampling space and we are interested to understand how the searching space shrinks as the algorithm progresses. `info` labels different stages in the searching process. A sketch of the global object for projection pursuit guided tour is presented in Figure \ref{fig:glb-obj}. 
+
+
+```{r glb-obj, out.width= "100%", out.height="20%", fig.cap="\\label{glb-obj}The global object in projection pursuit guided tour."}
+knitr::include_graphics(path = here::here("figures/global_obj.png"))
+```
+
+## Notation
+
+Now we formulate the idea of global object using mathmetical notation. Let $\mathbf{A}^0$ denotes the starting basis. Superscript $j$ is used to denote the number of iteration (index per iteration). Candidate basis are denoted using subscript on the right and interpolation basis are denoted using subscript on the left.  For example, $\mathbf{A}^1_{2}$ means the second candidate basis in the first iteration and ${}_{2}\mathbf{A}^1$ means the second interpolation basis that forms the tour path from the current basis $\mathbf{A}^0$ to the target basis $\mathbf{A}^1$. In iteration two, $\mathbf{A}^1$ becomes the current basis and projection pursuit searches through $\mathbf{A}^2_{1}, \mathbf{A}^2_{2}, \cdots, \mathbf{A}^2_{l_2}$ to find the target basis $\mathbf{A}^2$. The tour path from $\mathbf{A}^1$ to $\mathbf{A}^2$ is constructed using the interpolation bases ${}_{1}\mathbf{A}^2, {}_{2}\mathbf{A}^2, \cdots, {}_{k_2}\mathbf{A}^2$. All the bases together can be arranged in a format that each coloumn represents an iteration as in Equation \ref{eq:matrixA}.
 
 \begin{equation}
 \left[
@@ -339,6 +344,9 @@ knitr::include_graphics(here::here("figures", "iterators.png"))
 \label{eq:matrixA}
 \end{equation}
 
+When aggregated with information of index value and other interesting parameter, it is easier to write the basis as a column vector as in Equation \ref{eq:vectorA} and the full data structure is presneted in Equation \ref{eq:data-structure}.
+
+
 
 \begin{equation}
 \begin{bsmallmatrix}
@@ -349,7 +357,7 @@ knitr::include_graphics(here::here("figures", "iterators.png"))
 
 \begin{equation}
 \left[
-\begin{array}{cccccccc}
+\begin{array}{c|c|ccc|ccc}
 \mathbf{A} & I & j & l & n & o_1 & \cdots &o_p\\
 \hline
 \mathbf{A}^0 & I^0 & 0 & / & 1 & / & \cdots & /\\
@@ -373,28 +381,22 @@ knitr::include_graphics(here::here("figures", "iterators.png"))
 where $n* = (J-2) + \sum_{h = 1}^H l_h + \sum_{m = 1}^M k_m + 1$ and $n^{**} = (J-1) + \sum_{h = 1}^H l_h + \sum_{m = 1}^M k_m + 1$ 
 
 
-An optimisation procedure can easily generate hundreds or thousands sampling points and the question becomes what are the points we want to explore... [the classification of searching or updating points goes here and people should be clear what part of the points goes to the plot - this is the data part not the plot part. ]
+<!-- An optimisation procedure can easily generate hundreds or thousands sampling points and the question becomes what are the points we want to explore... [the classification of searching or updating points goes here and people should be clear what part of the points goes to the plot - this is the data part not the plot part. ] -->
 
-In tour, all the points recorded in the global object can be divided into two broad categories: searching points and interpolating points
+<!-- In tour, all the points recorded in the global object can be divided into two broad categories: searching points and interpolating points -->
 
-- *Searching points* include the observations recorded in the searching algorithm to find the target basis. The points for target bases is also included in the searching points and there is one such point per `tries`.
+<!-- - *Searching points* include the observations recorded in the searching algorithm to find the target basis. The points for target bases is also included in the searching points and there is one such point per `tries`. -->
 
-- *interpolating points* exist in the guided tour to produce continuous animated view from one target basis to another and it doesn't have `loop` value.
+<!-- - *interpolating points* exist in the guided tour to produce continuous animated view from one target basis to another and it doesn't have `loop` value. -->
 
 <!-- The concept of grammar of graphic requires a dataset to be supplied in making a plot, thus a global object needs to be created in the iterative algorithm. The variables will be mapped into element of a graphic to explore and thus should contain all the parameters of interest. The next section shows how a global object is created in projection pursuit guided tour. -->
 
 
 <!-- In the current implementation of the `tourr` package, while the target basis generated by the projection pursuit can be accessed later via `save_history()`, interpolating bases and those randomly nearby bases generated in the optimisation are not stored. This creates difficulties for fully understand the behaviour of the optimisation and interpolation of tour in complex scenario **[need a rephrase this part].**  -->
 
-In the projection pursuit guided tour, the decision variable is the projection matrix, the value of objective function is the index value. There are three iterators: `id` is the smallest ordering unit that increases by one for each observation; `tries` is updated once a search-and-interpolate step is finished. A third iterator `loop` is used to record the number of repetition in the search step and starts over from one at the beginning of a new `tries`. Three other parameters of our interest includes `method`, `alpha` and `info`.  `method` identifies the name of the searching method used and we are interested in comparing the performance between different algorithms under direct search. The neighbourhood parameter `alpha` controls the size of the sampling space and we are interested to understand how the searching space shrinks as the algorithm progresses. `info` labels different stages in the searching process. A sketch of the global object for projection pursuit guided tour is presented in Figure \ref{fig:glb-obj}. 
 
 
-```{r glb-obj, out.width= "100%", out.height="20%", fig.cap="\\label{glb-obj}The global object in projection pursuit guided tour."}
-knitr::include_graphics(path = here::here("figures/global_obj.png"))
-```
-
-
-### Simulated data
+## Simulated data
 
 [I would add the maths here to describe the simulations. ppp]
 
