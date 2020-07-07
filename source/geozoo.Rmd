@@ -18,23 +18,35 @@ purrr::walk(.x = files, ~load(here::here(.x), env = globalenv()))
 ```
 
 
-```{r}
-vis <- function(data, color = NULL, ...){
+```{r echo = FALSE}
+vis <- function(data, color = NULL, edges = NULL, edges.col = NULL, ...){
   
   row <- data$basis[[1]] %>% nrow()
   col <- data$basis[[1]] %>% ncol()
   dim <- row * col
+  n_bg <- 1000
   
   path <- data %>% pull(basis) %>% purrr::flatten_dbl() %>% matrix(ncol = dim, byrow = TRUE)
   
-  a <- sphere.hollow(p = dim, n = 1000)
+  a <- sphere.hollow(p = dim, n = n_bg)
   a$points <- a$points %>% rbind(path)
   
   if(is.null(color)){
-    color <- c(rep("grey", 1000), rep("red", nrow(data) - 1), "green")
+    color <- c(rep("grey", 1000), rep("red", nrow(data)))
   }
   
-  print(a, col = color)
+  # if(is.null(edges)){
+  #   start <- n_bg + 1
+  #   end <- nrow(a$points)
+  #   edges <- matrix(c(start: (end -1), 
+  #                     (start + 1): end), ncol = 2)
+  # }
+  # 
+  # if(is.null(edges.col)){
+  #   edges.col <- "red"
+  # }
+  
+  print(a, col = color, edges = edges, edges.col = edges.col)
   
 }
 ```
@@ -46,50 +58,86 @@ vis <- function(data, color = NULL, ...){
 
 ```{r}
 # final basis 
-holes_1d_geo %>% filter(info == "interpolation") %>% tail(1) %>% pull(basis)
+holes_1d_geo %>% filter(info == "interpolation") %>% tail(1) %>% pull(basis) %>% .[[1]]
 # final basis after polish
-holes_1d_geo_polish %>% tail(1) %>% pull(basis)
+holes_1d_geo_polish %>% tail(1) %>% pull(basis) %>% .[[1]]
 
-
-
+# searching path and final basis
 dt <- holes_1d_geo %>% filter(info == "interpolation")
-color <-  c(rep("grey", 1000), rep("red", nrow(dt) - 1), "green")
-vis(dt, color = color)
+color <- hue_pal()(1)
+color_vec <-  c(rep("grey", 1000), rep(color, nrow(dt)))
+vis(dt, color = color_vec, edges.col = color)
 
-
+# searching path, final basis and polish
 interp <- holes_1d_geo %>% filter(info == "interpolation")
 polish <- holes_1d_geo_polish %>% filter(info == "loop_best")
 dt_bind <- bind_rows(interp,polish) 
-
-color <- c(rep("grey", 1000), rep("red", nrow(interp) - 1),"green", rep("blue", nrow(polish)))
-vis(dt_bind, color = color)
+color1 <-  hue_pal()(2)[1]
+color2 <-  hue_pal()(2)[2]
+color_vec <- c(rep("grey", 1000), rep(color1, nrow(interp)), rep(color2, nrow(polish)))
+edges.col <- c(rep(color1, nrow(interp)), rep(color2, nrow(polish)))
+vis(dt_bind, color = color_vec, edges.col = edges.col)
 
 ```
 
 2. Comparing two search better paths
 
 ```{r}
-# a small example 
-interp1 %>% tail(1) %>% pull(basis)
-interp2 %>% tail(1) %>% pull(basis)
-
 # different seeds lead to different variables found
 interp1 <- kol_cdf_1d_2var_better %>% filter(info == "interpolation")
 interp2 <- kol_cdf_1d_2var_better_2 %>% filter(info == "interpolation")
 dt_bind <- bind_rows(interp1, interp2)
 
+# a small example 
+interp1 %>% tail(1) %>% pull(basis) %>% .[[1]]
+interp2 %>% tail(1) %>% pull(basis) %>% .[[1]]
 
 color_hex <- RColorBrewer::brewer.pal(4, "Dark2")
-color <- c(rep("grey", 1000), 
-           rep(color_hex[[1]], nrow(interp1)-1), color_hex[[3]],
-           rep(color_hex[[2]], nrow(interp2)-1), color_hex[[3]])
+color_vec<- c(rep("grey", 1000), 
+           rep(color_hex[[1]], nrow(interp1)),
+           rep(color_hex[[2]], nrow(interp2)))
+edges <- matrix(
+  c((1000 + 1): (1000 + nrow(interp1)-1), (1000 + nrow(interp1) + 1): (1000 + nrow(dt_bind)-1), 
+    (1000 + 2): (1000 + nrow(interp1)), (1000 + nrow(interp1) + 2): (1000 + nrow(dt_bind))), 
+  ncol = 2
+)
+edges.col <- c(rep(color_hex[[1]], nrow(interp1)), 
+               rep(color_hex[[2]], nrow(interp2)))
 
-vis(dt_bind, color)
+vis(dt_bind, color_vec, edges = edges, edges.col = edges.col)
 ```
 
 ```{r}
-# better random finds global 
+# don't think adding the lines is particularly useful tho
+# explore the full parameter space 
+interp3 <- kol_cdf_1d_2var_better_random %>% filter(info == "interpolation")
+polish3 <- kol_cdf_1d_2var_better_random_polish %>% filter(info == "polish_best")
+n_interp3 <- nrow(interp3) + nrow(polish3)
 
+dt_bind <- bind_rows(interp3, polish3)
+
+color_hex <- RColorBrewer::brewer.pal(4, "Dark2")
+color_vec <- c(rep("grey", 1000), 
+           rep(color_hex[[3]], n_interp3)) 
+
+edges <- matrix(
+  c((1000 + 1): (1000 + nrow(dt_bind)-1),
+    
+    (1000 + 2): (1000 + nrow(dt_bind))),
+    
+  ncol = 2
+)
+
+edges.col <- c(rep(color_hex[[3]], n_interp3))
+
+vis(dt_bind, color_vec, edges = edges, edges.col = edges.col)
+```
+
+
+
+```{r}
+# combined all three together
+# better random finds global 
 # explore the full parameter space 
 interp1 <- kol_cdf_1d_2var_better %>% filter(info == "interpolation")
 interp2 <- kol_cdf_1d_2var_better_2 %>% filter(info == "interpolation")
@@ -99,18 +147,37 @@ polish1 <- kol_cdf_1d_2var_better_polish %>% filter(info == "polish_best")
 polish2 <- kol_cdf_1d_2var_better_2_polish %>% filter(info == "polish_best")
 polish3 <- kol_cdf_1d_2var_better_random_polish %>% filter(info == "polish_best")
 
+n_interp1 <- nrow(interp1) + nrow(polish1)
+n_interp2 <- nrow(interp2) + nrow(polish2)
+n_interp3 <- nrow(interp3) + nrow(polish3)
+
 dt_bind <- bind_rows(interp1, polish1, 
                      interp2, polish2,
                      interp3, polish3)
 
-color_hex <- RColorBrewer::brewer.pal(8, "Dark2")
-color <- c(rep("grey", 1000), 
-           rep(color_hex[[1]], nrow(interp1) + nrow(polish1)-1), "green",
-           rep(color_hex[[2]], nrow(interp2) + nrow(polish2)-1), "green",
-           rep(color_hex[[3]], nrow(interp3) + nrow(polish3)-1), "green"
-           ) 
+color_hex <- RColorBrewer::brewer.pal(4, "Dark2")
+color_vec <- c(rep("grey", 1000), 
+           rep(color_hex[[1]], n_interp1), 
+           rep(color_hex[[2]], n_interp2), 
+           rep(color_hex[[3]], n_interp3)) 
 
-vis(dt_bind, color)
+edges <- matrix(
+  c((1000 + 1): (1000 + n_interp1), 
+    (1000 + n_interp1 + 1): (1000 + n_interp1 + n_interp2-1), 
+    (1000 + n_interp1 + n_interp2 + 1): (1000 + nrow(dt_bind)-1),
+    
+    (1000 + 2): (1000 + n_interp1 + 1), 
+    (1000 + n_interp1 + 2): (1000 + n_interp1 + n_interp2), 
+    (1000 + n_interp1 + n_interp2 + 2): (1000 + nrow(dt_bind))),
+    
+  ncol = 2
+)
+
+edges.col <- c(rep(color_hex[[1]], n_interp1), 
+               rep(color_hex[[2]], n_interp2),
+               rep(color_hex[[3]], n_interp3))
+
+vis(dt_bind, color_vec, edges = edges, edges.col = edges.col)
 
 
 # explore the reduced 2D space via PCAs
@@ -121,13 +188,15 @@ interp3 <- kol_cdf_1d_2var_better_random
 pca <- bind_rows(interp1, interp2, interp3) %>% 
   mutate(algorithm = c(rep("better1", nrow(interp1)), 
                        rep("better2", nrow(interp2)), 
-                       rep("better_random", nrow(interp3)))) %>% 
+                       rep("better_random", nrow(interp3))),
+         algorithm = fct_relevel(algorithm, c("better1", "better2", "better_random"))) %>% 
   ferrn::compute_pca()
 
 pca$combined %>% 
   ggplot(aes(x = PC1, y = PC2, color = algorithm)) + 
   geom_point() + 
-  theme(aspect.ratio = 1)
+  scale_color_brewer(palette = "Dark2") + 
+  theme(aspect.ratio = 1) 
 
 interp3 %>% filter(tries > 40) %>% explore_trace_search()
 interp3 %>% explore_trace_search()
