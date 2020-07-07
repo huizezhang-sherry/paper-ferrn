@@ -678,16 +678,20 @@ p2 <- bind_rows(kol_cdf_1d_better, kol_cdf_1d_better_polish) %>% explore_trace_i
 The second example for `kol_cdf` index uses 1D projection on the larger dataset. Since there are two informative variables and the projection is 1D, there are two local maximum  when the projection matrix at $[0, 1, 0, 0, 0, 0]$ and $[0, 0, 1 ,0, 0, 0]$. As in Figure \ref{1d-2var-different-seeds}, different local maximum can be found using `search_better` with different seeds while `search_better_random` can always find the global maximum, as in Figure \ref{1d-2var-better-random}, although at a high cost of number of points evaluated. 
 
 ```{r 1d-2var-different-seeds,  fig.asp=0.5, fig.cap="\\label{1d-2var-different-seeds}The trace plot search better in a 1D projection problem with two informative variables using different seeds (without polishing). Since there are two informative variables, setting different value for seed will lead search better to find either of the local maximum."}
-p5 <- kol_cdf_1d_2var_better %>% explore_trace_interp() + ggtitle("search_better, seed 123456")
-p6 <- kol_cdf_1d_2var_better_2 %>% explore_trace_interp() +  ggtitle("search_better, seed 12345")
+color <- RColorBrewer::brewer.pal(3, "Dark2")
+p5 <- kol_cdf_1d_2var_better %>% explore_trace_interp(col = 0) + 
+  scale_color_manual(values = color[2]) + ggtitle("search_better, seed 123456")
+p6 <- kol_cdf_1d_2var_better_2 %>% explore_trace_interp(col = 0) + 
+  scale_color_manual(values = color[1]) + ggtitle("search_better, seed 12345")
 
 (p5 | p6) & theme(legend.position = "none") & ylim(0, 0.25)
 ```
 
 ```{r 1d-2var-better-random, fig.asp=0.5, fig.cap = "\\label{1d-2var-better-random}Using search better random for the problem above will result in finding the global maximum but much larger number of iteration is needed."}
 kol_cdf_1d_2var_better_random %>% 
-  explore_trace_interp() + 
+  explore_trace_interp(col = 0) + 
   ylim(0, 0.25) + 
+  scale_color_manual(values = color[3]) + 
   theme(legend.position = "none") + 
   ggtitle("search_better_random")
 ```
