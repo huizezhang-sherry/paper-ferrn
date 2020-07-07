@@ -18,7 +18,7 @@ keywords:
 abstract: Friedman & Tukey commented on their intial paper on projection pursuit in 1974 that "the  technique  use  for  maximising  the  projection index strongly influences both the statistical and the computational aspects of the procedure." While many projection pursuit indices have been proposed in the literature, few concerns the optimisation procedure. In this paper, we developed a system of diagnostics aiming to visually learn how the optimisation procedures find its way towards the optimum. This diagnostic system can be applied to more general to help practitioner to unveil the black-box in randomised iteartive (optimisation) algorithms. An R package, ferrn, has been created to implement this diagnostic system.
 bibliography: biblio.bib
 preamble: >
-  \usepackage{amssymb}
+  \usepackage{amssymb, amsmath, mathtools}
   \usepackage[ruled,vlined, linesnumbered]{algorithm2e}
 output: rticles::asa_article
 editor_options: 
@@ -286,11 +286,94 @@ The idea of generalising all the diagnostic plots under one framework is inspire
 
 ## Global object
 
-Ggplot requires a data frame that contains all the variables to plot and a *global object* is constructed as the data frame supplied to the visual diagnostic plots to better suit the characters of iterative optimisation algorithms. Given an optimisation algorithm, two primary variables of interest are the *decision variable* and the *value of the objective function*. *iterators* indexes the data collected and this order has time series feature that prescribes the progression of the optimisation. Given the complexity of the algorithm, there could be multiple iterators. There are other parameters that can't be classified as one of the three categories but are also of our interest. They are defined under the fourth category: *other parameter of interest*. This could include variables that are specific for one particular algorithm. Below we show an example of defining the global object of projection pursuit guided tour.
+Ggplot requires a data frame that contains all the variables to plot and a *global object* is constructed as the data frame supplied to the visual diagnostic plots to better suit the characters of iterative optimisation algorithms. Given an optimisation algorithm, two primary variables of interest are the *decision variable* and the *value of the objective function*. To align with the notation used previously for projection pursuit, we denote the decision variable to be $\mathbf{A}$, which are matrices in projection pursuit algorithms and value of the objective function to be $I$, the index function. 
+
+*Iterators* indexes the data collected and it has a time series feature that prescribes the progression of the optimisation. Given the complexity of the algorithm, there could be multiple iterators. The simpliest iterator: *index per observation*, is a unique identifier for each observation in the data. For each level of iteration, we design two indices: *index per iteration* is fixed for each observations in one iteration and has an increment of one once a new iteration starts. *index within iteration* has an increment of one for each observation in an iteartion and starts over from one once a new iteration starts. Depend on the number of iteration level ($L$), the total number of iterators will differ and can be calculated as $1 + 2L$. In projection pursuit optimisation algorithms, there is only one level of iteartion and hence exists three iterators: $t_1$, $t_2$ and $t_3$. A sketch of the design of iterators is provided in Figure \ref{iterators}.
+ 
+ 
+There could exist other parameters that are also of our interest but can't be classified as one of the three categories. They are defined under the fourth category: *other parameter of interest: $O$*. This could include variables that are specific for one particular algorithm. Below we show an example of defining the global object of projection pursuit guided tour.
+
+Now we formulate the idea of global object in terms of mathmetical notation. Superscript $j$ is used to denote the number of iteration. Candidate basis are denoted using subscript on the right and interpolation basis are denoted using subscript on the left. The output basis doesn't have subscript. For example, $\mathbf{A}^1_{2}$ means the second candidate basis in the first iteration and ${}_{2}\mathbf{A}^1$ means the second interpolation basis that forms the tour path from the current basis $\mathbf{A}^0$ to the target basis $\mathbf{A}^1$. In the next iteration (iteration 2), $\mathbf{A}^1$ becomes the current basis, projection pursuit searches through $\mathbf{A}^2_{1}, \mathbf{A}^2_{2}, \cdots, \mathbf{A}^2_{l_2}$ to find the target basis $\mathbf{A}^2$ and the tour path from $\mathbf{A}^1$ to $\mathbf{A}^2$ is constructed using the interpolation bases ${}_{1}\mathbf{A}^2, {}_{2}\mathbf{A}^2, \cdots, {}_{k_2}\mathbf{A}^2$. Below we arrange all the bases in a format that each coloumn represents an iteration in Equation \ref{eq:matrixA}. 
+
+When aggregated with information of index value and other interesting parameter, it is easier to write the basis as a column vector with its natual ordering as in Equation \ref{eq:vectorA}. Hence the full data structure can be written as in Equation \ref{eq:data-structure}
+
+
+
+```{r iterators, out.width = "100%", out.height = "25%", fig.cap = "\\label{iterators} A sketch of the design of iterators in iterative algorithms."}
+knitr::include_graphics(here::here("figures", "iterators.png"))
+```
+
+
+\begin{equation}
+\left[
+\begin{array}{ccccccc}
+/ & \mathbf{A}^1_1 & \mathbf{A}^2_1 & \cdots & \mathbf{A}^j_1 &\cdots & \mathbf{A}^J_1 \\
+/ & \mathbf{A}^1_2 & \mathbf{A}^2_2 & \cdots & \mathbf{A}^j_2 &\cdots & \mathbf{A}^J_2 \\
+\vdots & \vdots & \vdots & \ddots & \vdots & \ddots &\vdots   \\
+/ &\mathbf{A}^1_{l_1} & \mathbf{A}^2_{l_2} & \cdots & \mathbf{A}^j_{l_h} &\cdots & \mathbf{A}^J_{L_H}\\
+\hline
+\mathbf{A}^0 & \mathbf{A}^1 & \mathbf{A}^2 & \cdots & \mathbf{A}^j  &\cdots & \mathbf{A}^J\\
+\hline
+/ &{}_{1}\mathbf{A}^1 & {}_{1}\mathbf{A}^2 & \cdots &{}_{1}\mathbf{A}^j & \cdots & /\\
+/ &{}_{2}\mathbf{A}^1 & {}_{2}\mathbf{A}^2 & \cdots &{}_{2}\mathbf{A}^j & \cdots & / \\
+\vdots & \vdots & \vdots & \ddots & \vdots  & \ddots & / \\
+/ &{}_{k_1}\mathbf{A}^1 & {}_{k_2}\mathbf{A}^2 & \cdots &{}_{k_m}\mathbf{A}^j & \cdots & / \\
+\end{array}
+\right]
+= 
+\left[
+\begin{array}{c}
+\vphantom{A^J_1}\text{candidate basis} \\
+\vphantom{A^J_2}\text{candidate basis} \\
+\vphantom{\vdots} \vdots \\
+\vphantom{A^J_{L_H}}\text{candidate basis} \\
+\hline
+\vphantom{A^J}\text{output basis} \\
+\hline
+\vphantom{\text{NULL}}\text{interpolation basis} \\
+\vphantom{\text{NULL}}\text{interpolation basis} \\
+\vphantom{\text{NULL}}\vdots \\
+\vphantom{\text{NULL}}\text{interpolation basis} \\
+\end{array}
+\right]
+\label{eq:matrixA}
+\end{equation}
+
+
+\begin{equation}
+\begin{bsmallmatrix}
+\mathbf{A}^0 &\mathbf{A}^1_1 &  \mathbf{A}^1_{2} & \cdots& \mathbf{A}^1_{l_1} & \mathbf{A}^1 & {}_{1}\mathbf{A}^1& {}_{2}\mathbf{A}^1 &\cdots& {}_{k_1}\mathbf{A}^1 & \mathbf{A}^2_1 & \mathbf{A}^2_{2} & \cdots& \mathbf{A}^2_{l_2} & \mathbf{A}^2 & {}_{1}\mathbf{A}^2 &{}_{2}\mathbf{A}^2 &\cdots& {}_{k_2}\mathbf{A}^2 & \cdots & \mathbf{A}^J
+\end{bsmallmatrix} 
+\label{eq:vectorA}
+\end{equation}
+
+\begin{equation}
+\left[
+\begin{array}{cccccccc}
+\mathbf{A} & I & j & l & n & o_1 & \cdots &o_p\\
+\hline
+\mathbf{A}^0 & I^0 & 0 & / & 1 & / & \cdots & /\\
+\mathbf{A}^1_1 & I^1_1 & 1 & 1 & 2 & o_{1, 1} & \cdots & o_{p, 1}\\
+\mathbf{A}^1_2 & I^1_2 & 1 & 2 & 3 & o_{1, 2} & \cdots & o_{p, 2}\\
+\vdots &\vdots & \vdots &\vdots &\vdots &\vdots &\cdots &\vdots\\
+\mathbf{A}^1_{l_1} & I^1_{l_1} & 1 & l_1 & l_1+1 & \vdots & \cdots & \vdots\\
+\mathbf{A}^1 & I^1 & 1 & l_1 + 1 & l_1 + 2 & \vdots & \cdots & \vdots\\
+{}_{1}\mathbf{A}^1 &{}_{1}I^1 & 1 & / & l_1 + 3 &\vdots & \cdots & \vdots\\
+{}_{2}\mathbf{A}^1 &{}_{2}I^1 & 1 & / & l_1 + 4&\vdots & \cdots & \vdots\\
+\vdots &\vdots &\vdots  &\vdots &\vdots &\vdots &\cdots &\vdots \\
+{}_{k_1}\mathbf{A}^1 &{}_{k_1}I^1 & 1 & / & l_1 +k_1 + 2 &\vdots & \cdots & \vdots\\
+\vdots &\vdots &\vdots  &\vdots &\vdots &\vdots &\cdots &\vdots \\
+\mathbf{A}^J_{l_H} & I^J_{l_H} & J & l_H & n^{*} &o_{1, n-1}& \cdots & o_{p, n-1}\\
+\mathbf{A}^J & I^J & J & l_H + 1 & n^{**} & o_{1, n}& \cdots & o_{p, n}\\
+\end{array}
+\right]
+\label{eq:data-structure}
+\end{equation}
+
+where $n* = (J-2) + \sum_{h = 1}^H l_h + \sum_{m = 1}^M k_m + 1$ and $n^{**} = (J-1) + \sum_{h = 1}^H l_h + \sum_{m = 1}^M k_m + 1$ 
+
 
 An optimisation procedure can easily generate hundreds or thousands sampling points and the question becomes what are the points we want to explore... [the classification of searching or updating points goes here and people should be clear what part of the points goes to the plot - this is the data part not the plot part. ]
-
-
 
 In tour, all the points recorded in the global object can be divided into two broad categories: searching points and interpolating points
 
