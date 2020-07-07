@@ -271,15 +271,16 @@ The optimisation problem we're interested in is in the context of
 projection pursuit. Coined by \citet{friedman1974projection}, projection
 pursuit is a method that detects the interesting structure
 (i.e.~clustering, outliers and skewness) of multivariate data via
-projecting it in lower dimensions. Let \(D_{n \times p}\) be a data
-matrix, an n-d projection can be seen as a linear transformation:
-\(T: \mathbb{R}^p \mapsto \mathbb{R}^d\) defined by \(P = D \cdot A\),
-where \(A_{p\times d}\) is the projection basis and \(P_{n \times p}\)
-is the projected data. Define
+projecting it in lower dimensions. Let \(\mathbf{D}_{n \times p}\) be a
+data matrix, an n-d projection can be seen as a linear transformation:
+\(T: \mathbb{R}^p \mapsto \mathbb{R}^d\) defined by
+\(\mathbf{P} = \mathbf{D} \cdot \mathbf{A}\), where
+\(\mathbf{P}_{n \times p}\) is the projected data and
+\(\mathbf{A}_{p\times d}\) is the projection basis Define
 \(f: \mathbb{R}^{p \times d} \mapsto \mathbb{R}\) be an index function
-that maps the projection basis \(A\) onto a scalar value \(I\), this
-function is commonly known as the projection pursuit index (PPI)
-function, or indice function, that can be used to measure the
+that maps the projection basis \(\mathbf{A}\) onto a scalar value \(I\),
+this function is commonly known as the projection pursuit index (PPI)
+function, or index function and can be used to measure the
 ``interestingness'' of the projection. A number of indice functions have
 been proposed in the literature and this includes Legendre index
 \citep{friedman1974projection}, hermite index
@@ -331,7 +332,7 @@ finds the projection basis
 optimisation problem:
 
 \begin{align}
-I &= \arg \max_{\mathbf{A} \in \mathcal{A}^{p \times d}} f(\mathbf{A}) \\
+&\arg \max_{\mathbf{A} \in \mathcal{A}} f(\mathbf{A}) \\
 s.t. & \mathcal{A} = \{ \forall \mathbf{a}_i \in \mathbf{A}: \lVert \mathbf{a}_i \rVert = 1 \}
 \end{align}
 
@@ -339,28 +340,31 @@ via an iterative search:
 \(\{\mathbf{A}^j: \mathbf{A}^1, \mathbf{A}^2, \cdots \cdots \mathbf{A}^J\}\).
 Guided tour interpolates geodesically between each basis found by
 projection pursuit \(A^j\) to form a tour path:
-\[\{\mathbf{A}^1, {}_{1}\mathbf{A}^1, {}_{2}\mathbf{A}^1,\cdots, {}_{k_1}\mathbf{A}^1, A^2, {}_{1}\mathbf{A}^2, {}_{2}\mathbf{A}^2, \cdots {}_{k_2}\mathbf{A}^2, \cdots, A^{J-1}, {}_{1}A^{J-1}, \cdots {}_{k_m}A^{J-1} ,A^J \}\]
+\[\{ \mathbf{A}^0, \mathbf{A}^1, {}_{1}\mathbf{A}^1, {}_{2}\mathbf{A}^1,\cdots, {}_{k_1}\mathbf{A}^1, A^2, {}_{1}\mathbf{A}^2, {}_{2}\mathbf{A}^2, \cdots {}_{k_2}\mathbf{A}^2, \cdots, \mathbf{A}^{J-1}, {}_{1}\mathbf{A}^{J-1}, \cdots {}_{k_m}\mathbf{A}^{J-1} ,\mathbf{A}^J \}\]
 
-Here we use left subscript for the index of the interpolation at each
-iteration i,e, \({}_{2}\mathbf{A}^1\) means the second interpolation
-basis in the first iteration. The right subcript is reserved for the
-index of searching points in the optimisation algorithm.
+Where \(\mathbf{A}^0\) is the starting basis and \(\mathbf{A}^J\) is the
+final basis that has the largest index value in the searching space.
+Here we use left subscript to denote the index of the interpolation
+bases in each iteration i.e. \({}_{2}\mathbf{A}^1\) means the second
+interpolation basis in the first iteration. The right subcript is
+reserved for the index of searching points in the optimisation
+algorithm.
 
 There are three existing methods for optimisating PPI function and we
-review them below.
-
-\citet{posse1995projection} used a stochastic direct search method, a
-random search algorithm to sample a candidate bases \(A^{j +1}_l\) in
-the neighbourhood of the current basis \(A^j\) defined by the radius of
-the p-dimensional sphere, \(\alpha\). If the candidate basis has a
-higher index value than the current basis, it is outputed as the target
-basis \(A^{j + 1}\) along with other metadata and the algorithm stops.
-If no basis is found to have higher index value after the maximum number
-of tries \(l_{\max}\), the algorithm stops with nothing outputted. \(c\)
-is the halfing parameter meaning if \(c > 30\), the nieghbourhood
-parameter \(\alpha\) will be reduced by half in the next iteration of
-the random search. The algorithm for a random search is summarised in
-Algorithm \ref{random-search}.
+review them below. \citet{posse1995projection} proposed a stochastic
+direct search method, a random search algorithm. Given a current basis
+\(\mathbf{A}^{j}\), a candidate basis \(\mathbf{A}^{j +1}_l\) is sampled
+in the neighbourhood defined by the radius of the p-dimensional sphere,
+\(\alpha\) of the current basis \(\mathbf{A}^{j}\) by
+\[\mathbf{A}^{j+1}_{l} = \mathbf{A}^{j} + \alpha \mathbf{A}_{rand}\]. If
+the candidate basis has a higher index value than the current basis, it
+is outputed as the target basis \(\mathbf{A}^{j + 1}\) along with other
+metadata and the current iteration stops. If no basis is found to have
+higher index value after the maximum number of tries \(l_{\max}\), the
+algorithm stops with nothing outputted. \(c\) is the halfing parameter
+and when \(c > 30\), the nieghbourhood parameter \(\alpha\) in the next
+iteration will be reduced by half. The algorithm for a random search is
+summarised in Algorithm \ref{random-search}.
 
 \newpage
 \begin{algorithm}[H]
@@ -425,7 +429,7 @@ basis is constructed as
 of the candidate basis is larger than the one of the current basis, the
 candidate basis becomes the target basis. If it is smaller, the
 candidate is accepted with probability
-\(\text{prob} = \\min\left\{\exp\left[\frac{I^j - I^{j+1}_l}{T(l)}\right],1\right\}\)
+\(\text{prob} = \min\left\{\exp\left[\frac{I^j - I^{j+1}_l}{T(l)}\right],1\right\}\)
 where \(I^j\) and \(I^{j+1}_l\) are the index value of the current and
 candidate basis respectively. The algorithm can be summarised as in
 Algorithm \ref{simulated_annealing}.
@@ -631,28 +635,29 @@ Equation \ref{eq:data-structure}.
 \begin{equation}
 \left[
 \begin{array}{c|c|ccc|ccc}
-\mathbf{A} & I & j & l & n & o_1 & \cdots &o_p\\
-\hline
 \mathbf{A}^0 & I^0 & 0 & / & 1 & / & \cdots & /\\
+\hline
 \mathbf{A}^1_1 & I^1_1 & 1 & 1 & 2 & o_{1, 1} & \cdots & o_{p, 1}\\
 \mathbf{A}^1_2 & I^1_2 & 1 & 2 & 3 & o_{1, 2} & \cdots & o_{p, 2}\\
 \vdots &\vdots & \vdots &\vdots &\vdots &\vdots &\cdots &\vdots\\
 \mathbf{A}^1_{l_1} & I^1_{l_1} & 1 & l_1 & l_1+1 & \vdots & \cdots & \vdots\\
+\hline 
 \mathbf{A}^1 & I^1 & 1 & l_1 + 1 & l_1 + 2 & \vdots & \cdots & \vdots\\
+\hline
 {}_{1}\mathbf{A}^1 &{}_{1}I^1 & 1 & / & l_1 + 3 &\vdots & \cdots & \vdots\\
 {}_{2}\mathbf{A}^1 &{}_{2}I^1 & 1 & / & l_1 + 4&\vdots & \cdots & \vdots\\
 \vdots &\vdots &\vdots  &\vdots &\vdots &\vdots &\cdots &\vdots \\
 {}_{k_1}\mathbf{A}^1 &{}_{k_1}I^1 & 1 & / & l_1 +k_1 + 2 &\vdots & \cdots & \vdots\\
+\hline
 \vdots &\vdots &\vdots  &\vdots &\vdots &\vdots &\cdots &\vdots \\
-\mathbf{A}^J_{l_H} & I^J_{l_H} & J & l_H & n^{*} &o_{1, n-1}& \cdots & o_{p, n-1}\\
-\mathbf{A}^J & I^J & J & l_H + 1 & n^{**} & o_{1, n}& \cdots & o_{p, n}\\
+\mathbf{A}^J_{l_H} & I^J_{l_H} & J & l_H & n-1 &o_{1, n-1}& \cdots & o_{p, n-1}\\
+\mathbf{A}^J & I^J & J & l_H + 1 & n & o_{1, n}& \cdots & o_{p, n}\\
 \end{array}
 \right]
 \label{eq:data-structure}
 \end{equation}
 
-where \(n* = (J-2) + \sum_{h = 1}^H l_h + \sum_{m = 1}^M k_m + 1\) and
-\(n^{**} = (J-1) + \sum_{h = 1}^H l_h + \sum_{m = 1}^M k_m + 1\)
+where \(n = (J-1) + \sum_{h = 1}^H l_h + \sum_{m = 1}^M k_m + 1\)
 
 \hypertarget{simulated-data}{%
 \subsection{Simulated data}\label{simulated-data}}
@@ -706,25 +711,32 @@ doesn't show all the columns. xxx{]}
 \hypertarget{visual-diagnostics}{%
 \subsection{Visual diagnostics}\label{visual-diagnostics}}
 
-Below we will present several examples to diagnose different aspect of
-the tour optimisation. We will first provide examples on producing 1)
-static plots to explore the value of objective function and 2) animated
-plots to explore the searching space and then a more sophisticated
-example that combines both to understand how to optimise a noisy and
-complex index function. In both section, we will first provide a toy
-example that is easy to grasp and one or two examples that help us
-understand the optimisation algorithm and parameter choice better.
+Below we will present several examples to diagnose different aspects of
+the projection pursuit optimisation. We will present:
 
-Follow the research question we raised earlier, the purpose of visual
-diagnostics is to understand
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi})}
+\item
+  static plots to explore the index value,
+\item
+  animated plots to explore the projection basis and,
+\item
+  a self-contained example to understand how to optimise a noisy and
+  complex index function.
+\end{enumerate}
+
+In the first two sections, we will first provide a toy example that is
+easy to grasp and then more examples that can help us to understand the
+algorithm and parameter choice. Remeber the research question we raised
+earlier, the purpose of visual diagnostics is to understand:
 
 \begin{itemize}
 \item
-  Whether the procedure has provided an optimum and how the value of the
-  objective function changes through the optimisation.
+  Whether the algorithm has successfully found the maximum and how the
+  index value changes throughout the algorithm?
 \item
   How does the searching space look like, that is, geometrically, where
-  are the points located in the space.
+  are the projection bases located in the space?
 \end{itemize}
 
 Overall, the first question can be answered using a static plot with
