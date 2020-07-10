@@ -271,10 +271,10 @@ The optimisation problem we're interested in is in the context of
 projection pursuit. Coined by \citet{friedman1974projection}, projection
 pursuit is a method that detects the interesting structure
 (i.e.~clustering, outliers and skewness) of multivariate data via
-projecting it in lower dimensions. Let \(\mathbf{D}_{n \times p}\) be a
+projecting it in lower dimensions. Let \(\mathbf{X}_{n \times p}\) be a
 data matrix, an n-d projection can be seen as a linear transformation:
 \(T: \mathbb{R}^p \mapsto \mathbb{R}^d\) defined by
-\(\mathbf{P} = \mathbf{D} \cdot \mathbf{A}\), where
+\(\mathbf{P} = \mathbf{X} \cdot \mathbf{A}\), where
 \(\mathbf{P}_{n \times p}\) is the projected data and
 \(\mathbf{A}_{p\times d}\) is the projection basis Define
 \(f: \mathbb{R}^{p \times d} \mapsto \mathbb{R}\) be an index function
@@ -333,13 +333,13 @@ optimisation problem:
 
 \begin{align}
 &\arg \max_{\mathbf{A} \in \mathcal{A}} f(\mathbf{A}) \\
-s.t. & \mathcal{A} = \{ \forall \mathbf{a}_i \in \mathbf{A}: \lVert \mathbf{a}_i \rVert = 1 \}
+s.t. & \mathcal{A} = \{ \forall \mathbf{a}_i, \mathbf{a}_j \in \mathbf{A}: \lVert \mathbf{a}_i \rVert = 1 \text{ and } \mathbf{a}_i \mathbf{a}_j = 0 \}
 \end{align}
 
 via an iterative search:
-\(\{\mathbf{A}^j: \mathbf{A}^1, \mathbf{A}^2, \cdots \cdots \mathbf{A}^J\}\).
-Guided tour interpolates geodesically between each basis found by
-projection pursuit \(A^j\) to form a tour path:
+\(\{\mathbf{A}^1, \mathbf{A}^2, \cdots \cdots \mathbf{A}^J\}\). Guided
+tour interpolates geodesically between each basis found by projection
+pursuit \(A^j\) to form a tour path:
 \[\{ \mathbf{A}^0, \mathbf{A}^1, {}_{1}\mathbf{A}^1, {}_{2}\mathbf{A}^1,\cdots, {}_{k_1}\mathbf{A}^1, A^2, {}_{1}\mathbf{A}^2, {}_{2}\mathbf{A}^2, \cdots {}_{k_2}\mathbf{A}^2, \cdots, \mathbf{A}^{J-1}, {}_{1}\mathbf{A}^{J-1}, \cdots {}_{k_m}\mathbf{A}^{J-1} ,\mathbf{A}^J \}\]
 
 Where \(\mathbf{A}^0\) is the starting basis and \(\mathbf{A}^J\) is the
@@ -568,6 +568,17 @@ for projection pursuit guided tour is presented in Figure
 \subsection{Notation}\label{notation}}
 
 Now we formulate the idea of global object using mathmetical notation.
+Let \[\mathbf{A}_{j,l,k}\] denotes the projection matrix in iteration
+\(j\). If it is searching basis produced in the optimisation, then it
+has a subscript \(l\). If it is an interpolation basis, it has a \(k\)
+subscript. For example \(\mathbf{A}_{1,2,/}\) means the second searching
+basis in the first iteration, \(\mathbf{A}_{1, /, 2}\) means the second
+interpolation basis that on the tour path from the current basis
+\(\mathbf{A}^0\) to the target basis found in iteration 1:
+\(\mathbf{A}^1\). The target basis found in each iteration,
+\(\mathbf{A}_{j, l_j, /}\) can also be simplified using a superscript as
+\(\mathbf{A}^j\).
+
 Let \(\mathbf{A}^0\) denotes the starting basis. Superscript \(j\) is
 used to denote the number of iteration (index per iteration). Candidate
 basis are denoted using subscript on the right and interpolation basis
@@ -588,17 +599,19 @@ represents an iteration as in Equation \ref{eq:matrixA}.
 \begin{equation}
 \left[
 \begin{array}{ccccccc}
-/ & \mathbf{A}^1_1 & \mathbf{A}^2_1 & \cdots & \mathbf{A}^j_1 &\cdots & \mathbf{A}^J_1 \\
-/ & \mathbf{A}^1_2 & \mathbf{A}^2_2 & \cdots & \mathbf{A}^j_2 &\cdots & \mathbf{A}^J_2 \\
+\ast & \mathbf{A}_{1,1,\ast} & \mathbf{A}_{2, l_1 +1,\ast} & \cdots & \mathbf{A}_{j,\sum_{i = 1}^{j-1}l_i +1,\ast} &\cdots & \mathbf{A}_{J,\sum_{i = 1}^{J-1}l_i +1 ,\ast} \\
+\ast & \mathbf{A}_{1,2,\ast} & \mathbf{A}_{2,l_1 +2,\ast} & \cdots & \mathbf{A}_{j,\sum_{i = 1}^{j-1}l_i +2,\ast} &\cdots & \mathbf{A}_{J,\sum_{i = 1}^{J-1}l_i +2, \ast} \\
 \vdots & \vdots & \vdots & \ddots & \vdots & \ddots &\vdots   \\
-/ &\mathbf{A}^1_{l_1} & \mathbf{A}^2_{l_2} & \cdots & \mathbf{A}^j_{l_h} &\cdots & \mathbf{A}^J_{L_H}\\
+\ast & \mathbf{A}_{1, l, \ast} & \mathbf{A}_{2, l_1 + l, \ast} & \cdots & \mathbf{A}_{j, \sum_{i = 1}^{j-1}l_i + l, \ast}  &\cdots & \mathbf{A}_{J, \sum_{i = 1}^{J-1}l_i + l, \ast}\\
+\vdots & \vdots & \vdots & \ddots & \vdots & \ddots &\vdots   \\
+\mathbf{A}_{0,\ast,\ast} & \mathbf{A}_{1, l_1, \ast} & \mathbf{A}_{2, l_1 + l_2, \ast} & \cdots & \mathbf{A}_{j, \sum_{i = 1}^{j}l_i , \ast}  &\cdots & \mathbf{A}_{J, \sum_{i = 1}^{J} l_i, \ast}\\
 \hline
-\mathbf{A}^0 & \mathbf{A}^1 & \mathbf{A}^2 & \cdots & \mathbf{A}^j  &\cdots & \mathbf{A}^J\\
-\hline
-/ &{}_{1}\mathbf{A}^1 & {}_{1}\mathbf{A}^2 & \cdots &{}_{1}\mathbf{A}^j & \cdots & /\\
-/ &{}_{2}\mathbf{A}^1 & {}_{2}\mathbf{A}^2 & \cdots &{}_{2}\mathbf{A}^j & \cdots & / \\
-\vdots & \vdots & \vdots & \ddots & \vdots  & \ddots & / \\
-/ &{}_{k_1}\mathbf{A}^1 & {}_{k_2}\mathbf{A}^2 & \cdots &{}_{k_m}\mathbf{A}^j & \cdots & / \\
+\ast &\mathbf{A}_{1, \ast, 1} & \mathbf{A}_{2, \ast, k_1 + 1} & \cdots &\mathbf{A}_{j, \ast,\sum_{i = 1}^{j-1}k_i + 1} & \cdots & \ast\\
+\ast &\mathbf{A}_{1, \ast, 2} & \mathbf{A}_{2, \ast, k_1 + 2} & \cdots &\mathbf{A}_{j, \ast, \sum_{i = 1}^{j-1}k_i +2} & \cdots & \ast \\
+\vdots & \vdots & \vdots & \ddots & \vdots  & \ddots & \vdots \\
+\ast &\mathbf{A}_{1, \ast, k} & \mathbf{A}_{2, \ast, k_1 + k} & \cdots &\mathbf{A}_{j, \ast, \sum_{i = 1}^{j-1}k_i +k} & \cdots & \ast \\
+\vdots & \vdots & \vdots & \ddots & \vdots  & \ddots & \vdots \\
+\ast &\mathbf{A}_{1, \ast, k_1} & \mathbf{A}_{2, \ast, k_1 + k_2} & \cdots &\mathbf{A}_{j, \ast,\sum_{i = 1}^{j}k_i} & \cdots & \ast \\
 \end{array}
 \right]
 = 
@@ -607,17 +620,19 @@ represents an iteration as in Equation \ref{eq:matrixA}.
 \vphantom{A^J_1}\text{candidate basis} \\
 \vphantom{A^J_2}\text{candidate basis} \\
 \vphantom{\vdots} \vdots \\
-\vphantom{A^J_{L_H}}\text{candidate basis} \\
-\hline
-\vphantom{A^J}\text{output basis} \\
+\vphantom{A^J_2}\text{candidate basis} \\
+\vphantom{\vdots} \vdots \\
+\vphantom{A^J}\text{current/target basis} \\
 \hline
 \vphantom{\text{NULL}}\text{interpolation basis} \\
 \vphantom{\text{NULL}}\text{interpolation basis} \\
 \vphantom{\text{NULL}}\vdots \\
 \vphantom{\text{NULL}}\text{interpolation basis} \\
+\vphantom{\vdots} \vdots \\
+\vphantom{\text{NULL}}\text{interpolation basis} \\
 \end{array}
 \right]
-\label{eq:matrixA}
+\label{matrixA}
 \end{equation}
 
 When aggregated with information of index value and other interesting
@@ -625,39 +640,56 @@ parameter, it is easier to write the basis as a column vector as in
 Equation \ref{eq:vectorA} and the full data structure is presneted in
 Equation \ref{eq:data-structure}.
 
+All the basis can also be denoted usign a single subscript by their
+natural ordering as
+\(\mathbf{A}_0, \mathbf{A}_1, \cdots, \mathbf{A}_n\).
+
 \begin{equation}
-\begin{bsmallmatrix}
-\mathbf{A}^0 &\mathbf{A}^1_1 &  \mathbf{A}^1_{2} & \cdots& \mathbf{A}^1_{l_1} & \mathbf{A}^1 & {}_{1}\mathbf{A}^1& {}_{2}\mathbf{A}^1 &\cdots& {}_{k_1}\mathbf{A}^1 & \mathbf{A}^2_1 & \mathbf{A}^2_{2} & \cdots& \mathbf{A}^2_{l_2} & \mathbf{A}^2 & {}_{1}\mathbf{A}^2 &{}_{2}\mathbf{A}^2 &\cdots& {}_{k_2}\mathbf{A}^2 & \cdots & \mathbf{A}^J
-\end{bsmallmatrix} 
+\begin{array}{cccccccc}
+\bigl[\mathbf{A}_{0, \ast, \ast} & 
+\mathbf{A}_{1, 1, \ast} & 
+\mathbf{A}_{1,2,\ast} & 
+\cdots & 
+\mathbf{A}_{1,l,\ast} & 
+\cdots & 
+\mathbf{A}_{1,l_1, \ast}   \\ 
+\mathbf{A}_{1, \ast, 1} & 
+\mathbf{A}_{1, \ast, 2} & 
+\cdots &
+\mathbf{A}_{1, \ast, k} &
+\cdots &
+\mathbf{A}_{1, \ast, k_1} &
+\cdots &
+\mathbf{A}_{J, l_J, \ast} \bigr]
+\end{array} 
 \label{eq:vectorA}
 \end{equation}
 
 \begin{equation}
 \left[
-\begin{array}{c|c|ccc|ccc}
-\mathbf{A}^0 & I^0 & 0 & / & 1 & / & \cdots & /\\
+\begin{array}{c|c|cccc|ccc}
+\mathbf{A} & I & j &  l  & k & n & S_{1}& \cdots & S_{p}\\
 \hline
-\mathbf{A}^1_1 & I^1_1 & 1 & 1 & 2 & o_{1, 1} & \cdots & o_{p, 1}\\
-\mathbf{A}^1_2 & I^1_2 & 1 & 2 & 3 & o_{1, 2} & \cdots & o_{p, 2}\\
-\vdots &\vdots & \vdots &\vdots &\vdots &\vdots &\cdots &\vdots\\
-\mathbf{A}^1_{l_1} & I^1_{l_1} & 1 & l_1 & l_1+1 & \vdots & \cdots & \vdots\\
-\hline 
-\mathbf{A}^1 & I^1 & 1 & l_1 + 1 & l_1 + 2 & \vdots & \cdots & \vdots\\
+\mathbf{A}_0 & I_0 & 0 & \ast & \ast & 1 & \ast & \cdots & \ast\\
 \hline
-{}_{1}\mathbf{A}^1 &{}_{1}I^1 & 1 & / & l_1 + 3 &\vdots & \cdots & \vdots\\
-{}_{2}\mathbf{A}^1 &{}_{2}I^1 & 1 & / & l_1 + 4&\vdots & \cdots & \vdots\\
-\vdots &\vdots &\vdots  &\vdots &\vdots &\vdots &\cdots &\vdots \\
-{}_{k_1}\mathbf{A}^1 &{}_{k_1}I^1 & 1 & / & l_1 +k_1 + 2 &\vdots & \cdots & \vdots\\
+\mathbf{A}_1 & I_1 & 1 & 1 & \ast& 2 & S_{1, 1} & \cdots & S_{p, 1}\\
+\mathbf{A}_2 & I_2 & 1 & 2 &\ast & 3 & S_{1, 2} & \cdots & S_{p, 2}\\
+\vdots &\vdots & \vdots &\vdots & \vdots &\vdots &\vdots &\cdots &\vdots\\
+\vdots & \vdots & 1 & l_1 & \ast & \vdots & \vdots & \cdots & \vdots\\
 \hline
-\vdots &\vdots &\vdots  &\vdots &\vdots &\vdots &\cdots &\vdots \\
-\mathbf{A}^J_{l_H} & I^J_{l_H} & J & l_H & n-1 &o_{1, n-1}& \cdots & o_{p, n-1}\\
-\mathbf{A}^J & I^J & J & l_H + 1 & n & o_{1, n}& \cdots & o_{p, n}\\
+\vdots & \vdots & 1 & \ast & 1& \vdots &\vdots & \cdots & \vdots\\
+\vdots &\vdots& 1 & \ast & 2& \vdots&\vdots & \cdots & \vdots\\
+\vdots &\vdots &\vdots  &\vdots & \vdots &\vdots &\vdots &\cdots &\vdots \\
+\vdots &\vdots & 1 & \ast & k_1&\vdots &\vdots & \cdots & \vdots\\
+\hline
+\vdots &\vdots &\vdots  &\vdots & \vdots &\vdots &\vdots &\cdots &\vdots \\
+\mathbf{A}_n & I_n & J &  l_J & \ast & n & S_{1, n}& \cdots & S_{p, n}\\
 \end{array}
 \right]
 \label{eq:data-structure}
 \end{equation}
 
-where \(n = (J-1) + \sum_{h = 1}^H l_h + \sum_{m = 1}^M k_m + 1\)
+where \(n = 1+ \sum_{i = 1}^J l_i + \sum_{i = 1}^{J-1} k_i\)
 
 \hypertarget{simulated-data}{%
 \subsection{Simulated data}\label{simulated-data}}
