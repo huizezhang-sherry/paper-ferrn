@@ -22,7 +22,7 @@
 \addtolength{\topmargin}{-.8in}%
 
 %% load any required packages here
-\usepackage{amssymb, amsmath, mathtools} \usepackage[ruled,vlined, linesnumbered]{algorithm2e}
+\usepackage{amssymb, amsmath, mathtools, bbm} \usepackage[ruled,vlined, linesnumbered]{algorithm2e}
 
 \usepackage{color}
 \usepackage{fancyvrb}
@@ -275,7 +275,7 @@ projecting it in lower dimensions. Let \(\mathbf{X}_{n \times p}\) be a
 data matrix, an n-d projection can be seen as a linear transformation:
 \(T: \mathbb{R}^p \mapsto \mathbb{R}^d\) defined by
 \(\mathbf{P} = \mathbf{X} \cdot \mathbf{A}\), where
-\(\mathbf{P}_{n \times p}\) is the projected data and
+\(\mathbf{P}_{n \times d}\) is the projected data and
 \(\mathbf{A}_{p\times d}\) is the projection basis Define
 \(f: \mathbb{R}^{p \times d} \mapsto \mathbb{R}\) be an index function
 that maps the projection basis \(\mathbf{A}\) onto a scalar value \(I\),
@@ -743,8 +743,8 @@ doesn't show all the columns. xxx{]}
 \hypertarget{visual-diagnostics}{%
 \subsection{Visual diagnostics}\label{visual-diagnostics}}
 
-Below we will present several examples to diagnose different aspects of
-the projection pursuit optimisation. We will present:
+Below we will present several examples of diagnosing different aspects
+of the projection pursuit optimisation. We will present:
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi})}
@@ -753,8 +753,7 @@ the projection pursuit optimisation. We will present:
 \item
   animated plots to explore the projection basis and,
 \item
-  a self-contained example to understand how to optimise a noisy and
-  complex index function.
+  a self-contained example to optimise a complex index function.
 \end{enumerate}
 
 In the first two sections, we will first provide a toy example that is
@@ -798,21 +797,27 @@ work here.{]}
 \hypertarget{static}{%
 \subsubsection{Explore the value of objective function}\label{static}}
 
-\hypertarget{toy-example-exploring-searching-points}{%
-\paragraph{Toy example: exploring searching
-points}\label{toy-example-exploring-searching-points}}
+It is a convention to map the time index of a time series on the x-axis
+and value to the y-axis. In our diagnostic plots, it is to map the
+iterator on the x-axis and index value to the y-axis. The next question
+is to ask, given four indices being defined in the global object, which
+one should be used? \emph{It depends on the }.
 
-The largest difficulties of exploring searching points is its unknown
-number of observations per \texttt{tries}. Mapping \texttt{id} on the
-x-axis will leave the \texttt{tries} with few observations a small space
-in the plot, while those \texttt{tries} with large number of search
-points (usually towards the end) occupy the vast majority of the plot
-space. This motivates to summarise the points in each \texttt{tries}. At
-each iteration, rather than knowing the index value of \emph{every}
-points, we are more interested to know a general summary of all the
-points and more importantly, the point with the largest
-\texttt{index\_val} since it prescribes the geodesic interpolation and
-future searches.
+As the searching goes towards the end, it is easy to have hundreds of
+candidate bases in each iteration with very close index value. When
+plotting, these iteration will occupy the vast majority of the plot
+space. This motivates to summarise the points in each iteration
+(\texttt{tries}). At each iteration, rather than knowing the index value
+of \emph{every} points, we are more interested to have a general summary
+of all the points and more importantly, the point with the largest
+\texttt{index\_val} since it prescribes the next geodesic interpolation
+and future searches.
+
+Using the notation we defined earlier, the plot can be defined as
+plotting \(j\) on the x-axis and the five point summary of the following
+groups on the y-axis:
+
+\[\mathbbm{1}(I_{j = j^*})\]
 
 Boxplot is a suitable candidate that provides five points summary of the
 data, however it has one drawback: it doesn't report the number of point
@@ -825,14 +830,18 @@ achieved via the \texttt{cutoff} argument. A line geometry is also added
 to link the points with the largest index value in each \texttt{tries}.
 This helps to visualise the improvement made by each \texttt{tries}.
 
-\emph{Example: exploring searching points} The larger dataset is used
-for 2D projection with \texttt{search\_better} and
-\texttt{max.tries\ =\ 500}. In Figure \ref{points}, the searching points
-with \texttt{id} and \texttt{tries} on the x-axis, colored by
-\texttt{tries}. Label at the bottom indicates the number of observations
-in each tries and facilitates the choice of cutoff to switch from point
-geometry to boxplot geometry (\texttt{cutoff\ =\ 15}). The line geometry
-suggests the largest improvement happens at \texttt{tries\ =\ 5}.
+\hypertarget{toy-example-exploring-searching-points}{%
+\paragraph{Toy example: exploring searching
+points}\label{toy-example-exploring-searching-points}}
+
+The larger dataset is used for 2D projection with
+\texttt{search\_better} and \texttt{max.tries\ =\ 500}. In Figure
+\ref{points}, the searching points with \texttt{id} and \texttt{tries}
+on the x-axis, colored by \texttt{tries}. Label at the bottom indicates
+the number of observations in each tries and facilitates the choice of
+cutoff to switch from point geometry to boxplot geometry
+(\texttt{cutoff\ =\ 15}). The line geometry suggests the largest
+improvement happens at \texttt{tries\ =\ 5}.
 
 \begin{figure}
 \centering
@@ -843,21 +852,28 @@ plot space to convey information from the plot while the right plot
 provides good summarisation of data and number of points in each tries.}
 \end{figure}
 
-\hypertarget{a-more-complex-example-adding-an-interruption-in-the-interpolation-stage}{%
-\paragraph{A more complex example: adding an interruption in the
-interpolation
-stage}\label{a-more-complex-example-adding-an-interruption-in-the-interpolation-stage}}
+\newpage
 
-\emph{Example: Interruption} This examples uses \texttt{search\_better}
-for a 2D projection on the larger dataset using the \texttt{holes}
-index. In the interpolation stage, continuous frames will be constructed
-to bridge the project on the current basis to the target basis. The
-target basis will become the current basis in the next iteration and the
-searching stage continues to find the next target basis. In the left
-panel of Figure \ref{interruption}, we observe that there are
-interpolating bases with higher index values than the target basis and
-these bases could be used to search for new basis in the next searching
-stage.
+The number of interpolation points is much managable than the searching
+points and always shows a pattern of gradual increase in the index
+value. Hence a line plot with interpolating order on the x-axis will be
+desirable. Using notation, the x-axis is a sequence
+\[x = \{1, 2, \cdots, k_1, \cdots, \sum_{i=1}^Jk_i\}\] and y-axis are
+the index values defined by \(y = I_{x}\).
+
+\hypertarget{a-more-complex-example-interruption}{%
+\paragraph{A more complex example:
+Interruption}\label{a-more-complex-example-interruption}}
+
+This examples uses \texttt{search\_better} for a 2D projection on the
+larger dataset using the \texttt{holes} index. In the interpolation
+stage, continuous frames will be constructed to bridge the project on
+the current basis to the target basis. The target basis will become the
+current basis in the next iteration and the searching stage continues to
+find the next target basis. In the left panel of Figure
+\ref{interruption}, we observe that there are interpolating bases with
+higher index values than the target basis and these bases could be used
+to search for new basis in the next searching stage.
 
 An interruption is then constructed to accept the interpolating bases up
 to the one with the largest index value and use that basis as the
@@ -961,38 +977,50 @@ Both attain the same final index value after the polishing while using a
 max.tries 25 is not sufficient to find the ture maximum.}
 \end{figure}
 
-Exploring the value of an objective function is cna be a simple task.
-Because the iterator has a time series ordering feature, it goes onto
-the x-axis as convention. The value of hte objective function goes to
-the y-axis. Other parameter of interest can be represented using color
-to present more information. {[}This is the case for our purpose with
-method, but when the level goes higher or the parameter is quantitative,
-color may not be a good option. {]}
-
-An option to explore of the searching space is to explore a reduced
-projection 2D space via principle component analysis or other
-dimensional reduction methods. In this way, the first two principle
-components will take up the x and y axis and all the other information
-will be mapped using other aesthetic attribution. {[}need to think
-further about how different type of variables can be shown{]}. While
-explore the reduced space is an initial attempt to understand the
-searching space, there are existing technology for rotating a higher
-dimensional space for visualisation. Geozoo is an option. It generates
-random points on the high dimensional space and we can overlay it with
-the points on the optimisation path to visualise the spread of it on the
-high-D sphere.
+\newpage
 
 \hypertarget{animated}{%
 \subsubsection{Explore searching space}\label{animated}}
 
-The parameter to explore can be a vector or matrix instead of scalar,
-for example, the projection basis in tour. This imposes difficulties in
-visualisation since humans are bounded to perceive at most three
-dimensions in a plot. Thus, principal component analysis is used to
-reduce the dimension of projection bases and the first two principal
-components are mapped to the x and y axis of the plot. Additional
-variable of interest could be mapped to the color aesthetics for
-exploration.
+In projection pursuit, the projection bases \(\mathbf{A}_{p \times d}\)
+are usually of dimension \(p \times d\) and hence can't be visualised in
+a 2D plot. An option to explore the searching space of these bases is to
+explore a reduced space via principal component analysis (PCA). We first
+flat each projection bases \(\mathbf{A}\) to a row vector and stack them
+by rows. This gives a matrix of dimension \(n\) by \((p*d)\). Centering
+and scaling are usually done before performing PCA and we denotes the
+pre-processed matrix as \(\tilde{\mathbf{A}}_{n \times (p \times d)}\).
+By definition, the principal components maximise the variance of the
+projection bases in the reduced space. Using lagrange multipler, this is
+equivalent to find the eigenvector of the variance-covariance matrix:
+\(\Sigma = \tilde{\mathbf{A}}^T\tilde{\mathbf{A}}\). Decomposing
+\(\tilde{\mathbf{A}}\) using singular value decomposition (SVD) gives
+\[\tilde{\mathbf{A}} = \mathbf{U} \mathbf{\lambda} \mathbf{V}\] and
+hence the variance-covariance matrix
+
+\[\Sigma = \tilde{\mathbf{A}}^T\tilde{\mathbf{A}} = (\mathbf{V}^T \mathbf{\lambda}^T \mathbf{U}^T) (\mathbf{U} \mathbf{\lambda} \mathbf{V}) = \mathbf{V}^T \mathbf{\lambda}^2 \mathbf{V}\]
+
+has eigenvector
+\(\mathbf{V} = [\mathbf{v}_1, \mathbf{v}_2, \cdots, \mathbf{v}_{p\times d}]\).
+The projection mapping to the x- and y-axis uses the first two principal
+components and hence
+\[\tilde{\mathbf{A}} \mathbf{v}_1 \text{ and } \tilde{\mathbf{A}} \mathbf{v}_2\]
+
+The resulting two vectors are of dimension \(n \times 1\), which is
+compatible with the dimension of the global object. THis means all the
+iterators and interesting other variables defined in the global object
+can be binded with the these two projections and can be mapped to other
+aesthetics (i.e.~color).
+
+In this way, the first two principle components will take up the x and y
+axis and all the other information will be mapped using other aesthetic
+attribution. {[}need to think further about how different type of
+variables can be shown{]}. While explore the reduced space is an initial
+attempt to understand the searching space, there are existing technology
+for rotating a higher dimensional space for visualisation. Geozoo is an
+option. It generates random points on the high dimensional space and we
+can overlay it with the points on the optimisation path to visualise the
+spread of it on the high-D sphere.
 
 \hypertarget{a-toy-example-understand-different-stage-of-search_geodesic}{%
 \paragraph{A toy example: understand different stage of
@@ -1055,28 +1083,49 @@ alpha will search near the ending basis. Both intialisations reach the
 same ending index values.}
 \end{figure}
 
+\newpage
+
 \hypertarget{a-comprehensive-example-of-diagnosing-a-noisy-index-function}{%
 \subsubsection{A comprehensive example of diagnosing a noisy index
 function}\label{a-comprehensive-example-of-diagnosing-a-noisy-index-function}}
 
-\emph{Example: Noisy index function} The interpolation path of holes
-index, as seen in Figure \ref{interruption}, is smooth, while this may
-not be the case for more complicated index functions. \texttt{kol\_cdf}
-index, an index function based on Kolmogorov test, compares the
-difference between a projection matrix and a randomly generated normal
-distribution based on cumulated distribution function (CDF). Several
-diagnostic visualisations below show the characteristic of this index
-function.
+The interpolation path of holes index, as seen in Figure
+\ref{interruption}, is smooth, while this may not be the case for more
+complicated index functions. \texttt{kol\_cdf} index, an 1D projection
+index function based on Kolmogorov test, compares the difference between
+the 1D projected data, \(\mathbf{P}_{n \times 1}\) and a randomly
+generated normal distribution, \(y_n\) based on the empirical cumulated
+distribution function (ECDF). Denotes the ECDF function as \(F(u)\) with
+subscript incidating the variable, the Kolmogorove statistics defined by
+
+\[\max \left[F_{\mathbf{P}}(u) - F_{y}(u)\right]\]
+
+can be seen as a function of the projection matrix
+\(\mathbf{A}_{p \times 1}\) and hence a valid index function.
+
+\hypertarget{explore-index-value}{%
+\paragraph{Explore index value}\label{explore-index-value}}
 
 Figure \ref{kol-cdf} compares the tracing plot of the interpolating
-points for \texttt{search\_geodesic} and \texttt{search\_better} on 1D
-projection for \texttt{kol\_cdf} index and the interpolation path shows
-a zig-zag pattern. Polishing step has done much more work to reach the
-final index value for \texttt{search\_geodesic} than
-\texttt{search\_better} and this indicates that noisy index's favour of
-a random search method than ascent method {[}the order of the examples
-needs to be rearranged since I haven't introduced polishing here.
-xxx{]}.
+points when using different optimisation algorithms:
+\texttt{search\_geodesic} and \texttt{search\_better}. One can observe
+that
+
+\begin{itemize}
+\tightlist
+\item
+  The index value of \texttt{kol\_cdf} index is much smaller than that
+  of holes index
+\item
+  The link of index values from interpolation bases are no longer smooth
+\item
+  Both algorithms reach a similar final index value after polishing
+\end{itemize}
+
+Polishing step has done much more work to find the final index value ub
+\texttt{search\_geodesic} than \texttt{search\_better} and this
+indicates \texttt{kol\_cdf} function favours of a random search method
+than ascent method.
 
 \begin{figure}
 \centering
@@ -1088,15 +1137,20 @@ polishing step to find the final index value while search better works
 well.}
 \end{figure}
 
-The second example for \texttt{kol\_cdf} index uses 1D projection on the
-larger dataset. Since there are two informative variables and the
-projection is 1D, there are two local maximum when the projection matrix
-at \([0, 1, 0, 0, 0, 0]\) and \([0, 0, 1 ,0, 0, 0]\). As in Figure
-\ref{1d-2var-different-seeds}, different local maximum can be found
-using \texttt{search\_better} with different seeds while
-\texttt{search\_better\_random} can always find the global maximum, as
-in Figure \ref{1d-2var-better-random}, although at a high cost of number
-of points evaluated.
+Now we enlarge the dataset to include two informative variables:
+\texttt{x2} and \texttt{x3} and remain 1D projection. In this case, two
+local maximum appear when projection matrix being \([0, 1, 0, 0, 0, 0]\)
+and \([0, 0, 1 ,0, 0, 0]\).
+
+Using different seeds in \texttt{search\_better} allows us to find both
+local maximum as in Figure \ref{1d-2var-different-seeds}. Comparing the
+maximum of both, we can see that the global maximum happens when
+\texttt{x2} is found. It is natural to ask then if there is an algorithm
+that can find the global maximum without trying on different seeds?
+\texttt{search\_better\_random} manages to do it via a
+metropolis-hasting random search as shown in Figure
+\ref{1d-2var-better-random}, although at a higher cost of number of
+points to evaluate.
 
 \begin{figure}
 \centering
@@ -1114,6 +1168,29 @@ of the local maximum.}
 \caption{\label{1d-2var-better-random}Using search better random for the
 problem above will result in finding the global maximum but much larger
 number of iteration is needed.}
+\end{figure}
+
+\hypertarget{explore-searching-space}{%
+\paragraph{Explore searching space}\label{explore-searching-space}}
+
+We can also plot the searching points of all the three algorithms in the
+searching space and explore their relative position against each other
+using principal components. As shown in Figure
+\ref{1d-2var-explore-proj-pca}, the bases from better1 and better2 only
+search a proportion of the searching space while better\_random produces
+a more exhausive search. The large overlapping of better1 and
+better\_random is explained by the fact that both algorithms finds x2 in
+the end.
+
+\begin{figure}
+\centering
+\includegraphics{paper_files/figure-latex/1d-2var-explore-proj-pca-1.pdf}
+\caption{\label{1d-2var-explore-proj-pca} The projected projection basis
+using principal components. The bases from better1 and better2 only
+search a proportion of the searching space while better\_random produces
+a more exhausive search. The large overlapping of better1 and
+better\_random is explained by the fact that both algorithms finds x2 in
+the end.}
 \end{figure}
 
 \hypertarget{implementation-ferrn-pacakge}{%
