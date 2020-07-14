@@ -22,7 +22,7 @@
 \addtolength{\topmargin}{-.8in}%
 
 %% load any required packages here
-\usepackage{amssymb, amsmath, mathtools, bbm} \usepackage[ruled,vlined, linesnumbered]{algorithm2e}
+\usepackage{amssymb, amsmath, mathtools, dsfont} \usepackage[ruled,vlined, linesnumbered]{algorithm2e}
 
 \usepackage{color}
 \usepackage{fancyvrb}
@@ -599,19 +599,20 @@ represents an iteration as in Equation \ref{eq:matrixA}.
 \begin{equation}
 \left[
 \begin{array}{ccccccc}
-\ast & \mathbf{A}_{1,1,\ast} & \mathbf{A}_{2, l_1 +1,\ast} & \cdots & \mathbf{A}_{j,\sum_{i = 1}^{j-1}l_i +1,\ast} &\cdots & \mathbf{A}_{J,\sum_{i = 1}^{J-1}l_i +1 ,\ast} \\
-\ast & \mathbf{A}_{1,2,\ast} & \mathbf{A}_{2,l_1 +2,\ast} & \cdots & \mathbf{A}_{j,\sum_{i = 1}^{j-1}l_i +2,\ast} &\cdots & \mathbf{A}_{J,\sum_{i = 1}^{J-1}l_i +2, \ast} \\
-\vdots & \vdots & \vdots & \ddots & \vdots & \ddots &\vdots   \\
-\ast & \mathbf{A}_{1, l, \ast} & \mathbf{A}_{2, l_1 + l, \ast} & \cdots & \mathbf{A}_{j, \sum_{i = 1}^{j-1}l_i + l, \ast}  &\cdots & \mathbf{A}_{J, \sum_{i = 1}^{J-1}l_i + l, \ast}\\
-\vdots & \vdots & \vdots & \ddots & \vdots & \ddots &\vdots   \\
-\mathbf{A}_{0,\ast,\ast} & \mathbf{A}_{1, l_1, \ast} & \mathbf{A}_{2, l_1 + l_2, \ast} & \cdots & \mathbf{A}_{j, \sum_{i = 1}^{j}l_i , \ast}  &\cdots & \mathbf{A}_{J, \sum_{i = 1}^{J} l_i, \ast}\\
+\ast & \mathbf{A}_{1,1,\ast} & \mathbf{A}_{2, l_1 +1,\ast} & \cdots & \mathbf{A}_{J,\sum_{i = 1}^{J-1}l_i +1,\ast} & \mathbf{A}_{J+1,\sum_{i = 1}^{J}l_i +1 ,\ast} \\
+\ast & \mathbf{A}_{1,2,\ast} & \mathbf{A}_{2,l_1 +2,\ast} & \cdots & \mathbf{A}_{J,\sum_{i = 1}^{J-1}l_i +2,\ast} & \mathbf{A}_{J+1,\sum_{i = 1}^{J}l_i +2, \ast} \\
+\vdots & \vdots & \vdots & \ddots & \vdots &\vdots   \\
+\ast & \mathbf{A}_{1, l, \ast} & \mathbf{A}_{2, l_1 + l, \ast} & \cdots & \mathbf{A}_{J+1, \sum_{i = 1}^{J-1}l_i + l, \ast}  & \mathbf{A}_{J + 1, \sum_{i = 1}^{J}l_i + l, \ast}\\
+\vdots & \vdots & \vdots & \ddots & \vdots &\vdots   \\
+\ast & \mathbf{A}_{1, l_1-1, \ast} & \mathbf{A}_{2, l_1 + l_2-1, \ast} & \cdots & \mathbf{A}_{J, \sum_{i = 1}^{J-1}l_i -1, \ast} & \mathbf{A}_{J+1, \sum_{i = 1}^{J+1} l_i-1, \ast}\\
+\mathbf{A}_{0,\ast,\ast} & \mathbf{A}_{1, l_1, \ast} & \mathbf{A}_{2, l_1 + l_2, \ast} & \cdots & \mathbf{A}_{J, \sum_{i = 1}^{J}l_i , \ast} & \ast\\
 \hline
-\ast &\mathbf{A}_{1, \ast, 1} & \mathbf{A}_{2, \ast, k_1 + 1} & \cdots &\mathbf{A}_{j, \ast,\sum_{i = 1}^{j-1}k_i + 1} & \cdots & \ast\\
-\ast &\mathbf{A}_{1, \ast, 2} & \mathbf{A}_{2, \ast, k_1 + 2} & \cdots &\mathbf{A}_{j, \ast, \sum_{i = 1}^{j-1}k_i +2} & \cdots & \ast \\
-\vdots & \vdots & \vdots & \ddots & \vdots  & \ddots & \vdots \\
-\ast &\mathbf{A}_{1, \ast, k} & \mathbf{A}_{2, \ast, k_1 + k} & \cdots &\mathbf{A}_{j, \ast, \sum_{i = 1}^{j-1}k_i +k} & \cdots & \ast \\
-\vdots & \vdots & \vdots & \ddots & \vdots  & \ddots & \vdots \\
-\ast &\mathbf{A}_{1, \ast, k_1} & \mathbf{A}_{2, \ast, k_1 + k_2} & \cdots &\mathbf{A}_{j, \ast,\sum_{i = 1}^{j}k_i} & \cdots & \ast \\
+\ast &\mathbf{A}_{1, \ast, 1} & \mathbf{A}_{2, \ast, k_1 + 1} & \cdots &\mathbf{A}_{J, \ast,\sum_{i = 1}^{J-1}k_i + 1}  & \ast\\
+\ast &\mathbf{A}_{1, \ast, 2} & \mathbf{A}_{2, \ast, k_1 + 2} & \cdots &\mathbf{A}_{J, \ast, \sum_{i = 1}^{J-1}k_i +2}  & \ast \\
+\vdots & \vdots & \vdots & \ddots & \vdots & \vdots \\
+\ast &\mathbf{A}_{1, \ast, k} & \mathbf{A}_{2, \ast, k_1 + k} & \cdots &\mathbf{A}_{J, \ast, \sum_{i = 1}^{J-1}k_i +k}  & \ast \\
+\vdots & \vdots & \vdots & \ddots & \vdots   & \vdots \\
+\ast &\mathbf{A}_{1, \ast, k_1} & \mathbf{A}_{2, \ast, k_1 + k_2} & \cdots &\mathbf{A}_{J, \ast,\sum_{i = 1}^{J}k_i} & \ast \\
 \end{array}
 \right]
 = 
@@ -622,6 +623,7 @@ represents an iteration as in Equation \ref{eq:matrixA}.
 \vphantom{\vdots} \vdots \\
 \vphantom{A^J_2}\text{candidate basis} \\
 \vphantom{\vdots} \vdots \\
+\vphantom{A^J_2}\text{candidate basis} \\
 \vphantom{A^J}\text{current/target basis} \\
 \hline
 \vphantom{\text{NULL}}\text{interpolation basis} \\
@@ -632,35 +634,31 @@ represents an iteration as in Equation \ref{eq:matrixA}.
 \vphantom{\text{NULL}}\text{interpolation basis} \\
 \end{array}
 \right]
-\label{matrixA}
+\label{eq:matrixA}
 \end{equation}
 
 When aggregated with information of index value and other interesting
-parameter, it is easier to write the basis as a column vector as in
-Equation \ref{eq:vectorA} and the full data structure is presneted in
-Equation \ref{eq:data-structure}.
-
-All the basis can also be denoted usign a single subscript by their
-natural ordering as
-\(\mathbf{A}_0, \mathbf{A}_1, \cdots, \mathbf{A}_n\).
+parameter, it is easier to write the basis as a column vector denoting
+by a single subscript by their natural ordering i.e.~all the bases in
+iteration 1 along with the starting basis as shown in Equation
+\ref{eq:vectorA}, can be denoted as
+\(\mathbf{A}_0, \mathbf{A}_1, \cdots, \mathbf{A}_n\) where
+\(n = 1 + l_1 + k_1\). The full data structure can thus be presneted as
+in Equation \ref{eq:data-structure}.
 
 \begin{equation}
-\begin{array}{cccccccc}
-\bigl[\mathbf{A}_{0, \ast, \ast} & 
+\begin{array}{cccccccccccc}
+\bigl[
+\mathbf{A}_{0, \ast, \ast} & 
 \mathbf{A}_{1, 1, \ast} & 
 \mathbf{A}_{1,2,\ast} & 
 \cdots & 
-\mathbf{A}_{1,l,\ast} & 
-\cdots & 
-\mathbf{A}_{1,l_1, \ast}   \\ 
+\mathbf{A}_{1,l_1, \ast}   &
 \mathbf{A}_{1, \ast, 1} & 
 \mathbf{A}_{1, \ast, 2} & 
 \cdots &
-\mathbf{A}_{1, \ast, k} &
-\cdots &
 \mathbf{A}_{1, \ast, k_1} &
-\cdots &
-\mathbf{A}_{J, l_J, \ast} \bigr]
+\bigr]
 \end{array} 
 \label{eq:vectorA}
 \end{equation}
@@ -672,8 +670,8 @@ natural ordering as
 \hline
 \mathbf{A}_0 & I_0 & 0 & \ast & \ast & 1 & \ast & \cdots & \ast\\
 \hline
-\mathbf{A}_1 & I_1 & 1 & 1 & \ast& 2 & S_{1, 1} & \cdots & S_{p, 1}\\
-\mathbf{A}_2 & I_2 & 1 & 2 &\ast & 3 & S_{1, 2} & \cdots & S_{p, 2}\\
+\mathbf{A}_1 & I_1 & 1 & 1 & \ast& 2 & S_{1, 1} & \cdots & S_{1, p}\\
+\mathbf{A}_2 & I_2 & 1 & 2 &\ast & 3 & S_{2, 1} & \cdots & S_{2, p}\\
 \vdots &\vdots & \vdots &\vdots & \vdots &\vdots &\vdots &\cdots &\vdots\\
 \vdots & \vdots & 1 & l_1 & \ast & \vdots & \vdots & \cdots & \vdots\\
 \hline
@@ -683,13 +681,14 @@ natural ordering as
 \vdots &\vdots & 1 & \ast & k_1&\vdots &\vdots & \cdots & \vdots\\
 \hline
 \vdots &\vdots &\vdots  &\vdots & \vdots &\vdots &\vdots &\cdots &\vdots \\
-\mathbf{A}_n & I_n & J &  l_J & \ast & n & S_{1, n}& \cdots & S_{p, n}\\
+\mathbf{A}_n & I_n & J &  l_J & \ast & n & S_{n, 1}& \cdots & S_{n, p}\\
 \end{array}
 \right]
 \label{eq:data-structure}
 \end{equation}
 
-where \(n = 1+ \sum_{i = 1}^J l_i + \sum_{i = 1}^{J-1} k_i\)
+where
+\(n = 1 + \sum_{i = 1}^{J+1} l_i -1 + \sum_{i = 1}^{J} k_i= \sum_{i = 1}^{J+1} l_i + \sum_{i = 1}^{J} k_i\)
 
 \hypertarget{simulated-data}{%
 \subsection{Simulated data}\label{simulated-data}}
@@ -814,10 +813,17 @@ of all the points and more importantly, the point with the largest
 and future searches.
 
 Using the notation we defined earlier, the plot can be defined as
-plotting \(j\) on the x-axis and the five point summary of the following
-groups on the y-axis:
+plotting
 
-\[\mathbbm{1}(I_{j = j^*})\]
+\[x = \{1, 2, \cdots J + 1\}\]
+
+against the five point summary of each \(j^*\) on the y-axis:
+
+\[y = \{Q_q(I_{jlk} \cdot \mathds{1} (j = x, k = \ast))\}\]
+
+where \(q\) takes one of \(0, 25, 50, 75, 100\) and \(Q_q(x)\) finds the
+qth-quantile for the vector \(x\). \(\mathds{1}(.)\) is the identity
+operator.
 
 Boxplot is a suitable candidate that provides five points summary of the
 data, however it has one drawback: it doesn't report the number of point
@@ -858,8 +864,8 @@ The number of interpolation points is much managable than the searching
 points and always shows a pattern of gradual increase in the index
 value. Hence a line plot with interpolating order on the x-axis will be
 desirable. Using notation, the x-axis is a sequence
-\[x = \{1, 2, \cdots, k_1, \cdots, \sum_{i=1}^Jk_i\}\] and y-axis are
-the index values defined by \(y = I_{x}\).
+\[x = \{1, 2, \cdots,\sum_{i=1}^Jk_i\}\] and y-axis are the index values
+defined by \[y = \{I_{jlk}: k = x\}\]
 
 \hypertarget{a-more-complex-example-interruption}{%
 \paragraph{A more complex example:
@@ -895,17 +901,15 @@ of the interuption finds an ending basis with higher index value using
 fewer steps.}
 \end{figure}
 
-\hypertarget{another-example-polishing-the-final-projection-basis}{%
-\paragraph{Another example: polishing the final projection
-basis}\label{another-example-polishing-the-final-projection-basis}}
+\hypertarget{another-example-polish}{%
+\paragraph{Another example: Polish}\label{another-example-polish}}
 
-\emph{Example: Polish} In principle, all the optimisation routines
-should result in the same output on the same problem while this may not
-be true in real application. This motivates the creation of a polishing
-search that polishes the ending basis and achieves unity on different
-methods.
+In principle, all the optimisation routines should result in the same
+output for the same problem while this may not be true in real
+application. This motivates the creation of a polishing search that
+polishes the final basis and achieves unity on different methods.
 
-\texttt{search\_polish} takes the ending basis of a given search as the
+\texttt{search\_polish} takes the final basis of a given search as the
 current basis and uses a brutal-force approach to sample a large number
 of basis (\texttt{n\_sample}) in the neighbourhood, whose radius is
 controlled by \texttt{polish\_alpha}. Among the \texttt{n\_sample}
@@ -957,6 +961,19 @@ remain the same.
                                   \DataTypeTok{start =}\NormalTok{ last_basis)}
 \end{Highlighting}
 \end{Shaded}
+
+Polishing points form on itself a global structure with candidate bases
+and output bases. If we're allowed to abuse the notation a bit, we
+denote \[A_{J, \ast, \sum_{i = 1}^J k_i + 1}\] as the first polishing
+basis and \[A_{J, \ast, \sum_{i = 1}^J k_i + M}\] as the last polishing
+basis, where
+\[M = \sum_i S_{i, \text{method}} \mathds{1}(\text{method} = \text{polish})\]
+
+Then the index plot incorporating both the interpolating points and
+polishing points can be defined as
+
+\[x = \{1, 2, \cdots, \sum_{i = 1}^J k_i,(\sum_{i = 1}^J k_i + 1) \cdots,  \sum_{i = 1}^J k_i + M\}\]
+\[y = \{I_{jlk}: k = x\}\]
 
 The following example conducted a 2D projection on the larger dataset
 using search better with different configurations. \texttt{max.tries} is

@@ -18,7 +18,7 @@ keywords:
 abstract: Friedman & Tukey commented on their intial paper on projection pursuit in 1974 that "the  technique  use  for  maximising  the  projection index strongly influences both the statistical and the computational aspects of the procedure." While many projection pursuit indices have been proposed in the literature, few concerns the optimisation procedure. In this paper, we developed a system of diagnostics aiming to visually learn how the optimisation procedures find its way towards the optimum. This diagnostic system can be applied to more general to help practitioner to unveil the black-box in randomised iteartive (optimisation) algorithms. An R package, ferrn, has been created to implement this diagnostic system.
 bibliography: biblio.bib
 preamble: >
-  \usepackage{amssymb, amsmath, mathtools, bbm}
+  \usepackage{amssymb, amsmath, mathtools, dsfont}
   \usepackage[ruled,vlined, linesnumbered]{algorithm2e}
 output: rticles::asa_article
 editor_options: 
@@ -317,19 +317,20 @@ Let $\mathbf{A}^0$ denotes the starting basis. Superscript $j$ is used to denote
 \begin{equation}
 \left[
 \begin{array}{ccccccc}
-\ast & \mathbf{A}_{1,1,\ast} & \mathbf{A}_{2, l_1 +1,\ast} & \cdots & \mathbf{A}_{j,\sum_{i = 1}^{j-1}l_i +1,\ast} &\cdots & \mathbf{A}_{J,\sum_{i = 1}^{J-1}l_i +1 ,\ast} \\
-\ast & \mathbf{A}_{1,2,\ast} & \mathbf{A}_{2,l_1 +2,\ast} & \cdots & \mathbf{A}_{j,\sum_{i = 1}^{j-1}l_i +2,\ast} &\cdots & \mathbf{A}_{J,\sum_{i = 1}^{J-1}l_i +2, \ast} \\
-\vdots & \vdots & \vdots & \ddots & \vdots & \ddots &\vdots   \\
-\ast & \mathbf{A}_{1, l, \ast} & \mathbf{A}_{2, l_1 + l, \ast} & \cdots & \mathbf{A}_{j, \sum_{i = 1}^{j-1}l_i + l, \ast}  &\cdots & \mathbf{A}_{J, \sum_{i = 1}^{J-1}l_i + l, \ast}\\
-\vdots & \vdots & \vdots & \ddots & \vdots & \ddots &\vdots   \\
-\mathbf{A}_{0,\ast,\ast} & \mathbf{A}_{1, l_1, \ast} & \mathbf{A}_{2, l_1 + l_2, \ast} & \cdots & \mathbf{A}_{j, \sum_{i = 1}^{j}l_i , \ast}  &\cdots & \mathbf{A}_{J, \sum_{i = 1}^{J} l_i, \ast}\\
+\ast & \mathbf{A}_{1,1,\ast} & \mathbf{A}_{2, l_1 +1,\ast} & \cdots & \mathbf{A}_{J,\sum_{i = 1}^{J-1}l_i +1,\ast} & \mathbf{A}_{J+1,\sum_{i = 1}^{J}l_i +1 ,\ast} \\
+\ast & \mathbf{A}_{1,2,\ast} & \mathbf{A}_{2,l_1 +2,\ast} & \cdots & \mathbf{A}_{J,\sum_{i = 1}^{J-1}l_i +2,\ast} & \mathbf{A}_{J+1,\sum_{i = 1}^{J}l_i +2, \ast} \\
+\vdots & \vdots & \vdots & \ddots & \vdots &\vdots   \\
+\ast & \mathbf{A}_{1, l, \ast} & \mathbf{A}_{2, l_1 + l, \ast} & \cdots & \mathbf{A}_{J+1, \sum_{i = 1}^{J-1}l_i + l, \ast}  & \mathbf{A}_{J + 1, \sum_{i = 1}^{J}l_i + l, \ast}\\
+\vdots & \vdots & \vdots & \ddots & \vdots &\vdots   \\
+\ast & \mathbf{A}_{1, l_1-1, \ast} & \mathbf{A}_{2, l_1 + l_2-1, \ast} & \cdots & \mathbf{A}_{J, \sum_{i = 1}^{J-1}l_i -1, \ast} & \mathbf{A}_{J+1, \sum_{i = 1}^{J+1} l_i-1, \ast}\\
+\mathbf{A}_{0,\ast,\ast} & \mathbf{A}_{1, l_1, \ast} & \mathbf{A}_{2, l_1 + l_2, \ast} & \cdots & \mathbf{A}_{J, \sum_{i = 1}^{J}l_i , \ast} & \ast\\
 \hline
-\ast &\mathbf{A}_{1, \ast, 1} & \mathbf{A}_{2, \ast, k_1 + 1} & \cdots &\mathbf{A}_{j, \ast,\sum_{i = 1}^{j-1}k_i + 1} & \cdots & \ast\\
-\ast &\mathbf{A}_{1, \ast, 2} & \mathbf{A}_{2, \ast, k_1 + 2} & \cdots &\mathbf{A}_{j, \ast, \sum_{i = 1}^{j-1}k_i +2} & \cdots & \ast \\
-\vdots & \vdots & \vdots & \ddots & \vdots  & \ddots & \vdots \\
-\ast &\mathbf{A}_{1, \ast, k} & \mathbf{A}_{2, \ast, k_1 + k} & \cdots &\mathbf{A}_{j, \ast, \sum_{i = 1}^{j-1}k_i +k} & \cdots & \ast \\
-\vdots & \vdots & \vdots & \ddots & \vdots  & \ddots & \vdots \\
-\ast &\mathbf{A}_{1, \ast, k_1} & \mathbf{A}_{2, \ast, k_1 + k_2} & \cdots &\mathbf{A}_{j, \ast,\sum_{i = 1}^{j}k_i} & \cdots & \ast \\
+\ast &\mathbf{A}_{1, \ast, 1} & \mathbf{A}_{2, \ast, k_1 + 1} & \cdots &\mathbf{A}_{J, \ast,\sum_{i = 1}^{J-1}k_i + 1}  & \ast\\
+\ast &\mathbf{A}_{1, \ast, 2} & \mathbf{A}_{2, \ast, k_1 + 2} & \cdots &\mathbf{A}_{J, \ast, \sum_{i = 1}^{J-1}k_i +2}  & \ast \\
+\vdots & \vdots & \vdots & \ddots & \vdots & \vdots \\
+\ast &\mathbf{A}_{1, \ast, k} & \mathbf{A}_{2, \ast, k_1 + k} & \cdots &\mathbf{A}_{J, \ast, \sum_{i = 1}^{J-1}k_i +k}  & \ast \\
+\vdots & \vdots & \vdots & \ddots & \vdots   & \vdots \\
+\ast &\mathbf{A}_{1, \ast, k_1} & \mathbf{A}_{2, \ast, k_1 + k_2} & \cdots &\mathbf{A}_{J, \ast,\sum_{i = 1}^{J}k_i} & \ast \\
 \end{array}
 \right]
 = 
@@ -340,6 +341,7 @@ Let $\mathbf{A}^0$ denotes the starting basis. Superscript $j$ is used to denote
 \vphantom{\vdots} \vdots \\
 \vphantom{A^J_2}\text{candidate basis} \\
 \vphantom{\vdots} \vdots \\
+\vphantom{A^J_2}\text{candidate basis} \\
 \vphantom{A^J}\text{current/target basis} \\
 \hline
 \vphantom{\text{NULL}}\text{interpolation basis} \\
@@ -350,34 +352,26 @@ Let $\mathbf{A}^0$ denotes the starting basis. Superscript $j$ is used to denote
 \vphantom{\text{NULL}}\text{interpolation basis} \\
 \end{array}
 \right]
-\label{matrixA}
+\label{eq:matrixA}
 \end{equation}
 
 
-When aggregated with information of index value and other interesting parameter, it is easier to write the basis as a column vector as in Equation \ref{eq:vectorA} and the full data structure is presneted in Equation \ref{eq:data-structure}.
-
-
-All the basis can also be denoted usign a single subscript by their natural ordering as $\mathbf{A}_0, \mathbf{A}_1, \cdots, \mathbf{A}_n$. 
-
+When aggregated with information of index value and other interesting parameter, it is easier to write the basis as a column vector denoting by a single subscript by their natural ordering i.e. all the bases in iteration 1 along with the starting basis as shown in Equation \ref{eq:vectorA}, can be denoted as $\mathbf{A}_0, \mathbf{A}_1, \cdots, \mathbf{A}_n$ where $n = 1 + l_1 + k_1$. The full data structure can thus be presneted as in Equation \ref{eq:data-structure}.
 
 
 \begin{equation}
-\begin{array}{cccccccc}
-\bigl[\mathbf{A}_{0, \ast, \ast} & 
+\begin{array}{cccccccccccc}
+\bigl[
+\mathbf{A}_{0, \ast, \ast} & 
 \mathbf{A}_{1, 1, \ast} & 
 \mathbf{A}_{1,2,\ast} & 
 \cdots & 
-\mathbf{A}_{1,l,\ast} & 
-\cdots & 
-\mathbf{A}_{1,l_1, \ast}   \\ 
+\mathbf{A}_{1,l_1, \ast}   &
 \mathbf{A}_{1, \ast, 1} & 
 \mathbf{A}_{1, \ast, 2} & 
 \cdots &
-\mathbf{A}_{1, \ast, k} &
-\cdots &
 \mathbf{A}_{1, \ast, k_1} &
-\cdots &
-\mathbf{A}_{J, l_J, \ast} \bigr]
+\bigr]
 \end{array} 
 \label{eq:vectorA}
 \end{equation} 
@@ -390,8 +384,8 @@ All the basis can also be denoted usign a single subscript by their natural orde
 \hline
 \mathbf{A}_0 & I_0 & 0 & \ast & \ast & 1 & \ast & \cdots & \ast\\
 \hline
-\mathbf{A}_1 & I_1 & 1 & 1 & \ast& 2 & S_{1, 1} & \cdots & S_{p, 1}\\
-\mathbf{A}_2 & I_2 & 1 & 2 &\ast & 3 & S_{1, 2} & \cdots & S_{p, 2}\\
+\mathbf{A}_1 & I_1 & 1 & 1 & \ast& 2 & S_{1, 1} & \cdots & S_{1, p}\\
+\mathbf{A}_2 & I_2 & 1 & 2 &\ast & 3 & S_{2, 1} & \cdots & S_{2, p}\\
 \vdots &\vdots & \vdots &\vdots & \vdots &\vdots &\vdots &\cdots &\vdots\\
 \vdots & \vdots & 1 & l_1 & \ast & \vdots & \vdots & \cdots & \vdots\\
 \hline
@@ -401,14 +395,14 @@ All the basis can also be denoted usign a single subscript by their natural orde
 \vdots &\vdots & 1 & \ast & k_1&\vdots &\vdots & \cdots & \vdots\\
 \hline
 \vdots &\vdots &\vdots  &\vdots & \vdots &\vdots &\vdots &\cdots &\vdots \\
-\mathbf{A}_n & I_n & J &  l_J & \ast & n & S_{1, n}& \cdots & S_{p, n}\\
+\mathbf{A}_n & I_n & J &  l_J & \ast & n & S_{n, 1}& \cdots & S_{n, p}\\
 \end{array}
 \right]
 \label{eq:data-structure}
 \end{equation}
 
 
-where $n = 1+ \sum_{i = 1}^J l_i + \sum_{i = 1}^{J-1} k_i$ 
+where $n = 1 + \sum_{i = 1}^{J+1} l_i -1 + \sum_{i = 1}^{J} k_i=  \sum_{i = 1}^{J+1} l_i + \sum_{i = 1}^{J} k_i$ 
 
 
 <!-- An optimisation procedure can easily generate hundreds or thousands sampling points and the question becomes what are the points we want to explore... [the classification of searching or updating points goes here and people should be clear what part of the points goes to the plot - this is the data part not the plot part. ] -->
@@ -500,9 +494,16 @@ It is a convention to map the time index of a time series on the x-axis and valu
 
 As the searching goes towards the end, it is easy to have hundreds of candidate bases in each iteration with very close index value. When plotting, these iteration will occupy the vast majority of the plot space. This motivates to summarise the points in each iteration (`tries`). At each iteration, rather than knowing the index value of *every* points, we are more interested to have a general summary of all the points and more importantly, the point with the largest `index_val` since it prescribes the next geodesic interpolation and future searches. 
 
-Using the notation we defined earlier, the plot can be defined as plotting $j$ on the x-axis and the five point summary of the following groups on the y-axis:
+Using the notation we defined earlier, the plot can be defined as plotting 
 
-$$\mathbbm{1}(I_{j = j^*})$$
+$$x = \{1, 2, \cdots J + 1\}$$
+
+against the five point summary of each $j^*$ on the y-axis:
+
+$$y = \{Q_q(I_{jlk} \cdot \mathds{1} (j = x, k = \ast))\}$$
+
+where $q$ takes one of $0, 25, 50, 75, 100$ and $Q_q(x)$ finds the qth-quantile for the vector $x$. $\mathds{1}(.)$ is the identity operator.
+
 
 Boxplot is a suitable candidate that provides five points summary of the data, however it has one drawback: it doesn't report the number of point in each box. We may risk losing information on how many points it takes to find the target basis by displaying the boxplot alone for all `tries`. Thus, the number of point for each `tries` is displayed at the bottom of each box and we provide options to switch `tries` with small number of points to a point geometry, which is achieved via the `cutoff` argument. A line geometry is also added to link the points with the largest index value in each `tries`. This helps to visualise the improvement made by each `tries`. 
 
@@ -522,7 +523,7 @@ dt %>% explore_trace_search()
 
 \newpage
 
-The number of interpolation points is much managable than the searching points and always shows a pattern of gradual increase in the index value. Hence a line plot with interpolating order on the x-axis will be desirable. Using notation, the x-axis is a sequence $$x = \{1, 2, \cdots, k_1, \cdots, \sum_{i=1}^Jk_i\}$$ and y-axis are the index values defined by $y = I_{x}$. 
+The number of interpolation points is much managable than the searching points and always shows a pattern of gradual increase in the index value. Hence a line plot with interpolating order on the x-axis will be desirable. Using notation, the x-axis is a sequence $$x = \{1, 2, \cdots,\sum_{i=1}^Jk_i\}$$ and y-axis are the index values defined by $$y = \{I_{jlk}: k = x\}$$ 
 
 #### A more complex example: Interruption
 
@@ -561,15 +562,15 @@ p1 | p2
 #xxx up and down plot allows for displaying time series features while left and right display makes it easier for comparison? The same problem for plot of comparing between different searching methods
 ```
 
-#### Another example: polishing the final projection basis
+#### Another example: Polish
 
 <!-- In the previous two sections, only the iterator and the index value are mapped onto the x and y aesthetics of the plot; while more aesthetics i.e. color, could be added to compare other parameters in the global object. -->
 
 <!-- Two examples are shown below to explore and compare different searching methods and neighbourhood parameter alpha.  -->
 
-*Example: Polish* In principle, all the optimisation routines should result in the same output on the same problem while this may not be true in real application. This motivates the creation of a polishing search that polishes the ending basis and achieves unity on different methods. 
+In principle, all the optimisation routines should result in the same output for the same problem while this may not be true in real application. This motivates the creation of a polishing search that polishes the final basis and achieves unity on different methods. 
 
-`search_polish` takes the ending basis of a given search as the current basis and uses a brutal-force approach to sample a large number of basis (`n_sample`) in the neighbourhood, whose radius is controlled by `polish_alpha`. Among the `n_sample` basis, the one with the largest index value becomes the candidate basis. If its index value of the candidate basis is larger than that of the current basis, it becomes the current basis in the next iteration. If no basis is found to have larger index value than the current basis, the searching neighbourhood will be shrunk and the search continues. The polishing search ends when one of the four stopping criteria is satisfied:
+`search_polish` takes the final basis of a given search as the current basis and uses a brutal-force approach to sample a large number of basis (`n_sample`) in the neighbourhood, whose radius is controlled by `polish_alpha`. Among the `n_sample` basis, the one with the largest index value becomes the candidate basis. If its index value of the candidate basis is larger than that of the current basis, it becomes the current basis in the next iteration. If no basis is found to have larger index value than the current basis, the searching neighbourhood will be shrunk and the search continues. The polishing search ends when one of the four stopping criteria is satisfied:
 
 1) the two basis can't be too close 
 2) the percentage improvement of the index function can't be too small 
@@ -597,6 +598,13 @@ holes_2d_geo_polish <- animate_xy(data_mult[,c(1,2, 7:10)], tour_path =
                                   rescale = FALSE, verbose = TRUE, 
                                   start = last_basis)
 ```
+
+Polishing points form on itself a global structure with candidate bases and output bases. If we're allowed to abuse the notation a bit, we denote $$A_{J, \ast, \sum_{i = 1}^J k_i + 1}$$ as the first polishing basis and $$A_{J, \ast, \sum_{i = 1}^J k_i + M}$$ as the last polishing basis, where $$M = \sum_i S_{i, \text{method}} \mathds{1}(\text{method} = \text{polish})$$
+
+Then the index plot incorporating both the interpolating points and polishing points can be defined as 
+
+$$x = \{1, 2, \cdots, \sum_{i = 1}^J k_i,(\sum_{i = 1}^J k_i + 1), \cdots,  \sum_{i = 1}^J k_i + M\}$$
+$$y = \{I_{jlk}: k = x\}$$
 
 The following example conducted a 2D projection on the larger dataset using search better with different configurations. `max.tries` is a hyperparameter that controls the maximum number of try without improvement and its default value is 25. As shown in Figure \ref{trace-compare}, both trials attain the same index value after polishing while a small `max.tries` of 25 is not sufficient for `search_better` to find the global maximum. The `max.tries` argument needs to be adjusted to ensure it is sufficient to explore the parameter space.
 
