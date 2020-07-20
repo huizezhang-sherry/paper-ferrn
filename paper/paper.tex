@@ -758,29 +758,20 @@ earlier, the purpose of visual diagnostics is to understand:
   are the projection bases located in the space?
 \end{itemize}
 
-Overall, the first question can be answered using a static plot with
-x-axis showing the progression of the optimisation and y-axis showing
-the value of the objective function. The second question can be
-addressed via visualising the rotating high dimensional space. This
-seems to be a hard task to see beyond 3D, but the fact is that we never
-really see all the six faces of a cube at one time. The way humans
-understand the dimension of a 3D object is either through rotating the
-physical 3D object or using shade and line type to annotate the 3D
-object in a paper or electronically. Thus we can do a similar rotation
-on the screen to precieve even higher dimension. {[}there is likely to
-be a learning curve - remember when learning geometry in school, it
-takes a while to get used to see 3D cube on a paper{]}. Thus animated
-visualisation is needed to preceive the optimisation path in the
-searching space.
+The first question can be answered using a static plot with x-axis
+showing the progression of the optimisation and y-axis showing the value
+of the objective function. The second question can be addressed via
+visualising the rotating high dimensional space or its projection on the
+reduced 2D space. Thus animated visualisation is needed to preceive the
+optimisation path in the searching space.
 
-The plot design of visual diagnostics depends on the characteristics of
-the variables to plot. If the searching points are of interest {[}point
-geom is not good; need summarise. While updating points are more
-manageable -\textgreater{} point geom{]}. However, one must realise that
-with hundreds or thousands of searching points, exploring the sample
-space in animation could be slow and this is because of the time it
-takes to render hundreds point. {[}stratefy may help? - may need more
-work here.{]}
+Since the global object is already tidy, not further tidying steps is
+needed, while certain data wrangling steps
+\citep{wickham2016rfordatascience} are still needed to transform the
+global object into desirable format for one particular visualisation. To
+emphasize on this good practice of data analysis, we will describe the
+transformation steps needed for each diagnostic plots before stepping
+into visualisation.
 
 \hypertarget{static}{%
 \subsubsection{Explore the value of objective function}\label{static}}
@@ -801,19 +792,6 @@ of all the points and more importantly, the point with the largest
 \texttt{index\_val} since it prescribes the next geodesic interpolation
 and future searches.
 
-Using the notation we defined earlier, the plot can be defined as
-plotting
-
-\[x = \{1, 2, \cdots J + 1\}\]
-
-against the five point summary of each \(j^*\) on the y-axis:
-
-\[y = \{Q_q(I_{jlk} \cdot \mathds{1} (j = x, k = \ast))\}\]
-
-where \(q\) takes one of \(0, 25, 50, 75, 100\) and \(Q_q(x)\) finds the
-qth-quantile for the vector \(x\). \(\mathds{1}(.)\) is the identity
-operator.
-
 Boxplot is a suitable candidate that provides five points summary of the
 data, however it has one drawback: it doesn't report the number of point
 in each box. We may risk losing information on how many points it takes
@@ -824,6 +802,55 @@ displayed at the bottom of each box and we provide options to switch
 achieved via the \texttt{cutoff} argument. A line geometry is also added
 to link the points with the largest index value in each \texttt{tries}.
 This helps to visualise the improvement made by each \texttt{tries}.
+With gramma of graphics \citep{wickham2010layered}, the plot for
+exploring index value can be defined in three layers as follows:
+
+\begin{itemize}
+\tightlist
+\item
+  Layer 1: boxplot geom
+
+  \begin{itemize}
+  \tightlist
+  \item
+    data: group by \texttt{tries} and filter the observations in the
+    group that have count greater than \texttt{cutoff\ =\ 15}.
+  \item
+    x: \texttt{tries} is mapped to the x-axis
+  \item
+    y: the index value after statistical transformation
+    \(y = \{Q_q(I_{jlk} \cdot \mathds{1} (j = x, k = \ast))\}\) is
+    mapped to the y-axis where \(q\) takes one of \(0, 25, 50, 75, 100\)
+    and \(Q_q(x)\) finds the qth-quantile for the vector \(x\).
+    \(\mathds{1}(.)\) is the identity operator.
+  \end{itemize}
+\item
+  Layer 2: point geom
+
+  \begin{itemize}
+  \tightlist
+  \item
+    data: group by \texttt{tries} and filter the observations in the
+    group that have count less than \texttt{cutoff\ =\ 15}.
+  \item
+    x: \texttt{tries} is mapped to the x-axis
+  \item
+    y: \texttt{index\_val} is mapped to the y-axis
+  \end{itemize}
+\item
+  Layer 3: line geom
+
+  \begin{itemize}
+  \tightlist
+  \item
+    data: filter the points with the highest index value in each
+    \texttt{tries}
+  \item
+    x: \texttt{tries} is mapped to the x-axis
+  \item
+    y: \texttt{index\_val} is mapped to the y-axis
+  \end{itemize}
+\end{itemize}
 
 \hypertarget{toy-example-exploring-searching-points}{%
 \paragraph{Toy example: exploring searching
@@ -847,14 +874,34 @@ plot space to convey information from the plot while the right plot
 provides good summarisation of data and number of points in each tries.}
 \end{figure}
 
-\newpage
+Sometimes, it is more interesting to explore the index value on the
+interpolation path and the plot definition is slightly varied.
 
-The number of interpolation points is much managable than the searching
-points and always shows a pattern of gradual increase in the index
-value. Hence a line plot with interpolating order on the x-axis will be
-desirable. Using notation, the x-axis is a sequence
-\[x = \{1, 2, \cdots,\sum_{i=1}^Jk_i\}\] and y-axis are the index values
-defined by \[y = \{I_{jlk}: k = x\}\]
+\begin{itemize}
+\tightlist
+\item
+  Layer 1: point geom
+
+  \begin{itemize}
+  \tightlist
+  \item
+    data: filter the observations with \texttt{info} being
+    \texttt{interpolation} and mutate \texttt{id} to be the row number
+    of the subsetted tibble
+  \item
+    x: \texttt{id} is mapped to the x-axis
+  \item
+    y: \texttt{index\_val} is mapped to the y-axis
+  \end{itemize}
+\item
+  Layer 2: line geom
+
+  \begin{itemize}
+  \tightlist
+  \item
+    using line goemetry for the same data and aesthetics
+  \end{itemize}
+\end{itemize}
 
 \hypertarget{a-more-complex-example-interruption}{%
 \paragraph{A more complex example:
@@ -951,18 +998,37 @@ remain the same.
 \end{Highlighting}
 \end{Shaded}
 
-Polishing points form on itself a global structure with candidate bases
-and output bases. If we're allowed to abuse the notation a bit, we
-denote \[A_{J, \ast, \sum_{i = 1}^J k_i + 1}\] as the first polishing
-basis and \[A_{J, \ast, \sum_{i = 1}^J k_i + M}\] as the last polishing
-basis, where
-\[M = \sum_i S_{i, \text{method}} \mathds{1}(\text{method} = \text{polish})\]
+Slight variation of plot definition due to the addition of polishing
+points is as follows:
 
-Then the index plot incorporating both the interpolating points and
-polishing points can be defined as
+\begin{itemize}
+\tightlist
+\item
+  Layer 1: point geom
 
-\[x = \{1, 2, \cdots, \sum_{i = 1}^J k_i,(\sum_{i = 1}^J k_i + 1), \cdots,  \sum_{i = 1}^J k_i + M\}\]
-\[y = \{I_{jlk}: k = x\}\]
+  \begin{itemize}
+  \tightlist
+  \item
+    data: filter the observations with \texttt{info} being
+    \texttt{interpolation}; bind the global object from optimisation and
+    interpolation and form polishing; mutate \texttt{id} to be the row
+    number of the binded tibble.
+  \item
+    x: \texttt{id} is mapped to the x-axis
+  \item
+    y: \texttt{index\_val} is mapped to the y-axis
+  \item
+    color: \texttt{method} is mapped to the color aesthetic
+  \end{itemize}
+\item
+  Layer 2: line geom
+
+  \begin{itemize}
+  \tightlist
+  \item
+    using line goemetry for the same data and aesthetics
+  \end{itemize}
+\end{itemize}
 
 The following example conducted a 2D projection on the larger dataset
 using search better with different configurations. \texttt{max.tries} is
@@ -991,42 +1057,36 @@ max.tries 25 is not sufficient to find the ture maximum.}
 In projection pursuit, the projection bases \(\mathbf{A}_{p \times d}\)
 are usually of dimension \(p \times d\) and hence can't be visualised in
 a 2D plot. An option to explore the searching space of these bases is to
-explore a reduced space via principal component analysis (PCA). We first
-flat each projection bases \(\mathbf{A}\) to a row vector and stack them
-by rows. This gives a matrix of dimension \(n\) by \((p*d)\). Centering
-and scaling are usually done before performing PCA and we denotes the
-pre-processed matrix as \(\tilde{\mathbf{A}}_{n \times (p \times d)}\).
-By definition, the principal components maximise the variance of the
-projection bases in the reduced space. Using lagrange multipler, this is
-equivalent to find the eigenvector of the variance-covariance matrix:
-\(\Sigma = \tilde{\mathbf{A}}^T\tilde{\mathbf{A}}\). Decomposing
-\(\tilde{\mathbf{A}}\) using singular value decomposition (SVD) gives
-\[\tilde{\mathbf{A}} = \mathbf{U} \mathbf{\lambda} \mathbf{V}\] and
-hence the variance-covariance matrix
+explore a reduced space via principal component analysis (PCA). The
+visualisation can thus be defined as
 
-\[\Sigma = \tilde{\mathbf{A}}^T\tilde{\mathbf{A}} = (\mathbf{V}^T \mathbf{\lambda}^T \mathbf{U}^T) (\mathbf{U} \mathbf{\lambda} \mathbf{V}) = \mathbf{V}^T \mathbf{\lambda}^2 \mathbf{V}\]
+\begin{itemize}
+\tightlist
+\item
+  Layer 1: point geom
 
-has eigenvector
-\(\mathbf{V} = [\mathbf{v}_1, \mathbf{v}_2, \cdots, \mathbf{v}_{p\times d}]\).
-The projection mapping to the x- and y-axis uses the first two principal
-components and hence
-\[\tilde{\mathbf{A}} \mathbf{v}_1 \text{ and } \tilde{\mathbf{A}} \mathbf{v}_2\]
+  \begin{itemize}
+  \tightlist
+  \item
+    data: subset the basis of interest and arrange into a matrix format;
+    perform PCA on the basis matrix and compute the projected basis on
+    the first two principal components; bind the variables from the
+    original global object and form a tibble
+  \item
+    x: the projected basis on the first principal component
+  \item
+    y: the projected basis on the second principal component
+  \item
+    color: an variable of interest is mapped onto color
+  \end{itemize}
+\end{itemize}
 
-The resulting two vectors are of dimension \(n \times 1\), which is
-compatible with the dimension of the global object. THis means all the
-iterators and interesting other variables defined in the global object
-can be binded with the these two projections and can be mapped to other
-aesthetics (i.e.~color).
-
-In this way, the first two principle components will take up the x and y
-axis and all the other information will be mapped using other aesthetic
-attribution. {[}need to think further about how different type of
-variables can be shown{]}. While explore the reduced space is an initial
-attempt to understand the searching space, there are existing technology
-for rotating a higher dimensional space for visualisation. Geozoo is an
-option. It generates random points on the high dimensional space and we
-can overlay it with the points on the optimisation path to visualise the
-spread of it on the high-D sphere.
+While explore the reduced space is an initial attempt to understand the
+searching space, there are existing technology for rotating a higher
+dimensional space for visualisation. Geozoo is an option. It generates
+random points on the high dimensional space and we can overlay it with
+the points on the optimisation path to visualise the spread of it on the
+high-D sphere.
 
 \hypertarget{a-toy-example-understand-different-stage-of-search_geodesic}{%
 \paragraph{A toy example: understand different stage of
