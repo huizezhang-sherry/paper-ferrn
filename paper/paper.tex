@@ -666,26 +666,33 @@ T+1 & \mathbf{A}_T & I_T & J &  l_J & \ast & S_{T, 1}& \cdots & S_{T, p}\\
 \hypertarget{simulated-data}{%
 \subsection{Simulated data}\label{simulated-data}}
 
-{[}I would add the maths here to describe the simulations. ppp{]}
+We first simulate some random variables of size 1000 with different
+structures. \texttt{x1}, \texttt{x8}, \texttt{x9} and \texttt{x10} are
+simulated from normal distribution iwth zero mean and variance of one as
+in equation \ref{eq:sim-norm}. When using projection pursuit to explore
+the data structure based on its departure from normality, the entry in
+the projection basis for these variables should be close to zero in
+theory. \texttt{x2} to \texttt{x7} are mixture of normal distribution
+with different weights and locations. Equation \ref{eq:sim-x2} to
+\ref{eq:sim-x7} show the distribution of each variables and Figure
+\ref{origin-data} shows the histogram of each variable except
+\texttt{x3}. All the variables are then scaled to ensure the mixture has
+variance of one.
 
-Two set of simulated data are used in the demo of the visual diagnostics
-in projection pursuit guided tour. A small dataset consists of 1000
-randomly simulated observations of five variables (\texttt{x1},
-\texttt{x2}, \texttt{x8}, \texttt{x9}, \texttt{x10}). \texttt{x2} is the
-informative variable simulated from two bi-modal normal distribution
-centred at -3 and 3 with variance of one and the other four are
-simulated from non-informative standard random normal distributions. The
-data has been scaled to ensure \texttt{x2} has variance of 1. The goal
-is to find the 1D projection of bi-modal shape, which corresponds to the
-projection matrix (vector) of \texttt{{[}0,\ 1,\ 0,\ 0,\ 0{]}}.
-
-A larger dataset contains more informative variables (\texttt{x3} to
-\texttt{x7}) of different types. The distribution of all the variables
-except \texttt{x3} is plotted in Figure \ref{origin-data} and
-\texttt{x3} takes 500 positive one and 500 negative one. {[}should I
-introduce the dist for each var? xxx{]} {[}also feel like we don't
-really use \texttt{x3} to \texttt{x6}, should we not mention about
-these? xxx{]}
+\begin{align}
+x_1 \overset{d}{=} x_8 \overset{d}{=} x_9 \overset{d}{=} x_{10}& \sim \mathcal{N}(0, 1) \label{eq:sim-norm} \\
+x_2 &\sim 0.5 \mathcal{N}(-3, 1) + 0.5 \mathcal{N}(3, 1)\label{eq:sim-x2}\\
+\Pr(x_3) &= 
+\begin{cases}
+0.5 & \text{if $x_3 = -1$ or $1$}\\
+0 & \text{otherwise}
+\end{cases}\label{eq:sim-x3}\\
+x_4 &\sim 0.25 \mathcal{N}(-3, 1) + 0.75 \mathcal{N}(3, 1) \label{eq:sim-x4}\\
+x_5 &\sim \frac{1}{3} \mathcal{N}(-5, 1) + \frac{1}{3} \mathcal{N}(0, 1) + \frac{1}{3} \mathcal{N}(5, 1)\label{eq:sim-x5}\\
+x_6 &\sim 0.45 \mathcal{N}(-5, 1) + 0.1 \mathcal{N}(0, 1) + 0.45 \mathcal{N}(5, 1)\label{eq:sim-x6}\\
+x_7 &\sim 0.5 \mathcal{N}(-5, 1) + 0.5 \mathcal{N}(5, 1) 
+\label{eq:sim-x7}
+\end{align}
 
 \begin{figure}
 \centering
@@ -694,22 +701,31 @@ these? xxx{]}
 x3}
 \end{figure}
 
-In tour, when the optimisation ends the global object will be stored and
-printed and can be turned off via \texttt{print\ =\ FALSE}. Additional
-messages during the optimisation can be displayed via
-\texttt{verbose\ =\ TRUE}. Below presented the global object of the 1D
-projection using the small dataset. {[}the printing is not ideal as it
-doesn't show all the columns. xxx{]}
+We form our first dataset using variable \texttt{x1}, \texttt{x2},
+\texttt{x8}, \texttt{x9} and \texttt{x10} and supply it to one of the
+above algorithm, say \texttt{search\_geodesic} in the \texttt{tourr}
+package. When the optimisation ends, the global object will be stored
+and printed (it can be turned off by supplying argument
+\texttt{print\ =\ FALSE}). Additional messages during the optimisation
+can be displayed by \texttt{verbose\ =\ TRUE}. Below shows the first
+five rows of the global object. The global object meets the definition
+of tidy data introduced in \citep{wickham2014tidy} where each
+observation forms a row, each variable forms a column and each type of
+observational unit forms a table. The adoption of tidy data makes it
+easier for data wrangling and visualisation, which powers the visual
+diagnostics system introduced in this paper.
+
+\newpage
 
 \begin{verbatim}
 ## # A tibble: 5 x 8
-##   basis           index_val tries info            loop method        alpha    id
-##   <list>              <dbl> <dbl> <chr>          <dbl> <chr>         <dbl> <int>
-## 1 <dbl[,1] [5 x ~     0.749     1 start             NA <NA>            0.5     1
-## 2 <dbl[,1] [5 x ~     0.749     1 direction_sea~     1 search_geode~  NA       2
-## 3 <dbl[,1] [5 x ~     0.749     1 direction_sea~     1 search_geode~  NA       3
-## 4 <dbl[,1] [5 x ~     0.749     1 direction_sea~     1 search_geode~  NA       4
-## 5 <dbl[,1] [5 x ~     0.749     1 direction_sea~     1 search_geode~  NA       5
+##   basis             index_val tries info           loop method       alpha    id
+##   <list>                <dbl> <dbl> <chr>         <dbl> <chr>        <dbl> <int>
+## 1 <dbl[,1] [5 x 1]>     0.749     1 start            NA <NA>           0.5     1
+## 2 <dbl[,1] [5 x 1]>     0.730     1 random_search     1 search_bett~   0.5     2
+## 3 <dbl[,1] [5 x 1]>     0.743     1 random_search     2 search_bett~   0.5     3
+## 4 <dbl[,1] [5 x 1]>     0.736     1 random_search     3 search_bett~   0.5     4
+## 5 <dbl[,1] [5 x 1]>     0.747     1 random_search     4 search_bett~   0.5     5
 \end{verbatim}
 
 \hypertarget{visual-diagnostics}{%
