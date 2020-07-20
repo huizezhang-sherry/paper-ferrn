@@ -158,7 +158,7 @@ Projection pursuit is usually used in conjunction with a tour method called *gui
 
 For a projection basis, let the three-subscript notation $$\mathbf{A}_{jlk}$$ represent the projection matrix in iteration $j$ with either a searching index $l$ or an interpolation index $k$. The placeholder $*$ will be the substitue for the non-applicable index. To give two examples, $\mathbf{A}_{12*}$ denotes the second searching basis in the first iteration; $\mathbf{A}_{1*2}$ denotes the second interpolation basis in the first iteration.
 
-If we are being pedantic, all the target bases, except the starting basis, should have a searching index since it is the last candidate basis that successfully allows the optimisation algorithm to end and output a new basis for interpolation. If we denotes the length of each search (number of basis searched in each iteration) as $l_1, l_2, \cdots, l_J$ and the length of each interpolation is $k_1, k_2, \cdots, k_J$ , then the searching index for target basis in each iteration will become $l_1, l_1 + l_2, \cdots, l_1 +l_2+\cdots l_J$. To avoid this complex notation involving opteration in the subscript, we simplify it using a superscript as $$\mathbf{A}^{0}, \mathbf{A}^{1}, \mathbf{A}^{2}, \cdots, \mathbf{A}^{J}$$ where $\mathbf{A}^{0}$ is the starting basis. Notice that in the case when the complex notation can't be avoided, we shall separate each index using a comma and  write the index in brackets if necessary. Using the notation above, all the bases on the interpolation path (including target and interpolation bases) can be written as in Equation \ref{eq:interp-path}.
+If we are being pedantic, all the target bases, except the starting basis, should have a searching index since it is the last candidate basis that successfully allows the optimisation algorithm to end and output a new basis for interpolation. If we denotes the length of each search (number of basis searched in each iteration) as $l_1, l_2, \cdots, l_J$ and the length of each interpolation is $k_1, k_2, \cdots, k_J$ , then the searching index for target basis in each iteration will become $\mathbf{A}_{1l_1*}, \mathbf{A}_{2l_2*}, \cdots, \mathbf{A}_{Jl_J*}$. We simplify this notation for target bases by using a superscript as $$\mathbf{A}^{0}, \mathbf{A}^{1}, \mathbf{A}^{2}, \cdots, \mathbf{A}^{J}$$ where $\mathbf{A}^{0}$ is the starting basis. Notice that in the case when the complex notation can't be avoided, we shall separate each index using a comma and  write the index in brackets if necessary. Using the notation above, all the bases on the interpolation path (including target and interpolation bases) can be written as in Equation \ref{eq:interp-path}.
 
 
 \begin{equation}
@@ -314,7 +314,7 @@ Below listed several features characterise the optimisation procedures needed in
 
 [I would expand this section more as the core contribution. ppp]
 
-## Origin idea
+## Motivation
 <!-- Visual diagnostics can be real-time or post-run. Real time diagnostic directly uses the data produced in the algorithm to produce visual representation and thus doesn't need to store the data.   This section focuses on the definition and production of post-run diagnostics and the next section discusses real-time diagnostics. -->
 
 
@@ -333,17 +333,55 @@ The idea of generalising all the diagnostic plots under one framework is inspire
 
 ## Global object
 
-Ggplot requires a data frame that contains all the variables to plot and a *global object* is constructed as the data frame supplied to the visual diagnostic plots to better suit the characters of iterative optimisation algorithms. Given an optimisation algorithm, two primary variables of interest are the *decision variable: $\mathbf{A}$* and the *value of the objective function: $I$*. 
+Ggplot requires a data frame that contains all the variables to plot and a *global object* is constructed as the data frame supplied to the visual diagnostic plots to better suit the characters of iterative optimisation algorithms. Given an optimisation algorithm, two primary variables of interest are the *decision variable: $\mathbf{A}$* and the *value of the objective function: $I$*. To further simplify the notation for $\mathbf{A}$, we write the bases as a column vector denoting by a single subscript by their natural ordering as in Equation \ref{vector-basis}.
 
-*Iterators* indexes the data collected and has a time series feature that prescribes the its natural ordering of the decision varible in the searching. The simpliest iterator, *index per observation: $t$*, is a unique identifier for each observation in the data. For each level of iteration, we design two types of indices: *index per iteration* is fixed for each observations in one iteration and has an increment of one once a new iteration starts. *index within iteration* has an increment of one for each observation in an iteartion and starts over from one once a new iteration starts. A sketch of the difference between these three iterators is provided in Figure \ref{iterators}.
+\begin{equation}
+\{
+\mathbf{A}_0, 
+\mathbf{A}_1, 
+\mathbf{A}_2, 
+\cdots,
+\mathbf{A}_T
+\label{vector-basis}
+\}
+\end{equation}
+
+where $T$ is the total number of plane serached by the optimisation algorithm including all the target planes, all the interpolating planes and all the candidate planes but NOT the starting plane.
+
+*Iterators* indexes the data collected and has a time series feature that prescribes the its natural ordering of the decision varible in the searching. The simpliest iterator, *index per observation: $t$*, is a unique identifier for each observation in the data. For each level of iteration, we design two types of indices: *index per iteration: $j$* is fixed for each observations in one iteration and has an increment of one once a new iteration starts. *index within iteration: $l$* has an increment of one for each observation in an iteartion and starts over from one once a new iteration starts. A sketch of the difference between these three iterators is provided in Figure \ref{iterators}. In projection pursuit optimisation algorithms, there is one level of iteartion and hence exists three iterators: `id` indices each observation by a unique number; `tries` is the index per iteration iterator that gets updated once a search-and-interpolate step is finished; and `loop` is the index within iteration iterator and starts over from one at the beginning of a new `tries`. We give the interpolating basis a different index $k$ for projection pursuit guided tour. It is similar in nature to $l$ but is specific for interpolating bases, which is usually not part of the optimisation.
+
 
 ```{r iterators, out.width = "100%", out.height = "25%", fig.cap = "\\label{iterators} A sketch of the design of iterators in iterative algorithms."}
 knitr::include_graphics(here::here("figures", "iterators.png"))
 ```
 
-In projection pursuit optimisation algorithms, there is one level of iteartion and hence exists three iterators: `id` indices each observation by a unique number; `tries` is the index per iteration iterator that gets updated once a search-and-interpolate step is finished; and `loop` is the index within iteration iterator and starts over from one at the beginning of a new `tries`.
 
-There could exist other parameters that are also of our interest but can't be classified as one of the three categories. They are defined under the fourth category: *other parameter of interest: $S$*. In projection pursuit, three other parameters of our interest includes `method`, `alpha` and `info`.  `method` identifies the name of the searching method used and we are interested in comparing the performance between different algorithms under direct search. The neighbourhood parameter `alpha` controls the size of the sampling space and we are interested to understand how the searching space shrinks as the algorithm progresses. `info` labels different stages in the searching process. A sketch of the global object for projection pursuit guided tour is presented in Figure \ref{fig:glb-obj}. 
+There could exist other parameters that are also of our interest but can't be classified as one of the three categories. They are defined under the fourth category: *other parameter of interest: $S$*. In projection pursuit, three other parameters of our interest includes `method`, `alpha` and `info`.  `method` identifies the name of the searching method used and we are interested in comparing the performance between different algorithms under direct search. The neighbourhood parameter `alpha` controls the size of the sampling space and we are interested to understand how the searching space shrinks as the algorithm progresses. `info` labels different stages in the searching process. A sketch of the global object for projection pursuit guided tour is presented in Figure \ref{fig:glb-obj}. The full data structure can thus be shown as in Equation \ref{eq:data-structure}.
+
+\begin{equation}
+\left[
+\begin{array}{c|cc|ccc|ccc}
+t & \mathbf{A} & I & j &  l  & k & S_{1}& \cdots & S_{p}\\
+\hline
+1 & \mathbf{A}_0 & I_0 & 0 & \ast & \ast & \ast & \cdots & \ast\\
+\hline
+2 & \mathbf{A}_1 & I_1 & 1 & 1 & \ast & S_{1, 1} & \cdots & S_{1, p}\\
+3 & \mathbf{A}_2 & I_2 & 1 & 2 & \ast & S_{2, 1} & \cdots & S_{2, p}\\
+\vdots & \vdots &\vdots & \vdots &\vdots & \vdots &\vdots &\cdots &\vdots\\
+\vdots & \vdots & \vdots & 1 & l_1 & \ast & \vdots &  \cdots & \vdots\\
+\hline
+\vdots &\vdots & \vdots & 1 & \ast & 1& \vdots &  \cdots & \vdots\\
+\vdots &\vdots &\vdots& 1 & \ast & 2& \vdots& \cdots & \vdots\\
+\vdots &\vdots &\vdots &\vdots  &\vdots & \vdots &\vdots &\cdots &\vdots \\
+\vdots &\vdots &\vdots & 1 & \ast & k_1&\vdots & \cdots & \vdots\\
+\hline
+\vdots &\vdots &\vdots &\vdots  &\vdots & \vdots &\vdots &\cdots &\vdots \\
+T+1 & \mathbf{A}_T & I_T & J &  l_J & \ast & S_{T, 1}& \cdots & S_{T, p}\\
+\end{array}
+\right]
+\label{eq:data-structure}
+\end{equation}
+
 
 
 ```{r glb-obj, out.width= "100%", out.height="20%", fig.cap="\\label{glb-obj}The global object in projection pursuit guided tour."}
@@ -394,46 +432,6 @@ knitr::include_graphics(path = here::here("figures/global_obj.png"))
 <!-- \end{equation} -->
 
 
-To write down the notation for the data structure, it is easier to write the bases as a column vector denoting by a single subscript by their natural ordering: 
-
-\begin{equation}
-\{
-\mathbf{A}_0, 
-\mathbf{A}_1, 
-\mathbf{A}_2, 
-\cdots,
-\mathbf{A}_T
-\label{vector-basis}
-\}
-\end{equation}
-
-
-where $T$ is the total number of plane serached by the optimisation algorithm including all the target planes, all the interpolating planes and all the candidate planes but NOT the starting plane. The full data structure can thus be shown as in Equation \ref{eq:data-structure}.
-
-\begin{equation}
-\left[
-\begin{array}{c|cc|ccc|ccc}
-t & \mathbf{A} & I & j &  l  & k & S_{1}& \cdots & S_{p}\\
-\hline
-1 & \mathbf{A}_0 & I_0 & 0 & \ast & \ast & \ast & \cdots & \ast\\
-\hline
-2 & \mathbf{A}_1 & I_1 & 1 & 1 & \ast & S_{1, 1} & \cdots & S_{1, p}\\
-3 & \mathbf{A}_2 & I_2 & 1 & 2 & \ast & S_{2, 1} & \cdots & S_{2, p}\\
-\vdots & \vdots &\vdots & \vdots &\vdots & \vdots &\vdots &\cdots &\vdots\\
-\vdots & \vdots & \vdots & 1 & l_1 & \ast & \vdots &  \cdots & \vdots\\
-\hline
-\vdots &\vdots & \vdots & 1 & \ast & 1& \vdots &  \cdots & \vdots\\
-\vdots &\vdots &\vdots& 1 & \ast & 2& \vdots& \cdots & \vdots\\
-\vdots &\vdots &\vdots &\vdots  &\vdots & \vdots &\vdots &\cdots &\vdots \\
-\vdots &\vdots &\vdots & 1 & \ast & k_1&\vdots & \cdots & \vdots\\
-\hline
-\vdots &\vdots &\vdots &\vdots  &\vdots & \vdots &\vdots &\cdots &\vdots \\
-T+1 & \mathbf{A}_T & I_T & J &  l_J & \ast & S_{T, 1}& \cdots & S_{T, p}\\
-\end{array}
-\right]
-\label{eq:data-structure}
-\end{equation}
-
 
 
 
@@ -449,8 +447,6 @@ T+1 & \mathbf{A}_T & I_T & J &  l_J & \ast & S_{T, 1}& \cdots & S_{T, p}\\
 
 
 <!-- In the current implementation of the `tourr` package, while the target basis generated by the projection pursuit can be accessed later via `save_history()`, interpolating bases and those randomly nearby bases generated in the optimisation are not stored. This creates difficulties for fully understand the behaviour of the optimisation and interpolation of tour in complex scenario **[need a rephrase this part].**  -->
-
-
 
 ## Simulated data
 

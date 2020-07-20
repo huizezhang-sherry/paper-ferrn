@@ -326,9 +326,8 @@ search (number of basis searched in each iteration) as
 \(l_1, l_2, \cdots, l_J\) and the length of each interpolation is
 \(k_1, k_2, \cdots, k_J\) , then the searching index for target basis in
 each iteration will become
-\(l_1, l_1 + l_2, \cdots, l_1 +l_2+\cdots l_J\). To avoid this complex
-notation involving opteration in the subscript, we simplify it using a
-superscript as
+\(\mathbf{A}_{1l_1*}, \mathbf{A}_{2l_2*}, \cdots, \mathbf{A}_{Jl_J*}\).
+We simplify this notation for target bases by using a superscript as
 \[\mathbf{A}^{0}, \mathbf{A}^{1}, \mathbf{A}^{2}, \cdots, \mathbf{A}^{J}\]
 where \(\mathbf{A}^{0}\) is the starting basis. Notice that in the case
 when the complex notation can't be avoided, we shall separate each index
@@ -543,8 +542,8 @@ needed in projection pursuit
 
 {[}I would expand this section more as the core contribution. ppp{]}
 
-\hypertarget{origin-idea}{%
-\subsection{Origin idea}\label{origin-idea}}
+\hypertarget{motivation}{%
+\subsection{Motivation}\label{motivation}}
 
 Random search methods has a black-box mechanism and focuses solely on
 finding the global maximum point, while the projection pursuit problem
@@ -576,52 +575,10 @@ a \emph{global object} is constructed as the data frame supplied to the
 visual diagnostic plots to better suit the characters of iterative
 optimisation algorithms. Given an optimisation algorithm, two primary
 variables of interest are the \emph{decision variable: \(\mathbf{A}\)}
-and the \emph{value of the objective function: \(I\)}.
-
-\emph{Iterators} indexes the data collected and has a time series
-feature that prescribes the its natural ordering of the decision varible
-in the searching. The simpliest iterator, \emph{index per observation:
-\(t\)}, is a unique identifier for each observation in the data. For
-each level of iteration, we design two types of indices: \emph{index per
-iteration} is fixed for each observations in one iteration and has an
-increment of one once a new iteration starts. \emph{index within
-iteration} has an increment of one for each observation in an iteartion
-and starts over from one once a new iteration starts. A sketch of the
-difference between these three iterators is provided in Figure
-\ref{iterators}.
-
-\begin{figure}
-\includegraphics[width=1\linewidth,height=0.25\textheight]{/Users/hzha400/Documents/3.PhD/paper-tour-vis/figures/iterators} \caption{\label{iterators} A sketch of the design of iterators in iterative algorithms.}\label{fig:iterators}
-\end{figure}
-
-In projection pursuit optimisation algorithms, there is one level of
-iteartion and hence exists three iterators: \texttt{id} indices each
-observation by a unique number; \texttt{tries} is the index per
-iteration iterator that gets updated once a search-and-interpolate step
-is finished; and \texttt{loop} is the index within iteration iterator
-and starts over from one at the beginning of a new \texttt{tries}.
-
-There could exist other parameters that are also of our interest but
-can't be classified as one of the three categories. They are defined
-under the fourth category: \emph{other parameter of interest: \(S\)}. In
-projection pursuit, three other parameters of our interest includes
-\texttt{method}, \texttt{alpha} and \texttt{info}. \texttt{method}
-identifies the name of the searching method used and we are interested
-in comparing the performance between different algorithms under direct
-search. The neighbourhood parameter \texttt{alpha} controls the size of
-the sampling space and we are interested to understand how the searching
-space shrinks as the algorithm progresses. \texttt{info} labels
-different stages in the searching process. A sketch of the global object
-for projection pursuit guided tour is presented in Figure
-\ref{fig:glb-obj}.
-
-\begin{figure}
-\includegraphics[width=1\linewidth,height=0.2\textheight]{/Users/hzha400/Documents/3.PhD/paper-tour-vis/figures/global_obj} \caption{\label{glb-obj}The global object in projection pursuit guided tour.}\label{fig:glb-obj}
-\end{figure}
-
-To write down the notation for the data structure, it is easier to write
-the bases as a column vector denoting by a single subscript by their
-natural ordering:
+and the \emph{value of the objective function: \(I\)}. To further
+simplify the notation for \(\mathbf{A}\), we write the bases as a column
+vector denoting by a single subscript by their natural ordering as in
+Equation \ref{vector-basis}.
 
 \begin{equation}
 \{
@@ -636,8 +593,47 @@ natural ordering:
 
 where \(T\) is the total number of plane serached by the optimisation
 algorithm including all the target planes, all the interpolating planes
-and all the candidate planes but NOT the starting plane. The full data
-structure can thus be shown as in Equation \ref{eq:data-structure}.
+and all the candidate planes but NOT the starting plane.
+
+\emph{Iterators} indexes the data collected and has a time series
+feature that prescribes the its natural ordering of the decision varible
+in the searching. The simpliest iterator, \emph{index per observation:
+\(t\)}, is a unique identifier for each observation in the data. For
+each level of iteration, we design two types of indices: \emph{index per
+iteration: \(j\)} is fixed for each observations in one iteration and
+has an increment of one once a new iteration starts. \emph{index within
+iteration: \(l\)} has an increment of one for each observation in an
+iteartion and starts over from one once a new iteration starts. A sketch
+of the difference between these three iterators is provided in Figure
+\ref{iterators}. In projection pursuit optimisation algorithms, there is
+one level of iteartion and hence exists three iterators: \texttt{id}
+indices each observation by a unique number; \texttt{tries} is the index
+per iteration iterator that gets updated once a search-and-interpolate
+step is finished; and \texttt{loop} is the index within iteration
+iterator and starts over from one at the beginning of a new
+\texttt{tries}. We give the interpolating basis a different index \(k\)
+for projection pursuit guided tour. It is similar in nature to \(l\) but
+is specific for interpolating bases, which is usually not part of the
+optimisation.
+
+\begin{figure}
+\includegraphics[width=1\linewidth,height=0.25\textheight]{/Users/hzha400/Documents/3.PhD/paper-tour-vis/figures/iterators} \caption{\label{iterators} A sketch of the design of iterators in iterative algorithms.}\label{fig:iterators}
+\end{figure}
+
+There could exist other parameters that are also of our interest but
+can't be classified as one of the three categories. They are defined
+under the fourth category: \emph{other parameter of interest: \(S\)}. In
+projection pursuit, three other parameters of our interest includes
+\texttt{method}, \texttt{alpha} and \texttt{info}. \texttt{method}
+identifies the name of the searching method used and we are interested
+in comparing the performance between different algorithms under direct
+search. The neighbourhood parameter \texttt{alpha} controls the size of
+the sampling space and we are interested to understand how the searching
+space shrinks as the algorithm progresses. \texttt{info} labels
+different stages in the searching process. A sketch of the global object
+for projection pursuit guided tour is presented in Figure
+\ref{fig:glb-obj}. The full data structure can thus be shown as in
+Equation \ref{eq:data-structure}.
 
 \begin{equation}
 \left[
@@ -662,6 +658,10 @@ T+1 & \mathbf{A}_T & I_T & J &  l_J & \ast & S_{T, 1}& \cdots & S_{T, p}\\
 \right]
 \label{eq:data-structure}
 \end{equation}
+
+\begin{figure}
+\includegraphics[width=1\linewidth,height=0.2\textheight]{/Users/hzha400/Documents/3.PhD/paper-tour-vis/figures/global_obj} \caption{\label{glb-obj}The global object in projection pursuit guided tour.}\label{fig:glb-obj}
+\end{figure}
 
 \hypertarget{simulated-data}{%
 \subsection{Simulated data}\label{simulated-data}}
