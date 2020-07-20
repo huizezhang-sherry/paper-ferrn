@@ -272,23 +272,22 @@ projection pursuit. Coined by \citet{friedman1974projection}, projection
 pursuit is a method that detects the interesting structure
 (i.e.~clustering, outliers and skewness) of multivariate data via
 projecting it in lower dimensions. Let \(\mathbf{X}_{n \times p}\) be a
-data matrix, an n-d projection can be seen as a linear transformation:
+data matrix, an n-d projection can be seen as a linear transformation
 \(T: \mathbb{R}^p \mapsto \mathbb{R}^d\) defined by
 \(\mathbf{P} = \mathbf{X} \cdot \mathbf{A}\), where
 \(\mathbf{P}_{n \times d}\) is the projected data and
-\(\mathbf{A}_{p\times d}\) is the projection basis Define
+\(\mathbf{A}_{p\times d}\) is the projection basis. Define
 \(f: \mathbb{R}^{p \times d} \mapsto \mathbb{R}\) be an index function
 that maps the projection basis \(\mathbf{A}\) onto a scalar value \(I\),
 this function is commonly known as the projection pursuit index (PPI)
-function, or index function and can be used to measure the
+function, or the index function and can be used to measure the
 ``interestingness'' of the projection. A number of indice functions have
-been proposed in the literature and this includes Legendre index
+been proposed in the literature including Legendre index
 \citep{friedman1974projection}, hermite index
 \citep{hall1989polynomial}, natural hermite index
 \citep{cook1993projection}, chi-square index
 \citep{posse1995projection}, LDA index \citep{lee2005projection} and PDA
-index \citep{lee2010projection}. {[}Any literature on holes index?
-xxx{]}
+index \citep{lee2010projection}.
 
 As \citet{friedman1974projection} noted ``\ldots{}, the technique use
 for maximising the projection index strongly influences both the
@@ -302,33 +301,103 @@ called \emph{guided tour}. Tour explores the multivariate data
 \emph{interactively} via playing a series of projections, that form a
 \emph{tour path} and guided tour uses the path that is geodesically the
 shortest. Details of the mathematical construction of a tour path can be
-found in \citet{buja2005computational}. Modified from
-\citet{buja2005computational}, Figure \ref{tour-path} vividly depicts
-the tour path in guided tour. Guided tour, along with other types of
-tour, has been implemented in the \emph{tourr} package in R, available
-on the Comprehensive R Archive Network at
+found in \citet{buja2005computational}. Guided tour, along with other
+types of tour, has been implemented in the \emph{tourr} package in R,
+available on the Comprehensive R Archive Network at
 \url{https://cran.r-project.org/web/packages/tourr/}
 \citep{wickham2011tourrpackage}.
+
+\hypertarget{notation}{%
+\subsection{Notation}\label{notation}}
+
+For a projection basis, let the three-subscript notation
+\[\mathbf{A}_{jlk}\] represent the projection matrix in iteration \(j\)
+with either a searching index \(l\) or an interpolation index \(k\). The
+placeholder \(*\) will be the substitue for the non-applicable index. To
+give two examples, \(\mathbf{A}_{12*}\) denotes the second searching
+basis in the first iteration; \(\mathbf{A}_{1*2}\) denotes the second
+interpolation basis in the first iteration.
+
+If we are being pedantic, all the target bases, except the starting
+basis, should have a searching index since it is the last candidate
+basis that successfully allows the optimisation algorithm to end and
+output a new basis for interpolation. If we denotes the length of each
+search (number of basis searched in each iteration) as
+\(l_1, l_2, \cdots, l_J\) and the length of each interpolation is
+\(k_1, k_2, \cdots, k_J\) , then the searching index for target basis in
+each iteration will become
+\(l_1, l_1 + l_2, \cdots, l_1 +l_2+\cdots l_J\). To avoid this complex
+notation involving opteration in the subscript, we simplify it using a
+superscript as
+\[\mathbf{A}^{0}, \mathbf{A}^{1}, \mathbf{A}^{2}, \cdots, \mathbf{A}^{J}\]
+where \(\mathbf{A}^{0}\) is the starting basis. Notice that in the case
+when the complex notation can't be avoided, we shall separate each index
+using a comma and write the index in brackets if necessary. Using the
+notation above, all the bases on the interpolation path (including
+target and interpolation bases) can be written as in Equation
+\ref{eq:interp-path}.
+
+\begin{equation}
+\{ 
+\mathbf{A}^0, 
+\mathbf{A}^1, 
+\mathbf{A}_{1 \ast 1}, 
+\mathbf{A}_{1 \ast 2},
+\cdots, 
+\mathbf{A}^2, 
+\mathbf{A}_{2 \ast 1}, 
+\mathbf{A}_{2 \ast 2}, 
+\cdots, 
+\mathbf{A}^J,
+\mathbf{A}_{J \ast 1}, 
+\mathbf{A}_{J \ast 2}, 
+\cdots, 
+\mathbf{A}_{J \ast K},
+\}
+\label{eq:interp-path}
+\end{equation}
+
+where \(K\) denotes the last interpolating index. A visual
+representation of the interpolation path ( for iteration one) modified
+from \citet{buja2005computational} is shown in Figure \ref{tour-path}.
+If we use a dot to represent a plane in the searching space, the
+searching points along with the current and target basis in iteration
+one can sketched in Figure \ref{searching-points}. Combine the two
+above, we can write all the bases in the first iteration (including the
+starting basis) in its natural ordering as in Equation \ref{eq:vectorA}.
+
+\begin{equation}
+\{
+\mathbf{A}^{0}, 
+\mathbf{A}_{1 1\ast}, 
+\mathbf{A}_{1 2\ast}, 
+\cdots, 
+\mathbf{A}^{1},
+\mathbf{A}_{1\ast 1}, 
+\mathbf{A}_{1\ast 2},  
+\cdots, 
+\mathbf{A}_{1\ast k_1}
+\}
+\label{eq:vectorA}
+\end{equation}
 
 \begin{figure}
 \includegraphics[width=1\linewidth,height=0.6\textheight]{/Users/hzha400/Documents/3.PhD/paper-tour-vis/figures/tour_path_increasing} \caption{\label{tour-path}An illustration of the tour path}\label{fig:tour-path}
 \end{figure}
 
-{[}doubt if I need the following. xxx - maybe an algorithmatic version
-of guide tour would be helpful for non-expert to understand the
-method?{]}
+\begin{figure}
+\includegraphics[width=1\linewidth,height=0.6\textheight]{/Users/hzha400/Documents/3.PhD/paper-tour-vis/figures/tour_path_increasing} \caption{\label{searching-points}An illustration of the tour path}\label{fig:searching-points}
+\end{figure}
 
-\hypertarget{optimisation-in-projection-pursuit}{%
-\subsection{Optimisation in projection
-pursuit}\label{optimisation-in-projection-pursuit}}
+\hypertarget{optimisation-problem-and-existing-algorithms}{%
+\subsection{Optimisation problem and existing
+algorithms}\label{optimisation-problem-and-existing-algorithms}}
 
-{[}thinking if the following three should be presented as algorithms or
-plain description is fine. xxx{]}
-
-Now we formulate the problem in mathmetical notation. Projection pursuit
-finds the projection basis
+Now we begin to formulate the optimisation problem. Given a randomly
+generated starting basis \(\mathbf{A}^0\), projection pursuit finds the
+final projection basis
 \(\mathbf{A}^J = [\mathbf{a}_1, \cdots, \mathbf{a}_d]\), where
-\(\mathbf{a}_i\) is a \(p \times 1\) vector, satisfying the following
+\(\mathbf{a}_i\) is a \(p \times 1\) vector, satisfies the following
 optimisation problem:
 
 \begin{align}
@@ -336,29 +405,20 @@ optimisation problem:
 s.t. & \mathcal{A} = \{ \forall \mathbf{a}_i, \mathbf{a}_j \in \mathbf{A}: \lVert \mathbf{a}_i \rVert = 1 \text{ and } \mathbf{a}_i \mathbf{a}_j = 0 \}
 \end{align}
 
-via an iterative search:
-\(\{\mathbf{A}^1, \mathbf{A}^2, \cdots \cdots \mathbf{A}^J\}\). Guided
-tour interpolates geodesically between each basis found by projection
-pursuit \(A^j\) to form a tour path:
-\[\{ \mathbf{A}^0, \mathbf{A}^1, {}_{1}\mathbf{A}^1, {}_{2}\mathbf{A}^1,\cdots, {}_{k_1}\mathbf{A}^1, A^2, {}_{1}\mathbf{A}^2, {}_{2}\mathbf{A}^2, \cdots {}_{k_2}\mathbf{A}^2, \cdots, \mathbf{A}^{J-1}, {}_{1}\mathbf{A}^{J-1}, \cdots {}_{k_m}\mathbf{A}^{J-1} ,\mathbf{A}^J \}\]
-
-Where \(\mathbf{A}^0\) is the starting basis and \(\mathbf{A}^J\) is the
-final basis that has the largest index value in the searching space.
-Here we use left subscript to denote the index of the interpolation
-bases in each iteration i.e. \({}_{2}\mathbf{A}^1\) means the second
-interpolation basis in the first iteration. The right subcript is
-reserved for the index of searching points in the optimisation
-algorithm.
+via an iterative search of target basis:
+\(\{\mathbf{A}^0, \mathbf{A}^1, \mathbf{A}^2, \cdots \cdots \mathbf{A}^J\}\).
 
 There are three existing methods for optimisating PPI function and we
-review them below. \citet{posse1995projection} proposed a stochastic
-direct search method, a random search algorithm. Given a current basis
-\(\mathbf{A}^{j}\), a candidate basis \(\mathbf{A}^{j +1}_l\) is sampled
-in the neighbourhood defined by the radius of the p-dimensional sphere,
-\(\alpha\) of the current basis \(\mathbf{A}^{j}\) by
-\[\mathbf{A}^{j+1}_{l} = \mathbf{A}^{j} + \alpha \mathbf{A}_{rand}\]. If
+review them below.
+
+\citet{posse1995projection} proposed a stochastic direct search method,
+a random search algorithm. Given a current basis \(\mathbf{A}^{j-1}\), a
+candidate basis \(\mathbf{A}_{jl*}\) is sampled in the neighbourhood
+defined by the radius of the p-dimensional sphere, \(\alpha\) of the
+current basis \(\mathbf{A}^{j}\) by
+\(\mathbf{A}_{jl*} = \mathbf{A}^{j-1} + \alpha \mathbf{A}_{rand}\). If
 the candidate basis has a higher index value than the current basis, it
-is outputed as the target basis \(\mathbf{A}^{j + 1}\) along with other
+is outputed as the target basis \(\mathbf{A}^{j}\) along with other
 metadata and the current iteration stops. If no basis is found to have
 higher index value after the maximum number of tries \(l_{\max}\), the
 algorithm stops with nothing outputted. \(c\) is the halfing parameter
@@ -366,21 +426,24 @@ and when \(c > 30\), the nieghbourhood parameter \(\alpha\) in the next
 iteration will be reduced by half. The algorithm for a random search is
 summarised in Algorithm \ref{random-search}.
 
-\newpage
-\begin{algorithm}[H]
+\begin{algorithm}
 \SetAlgoLined
-  initialisation: $c = 0$, $l = 1$ $l_{\max}$, $\mathbf{A}^{j}$\;
+  \SetKwInOut{Input}{input}
+  \SetKwInOut{Output}{output}
+    \Input{The current projection basis: $\mathbf{A}^{j-1}$; The index function: $f$}
+    \Output{The global object; The target basis: $\mathbf{A}^{j}$}
+  initialisation\;
   \While{$l < l_{\max}$}{
-    $\mathbf{A}^{j+1}_{l} = \mathbf{A}^{j} + \alpha \mathbf{A}_{rand}$\;
-    $I^{j+1}_l = f(\mathbf{A}^{j+1}_l)$\;
-    \eIf{$I^{j+1}_l > I^{j}$}{
-      $\mathbf{A}^{j+1} = \mathbf{A}^{j+1}_{l}$\;
+    Generate $\mathbf{A}_{jl*} = \mathbf{A}^{j-1} + \alpha \mathbf{A}_{\text{rand}}$ ensuring $\mathbf{A}_{j, l,*}$ is orthonormal\;
+    Compute $I_{jl*}  = f(\mathbf{A}_{jl*})$\;
+    \eIf{$I_{jl*} > I^{j-1}$}{
+      $A^{j} = A_{jl*}$, $I^{j} = I_{jl*}$\;
       }{
       $c = c + 1$\;
       }
     $l = l + 1$\;
   }
-  \caption{random search: my first algorithm}
+  \caption{random search}
   \label{random-search}
 \end{algorithm}
 
@@ -391,30 +454,29 @@ computation of derivative is replaced by a pseudo-derivative of
 evaluating five randomly generated directions in a tiny nearby
 neighbourhood. Taking a step on the straight derivative direction has
 been modified to maximise the projection pursuit index along the
-geodesic direction.
+geodesic direction. See Algorithm \ref{search-geodesic} for a
+summarisation of the steps.
 
-\newpage
-\begin{algorithm}[H]
+\begin{algorithm}
 \SetAlgoLined
-  initialisation: $l_{\max}$, $\alpha$, $l_{\max}$,$\mathbf{A}^j$\;
+\SetKwInOut{Input}{input}
+  \SetKwInOut{Output}{output}
+    \Input{The current projection basis: $\mathbf{A}^{j-1}$; The index function: $f$}
+    \Output{The global object; The target basis: $\mathbf{A}^{j}$}
+  initialisation\;
   \While{$l < l_{\max}$}{
-    Generate $\{A^{(j_1)}: A^{(1)}, \cdots A^{(5)}\}$\;
-    Find $A^{J_1}_l$ where $J_1 \in j_1$ such that $\{A^{(J_1)}: \arg \max I(A^{(j_1)})\}$\;
-    Denote $F_a = A^j$ and $F_z = A^{(J_1)}$\;
-    Conduct singular value decomposition (SVD) for $F_a$ and $F_z$ such that $F_{a}^{T}F_z = V_a\Lambda V_z^T$\;
-    Compute $G_a = F_aV_a$, $G_z = F_zV_z$ and $\tau = \arccos(\Lambda)$\;
-    ...\;
-    Find $A^{(J_2)}$ satisfying $A^{J_2}$ on the interpolation path such that $\{A^{(J_2)}: \arg \max I(A^{(j_2)})\}$\;
-    Compute $I^{(J_2)} = f(A^{(J_2)})$, $p_{diff} = (I^{(J_2)} - I^{j})/I^j$\;
-      \If{$p_{diff} > 0.001$}{
-        $A^{j+1} = A^{(J_2)}$\;
-        $I^{j+1} = I^{(J_2)}$\;
-        \KwOut{$A^{j+1}$, $I^{j+1}$, $i$ and relevant metadata}
+    Generate ten bases in five random directions: $\mathbf{A}_{jl*}: \mathbf{A}_{j,(l + 9), *}$ within a small neighbourhood $\text{dist}$\;
+    Find the direction with the largest index value: $\mathbf{A}_{j, l_{d}, *}$\;
+    Construct the geodesic from $\mathbf{A}^{j-1}$ to $\mathbf{A}_{j, l_{d}, *}$\;
+    Find $\mathbf{A}_{j,l_g, *}$ on the geodesic that has the largest index value \;
+    Compute $I_{j,l_g, *} = f(\mathbf{A}_{j,l_g, *})$, $p_{\text{diff}} = (I_{j,l_g, *} - I^{j-1})/I_{j,l_g, *}$\;
+      \If{$p_{\text{diff}} > 0.001$}{
+        $A^{j} = A_{j,l_g, *}$, $I^{j} = I_{j,l_g, *}$\;
       }
-    $i = i + 1$\;
+    $l = l + 1$\;
   }
-  \caption{searchgeodesic: this part has problem!}
-  \label{search_geodesic}
+  \caption{search geodesic}
+  \label{search-geodesic}
 \end{algorithm}
 
 Simulated annealing
@@ -425,32 +487,32 @@ is defined as \(T(l) = \frac{T_0}{log(l + 1)}\). The simulated annealing
 algorithm works as follows. Given a neighbourhood parameter \(\alpha\)
 and a randomly generated orthonormal basis \(A_{rand}\), a candidate
 basis is constructed as
-\(A^{j+1}_l = (1 - \alpha)A^{j} + \alpha A_{rand}\). If the index value
-of the candidate basis is larger than the one of the current basis, the
-candidate basis becomes the target basis. If it is smaller, the
-candidate is accepted with probability
-\(\text{prob} = \min\left\{\exp\left[\frac{I^j - I^{j+1}_l}{T(l)}\right],1\right\}\)
-where \(I^j\) and \(I^{j+1}_l\) are the index value of the current and
+\(\mathbf{A}_{jl*} = (1 - \alpha)\mathbf{A}^{j} + \alpha \mathbf{A}_{rand}\).
+If the index value of the candidate basis is larger than the one of the
+current basis, the candidate basis becomes the target basis. If it is
+smaller, the candidate is accepted with probability
+\(P= \min\left\{\exp\left[\frac{I^{j-1} - I_{jl*}}{T(l)}\right],1\right\}\)
+where \(I^{j-1}\) and \(I_{jl*}\) are the index value of the current and
 candidate basis respectively. The algorithm can be summarised as in
 Algorithm \ref{simulated_annealing}.
 
-\newpage
-\begin{algorithm}[H]
+\begin{algorithm}
 \SetAlgoLined
-  initialisation: $T_0$, $\alpha$, $l_{\max}$,$\mathbf{A}^j$\;
+\SetKwInOut{Input}{input}
+  \SetKwInOut{Output}{output}
+    \Input{The current projection basis: $\mathbf{A}^{j-1}$; The index function: $f$}
+    \Output{The global object; The target basis: $\mathbf{A}^{j}$}
+  initialisation\;
   \While{$l < l_{\max}$}{
-    $\mathbf{A}^{j+1}_{l} = (1 - \alpha)\mathbf{A}^{j} + \alpha \mathbf{A}_{rand}$ s.t. $\lVert\mathbf{a_i} \rVert = 1$\;
-    $I^{j+1}_l = f(\mathbf{A}^{j+1}_{l})$\;
-    $T(l) = \frac{T_0}{\log(l + 1)}$\;
-      \eIf{$I^{j+1}_l > I^{j}$}{
-        $\mathbf{A}^{j+1} = \mathbf{A}^{j+1}_{l}$\;
-        $I^{j+1} = I^{j+1}_l$\;
-        \KwOut{$\mathbf{A}^{j+1}$, $I^{j+1}$,$l$ and relevant metadata}
+    Generate $\mathbf{A}_{jl*} = (1 - \alpha)\mathbf{A}^{j-1} + \alpha \mathbf{A}_{rand}$ ensuring $\mathbf{A}_{jl*}$ is orthonormal \;
+    Commpute $I_{jl*} = f(\mathbf{A}_{jl*})$ and $T(l) = \frac{T_0}{\log(l + 1)}$\;
+      \eIf{$I_{jl*} > I^{j-1}$}{
+        $A^{j} = A_{jl*}$, $I^{j} = I_{jl*}$\;
       }{
-        $\text{prob} = \min\left\{\exp\left[\frac{I^j - I^{j+1}_l}{T(l)}\right],1\right\}$\;
-        Draw $\text{rand} \sim \text{Unif(0, 1)}$\;
-        \If{$\text{prob} > \text{rand}$}{
-          \KwOut{$\mathbf{A}^{j+1}$, $I^{j+1}$, $l$ and relevant metadata}
+        Compute $P= \min\left\{\exp\left[\frac{I^{j-1} - I_{jl*}}{T(l)}\right],1\right\}$\;
+        Draw $D$ from a uniform distribution: $D \sim \text{Unif(0, 1)}$\;
+        \If{$P > D$}{
+          $A^{j} = A_{jl*}$, $I^{j} = I_{jl*}$\;
         }
       }
     $l = l + 1$\;
@@ -458,8 +520,6 @@ Algorithm \ref{simulated_annealing}.
   \caption{simulated annealing}
   \label{simulated_annealing}
 \end{algorithm}
-
-\newpage
 
 Below listed several features characterise the optimisation procedures
 needed in projection pursuit
@@ -515,25 +575,20 @@ Ggplot requires a data frame that contains all the variables to plot and
 a \emph{global object} is constructed as the data frame supplied to the
 visual diagnostic plots to better suit the characters of iterative
 optimisation algorithms. Given an optimisation algorithm, two primary
-variables of interest are the \emph{decision variable} and the
-\emph{value of the objective function}. To align with the notation used
-previously for projection pursuit, we denote the decision variable to be
-\(\mathbf{A}\), which are matrices in projection pursuit algorithms and
-value of the objective function to be \(I\), the index function.
+variables of interest are the \emph{decision variable: \(\mathbf{A}\)}
+and the \emph{value of the objective function: \(I\)}.
 
 \emph{Iterators} indexes the data collected and has a time series
-feature that prescribes the its natural ordering. Given the complexity
-of the algorithm, there could be multiple iterators. The simpliest
-iterator: \emph{index per observation}, is a unique identifier for each
-observation in the data. For each level of iteration, we design two
-indices: \emph{index per iteration} is fixed for each observations in
-one iteration and has an increment of one once a new iteration starts.
-\emph{index within iteration} has an increment of one for each
-observation in an iteartion and starts over from one once a new
-iteration starts. A sketch of the difference between these three
-iterators is provided in Figure \ref{iterators}. Depend on the number of
-iteration level (\(L\)), the total number of iterators will differ and
-can be calculated as \(1 + 2L\).
+feature that prescribes the its natural ordering of the decision varible
+in the searching. The simpliest iterator, \emph{index per observation:
+\(t\)}, is a unique identifier for each observation in the data. For
+each level of iteration, we design two types of indices: \emph{index per
+iteration} is fixed for each observations in one iteration and has an
+increment of one once a new iteration starts. \emph{index within
+iteration} has an increment of one for each observation in an iteartion
+and starts over from one once a new iteration starts. A sketch of the
+difference between these three iterators is provided in Figure
+\ref{iterators}.
 
 \begin{figure}
 \includegraphics[width=1\linewidth,height=0.25\textheight]{/Users/hzha400/Documents/3.PhD/paper-tour-vis/figures/iterators} \caption{\label{iterators} A sketch of the design of iterators in iterative algorithms.}\label{fig:iterators}
@@ -548,7 +603,7 @@ and starts over from one at the beginning of a new \texttt{tries}.
 
 There could exist other parameters that are also of our interest but
 can't be classified as one of the three categories. They are defined
-under the fourth category: \emph{other parameter of interest: \(O\)}. In
+under the fourth category: \emph{other parameter of interest: \(S\)}. In
 projection pursuit, three other parameters of our interest includes
 \texttt{method}, \texttt{alpha} and \texttt{info}. \texttt{method}
 identifies the name of the searching method used and we are interested
@@ -564,131 +619,49 @@ for projection pursuit guided tour is presented in Figure
 \includegraphics[width=1\linewidth,height=0.2\textheight]{/Users/hzha400/Documents/3.PhD/paper-tour-vis/figures/global_obj} \caption{\label{glb-obj}The global object in projection pursuit guided tour.}\label{fig:glb-obj}
 \end{figure}
 
-\hypertarget{notation}{%
-\subsection{Notation}\label{notation}}
-
-Now we formulate the idea of global object using mathmetical notation.
-Let \[\mathbf{A}_{j,l,k}\] denotes the projection matrix in iteration
-\(j\). If it is searching basis produced in the optimisation, then it
-has a subscript \(l\). If it is an interpolation basis, it has a \(k\)
-subscript. For example \(\mathbf{A}_{1,2,/}\) means the second searching
-basis in the first iteration, \(\mathbf{A}_{1, /, 2}\) means the second
-interpolation basis that on the tour path from the current basis
-\(\mathbf{A}^0\) to the target basis found in iteration 1:
-\(\mathbf{A}^1\). The target basis found in each iteration,
-\(\mathbf{A}_{j, l_j, /}\) can also be simplified using a superscript as
-\(\mathbf{A}^j\).
-
-Let \(\mathbf{A}^0\) denotes the starting basis. Superscript \(j\) is
-used to denote the number of iteration (index per iteration). Candidate
-basis are denoted using subscript on the right and interpolation basis
-are denoted using subscript on the left. For example,
-\(\mathbf{A}^1_{2}\) means the second candidate basis in the first
-iteration and \({}_{2}\mathbf{A}^1\) means the second interpolation
-basis that forms the tour path from the current basis \(\mathbf{A}^0\)
-to the target basis \(\mathbf{A}^1\). In iteration two, \(\mathbf{A}^1\)
-becomes the current basis and projection pursuit searches through
-\(\mathbf{A}^2_{1}, \mathbf{A}^2_{2}, \cdots, \mathbf{A}^2_{l_2}\) to
-find the target basis \(\mathbf{A}^2\). The tour path from
-\(\mathbf{A}^1\) to \(\mathbf{A}^2\) is constructed using the
-interpolation bases
-\({}_{1}\mathbf{A}^2, {}_{2}\mathbf{A}^2, \cdots, {}_{k_2}\mathbf{A}^2\).
-All the bases together can be arranged in a format that each coloumn
-represents an iteration as in Equation \ref{eq:matrixA}.
+To write down the notation for the data structure, it is easier to write
+the bases as a column vector denoting by a single subscript by their
+natural ordering:
 
 \begin{equation}
-\left[
-\begin{array}{ccccccc}
-\ast & \mathbf{A}_{1,1,\ast} & \mathbf{A}_{2, l_1 +1,\ast} & \cdots & \mathbf{A}_{J,\sum_{i = 1}^{J-1}l_i +1,\ast} & \mathbf{A}_{J+1,\sum_{i = 1}^{J}l_i +1 ,\ast} \\
-\ast & \mathbf{A}_{1,2,\ast} & \mathbf{A}_{2,l_1 +2,\ast} & \cdots & \mathbf{A}_{J,\sum_{i = 1}^{J-1}l_i +2,\ast} & \mathbf{A}_{J+1,\sum_{i = 1}^{J}l_i +2, \ast} \\
-\vdots & \vdots & \vdots & \ddots & \vdots &\vdots   \\
-\ast & \mathbf{A}_{1, l, \ast} & \mathbf{A}_{2, l_1 + l, \ast} & \cdots & \mathbf{A}_{J+1, \sum_{i = 1}^{J-1}l_i + l, \ast}  & \mathbf{A}_{J + 1, \sum_{i = 1}^{J}l_i + l, \ast}\\
-\vdots & \vdots & \vdots & \ddots & \vdots &\vdots   \\
-\ast & \mathbf{A}_{1, l_1-1, \ast} & \mathbf{A}_{2, l_1 + l_2-1, \ast} & \cdots & \mathbf{A}_{J, \sum_{i = 1}^{J-1}l_i -1, \ast} & \mathbf{A}_{J+1, \sum_{i = 1}^{J+1} l_i-1, \ast}\\
-\mathbf{A}_{0,\ast,\ast} & \mathbf{A}_{1, l_1, \ast} & \mathbf{A}_{2, l_1 + l_2, \ast} & \cdots & \mathbf{A}_{J, \sum_{i = 1}^{J}l_i , \ast} & \ast\\
-\hline
-\ast &\mathbf{A}_{1, \ast, 1} & \mathbf{A}_{2, \ast, k_1 + 1} & \cdots &\mathbf{A}_{J, \ast,\sum_{i = 1}^{J-1}k_i + 1}  & \ast\\
-\ast &\mathbf{A}_{1, \ast, 2} & \mathbf{A}_{2, \ast, k_1 + 2} & \cdots &\mathbf{A}_{J, \ast, \sum_{i = 1}^{J-1}k_i +2}  & \ast \\
-\vdots & \vdots & \vdots & \ddots & \vdots & \vdots \\
-\ast &\mathbf{A}_{1, \ast, k} & \mathbf{A}_{2, \ast, k_1 + k} & \cdots &\mathbf{A}_{J, \ast, \sum_{i = 1}^{J-1}k_i +k}  & \ast \\
-\vdots & \vdots & \vdots & \ddots & \vdots   & \vdots \\
-\ast &\mathbf{A}_{1, \ast, k_1} & \mathbf{A}_{2, \ast, k_1 + k_2} & \cdots &\mathbf{A}_{J, \ast,\sum_{i = 1}^{J}k_i} & \ast \\
-\end{array}
-\right]
-= 
-\left[
-\begin{array}{c}
-\vphantom{A^J_1}\text{candidate basis} \\
-\vphantom{A^J_2}\text{candidate basis} \\
-\vphantom{\vdots} \vdots \\
-\vphantom{A^J_2}\text{candidate basis} \\
-\vphantom{\vdots} \vdots \\
-\vphantom{A^J_2}\text{candidate basis} \\
-\vphantom{A^J}\text{current/target basis} \\
-\hline
-\vphantom{\text{NULL}}\text{interpolation basis} \\
-\vphantom{\text{NULL}}\text{interpolation basis} \\
-\vphantom{\text{NULL}}\vdots \\
-\vphantom{\text{NULL}}\text{interpolation basis} \\
-\vphantom{\vdots} \vdots \\
-\vphantom{\text{NULL}}\text{interpolation basis} \\
-\end{array}
-\right]
-\label{eq:matrixA}
+\{
+\mathbf{A}_0, 
+\mathbf{A}_1, 
+\mathbf{A}_2, 
+\cdots,
+\mathbf{A}_T
+\label{vector-basis}
+\}
 \end{equation}
 
-When aggregated with information of index value and other interesting
-parameter, it is easier to write the basis as a column vector denoting
-by a single subscript by their natural ordering i.e.~all the bases in
-iteration 1 along with the starting basis as shown in Equation
-\ref{eq:vectorA}, can be denoted as
-\(\mathbf{A}_0, \mathbf{A}_1, \cdots, \mathbf{A}_n\) where
-\(n = 1 + l_1 + k_1\). The full data structure can thus be presneted as
-in Equation \ref{eq:data-structure}.
-
-\begin{equation}
-\begin{array}{cccccccccccc}
-\bigl[
-\mathbf{A}_{0, \ast, \ast} & 
-\mathbf{A}_{1, 1, \ast} & 
-\mathbf{A}_{1,2,\ast} & 
-\cdots & 
-\mathbf{A}_{1,l_1, \ast}   &
-\mathbf{A}_{1, \ast, 1} & 
-\mathbf{A}_{1, \ast, 2} & 
-\cdots &
-\mathbf{A}_{1, \ast, k_1} &
-\bigr]
-\end{array} 
-\label{eq:vectorA}
-\end{equation}
+where \(T\) is the total number of plane serached by the optimisation
+algorithm including all the target planes, all the interpolating planes
+and all the candidate planes but NOT the starting plane. The full data
+structure can thus be shown as in Equation \ref{eq:data-structure}.
 
 \begin{equation}
 \left[
-\begin{array}{c|c|cccc|ccc}
-\mathbf{A} & I & j &  l  & k & n & S_{1}& \cdots & S_{p}\\
+\begin{array}{c|cc|ccc|ccc}
+t & \mathbf{A} & I & j &  l  & k & S_{1}& \cdots & S_{p}\\
 \hline
-\mathbf{A}_0 & I_0 & 0 & \ast & \ast & 1 & \ast & \cdots & \ast\\
+1 & \mathbf{A}_0 & I_0 & 0 & \ast & \ast & \ast & \cdots & \ast\\
 \hline
-\mathbf{A}_1 & I_1 & 1 & 1 & \ast& 2 & S_{1, 1} & \cdots & S_{1, p}\\
-\mathbf{A}_2 & I_2 & 1 & 2 &\ast & 3 & S_{2, 1} & \cdots & S_{2, p}\\
-\vdots &\vdots & \vdots &\vdots & \vdots &\vdots &\vdots &\cdots &\vdots\\
-\vdots & \vdots & 1 & l_1 & \ast & \vdots & \vdots & \cdots & \vdots\\
+2 & \mathbf{A}_1 & I_1 & 1 & 1 & \ast & S_{1, 1} & \cdots & S_{1, p}\\
+3 & \mathbf{A}_2 & I_2 & 1 & 2 & \ast & S_{2, 1} & \cdots & S_{2, p}\\
+\vdots & \vdots &\vdots & \vdots &\vdots & \vdots &\vdots &\cdots &\vdots\\
+\vdots & \vdots & \vdots & 1 & l_1 & \ast & \vdots &  \cdots & \vdots\\
 \hline
-\vdots & \vdots & 1 & \ast & 1& \vdots &\vdots & \cdots & \vdots\\
-\vdots &\vdots& 1 & \ast & 2& \vdots&\vdots & \cdots & \vdots\\
-\vdots &\vdots &\vdots  &\vdots & \vdots &\vdots &\vdots &\cdots &\vdots \\
-\vdots &\vdots & 1 & \ast & k_1&\vdots &\vdots & \cdots & \vdots\\
+\vdots &\vdots & \vdots & 1 & \ast & 1& \vdots &  \cdots & \vdots\\
+\vdots &\vdots &\vdots& 1 & \ast & 2& \vdots& \cdots & \vdots\\
+\vdots &\vdots &\vdots &\vdots  &\vdots & \vdots &\vdots &\cdots &\vdots \\
+\vdots &\vdots &\vdots & 1 & \ast & k_1&\vdots & \cdots & \vdots\\
 \hline
-\vdots &\vdots &\vdots  &\vdots & \vdots &\vdots &\vdots &\cdots &\vdots \\
-\mathbf{A}_n & I_n & J &  l_J & \ast & n & S_{n, 1}& \cdots & S_{n, p}\\
+\vdots &\vdots &\vdots &\vdots  &\vdots & \vdots &\vdots &\cdots &\vdots \\
+T+1 & \mathbf{A}_T & I_T & J &  l_J & \ast & S_{T, 1}& \cdots & S_{T, p}\\
 \end{array}
 \right]
 \label{eq:data-structure}
 \end{equation}
-
-where
-\(n = 1 + \sum_{i = 1}^{J+1} l_i -1 + \sum_{i = 1}^{J} k_i= \sum_{i = 1}^{J+1} l_i + \sum_{i = 1}^{J} k_i\)
 
 \hypertarget{simulated-data}{%
 \subsection{Simulated data}\label{simulated-data}}
@@ -972,7 +945,7 @@ basis, where
 Then the index plot incorporating both the interpolating points and
 polishing points can be defined as
 
-\[x = \{1, 2, \cdots, \sum_{i = 1}^J k_i,(\sum_{i = 1}^J k_i + 1) \cdots,  \sum_{i = 1}^J k_i + M\}\]
+\[x = \{1, 2, \cdots, \sum_{i = 1}^J k_i,(\sum_{i = 1}^J k_i + 1), \cdots,  \sum_{i = 1}^J k_i + M\}\]
 \[y = \{I_{jlk}: k = x\}\]
 
 The following example conducted a 2D projection on the larger dataset
