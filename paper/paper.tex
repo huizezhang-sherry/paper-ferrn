@@ -729,7 +729,7 @@ diagnostics system introduced in this paper.
 \end{verbatim}
 
 \hypertarget{visual-diagnostics}{%
-\subsection{Visual diagnostics}\label{visual-diagnostics}}
+\section{Visual diagnostics}\label{visual-diagnostics}}
 
 Below we will present several examples of diagnosing different aspects
 of the projection pursuit optimisation. We will present:
@@ -774,36 +774,36 @@ transformation steps needed for each diagnostic plots before stepping
 into visualisation.
 
 \hypertarget{static}{%
-\subsubsection{Explore the value of objective function}\label{static}}
+\subsection{Explore the value of objective function}\label{static}}
 
-It is a convention to map the time index of a time series on the x-axis
-and value to the y-axis. In our diagnostic plots, it is to map the
-iterator on the x-axis and index value to the y-axis. The next question
-is to ask, given four indices being defined in the global object, which
-one should be used? \emph{It depends on the }.
+\hypertarget{searching-points}{%
+\subsubsection{Searching points}\label{searching-points}}
 
-As the searching goes towards the end, it is easy to have hundreds of
-candidate bases in each iteration with very close index value. When
-plotting, these iteration will occupy the vast majority of the plot
-space. This motivates to summarise the points in each iteration
-(\texttt{tries}). At each iteration, rather than knowing the index value
-of \emph{every} points, we are more interested to have a general summary
-of all the points and more importantly, the point with the largest
-\texttt{index\_val} since it prescribes the next geodesic interpolation
-and future searches.
+A primary interest of diagnosing an optimisation algorithm is to study
+how it finds its optimal progressively. We could plot the index value
+across its natural ordering, however, different iterations may have
+different number of points and, towards the end of the search there
+could easily be hundreds of bases being tested before the target basis
+is found. In the plot, points from those iterations towards the end will
+occupy the vast majority of the plot space. This motivates to use
+summarisation. Rather than knowing the index value of \emph{every}
+basis, we are more interested to have a general summary of all the index
+value in that iteration and more importantly, the basis with the largest
+index value (since it prescribes the next geodesic interpolation and
+future searches).
 
 Boxplot is a suitable candidate that provides five points summary of the
 data, however it has one drawback: it doesn't report the number of point
 in each box. We may risk losing information on how many points it takes
 to find the target basis by displaying the boxplot alone for all
-\texttt{tries}. Thus, the number of point for each \texttt{tries} is
-displayed at the bottom of each box and we provide options to switch
-\texttt{tries} with small number of points to a point geometry, which is
-achieved via the \texttt{cutoff} argument. A line geometry is also added
-to link the points with the largest index value in each \texttt{tries}.
-This helps to visualise the improvement made by each \texttt{tries}.
-With gramma of graphics \citep{wickham2010layered}, the plot for
-exploring index value can be defined in three layers as follows:
+\texttt{tries}. Thus, the number of point in each iteration is displayed
+at the bottom of each box and we provide options to switch iteration
+with small number of points to a point geometry, which is achieved via
+an \texttt{cutoff} argument. A line geometry is also added to link the
+points with the largest index value in each iteration. This helps to
+visualise the improvement made in each iteration. Using the concept of
+\emph{gramma of graphics} \citep{wickham2010layered}, the plot for
+exploring index value can be defined in three layers as:
 
 \begin{itemize}
 \tightlist
@@ -856,14 +856,16 @@ exploring index value can be defined in three layers as follows:
 \paragraph{Toy example: exploring searching
 points}\label{toy-example-exploring-searching-points}}
 
-The larger dataset is used for 2D projection with
-\texttt{search\_better} and \texttt{max.tries\ =\ 500}. In Figure
-\ref{points}, the searching points with \texttt{id} and \texttt{tries}
-on the x-axis, colored by \texttt{tries}. Label at the bottom indicates
-the number of observations in each tries and facilitates the choice of
-cutoff to switch from point geometry to boxplot geometry
-(\texttt{cutoff\ =\ 15}). The line geometry suggests the largest
-improvement happens at \texttt{tries\ =\ 5}.
+We choose variable \texttt{x1}, \texttt{x2}, \texttt{x3}, \texttt{x8},
+\texttt{x9} and \texttt{x10} to perform a 2D projection with tour.
+Parameter \texttt{search\_f\ =\ tour::search\_better} and
+\texttt{max.tries\ =\ 500} is used. The index value of the searching
+points are shown in Figure \ref{points}. Label at the bottom indicates
+the number of observations in each iteration and facilitates the choice
+of \texttt{cutoff} argument (by default \texttt{cutoff\ =\ 15}). We
+learn that the \texttt{search\_better} quickly finds better projection
+basis with higher index value at first and the takes longer to find a
+better one later.
 
 \begin{figure}
 \centering
@@ -874,8 +876,15 @@ plot space to convey information from the plot while the right plot
 provides good summarisation of data and number of points in each tries.}
 \end{figure}
 
-Sometimes, it is more interesting to explore the index value on the
-interpolation path and the plot definition is slightly varied.
+\hypertarget{interpolating-points}{%
+\subsubsection{Interpolating points}\label{interpolating-points}}
+
+Sometimes, rather than explore the searching points, we may be
+interested in explore the points on the interpolation path (target and
+interpolating points) since these points will be played by the tour
+animation. Since interpolation paths are geodesically the shortest, a
+summarisation using boxplot geometry is no longer needed. The slightly
+modified plot definition is shown below:
 
 \begin{itemize}
 \tightlist
@@ -907,25 +916,21 @@ interpolation path and the plot definition is slightly varied.
 \paragraph{A more complex example:
 Interruption}\label{a-more-complex-example-interruption}}
 
-This examples uses \texttt{search\_better} for a 2D projection on the
-larger dataset using the \texttt{holes} index. In the interpolation
-stage, continuous frames will be constructed to bridge the project on
-the current basis to the target basis. The target basis will become the
-current basis in the next iteration and the searching stage continues to
-find the next target basis. In the left panel of Figure
-\ref{interruption}, we observe that there are interpolating bases with
-higher index values than the target basis and these bases could be used
-to search for new basis in the next searching stage.
+We use the same dataset as the toy example above to explore the search
+function \texttt{search\_better} and we want to learn how the index
+value changes on the interpolation path for \texttt{holes} index. From
+the left panel of Figure \ref{interruption}, we observe that when
+interpolating from the current basis to the target basis, the index
+value may not be monotone: we could reach a basis with higher index
+value than the target basis on the interpolation path. In this sense, we
+would be better off using the basis with the highest index value on the
+interpolation path as the current basis for the next iteration (rather
+than using the target basis).
 
-An interruption is then constructed to accept the interpolating bases up
-to the one with the largest index value and use that basis as the
-current basis for the next searching stage. After implementing this
-interruption, the tracing plot with the same configuration is shown on
-the right panel of Figure \ref{interruption}. In the third
-\texttt{tries}, rather than interpolating fully to the target basis at
-\texttt{id\ =\ 62}, it stops before the index value starts to decrease
-at \texttt{id\ =\ 60}. This implementation results in a higher index
-value in the end with fewer steps.
+Hence, an interruption is constructed to accept the interpolating bases
+only up to the one with the largest index value. After implementing this
+interruption, the search finds higher final index value with fewer steps
+as shown in the right panel of Figure \ref{interruption}.
 
 \begin{figure}
 \centering
@@ -937,46 +942,43 @@ of the interuption finds an ending basis with higher index value using
 fewer steps.}
 \end{figure}
 
-\hypertarget{another-example-polish}{%
-\paragraph{Another example: Polish}\label{another-example-polish}}
+\hypertarget{polishing-points}{%
+\subsubsection{Polishing points}\label{polishing-points}}
 
 In principle, all the optimisation routines should result in the same
-output for the same problem while this may not be true in real
+output for the same problem while this may not be the case in real
 application. This motivates the creation of a polishing search that
-polishes the final basis and achieves unity on different methods.
+polishes the final basis found and achieves unity across different
+methods.
 
-\texttt{search\_polish} takes the final basis of a given search as the
-current basis and uses a brutal-force approach to sample a large number
-of basis (\texttt{n\_sample}) in the neighbourhood, whose radius is
-controlled by \texttt{polish\_alpha}. Among the \texttt{n\_sample}
-basis, the one with the largest index value becomes the candidate basis.
-If its index value of the candidate basis is larger than that of the
-current basis, it becomes the current basis in the next iteration. If no
-basis is found to have larger index value than the current basis, the
-searching neighbourhood will be shrunk and the search continues. The
-polishing search ends when one of the four stopping criteria is
-satisfied:
+\texttt{search\_polish} takes the final basis of a given search as a
+start and uses a brutal-force approach to sample a large number of basis
+(\texttt{n\_sample}) in the neighbourhood. Among those sampled basis,
+the one with the largest index value is chosen to be compared with the
+current basis. If its index value is larger than that of the current
+basis, it becomes the current basis in the next iteration. If no basis
+is found to have larger index value, the searching neighbourhood will
+shrink and the search continues. The polishing search ends when one of
+the four stopping criteria is satisfied:
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi})}
 \tightlist
 \item
-  the two basis can't be too close
+  the chosen basis can't be too close to the current basis
 \item
-  the percentage improvement of the index function can't be too small
+  the percentage improvement of the index value can't be too small
 \item
   the searching neighbourhood can't be too small
 \item
   the number of iteration can't exceed the \texttt{max.tries}
 \end{enumerate}
 
-{[}should the stopping criteria be more detailed? xxx{]}
-
-The usage of search\_polish is as follows. After the first tour, the
-final basis from the interpolation is extracted and supplied into a new
-tour with the \texttt{start} argument and \texttt{search\_polish} as the
-searching function in the guided\_tour. All the other arguments should
-remain the same.
+The usage of search\_polish is as follows. After the first search, the
+final basis from the interpolation is extracted and supplied to the
+second search as the \texttt{start} argument. \texttt{search\_polish} is
+used as the search function. All the other arguments should remain the
+same.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1030,15 +1032,20 @@ points is as follows:
   \end{itemize}
 \end{itemize}
 
-The following example conducted a 2D projection on the larger dataset
-using search better with different configurations. \texttt{max.tries} is
-a hyperparameter that controls the maximum number of try without
-improvement and its default value is 25. As shown in Figure
-\ref{trace-compare}, both trials attain the same index value after
-polishing while a small \texttt{max.tries} of 25 is not sufficient for
-\texttt{search\_better} to find the global maximum. The
-\texttt{max.tries} argument needs to be adjusted to ensure it is
-sufficient to explore the parameter space.
+\hypertarget{another-example-polish}{%
+\paragraph{Another example: Polish}\label{another-example-polish}}
+
+Again using the same data, we are interested to compare the effect of
+different \texttt{max.tries} in the 2D projection setting.
+\texttt{max.tries} is a hyperparameter that controls the maximum number
+of try before the search ends. The default value of 25 is suitable for
+1D projection while we suspect it may not be a good option for the 2D
+case and hence want to compare it with an alternative, 500. As shown in
+Figure \ref{trace-compare}, both trials attain the same index value
+after polishing while the small \texttt{max.tries} of 25 is not
+sufficient for \texttt{search\_better} to find its global maximum and we
+will need to adjust the \texttt{max.tries} argument for the search to
+succiciently explore the parameter space.
 
 \begin{figure}
 \centering
@@ -1052,7 +1059,7 @@ max.tries 25 is not sufficient to find the ture maximum.}
 \newpage
 
 \hypertarget{animated}{%
-\subsubsection{Explore searching space}\label{animated}}
+\subsection{Explore searching space}\label{animated}}
 
 In projection pursuit, the projection bases \(\mathbf{A}_{p \times d}\)
 are usually of dimension \(p \times d\) and hence can't be visualised in
@@ -1089,7 +1096,7 @@ the points on the optimisation path to visualise the spread of it on the
 high-D sphere.
 
 \hypertarget{a-toy-example-understand-different-stage-of-search_geodesic}{%
-\paragraph{A toy example: understand different stage of
+\subsubsection{A toy example: understand different stage of
 search\_geodesic}\label{a-toy-example-understand-different-stage-of-search_geodesic}}
 
 \emph{Example: understand search\_geodesic} {[}feel like this example is
@@ -1113,7 +1120,7 @@ for better understanding of each stage in the geodesic search}
 \end{figure}
 
 \hypertarget{a-more-complex-example-choosing-the-initial-value-for-polishing-parameter}{%
-\paragraph{A more complex example: Choosing the initial value for
+\subsubsection{A more complex example: Choosing the initial value for
 polishing
 parameter}\label{a-more-complex-example-choosing-the-initial-value-for-polishing-parameter}}
 
@@ -1152,7 +1159,7 @@ same ending index values.}
 \newpage
 
 \hypertarget{a-comprehensive-example-of-diagnosing-a-noisy-index-function}{%
-\subsubsection{A comprehensive example of diagnosing a noisy index
+\subsection{A comprehensive example of diagnosing a noisy index
 function}\label{a-comprehensive-example-of-diagnosing-a-noisy-index-function}}
 
 The interpolation path of holes index, as seen in Figure
@@ -1170,7 +1177,7 @@ can be seen as a function of the projection matrix
 \(\mathbf{A}_{p \times 1}\) and hence a valid index function.
 
 \hypertarget{explore-index-value}{%
-\paragraph{Explore index value}\label{explore-index-value}}
+\subsubsection{Explore index value}\label{explore-index-value}}
 
 Figure \ref{kol-cdf} compares the tracing plot of the interpolating
 points when using different optimisation algorithms:
@@ -1237,7 +1244,7 @@ number of iteration is needed.}
 \end{figure}
 
 \hypertarget{explore-searching-space}{%
-\paragraph{Explore searching space}\label{explore-searching-space}}
+\subsubsection{Explore searching space}\label{explore-searching-space}}
 
 We can also plot the searching points of all the three algorithms in the
 searching space and explore their relative position against each other

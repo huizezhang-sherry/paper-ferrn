@@ -509,7 +509,7 @@ print(holes_1d_better %>% head(5))
 
 
 
-## Visual diagnostics
+# Visual diagnostics
 
 Below we will present several examples of diagnosing different aspects of the projection pursuit optimisation. We will present:  
 
@@ -533,13 +533,13 @@ Since the global object is already tidy, not further tidying steps is needed, wh
 
 <!-- The plot design of visual diagnostics depends on the characteristics of the variables to plot. If the searching points are of interest [point geom is not good; need summarise. While updating points are more manageable -> point geom]. However, one must realise that with hundreds or thousands of searching points, exploring the sample space in animation could be slow and this is because of the time it takes to render hundreds point. [stratefy may help? - may need more work here.] -->
 
-### Explore the value of objective function {#static}
+## Explore the value of objective function {#static}
 
-It is a convention to map the time index of a time series on the x-axis and value to the y-axis. In our diagnostic plots, it is to map the iterator on the x-axis and index value to the y-axis. The next question is to ask, given four indices being defined in the global object, which one should be used? *It depends on the *. 
+### Searching points
 
-As the searching goes towards the end, it is easy to have hundreds of candidate bases in each iteration with very close index value. When plotting, these iteration will occupy the vast majority of the plot space. This motivates to summarise the points in each iteration (`tries`). At each iteration, rather than knowing the index value of *every* points, we are more interested to have a general summary of all the points and more importantly, the point with the largest `index_val` since it prescribes the next geodesic interpolation and future searches. 
+A primary interest of diagnosing an optimisation algorithm is to study how it finds its optimal progressively. We could plot the index value across its natural ordering, however, different iterations may have different number of points and, towards the end of the search there could easily be hundreds of bases being tested before the target basis is found. In the plot, points from those iterations towards the end will occupy the vast majority of the plot space. This motivates to use summarisation.  Rather than knowing the index value of *every* basis, we are more interested to have a general summary of all the index value in that iteration and more importantly, the basis with the largest index value (since it prescribes the next geodesic interpolation and future searches). 
 
-Boxplot is a suitable candidate that provides five points summary of the data, however it has one drawback: it doesn't report the number of point in each box. We may risk losing information on how many points it takes to find the target basis by displaying the boxplot alone for all `tries`. Thus, the number of point for each `tries` is displayed at the bottom of each box and we provide options to switch `tries` with small number of points to a point geometry, which is achieved via the `cutoff` argument. A line geometry is also added to link the points with the largest index value in each `tries`. This helps to visualise the improvement made by each `tries`. With gramma of graphics [@wickham2010layered], the plot for exploring index value can be defined in three layers as follows:
+Boxplot is a suitable candidate that provides five points summary of the data, however it has one drawback: it doesn't report the number of point in each box. We may risk losing information on how many points it takes to find the target basis by displaying the boxplot alone for all `tries`. Thus, the number of point in each iteration is displayed at the bottom of each box and we provide options to switch iteration with small number of points to a point geometry, which is achieved via an `cutoff` argument. A line geometry is also added to link the points with the largest index value in each iteration. This helps to visualise the improvement made in each iteration. Using the concept of *gramma of graphics* [@wickham2010layered], the plot for exploring index value can be defined in three layers as:
 
 - Layer 1: boxplot geom
   - data: group by `tries` and filter the observations in the group that have count greater than `cutoff = 15`.
@@ -556,12 +556,9 @@ Boxplot is a suitable candidate that provides five points summary of the data, h
   - x: `tries` is mapped to the x-axis
   - y: `index_val` is mapped to the y-axis 
 
-
-
-
 #### Toy example: exploring searching points 
 
-The larger dataset is used for 2D projection with `search_better` and `max.tries = 500`. In Figure \ref{points}, the searching points with `id` and `tries` on the x-axis, colored by `tries`. Label at the bottom indicates the number of observations in each tries and facilitates the choice of cutoff to switch from point geometry to boxplot geometry (`cutoff = 15`). The line geometry suggests the largest improvement happens at `tries = 5`. 
+We choose variable `x1`, `x2`, `x3`, `x8`, `x9` and `x10` to perform a 2D projection with tour. Parameter `search_f = tour::search_better` and `max.tries = 500` is used. The index value of the searching points are shown in Figure \ref{points}. Label at the bottom indicates the number of observations in each iteration and facilitates the choice of `cutoff` argument (by default `cutoff = 15`). We learn that the `search_better` quickly finds better projection basis with higher index value at first and the takes longer to find a better one later.
 
 ```{r points-tries,fig.asp=0.5, fig.cap="\\label{points}A comparison of plotting the same search points with different plot designs. The left plot doesn't efficiently use the plot space to convey information from the plot while the right plot provides good summarisation of data and number of points in each tries."}
 
@@ -573,7 +570,9 @@ dt %>% explore_trace_search()
 
 ```
 
-Sometimes, it is more interesting to explore the index value on the interpolation path and the plot definition is slightly varied.
+### Interpolating points
+
+Sometimes, rather than explore the searching points, we may be interested in explore the points on the interpolation path (target and interpolating points) since these points will be played by the tour animation. Since interpolation paths are geodesically the shortest, a summarisation using boxplot geometry is no longer needed. The slightly modified plot definition is shown below:
 
 - Layer 1: point geom
   - data: filter the observations with `info` being `interpolation` and mutate `id` to be the row number of the subsetted tibble
@@ -600,9 +599,7 @@ Sometimes, it is more interesting to explore the index value on the interpolatio
 # 
 ```
 
-This examples uses `search_better` for a 2D projection on the larger dataset using the `holes` index. In the interpolation stage, continuous frames will be constructed to bridge the project on the current basis to the target basis.  The target basis will become the current basis in the next iteration and the searching stage continues to find the next target basis. In the left panel of Figure \ref{interruption}, we observe that  there are interpolating bases with higher index values than the target basis and these bases could be used to search for new basis in the next searching stage. 
-
-An interruption is then constructed to accept the interpolating bases up to the one with the largest index value and use that basis as the current basis for the next searching stage. After implementing this interruption, the tracing plot with the same configuration is shown on the right panel of Figure \ref{interruption}. In the third `tries`, rather than interpolating fully to the target basis at `id = 62`, it stops before the index value starts to decrease at `id = 60`. This implementation results in a higher index value in the end with fewer steps.
+We use the same dataset as the toy example above to explore the search function `search_better` and we want to learn how the index value changes on the interpolation path for `holes` index. From the left panel of Figure \ref{interruption}, we observe that when interpolating from the current basis to the target basis, the index value may not be monotone: we could reach a basis with higher index value than the target basis on the interpolation path. In this sense, we would be better off using the basis with the highest index value on the interpolation path as the current basis for the next iteration (rather than using the target basis). Hence, an interruption is constructed to accept the interpolating bases only up to the one with the largest index value. After implementing this interruption, the search finds higher final index value with fewer steps as shown in the right panel of Figure \ref{interruption}.
 
 ```{r interruption,fig.asp=0.5, fig.cap = "\\label{interruption}Trace plots of the interpolated basis with and without the interruption. The interruption stops the interpolation when the index value starts to decrease at id = 60. The implementation of the interuption finds an ending basis with higher index value using fewer steps. "}
 p1_anno <- interrupt_no %>% filter(info == "interpolation") %>% mutate(id = row_number()) %>% filter(id %in% c(44, 60, 62)) %>% 
@@ -620,24 +617,22 @@ p1 | p2
 #xxx up and down plot allows for displaying time series features while left and right display makes it easier for comparison? The same problem for plot of comparing between different searching methods
 ```
 
-#### Another example: Polish
+### Polishing points
 
 <!-- In the previous two sections, only the iterator and the index value are mapped onto the x and y aesthetics of the plot; while more aesthetics i.e. color, could be added to compare other parameters in the global object. -->
 
 <!-- Two examples are shown below to explore and compare different searching methods and neighbourhood parameter alpha.  -->
 
-In principle, all the optimisation routines should result in the same output for the same problem while this may not be true in real application. This motivates the creation of a polishing search that polishes the final basis and achieves unity on different methods. 
+In principle, all the optimisation routines should result in the same output for the same problem while this may not be the case in real application. This motivates the creation of a polishing search that polishes the final basis found and achieves unity across different methods. 
 
-`search_polish` takes the final basis of a given search as the current basis and uses a brutal-force approach to sample a large number of basis (`n_sample`) in the neighbourhood, whose radius is controlled by `polish_alpha`. Among the `n_sample` basis, the one with the largest index value becomes the candidate basis. If its index value of the candidate basis is larger than that of the current basis, it becomes the current basis in the next iteration. If no basis is found to have larger index value than the current basis, the searching neighbourhood will be shrunk and the search continues. The polishing search ends when one of the four stopping criteria is satisfied:
+`search_polish` takes the final basis of a given search as a start and uses a brutal-force approach to sample a large number of basis (`n_sample`) in the neighbourhood. Among those sampled basis, the one with the largest index value is chosen to be compared with the current basis. If its index value is larger than that of the current basis, it becomes the current basis in the next iteration. If no basis is found to have larger index value, the searching neighbourhood will shrink and the search continues. The polishing search ends when one of the four stopping criteria is satisfied:
 
-1) the two basis can't be too close 
-2) the percentage improvement of the index function can't be too small 
+1) the chosen basis can't be too close to the current basis 
+2) the percentage improvement of the index value can't be too small 
 3) the searching neighbourhood can't be too small
 4) the number of iteration can't exceed the `max.tries`
 
-[should the stopping criteria be more detailed? xxx]
-
-The usage of search_polish is as follows. After the first tour, the final basis from the interpolation is extracted and supplied into a new tour with the `start` argument and `search_polish` as the searching function in the guided_tour. All the other arguments should remain the same. 
+The usage of search_polish is as follows. After the first search, the final basis from the interpolation is extracted and supplied to the second search as the `start` argument.  `search_polish` is used as the search function. All the other arguments should remain the same. 
 
 ```{r sample-code, eval = FALSE, echo = TRUE}
 set.seed(123456)
@@ -675,7 +670,9 @@ Slight variation of plot definition due to the addition of polishing points is a
 <!-- $$x = \{1, 2, \cdots, \sum_{i = 1}^J k_i,(\sum_{i = 1}^J k_i + 1), \cdots,  \sum_{i = 1}^J k_i + M\}$$ -->
 <!-- $$y = \{I_{jlk}: k = x\}$$ -->
 
-The following example conducted a 2D projection on the larger dataset using search better with different configurations. `max.tries` is a hyperparameter that controls the maximum number of try without improvement and its default value is 25. As shown in Figure \ref{trace-compare}, both trials attain the same index value after polishing while a small `max.tries` of 25 is not sufficient for `search_better` to find the global maximum. The `max.tries` argument needs to be adjusted to ensure it is sufficient to explore the parameter space.
+#### Another example: Polish
+
+Again using the same data, we are interested to compare the effect of different `max.tries` in the 2D projection setting. `max.tries` is a hyperparameter that controls the maximum number of try before the search ends. The default value of 25 is suitable for 1D projection while we suspect it may not be a good option for the 2D case and hence want to compare it with an alternative, 500. As shown in Figure \ref{trace-compare}, both trials attain the same index value after polishing while the small `max.tries` of 25 is not sufficient for `search_better` to find its global maximum and we will need to adjust the `max.tries` argument for the search to succiciently explore the parameter space.
 
 ```{r polish, fig.asp=0.5,fig.cap="\\label{trace-compare}Breakdown of index value when using different max.tries in search better in conjunction with search polish. Both attain the same final index value after the polishing while using a max.tries 25 is not sufficient to find the ture maximum."}
 
@@ -720,7 +717,7 @@ p2 <- bind_rows(holes_2d_better_max_tries, holes_2d_better_max_tries_polish) %>%
 
 \newpage
 
-### Explore searching space {#animated}
+## Explore searching space {#animated}
 
 In projection pursuit, the projection bases $\mathbf{A}_{p \times d}$ are usually of dimension $p \times d$ and hence can't be visualised in a 2D plot. An option to explore the searching space of these bases is to explore a reduced space via principal component analysis (PCA). The visualisation can thus be defined as
 
@@ -740,9 +737,8 @@ In projection pursuit, the projection bases $\mathbf{A}_{p \times d}$ are usuall
   
 <!-- In this way, the first two principle components will take up the x and y axis and all the other information will be mapped using other aesthetic attribution. [need to think further about how different type of variables can be shown].  -->
 
-While explore the reduced space is an initial attempt to understand the searching space, there are existing technology for rotating a higher dimensional space for visualisation. Geozoo is an option. It generates random points on the high dimensional space and we can overlay it with the points on the optimisation path to visualise the spread of it on the high-D sphere.
 
-#### A toy example: understand different stage of search_geodesic
+### A toy example: understand different stage of search_geodesic
 
 *Example: understand search_geodesic* [feel like this example is merely explaining search geodesic algorithm, so maybe introduce the animated plot here? xxx] `search_geodesic` is a two-stage ascending algorithm with four different stages in the search and a PCA plot useful to understand how the algorithm progresses and the relative position of each basis in the PCA projected 2D space. Starting from the start basis, a directional search is conducted in a narrow neighbourhood on five random directions. The best one is picked and a line search is then run on the geodesic direction to find the target basis. The starting and target bases are then interpolated. In the next iteration, the target basis becomes the current basis and then procedures continues. 
 
@@ -753,7 +749,7 @@ holes_1d_geo %>% explore_proj_pca(col = info)
 #xxx the info level need to be reorder to show the start and directional search points better.
 ```
 
-#### A more complex example: Choosing the initial value for polishing parameter
+### A more complex example: Choosing the initial value for polishing parameter
 
 
 *Example: initial value for polishing alpha* `search_polish` is a brutal-force algorithm that evaluate 1000 points in the neighbourhood at each loop. Setting an appropriate initial value for polish_alpha would avoid wasting search on large vector space that are not likely to produce higher index value. The default initial value for polishing step is 0.5 and we are interested in whether this is an appropriate initial value to use after `search_geodesic`. The problem is a 1D projection of the small dataset using `search_geodesic` and followed by `search_polish`. The top-left panel of Figure \ref{polish-alpha} displays all the projection bases on the first two principal components, colored by the `polish_alpha`. We can observe that rather than concentrating on the ending basis from `search_geodesic` as what polishing step is designed, `search_polish` searches a much larger vector space, which is unnecessary. Thus a customised smaller initial value for `polish_alpha` would be ideal. One way to do this is to initialised `polish_alpha` as the projection distance between the last two target bases. The top-right panel of Figure \ref{polish-alpha} shows a more desirable concentrated searching space near the ending basis. Both specifications of initial value allow the searches to reach the same ending index values. 
@@ -777,6 +773,11 @@ p4 <- bind_rows(holes_1d_geo, holes_1d_geo_polish) %>%
 ```
 
 
+
+While explore the reduced space is an initial attempt to understand the searching space, there are existing technology for rotating a higher dimensional space for visualisation. Geozoo is an option. It generates random points on the high dimensional space and we can overlay it with the points on the optimisation path to visualise the spread of it on the high-D sphere.
+
+[add example from geozoo]
+
 <!-- # Animated diagnostic plots -->
 
 <!-- ```{r pca-animated, echo = TRUE, eval = FALSE} -->
@@ -786,7 +787,7 @@ p4 <- bind_rows(holes_1d_geo, holes_1d_geo_polish) %>%
 
 \newpage
 
-### A comprehensive example of diagnosing a noisy index function
+## A comprehensive example of diagnosing a noisy index function
 
 The interpolation path of holes index, as seen in Figure \ref{interruption}, is smooth, while this may not be the case for more complicated index functions. `kol_cdf` index, an 1D projection index function based on Kolmogorov test, compares the difference between the 1D projected data, $\mathbf{P}_{n \times 1}$ and a randomly generated normal distribution, $y_n$ based on the empirical cumulated distribution function (ECDF). Denotes the ECDF function as $F(u)$ with subscript incidating the variable,  the Kolmogorove statistics defined by
 
@@ -795,7 +796,7 @@ $$\max \left[F_{\mathbf{P}}(u) - F_{y}(u)\right]$$
 can be seen as a function of the projection matrix $\mathbf{A}_{p \times 1}$ and hence a valid index function. 
 
 
-#### Explore index value
+### Explore index value
 
 Figure \ref{kol-cdf} compares the tracing plot of the interpolating points when using different optimisation algorithms: `search_geodesic` and `search_better`. One can observe that 
 
@@ -837,7 +838,7 @@ kol_cdf_1d_2var_better_random %>%
   ggtitle("search_better_random")
 ```
 
-#### Explore searching space
+### Explore searching space
 
 We can also plot the searching points of all the three algorithms in the searching space and explore their relative position against each other using principal components. As shown in Figure \ref{1d-2var-explore-proj-pca}, the bases from better1 and better2 only search a proportion of the searching space while better_random produces a more exhausive search. The large overlapping of better1 and better_random is explained by the fact that both algorithms finds x2 in the end. 
 
