@@ -47,7 +47,7 @@ source(here::here("source/sim_data.r"))
 
 In an optimization problem the goal is to find the best solution within the space of all feasible solutions which typically is represented by a set of constraints. The problem consists on optimizing an objective function $f: S \rightarrow \Re$ with $S \in \Re^n$ in a reduced spaced given by the problem constraints to either minimize or maximize a function.... Gradient based optimization has been typically used to solve such problems. However, there are many situations where derivatives of an objective function are unavailable or unreliable and therefore traditional methods based on derivatives are not the best option to solve an optimization problem.
 
-Derivative free methods provides another option to optimise the objective function without evaluating any gradient or Hessian information and a particular class of methods: direct search, has gained its popularity through its conceptual simplicity.  However, the whole searching process in the algorithm remains a black-box. Plots are usually used to evaluate and compare the performance of different algorithms but it can easily become tedious because the code will have to be modified significantly when comparing different parameters in the algorithms. For example, a categorical variable with 5 levels can be easily mapped onto color while mapping another categorical variable with 30 levels will not make the plot informative. Thus the plot needs to be re-designed to better suits the characteristics of the parameter (whether the parameter is a scalar or a matrix? whether the parameter is quantitative or categorical? If categorical, how many levels does the parameter have?). This motivates the  design of a visual diagnostic framework for optimisation algorithms based on the idea of a *global object*. 
+Derivative free methods provides another option to optimise the objective function without evaluating any gradient or Hessian information and a particular class of methods: direct search, has gained its popularity through its conceptual simplicity.  However, the whole searching process in the algorithm remains a black-box. Plots are usually used to evaluate and compare the performance of different algorithms but it can easily become tedious because the code will have to be modified significantly when comparing different parameters in the algorithms. For example, a categorical variable with 5 levels can be easily mapped onto colour while mapping another categorical variable with 30 levels will not make the plot informative. Thus the plot needs to be re-designed to better suits the characteristics of the parameter (whether the parameter is a scalar or a matrix? whether the parameter is quantitative or categorical? If categorical, how many levels does the parameter have?). This motivates the  design of a visual diagnostic framework for optimisation algorithms based on the idea of a *global object*. 
 
 The paper is organised as follows. Section \ref{DFO} gives a general literature review of optimisation, specifically derivative free optimisation. Section \ref{vis-diag} presents the new idea of constructing a
 systematic visual framework that diagnoses the components of an optimisation procedure (parameters, searching path, etc). The rest of the paper serves as a comprehensive example of using the visual diagnostics on one particular problem: *projection pursuit guided tour*. Some background knowledge of projection pursuit guided tour is provided in Section \ref{tour}. Section \ref{apply} applies the concepts proposed in section \ref{vis-diag} in the tour problem and sets up the data. The last section, Section \ref{plots}, presents the visual diagnostic plots and explains how they can help to understand different aspects of the optimisation in tour.
@@ -106,11 +106,11 @@ Below listed several issues in projection pursuit optimisation. Some are general
 
 From Section \ref{tour}, we presents a comprehensive case study on how to use the visual diagnostics to explore the optimisation in a specific problem: projection pursuit guided tour. Section \ref{tour} aims to provide non-experts with an overview of the problem content and the existing optimisation procedures used in projection pursuit guided tour. For those who are already familiar with the techniques, feel free to skip this section. 
 
-The optimisation problem we're interested in is in the context of projection pursuit. Coined by @friedman1974projection, projection pursuit is a method that detects the interesting structure (i.e. clustering, outliers and skewness) of multivariate data via projecting it in lower dimensions. Let $\mathbf{X}_{n \times p}$ be a data matrix, an n-d projection can be seen as a linear transformation $T: \mathbb{R}^p \mapsto \mathbb{R}^d$ defined by $\mathbf{P} = \mathbf{X} \cdot \mathbf{A}$, where $\mathbf{P}_{n \times d}$ is the projected data and $\mathbf{A}_{p\times d}$ is the projection basis. Define $f: \mathbb{R}^{p \times d} \mapsto \mathbb{R}$ be an index function that maps the projection basis $\mathbf{A}$ onto a scalar value $I$, this function is commonly known as the projection pursuit index (PPI) function, or the index function and can be used to measure the "interestingness" of the projection. A number of indice functions have been proposed in the literature including Legendre index [@friedman1974projection], hermite index [@hall1989polynomial], natural hermite index [@cook1993projection], chi-square index [@posse1995projection], LDA index [@lee2005projection] and PDA index [@lee2010projection].
+The optimisation problem we're interested in is in the context of projection pursuit. Coined by @friedman1974projection, projection pursuit is a method that detects the interesting structure (i.e. clustering, outliers and skewness) of multivariate data via projecting it in lower dimensions. Let $\mathbf{X}_{n \times p}$ be a data matrix, an n-d projection can be seen as a linear transformation $T: \mathbb{R}^p \mapsto \mathbb{R}^d$ defined by $\mathbf{P} = \mathbf{X} \cdot \mathbf{A}$, where $\mathbf{P}_{n \times d}$ is the projected data and $\mathbf{A}_{p\times d}$ is the projection basis. Define $f: \mathbb{R}^{p \times d} \mapsto \mathbb{R}$ be an index function that maps the projection basis $\mathbf{A}$ onto a scalar value $I$, this function is commonly known as the projection pursuit index (PPI) function, or the index function and can be used to measure the "interestingness" of the projection. A number of index functions have been proposed in the literature including Legendre index [@friedman1974projection], Hermite index [@hall1989polynomial], natural Hermite index [@cook1993projection], chi-square index [@posse1995projection], LDA index [@lee2005projection] and PDA index [@lee2010projection].
 
  As @friedman1974projection noted "..., the technique use for maximising the projection index strongly influences both the statistical and the computational aspects of the procedure." A suitable optimisation procedure is needed to find the projection angle that maximises the PPI and the quality of the optimisation largely affect the interesting projections one could possibly observe.
 
-Projection pursuit is usually used in conjunction with a tour method called *guided tour*. Tour explores the multivariate data *interactively* via playing a series of projections, that form a *tour path* and guided tour uses the path that is geodesically the shortest. Details of the mathematical construction of a tour path can be found in @buja2005computational.  Guided tour, along with other types of tour, has been implemented in the *tourr* package in R, available on the Comprehensive R Archive Network at [https://cran.r-project.org/web/packages/tourr/](https://cran.r-project.org/web/packages/tourr/) [@wickham2011tourrpackage]. 
+Projection pursuit is usually used in conjunction with a tour method called *guided tour*. Tour explores the multivariate data *interactively* via playing a series of projections, that form a *tour path* and guided tour uses the path that is geodesically the shortest. Details of the mathematical construction of a tour path can be found in @buja2005computational.  [Maybe add the sketch for illustrating tour path.] Guided tour, along with other types of tour, has been implemented in the *tourr* package in R, available on the Comprehensive R Archive Network at [https://cran.r-project.org/web/packages/tourr/](https://cran.r-project.org/web/packages/tourr/) [@wickham2011tourrpackage]. 
 
 
 <!-- A tour path includes two major components: a *generator* that generating the target basis that has higher index value than the current basis and an *interpolator* that performing geodesic interpolation between the current and target basis. An illustration modified from [@buja2005computational] vividly depicts the tour path in guided tour. -->
@@ -154,61 +154,9 @@ Projection pursuit is usually used in conjunction with a tour method called *gui
 
 
 
-## Notation
-
-For a projection basis, let the three-subscript notation $$\mathbf{A}_{jlk}$$ represent the projection matrix in iteration $j$ with either a searching index $l$ or an interpolation index $k$. The placeholder $*$ will be the substitue for the non-applicable index. To give two examples, $\mathbf{A}_{12*}$ denotes the second searching basis in the first iteration; $\mathbf{A}_{1*2}$ denotes the second interpolation basis in the first iteration.
-
-If we are being pedantic, all the target bases, except the starting basis, should have a searching index since it is the last candidate basis that successfully allows the optimisation algorithm to end and output a new basis for interpolation. If we denotes the length of each search (number of basis searched in each iteration) as $l_1, l_2, \cdots, l_J$ and the length of each interpolation is $k_1, k_2, \cdots, k_J$ , then the searching index for target basis in each iteration will become $\mathbf{A}_{1l_1*}, \mathbf{A}_{2l_2*}, \cdots, \mathbf{A}_{Jl_J*}$. We simplify this notation for target bases by using a superscript as $$\mathbf{A}^{0}, \mathbf{A}^{1}, \mathbf{A}^{2}, \cdots, \mathbf{A}^{J}$$ where $\mathbf{A}^{0}$ is the starting basis. Notice that in the case when the complex notation can't be avoided, we shall separate each index using a comma and  write the index in brackets if necessary. Using the notation above, all the bases on the interpolation path (including target and interpolation bases) can be written as in Equation \ref{eq:interp-path}.
-
-
-\begin{equation}
-\{ 
-\mathbf{A}^0, 
-\mathbf{A}^1, 
-\mathbf{A}_{1 \ast 1}, 
-\mathbf{A}_{1 \ast 2},
-\cdots, 
-\mathbf{A}^2, 
-\mathbf{A}_{2 \ast 1}, 
-\mathbf{A}_{2 \ast 2}, 
-\cdots, 
-\mathbf{A}^J,
-\mathbf{A}_{J \ast 1}, 
-\mathbf{A}_{J \ast 2}, 
-\cdots, 
-\mathbf{A}_{J \ast K},
-\}
-\label{eq:interp-path}
-\end{equation}
-
-where $K$ denotes the last interpolating index. A visual representation of the interpolation path ( for iteration one) modified from @buja2005computational is shown in Figure \ref{tour-path}. If we use a dot to represent a plane in the searching space, the searching points along with the current and target basis in iteration one can sketched in Figure \ref{searching-points}. Combine the two above, we can write all the bases in the first iteration (including the starting basis) in its natural ordering as in Equation \ref{eq:vectorA}.
-
-\begin{equation}
-\{
-\mathbf{A}^{0}, 
-\mathbf{A}_{1 1\ast}, 
-\mathbf{A}_{1 2\ast}, 
-\cdots, 
-\mathbf{A}^{1},
-\mathbf{A}_{1\ast 1}, 
-\mathbf{A}_{1\ast 2},  
-\cdots, 
-\mathbf{A}_{1\ast k_1}
-\}
-\label{eq:vectorA}
-\end{equation} 
-
-
 ```{r tour-path, out.width="100%", out.height="60%", fig.cap="\\label{tour-path}An illustration of the tour path"}
 knitr::include_graphics(path = here::here("figures/tour_path_increasing.png"))
 ```
- 
-
-```{r searching-points, out.width="100%", out.height="60%", fig.cap="\\label{searching-points}An illustration of the tour path"}
-knitr::include_graphics(path = here::here("figures/tour_path_increasing.png"))
-```
-
-
 
 
 ## Optimisation problem and existing algorithms
@@ -218,28 +166,29 @@ Now we begin to formulate the optimisation problem. Given a randomly generated s
 
 
 \begin{align}
-&\arg \max_{\mathbf{A} \in \mathcal{A}} f(\mathbf{A}) \\
+&\arg \max_{\mathbf{A} \in \mathcal{A}} f(\mathbf{X} \cdot \mathbf{A}) \\
 s.t. & \mathcal{A} = \{ \forall \mathbf{a}_i, \mathbf{a}_j \in \mathbf{A}: \lVert \mathbf{a}_i \rVert = 1 \text{ and } \mathbf{a}_i \mathbf{a}_j = 0 \}
 \end{align}
 
 via an iterative search of target basis: $\{\mathbf{A}^0, \mathbf{A}^1, \mathbf{A}^2, \cdots \cdots \mathbf{A}^J\}$. 
 
-There are three existing methods for optimisating PPI function and we review them below.
+There are three existing methods for optimising PPI function and we review them below.
 
-@posse1995projection proposed a stochastic direct search method, a random search algorithm. Given a current basis $\mathbf{A}^{j-1}$, a candidate basis $\mathbf{A}_{jl*}$ is sampled in the neighbourhood defined by the radius of the p-dimensional sphere, $\alpha$ of the current basis $\mathbf{A}^{j}$ by $\mathbf{A}_{jl*} = \mathbf{A}^{j-1} + \alpha \mathbf{A}_{rand}$. If the candidate basis has a higher index value than the current basis, it is outputed as the target basis $\mathbf{A}^{j}$ along with other metadata and the current iteration stops. If no basis is found to have higher index value after the maximum number of tries $l_{\max}$, the algorithm stops with nothing outputted. $c$ is the halfing parameter and when $c > 30$, the nieghbourhood parameter $\alpha$ in the next iteration will be reduced by half. The algorithm for a random search is summarised in Algorithm \ref{random-search}.
+@posse1995projection proposed a stochastic direct search method, a random search algorithm. Given a current basis $\mathbf{A}_{\text{cur}}$, a candidate basis $\mathbf{A}_{t}$ is sampled in the neighbourhood defined by the radius of the p-dimensional sphere, $\alpha$ of the current basis $\mathbf{A}_{t}$ by $\mathbf{A}_{t} = \mathbf{A}_{\text{cur}} + \alpha \mathbf{A}_{rand}$. If the candidate basis has a higher index value than the current basis, it is outputted as the target basis $\mathbf{A}_{t}$ along with other metadata and the current iteration stops. If no basis is found to have higher index value after the maximum number of tries $l_{\max}$, the algorithm stops with nothing outputted. $c$ is the halfing parameter and when $c > 30$, the neighbourhood parameter $\alpha$ in the next iteration will be reduced by half. The algorithm for a random search is summarised in Algorithm \ref{random-search}.
 
 \begin{algorithm}
 \SetAlgoLined
   \SetKwInOut{Input}{input}
   \SetKwInOut{Output}{output}
-    \Input{The current projection basis: $\mathbf{A}^{j-1}$; The index function: $f$}
-    \Output{The global object; The target basis: $\mathbf{A}^{j}$}
+    \Input{The current projection basis: $\mathbf{A}_{\text{cur}}$; The index function: $f$}
+    \Output{The target basis: $\mathbf{A}_{t+1}$}
   initialisation\;
+  Set $l = 1$\;
   \While{$l < l_{\max}$}{
-    Generate $\mathbf{A}_{jl*} = \mathbf{A}^{j-1} + \alpha \mathbf{A}_{\text{rand}}$ ensuring $\mathbf{A}_{j, l,*}$ is orthonormal\;
-    Compute $I_{jl*}  = f(\mathbf{A}_{jl*})$\;
-    \eIf{$I_{jl*} > I^{j-1}$}{
-      $A^{j} = A_{jl*}$, $I^{j} = I_{jl*}$\;
+    Generate $\mathbf{A}_{l} = \mathbf{A}_{\text{cur}} + \alpha \mathbf{A}_{\text{rand}}$ ensuring $\mathbf{A}_{l}$ is orthonormal\;
+    Compute $I_{l}  = f(\mathbf{A}_{l})$\;
+    \eIf{$I_{l} > I_{\text{cur}}$}{
+      \KwRet{$\mathbf{A}_{l}$} \;
       }{
       $c = c + 1$\;
       }
@@ -256,17 +205,18 @@ There are three existing methods for optimisating PPI function and we review the
 \SetAlgoLined
 \SetKwInOut{Input}{input}
   \SetKwInOut{Output}{output}
-    \Input{The current projection basis: $\mathbf{A}^{j-1}$; The index function: $f$}
-    \Output{The global object; The target basis: $\mathbf{A}^{j}$}
+    \Input{The current projection basis: $\mathbf{A}_{\text{cur}}$; The index function: $f$}
+    \Output{The target basis: $\mathbf{A}_{**}$}
   initialisation\;
+  Set $l = 1$\;
   \While{$l < l_{\max}$}{
-    Generate ten bases in five random directions: $\mathbf{A}_{jl*}: \mathbf{A}_{j,(l + 9), *}$ within a small neighbourhood $\text{dist}$\;
-    Find the direction with the largest index value: $\mathbf{A}_{j, l_{d}, *}$\;
-    Construct the geodesic from $\mathbf{A}^{j-1}$ to $\mathbf{A}_{j, l_{d}, *}$\;
-    Find $\mathbf{A}_{j,l_g, *}$ on the geodesic that has the largest index value \;
-    Compute $I_{j,l_g, *} = f(\mathbf{A}_{j,l_g, *})$, $p_{\text{diff}} = (I_{j,l_g, *} - I^{j-1})/I_{j,l_g, *}$\;
+    Generate ten bases in five random directions: $\mathbf{A}_{l}: \mathbf{A}_{l+9}$ within a small neighbourhood $\text{dist}$\;
+    Find the direction with the largest index value: $\mathbf{A}_{*}$ where $l < * < l+ 9$\;
+    Construct the geodesic $\mathcal{G}$ from $\mathbf{A}_{\text{cur}}$ to $\mathbf{A}_{*}$\;
+    Find $\mathbf{A}_{**}$ on the geodesic $\mathcal{G}$ that has the largest index value \;
+    Compute $I_{**} = f(\mathbf{A}_{**})$, $p_{\text{diff}} = (I_{**} - I_{\text{cur}})/I_{**}$\;
       \If{$p_{\text{diff}} > 0.001$}{
-        $A^{j} = A_{j,l_g, *}$, $I^{j} = I_{j,l_g, *}$\;
+         \KwRet{$\mathbf{A}_{**}$} \;
       }
     $l = l + 1$\;
   }
@@ -274,25 +224,26 @@ There are three existing methods for optimisating PPI function and we review the
   \label{search-geodesic}
 \end{algorithm}
 
-Simulated annealing [@bertsimas1993simulated, @kirkpatrick1983optimization] is a non-derivative procedure based on a non-increasing cooling scheme $T(l)$. Given an initial $T_0$, the temperature at iteration $l$ is defined as $T(l) = \frac{T_0}{log(l + 1)}$. The simulated annealing algorithm works as follows. Given a neighbourhood parameter $\alpha$ and a randomly generated orthonormal basis $A_{rand}$, a candidate basis is constructed as $\mathbf{A}_{jl*} = (1 - \alpha)\mathbf{A}^{j} + \alpha \mathbf{A}_{rand}$. If the index value of the candidate basis is larger than the one of the current basis, the candidate basis becomes the target basis. If it is smaller, the candidate is accepted with probability $P= \min\left\{\exp\left[\frac{I^{j-1} - I_{jl*}}{T(l)}\right],1\right\}$ where $I^{j-1}$ and $I_{jl*}$ are the index value of the current and candidate basis respectively. The algorithm can be summarised as in Algorithm \ref{simulated_annealing}.
+Simulated annealing [@bertsimas1993simulated, @kirkpatrick1983optimization] is a non-derivative procedure based on a non-increasing cooling scheme $T(t)$. Given an initial $T_0$, the temperature at iteration $t$ is defined as $T(t) = \frac{T_0}{log(t + 1)}$. The simulated annealing algorithm works as follows. Given a neighbourhood parameter $\alpha$ and a randomly generated orthonormal basis $A_{rand}$, a candidate basis is constructed as $\mathbf{A}_{t+1} = (1 - \alpha)\mathbf{A}_{t} + \alpha \mathbf{A}_{rand}$. If the index value of the candidate basis is larger than the one of the current basis, the candidate basis becomes the target basis. If it is smaller, the candidate is accepted with probability $P= \min\left\{\exp\left[\frac{I_{t+1} - I_{t}}{T(t)}\right],1\right\}$ where $I_{t}$ and $I_{t+1}$ are the index value of the current and candidate basis respectively. The algorithm can be summarised as in Algorithm \ref{simulated_annealing}.
 
 \begin{algorithm}
 \SetAlgoLined
 \SetKwInOut{Input}{input}
   \SetKwInOut{Output}{output}
-    \Input{The current projection basis: $\mathbf{A}^{j-1}$; The index function: $f$}
+    \Input{The current projection basis: $\mathbf{A}_{\text{cur}}$; The index function: $f$}
     \Output{The global object; The target basis: $\mathbf{A}^{j}$}
   initialisation\;
   \While{$l < l_{\max}$}{
-    Generate $\mathbf{A}_{jl*} = (1 - \alpha)\mathbf{A}^{j-1} + \alpha \mathbf{A}_{rand}$ ensuring $\mathbf{A}_{jl*}$ is orthonormal \;
-    Commpute $I_{jl*} = f(\mathbf{A}_{jl*})$ and $T(l) = \frac{T_0}{\log(l + 1)}$\;
-      \eIf{$I_{jl*} > I^{j-1}$}{
-        $A^{j} = A_{jl*}$, $I^{j} = I_{jl*}$\;
+    Set $l = 0$\;
+    Generate $\mathbf{A}_{l} = (1 - \alpha)\mathbf{A}_{\text{cur}} + \alpha \mathbf{A}_{rand}$ ensuring $\mathbf{A}_{l}$ is orthonormal \;
+    Compute $I_{l} = f(\mathbf{A}_{l})$ and $T(l) = \frac{T_0}{\log(l + 1)}$\;
+      \eIf{$I_{l} > I_{\text{cur}}$}{
+        \KwRet{$\mathbf{A}_{l}$} \;
       }{
-        Compute $P= \min\left\{\exp\left[\frac{I^{j-1} - I_{jl*}}{T(l)}\right],1\right\}$\;
+        Compute $P= \min\left\{\exp\left[\frac{I_{\text{cur}} -I_{l}}{T(l)}\right],1\right\}$\;
         Draw $D$ from a uniform distribution: $D \sim \text{Unif(0, 1)}$\;
         \If{$P > D$}{
-          $A^{j} = A_{jl*}$, $I^{j} = I_{jl*}$\;
+           \KwRet{$\mathbf{A}_{l}$} \;
         }
       }
     $l = l + 1$\;
@@ -333,50 +284,41 @@ The idea of generalising all the diagnostic plots under one framework is inspire
 
 ## Global object
 
-Ggplot requires a data frame that contains all the variables to plot and a *global object* is constructed as the data frame supplied to the visual diagnostic plots to better suit the characters of iterative optimisation algorithms. Given an optimisation algorithm, two primary variables of interest are the *decision variable: $\mathbf{A}$* and the *value of the objective function: $I$*. To further simplify the notation for $\mathbf{A}$, we write the bases as a column vector denoting by a single subscript by their natural ordering as in Equation \ref{vector-basis}.
+Ggplot requires a data frame that contains all the variables to plot and a *global object* is constructed as the data frame supplied to the visual diagnostic plots to better suit the characters of iterative optimisation algorithms. Given an optimisation algorithm, two primary variables of interest are the *decision variable: $\mathbf{A}$* and the *value of the objective function: $I$*, which is the projection basis and index value repsectively in projection pursuit. *State: $S$* is another variable of great importance since it labels $\mathbf{A}$ and $I$ by the stage they are in the whole search-and-interpolate process.
 
-\begin{equation}
-\{
-\mathbf{A}_0, 
-\mathbf{A}_1, 
-\mathbf{A}_2, 
-\cdots,
-\mathbf{A}_T
-\label{vector-basis}
-\}
-\end{equation}
+*Iterators* indexes the data collected and prescribes the the natural ordering of each observation in different levels. *$t$* is a unique identifier that has an increment of one for each observation and *$j$* is the counter for each search-and-interpolate round. [add a bit more for *$l$* after decide whether to combine $l$ and $k$. ]
 
-where $T$ is the total number of plane serached by the optimisation algorithm including all the target planes, all the interpolating planes and all the candidate planes but NOT the starting plane.
+<!-- For each level of iteration, we design two types of indices: *index per iteration: $j$* is fixed for each observations in one iteration and has an increment of one once a new iteration starts. *index within iteration: $l$* has an increment of one for each observation in an iteration and starts over from one once a new iteration starts. -->
 
-*Iterators* indexes the data collected and has a time series feature that prescribes the its natural ordering of the decision varible in the searching. The simpliest iterator, *index per observation: $t$*, is a unique identifier for each observation in the data. For each level of iteration, we design two types of indices: *index per iteration: $j$* is fixed for each observations in one iteration and has an increment of one once a new iteration starts. *index within iteration: $l$* has an increment of one for each observation in an iteartion and starts over from one once a new iteration starts. A sketch of the difference between these three iterators is provided in Figure \ref{iterators}. In projection pursuit optimisation algorithms, there is one level of iteartion and hence exists three iterators: `id` indices each observation by a unique number; `tries` is the index per iteration iterator that gets updated once a search-and-interpolate step is finished; and `loop` is the index within iteration iterator and starts over from one at the beginning of a new `tries`. We give the interpolating basis a different index $k$ for projection pursuit guided tour. It is similar in nature to $l$ but is specific for interpolating bases, which is usually not part of the optimisation.
+<!-- In projection pursuit optimisation algorithms, there is one level of iteration and hence exists three iterators: `id` indices each observation by a unique number; `tries` is the index per iteration iterator that gets updated once a search-and-interpolate step is finished; and `loop` is the index within iteration iterator and starts over from one at the beginning of a new `tries`. We give the interpolating basis a different index $k$ for projection pursuit guided tour. It is similar in nature to $l$ but is specific for interpolating bases, which is usually not part of the optimisation. -->
 
 
-```{r iterators, out.width = "100%", out.height = "25%", fig.cap = "\\label{iterators} A sketch of the design of iterators in iterative algorithms."}
-knitr::include_graphics(here::here("figures", "iterators.png"))
-```
+<!-- # ```{r iterators, out.width = "100%", out.height = "25%", fig.cap = "\\label{iterators} A sketch of the design of iterators in iterative algorithms."} -->
+<!-- # knitr::include_graphics(here::here("figures", "iterators.png")) -->
+<!-- # ``` -->
 
 
-There could exist other parameters that are also of our interest but can't be classified as one of the three categories. They are defined under the fourth category: *other parameter of interest: $S$*. In projection pursuit, three other parameters of our interest includes `method`, `alpha` and `info`.  `method` identifies the name of the searching method used and we are interested in comparing the performance between different algorithms under direct search. The neighbourhood parameter `alpha` controls the size of the sampling space and we are interested to understand how the searching space shrinks as the algorithm progresses. `info` labels different stages in the searching process. A sketch of the global object for projection pursuit guided tour is presented in Figure \ref{fig:glb-obj}. The full data structure can thus be shown as in Equation \ref{eq:data-structure}.
+There are other parameters that are of our interest and we denote them as *$V_{p}$*. In projection pursuit, this includes $V_1 = \text{method}$, denoting the name of the searching method used and $V_2 = \text{alpha}$, which is a neighbourhood parameter that controls the size in sampling candidate bases. A sketch of the global object for projection pursuit guided tour is presented in Figure \ref{fig:glb-obj}. The full data structure can thus be shown as in Equation \ref{eq:data-structure}.
 
 \begin{equation}
 \left[
-\begin{array}{c|cc|ccc|ccc}
-t & \mathbf{A} & I & j &  l  & k & S_{1}& \cdots & S_{p}\\
+\begin{array}{c|ccc|ccc|ccc}
+t & \mathbf{A} & I & S & j &  l  & k & V_{1}& \cdots & V_{p}\\
 \hline
-1 & \mathbf{A}_0 & I_0 & 0 & \ast & \ast & \ast & \cdots & \ast\\
+1 & \mathbf{A}_1 & I_1 & S_1 & 1 & 1 & \ast & V_{1, 1} & \cdots & V_{p, 1}\\
 \hline
-2 & \mathbf{A}_1 & I_1 & 1 & 1 & \ast & S_{1, 1} & \cdots & S_{1, p}\\
-3 & \mathbf{A}_2 & I_2 & 1 & 2 & \ast & S_{2, 1} & \cdots & S_{2, p}\\
-\vdots & \vdots &\vdots & \vdots &\vdots & \vdots &\vdots &\cdots &\vdots\\
-\vdots & \vdots & \vdots & 1 & l_1 & \ast & \vdots &  \cdots & \vdots\\
+2 & \mathbf{A}_2 & I_2 & S_2 & 2 & 1 & \ast & V_{1, 2} & \cdots & V_{p, 2}\\
+3 & \mathbf{A}_3 & I_3 & S_3 & 2 & 2 & \ast & V_{1, 3} & \cdots & V_{p, 3}\\
+\vdots & \vdots &\vdots &\vdots & \vdots &\vdots & \vdots &\vdots &\cdots &\vdots\\
+\vdots & \vdots & \vdots &\vdots & 2 & l_1 & \ast & \vdots &  \cdots & \vdots\\
 \hline
-\vdots &\vdots & \vdots & 1 & \ast & 1& \vdots &  \cdots & \vdots\\
-\vdots &\vdots &\vdots& 1 & \ast & 2& \vdots& \cdots & \vdots\\
-\vdots &\vdots &\vdots &\vdots  &\vdots & \vdots &\vdots &\cdots &\vdots \\
-\vdots &\vdots &\vdots & 1 & \ast & k_1&\vdots & \cdots & \vdots\\
+\vdots &\vdots & \vdots &\vdots & 2 & \ast & 1& \vdots &  \cdots & \vdots\\
+\vdots &\vdots &\vdots &\vdots & 2 & \ast & 2& \vdots& \cdots & \vdots\\
+\vdots &\vdots &\vdots &\vdots &\vdots  &\vdots & \vdots &\vdots &\cdots &\vdots \\
+\vdots &\vdots &\vdots &\vdots & 2 & \ast & k_1&\vdots & \cdots & \vdots\\
 \hline
-\vdots &\vdots &\vdots &\vdots  &\vdots & \vdots &\vdots &\cdots &\vdots \\
-T+1 & \mathbf{A}_T & I_T & J &  l_J & \ast & S_{T, 1}& \cdots & S_{T, p}\\
+\vdots &\vdots &\vdots &\vdots &\vdots  &\vdots & \vdots &\vdots &\cdots &\vdots \\
+T & \mathbf{A}_T & I_T &S_T  & J &  l_J & \ast & V_{1, T}& \cdots & V_{p, T}\\
 \end{array}
 \right]
 \label{eq:data-structure}
@@ -450,7 +392,7 @@ knitr::include_graphics(path = here::here("figures/global_obj.png"))
 
 ## Simulated data
 
-We first simulate some random variables of size 1000 with different structures. `x1`, `x8`, `x9` and `x10` are simulated from normal distribution iwth zero mean and variance of one as in equation \ref{eq:sim-norm}. When using projection pursuit to explore the data structure based on its departure from normality, the entry in the projection basis for these variables should be close to zero in theory. `x2` to `x7` are mixture of normal distribution with different weights and locations. Equation \ref{eq:sim-x2} to \ref{eq:sim-x7} show the distribution of each variables and Figure \ref{origin-data} shows the histogram of each variable except `x3`. All the variables are then scaled to ensure the mixture has variance of one.
+We first simulate some random variables of size 1000 with different structures. `x1`, `x8`, `x9` and `x10` are simulated from normal distribution with zero mean and variance of one as in equation \ref{eq:sim-norm}. When using projection pursuit to explore the data structure based on its departure from normality, the entry in the projection basis for these variables should be close to zero in theory. `x2` to `x7` are mixture of normal distribution with different weights and locations. Equation \ref{eq:sim-x2} to \ref{eq:sim-x7} show the distribution of each variables and Figure \ref{origin-data} shows the histogram of each variable except `x3`. All the variables are then scaled to ensure the mixture has variance of one.
 
 \begin{align}
 x_1 \overset{d}{=} x_8 \overset{d}{=} x_9 \overset{d}{=} x_{10}& \sim \mathcal{N}(0, 1) \label{eq:sim-norm} \\
@@ -519,13 +461,13 @@ Below we will present several examples of diagnosing different aspects of the pr
 
 3) a self-contained example to optimise a complex index function. 
 
-In the first two sections, we will first provide a toy example that is easy to grasp and then more examples that can help us to understand the algorithm and parameter choice. Remeber the research question we raised earlier, the purpose of visual diagnostics is to understand: 
+In the first two sections, we will first provide a toy example that is easy to grasp and then more examples that can help us to understand the algorithm and parameter choice. Remember the research question we raised earlier, the purpose of visual diagnostics is to understand: 
 
 - Whether the algorithm has successfully found the maximum and how the index value changes throughout the algorithm?
 
 - How does the searching space look like, that is, geometrically, where are the projection bases located in the space?
 
-The first question can be answered using a static plot with x-axis showing the progression of the optimisation and y-axis showing the value of the objective function. The second question can be addressed via visualising the rotating high dimensional space or its projection on the reduced 2D space. Thus animated visualisation is needed to preceive the optimisation path in the searching space.
+The first question can be answered using a static plot with x-axis showing the progression of the optimisation and y-axis showing the value of the objective function. The second question can be addressed via visualising the rotating high dimensional space or its projection on the reduced 2D space. Thus animated visualisation is needed to perceive the optimisation path in the searching space.
 
 <!-- [This seems to be a hard task to see the rotation of high dimensional space, but the way humans understand the dimension of a 3D object is either through rotating the physical 3D object or using shade and line type to annotate the 3D object in a paper or electronically. Thus we can do a similar rotation on the screen to precieve even higher dimension. there is likely to be a learning curve - remember when learning geometry in school, it takes a while to get used to see 3D cube on a paper].  -->
 
@@ -542,19 +484,19 @@ A primary interest of diagnosing an optimisation algorithm is to study how it fi
 Boxplot is a suitable candidate that provides five points summary of the data, however it has one drawback: it doesn't report the number of point in each box. We may risk losing information on how many points it takes to find the target basis by displaying the boxplot alone for all `tries`. Thus, the number of point in each iteration is displayed at the bottom of each box and we provide options to switch iteration with small number of points to a point geometry, which is achieved via an `cutoff` argument. A line geometry is also added to link the points with the largest index value in each iteration. This helps to visualise the improvement made in each iteration. Using the concept of *gramma of graphics* [@wickham2010layered], the plot for exploring index value can be defined in three layers as:
 
 - Layer 1: boxplot geom
-  - data: group by `tries` and filter the observations in the group that have count greater than `cutoff = 15`.
-  - x: `tries` is mapped to the x-axis
-  - y: the index value after statistical transformation $y = \{Q_q(I_{jlk} \cdot \mathds{1} (j = x, k = \ast))\}$ is mapped to the y-axis where $q$ takes one of $0, 25, 50, 75, 100$ and $Q_q(x)$ finds the qth-quantile for the vector $x$. $\mathds{1}(.)$ is the identity operator.
+  - data: group by $j$ and filter the observations in the group that have count greater than `cutoff = 15`.
+  - x: $j$ is mapped to the x-axis
+  - y: the statistical transformed index value: $Q_q(I_{T} \cdot \mathds{1} (S = \text{search}))$ is mapped to the y-axis where $q$ takes one of $0, 25, 50, 75, 100$ and $Q_q(x)$ finds the qth-quantile for the vector $x$. $\mathds{1}(.)$ is the identity operator.
 
 - Layer 2: point geom
-  - data: group by `tries` and filter the observations in the group that have count less than `cutoff = 15`.
-  - x: `tries` is mapped to the x-axis
-  - y: `index_val` is mapped to the y-axis 
+  - data: group by $j$ and filter the observations in the group that have count less than `cutoff = 15`.
+  - x: $j$ is mapped to the x-axis
+  - y: $I$ is mapped to the y-axis 
 
 - Layer 3: line geom
-  - data: filter the points with the highest index value in each `tries`
-  - x: `tries` is mapped to the x-axis
-  - y: `index_val` is mapped to the y-axis 
+  - data: filter the points with the highest index value in group $j$
+  - x: $j$ is mapped to the x-axis
+  - y: $I$ is mapped to the y-axis 
 
 #### Toy example: exploring searching points 
 
@@ -575,12 +517,12 @@ dt %>% explore_trace_search()
 Sometimes, rather than explore the searching points, we may be interested in explore the points on the interpolation path (target and interpolating points) since these points will be played by the tour animation. Since interpolation paths are geodesically the shortest, a summarisation using boxplot geometry is no longer needed. The slightly modified plot definition is shown below:
 
 - Layer 1: point geom
-  - data: filter the observations with `info` being `interpolation` and mutate `id` to be the row number of the subsetted tibble
-  - x: `id` is mapped to the x-axis
-  - y: `index_val` is mapped to the y-axis 
+  - data: filter the observations with $S = \text{interpolation}$ and mutate $t$ to be the row number of the subsetted tibble
+  - x: $t$ is mapped to the x-axis
+  - y: $I$ is mapped to the y-axis 
 
 - Layer 2: line geom
-  - using line goemetry for the same data and aesthetics 
+  - using line geometry for the same data and aesthetics 
 
 #### A more complex example: Interruption
 
@@ -619,7 +561,7 @@ p1 | p2
 
 ### Polishing points
 
-<!-- In the previous two sections, only the iterator and the index value are mapped onto the x and y aesthetics of the plot; while more aesthetics i.e. color, could be added to compare other parameters in the global object. -->
+<!-- In the previous two sections, only the iterator and the index value are mapped onto the x and y aesthetics of the plot; while more aesthetics i.e. colour, could be added to compare other parameters in the global object. -->
 
 <!-- Two examples are shown below to explore and compare different searching methods and neighbourhood parameter alpha.  -->
 
@@ -655,13 +597,12 @@ holes_2d_geo_polish <- animate_xy(data_mult[,c(1,2, 7:10)], tour_path =
 Slight variation of plot definition due to the addition of polishing points is as follows:
 
 - Layer 1: point geom
-  - data: filter the observations with `info` being `interpolation`; bind the global object from optimisation and interpolation and form polishing; mutate `id` to be the row number of the binded tibble.
-  - x: `id` is mapped to the x-axis
-  - y: `index_val` is mapped to the y-axis 
-  - color: `method` is mapped to the color aesthetic
+  - data: filter the observations with  $S = \text{interpolation}$; bind the global object from optimisation and interpolation and form polishing; mutate $t$ to be the row number of the binded tibble.
+  - x: $t$ is mapped to the x-axis
+  - y: $I$ is mapped to the y-axis 
+  - colour: $V$ is mapped to the colour aesthetic
 
 - Layer 2: line geom
-  - using line goemetry for the same data and aesthetics 
 
 <!-- Polishing points form on itself a global structure with candidate bases and output bases. If we're allowed to abuse the notation a bit, we denote $$A_{J, \ast, \sum_{i = 1}^J k_i + 1}$$ as the first polishing basis and $$A_{J, \ast, \sum_{i = 1}^J k_i + M}$$ as the last polishing basis, where $$M = \sum_i S_{i, \text{method}} \mathds{1}(\text{method} = \text{polish})$$ -->
 
@@ -672,7 +613,7 @@ Slight variation of plot definition due to the addition of polishing points is a
 
 #### Another example: Polish
 
-Again using the same data, we are interested to compare the effect of different `max.tries` in the 2D projection setting. `max.tries` is a hyperparameter that controls the maximum number of try before the search ends. The default value of 25 is suitable for 1D projection while we suspect it may not be a good option for the 2D case and hence want to compare it with an alternative, 500. As shown in Figure \ref{trace-compare}, both trials attain the same index value after polishing while the small `max.tries` of 25 is not sufficient for `search_better` to find its global maximum and we will need to adjust the `max.tries` argument for the search to succiciently explore the parameter space.
+Again using the same data, we are interested to compare the effect of different `max.tries` in the 2D projection setting. `max.tries` is a hyperparameter that controls the maximum number of try before the search ends. The default value of 25 is suitable for 1D projection while we suspect it may not be a good option for the 2D case and hence want to compare it with an alternative, 500. As shown in Figure \ref{trace-compare}, both trials attain the same index value after polishing while the small `max.tries` of 25 is not sufficient for `search_better` to find its global maximum and we will need to adjust the `max.tries` argument for the search to sufficiently explore the parameter space.
 
 ```{r polish, fig.asp=0.5,fig.cap="\\label{trace-compare}Breakdown of index value when using different max.tries in search better in conjunction with search polish. Both attain the same final index value after the polishing while using a max.tries 25 is not sufficient to find the ture maximum."}
 
@@ -721,19 +662,19 @@ p2 <- bind_rows(holes_2d_better_max_tries, holes_2d_better_max_tries_polish) %>%
 
 In projection pursuit, the projection bases $\mathbf{A}_{p \times d}$ are usually of dimension $p \times d$ and hence can't be visualised in a 2D plot. An option to explore the searching space of these bases is to explore a reduced space via principal component analysis (PCA). The visualisation can thus be defined as
 
-<!-- We first flat each projection bases $\mathbf{A}$ to a row vector and stack them by rows. This gives a matrix of dimension $n$ by $(p*d)$. Centering and scaling are usually done before performing PCA and we denotes the pre-processed matrix as $\tilde{\mathbf{A}}_{n \times (p \times d)}$. By definition, the principal components maximise the variance of the projection bases in the reduced space. Using lagrange multipler, this is equivalent to find the eigenvector of the variance-covariance matrix: $\Sigma = \tilde{\mathbf{A}}^T\tilde{\mathbf{A}}$. Decomposing $\tilde{\mathbf{A}}$ using singular value decomposition (SVD) gives $$\tilde{\mathbf{A}} = \mathbf{U} \mathbf{\lambda} \mathbf{V}$$ and hence the variance-covariance matrix    -->
+<!-- We first flat each projection bases $\mathbf{A}$ to a row vector and stack them by rows. This gives a matrix of dimension $n$ by $(p*d)$. Centering and scaling are usually done before performing PCA and we denotes the pre-processed matrix as $\tilde{\mathbf{A}}_{n \times (p \times d)}$. By definition, the principal components maximise the variance of the projection bases in the reduced space. Using lagrange multipler, this is equivalent to find the eigenvector of the variance-covariance matrix: $\Sigma = \tilde{\mathbf{A}}^T\tilde{\mathbf{A}}$. Decomposing $\tilde{\mathbf{A}}$ using singular value decomposition (SVD) gives $$\tilde{\mathbf{A}} = \mathbf{U} \mathbf{\lambda} \mathbf{V}$$ and hence the variance-covariance matrix -->
 
 <!-- $$\Sigma = \tilde{\mathbf{A}}^T\tilde{\mathbf{A}} = (\mathbf{V}^T \mathbf{\lambda}^T \mathbf{U}^T) (\mathbf{U} \mathbf{\lambda} \mathbf{V}) = \mathbf{V}^T \mathbf{\lambda}^2 \mathbf{V}$$ -->
 
 <!-- has eigenvector $\mathbf{V} = [\mathbf{v}_1, \mathbf{v}_2, \cdots, \mathbf{v}_{p\times d}]$. The projection mapping to the x- and y-axis uses the first two principal components and hence $$\tilde{\mathbf{A}} \mathbf{v}_1 \text{ and } \tilde{\mathbf{A}} \mathbf{v}_2$$ -->
 
-<!-- The resulting two vectors are of dimension $n \times 1$, which is compatible with the dimension of the global object. THis means all the iterators and interesting other variables defined in the global object can be binded with the these two projections and can be mapped to other aesthetics (i.e. color). -->
+<!-- The resulting two vectors are of dimension $n \times 1$, which is compatible with the dimension of the global object. THis means all the iterators and interesting other variables defined in the global object can be bound with the these two projections and can be mapped to other aesthetics (i.e. colour). -->
 
 - Layer 1: point geom
   - data: subset the basis of interest and arrange into a matrix format; perform PCA on the basis matrix and compute the projected basis on the first two principal components; bind the variables from the original global object and form a tibble
   - x: the projected basis on the first principal component
   - y: the projected basis on the second principal component
-  - color: an variable of interest is mapped onto color 
+  - colour: $V$ is mapped to the colour aesthetic
   
 <!-- In this way, the first two principle components will take up the x and y axis and all the other information will be mapped using other aesthetic attribution. [need to think further about how different type of variables can be shown].  -->
 
@@ -742,7 +683,7 @@ In projection pursuit, the projection bases $\mathbf{A}_{p \times d}$ are usuall
 
 *Example: understand search_geodesic* [feel like this example is merely explaining search geodesic algorithm, so maybe introduce the animated plot here? xxx] `search_geodesic` is a two-stage ascending algorithm with four different stages in the search and a PCA plot useful to understand how the algorithm progresses and the relative position of each basis in the PCA projected 2D space. Starting from the start basis, a directional search is conducted in a narrow neighbourhood on five random directions. The best one is picked and a line search is then run on the geodesic direction to find the target basis. The starting and target bases are then interpolated. In the next iteration, the target basis becomes the current basis and then procedures continues. 
 
-```{r pca, fig.cap = "\\label{pca}PCA plot of search geodesic Coloring by info allows for better understanding of each stage in the geodesic search"}
+```{r pca, fig.cap = "\\label{pca}PCA plot of search geodesic colouring by info allows for better understanding of each stage in the geodesic search"}
 
 holes_1d_geo %>% explore_proj_pca(col = info) 
 
@@ -752,7 +693,7 @@ holes_1d_geo %>% explore_proj_pca(col = info)
 ### A more complex example: Choosing the initial value for polishing parameter
 
 
-*Example: initial value for polishing alpha* `search_polish` is a brutal-force algorithm that evaluate 1000 points in the neighbourhood at each loop. Setting an appropriate initial value for polish_alpha would avoid wasting search on large vector space that are not likely to produce higher index value. The default initial value for polishing step is 0.5 and we are interested in whether this is an appropriate initial value to use after `search_geodesic`. The problem is a 1D projection of the small dataset using `search_geodesic` and followed by `search_polish`. The top-left panel of Figure \ref{polish-alpha} displays all the projection bases on the first two principal components, colored by the `polish_alpha`. We can observe that rather than concentrating on the ending basis from `search_geodesic` as what polishing step is designed, `search_polish` searches a much larger vector space, which is unnecessary. Thus a customised smaller initial value for `polish_alpha` would be ideal. One way to do this is to initialised `polish_alpha` as the projection distance between the last two target bases. The top-right panel of Figure \ref{polish-alpha} shows a more desirable concentrated searching space near the ending basis. Both specifications of initial value allow the searches to reach the same ending index values. 
+*Example: initial value for polishing alpha* `search_polish` is a brutal-force algorithm that evaluate 1000 points in the neighbourhood at each loop. Setting an appropriate initial value for polish_alpha would avoid wasting search on large vector space that are not likely to produce higher index value. The default initial value for polishing step is 0.5 and we are interested in whether this is an appropriate initial value to use after `search_geodesic`. The problem is a 1D projection of the small dataset using `search_geodesic` and followed by `search_polish`. The top-left panel of Figure \ref{polish-alpha} displays all the projection bases on the first two principal components, coloured by the `polish_alpha`. We can observe that rather than concentrating on the ending basis from `search_geodesic` as what polishing step is designed, `search_polish` searches a much larger vector space, which is unnecessary. Thus a customised smaller initial value for `polish_alpha` would be ideal. One way to do this is to initialised `polish_alpha` as the projection distance between the last two target bases. The top-right panel of Figure \ref{polish-alpha} shows a more desirable concentrated searching space near the ending basis. Both specifications of initial value allow the searches to reach the same ending index values. 
 
 
 ```{r polish-alpha, fig.cap = "\\label{polish-alpha}PCA plot of two different polish alpha initialisations. A default polish alpha = 0.5 searches a larger space that is unncessary while a small customised initial value of polish alpha will search near the ending basis. Both intialisations reach the same ending index values. "}
@@ -789,7 +730,7 @@ While explore the reduced space is an initial attempt to understand the searchin
 
 ## A comprehensive example of diagnosing a noisy index function
 
-The interpolation path of holes index, as seen in Figure \ref{interruption}, is smooth, while this may not be the case for more complicated index functions. `kol_cdf` index, an 1D projection index function based on Kolmogorov test, compares the difference between the 1D projected data, $\mathbf{P}_{n \times 1}$ and a randomly generated normal distribution, $y_n$ based on the empirical cumulated distribution function (ECDF). Denotes the ECDF function as $F(u)$ with subscript incidating the variable,  the Kolmogorove statistics defined by
+The interpolation path of holes index, as seen in Figure \ref{interruption}, is smooth, while this may not be the case for more complicated index functions. `kol_cdf` index, an 1D projection index function based on Kolmogorov test, compares the difference between the 1D projected data, $\mathbf{P}_{n \times 1}$ and a randomly generated normal distribution, $y_n$ based on the empirical cumulated distribution function (ECDF). Denotes the ECDF function as $F(u)$ with subscript indicating the variable,  the Kolmogorov statistics defined by
 
 $$\max \left[F_{\mathbf{P}}(u) - F_{y}(u)\right]$$
 
@@ -805,7 +746,7 @@ Figure \ref{kol-cdf} compares the tracing plot of the interpolating points when 
 - Both algorithms reach a similar final index value after polishing
 
 
-Polishing step has done much more work to find the final index value ub `search_geodesic` than `search_better` and this indicates `kol_cdf` function favours of a random search method than ascent method. 
+Polishing step has done much more work to find the final index value in `search_geodesic` than `search_better` and this indicates `kol_cdf` function favours of a random search method than ascent method. 
 
 ```{r kol-cdf,fig.asp=0.5, fig.cap = "\\label{kol-cdf}Comparison of two different searching methods: search_geodesic and search_better on 1D projection problem for a noisier index: kol_cdf. The geodesic search rely heavily on the polishing step to find the final index value while search better works well."}
 p1 <- bind_rows(kol_cdf_1d_geodesic, kol_cdf_1d_geodesic_polish) %>% explore_trace_interp(col = method)  + ggtitle("search_geodesic")
@@ -820,11 +761,11 @@ Now we enlarge the dataset to include two informative variables: `x2` and `x3` a
 Using different seeds in `search_better` allows us to find both local maximum as in Figure \ref{1d-2var-different-seeds}. Comparing the maximum of both, we can see that the global maximum happens when `x2` is found. It is natural to ask then if there is an algorithm that can find the global maximum without trying on different seeds? `search_better_random` manages to do it via a metropolis-hasting random search as shown in Figure \ref{1d-2var-better-random}, although at a higher cost of number of points to evaluate. 
 
 ```{r 1d-2var-different-seeds,  fig.asp=0.5, fig.cap="\\label{1d-2var-different-seeds}The trace plot search better in a 1D projection problem with two informative variables using different seeds (without polishing). Since there are two informative variables, setting different value for seed will lead search better to find either of the local maximum."}
-color <- RColorBrewer::brewer.pal(3, "Dark2")
+colour <- RColorBrewer::brewer.pal(3, "Dark2")
 p5 <- kol_cdf_1d_2var_better %>% explore_trace_interp(col = 0) + 
-  scale_color_manual(values = color[2]) + ggtitle("search_better, seed 123456")
+  scale_colour_manual(values = colour[2]) + ggtitle("search_better, seed 123456")
 p6 <- kol_cdf_1d_2var_better_2 %>% explore_trace_interp(col = 0) + 
-  scale_color_manual(values = color[1]) + ggtitle("search_better, seed 12345")
+  scale_colour_manual(values = colour[1]) + ggtitle("search_better, seed 12345")
 
 (p5 | p6) & theme(legend.position = "none") & ylim(0, 0.25)
 ```
@@ -833,14 +774,14 @@ p6 <- kol_cdf_1d_2var_better_2 %>% explore_trace_interp(col = 0) +
 kol_cdf_1d_2var_better_random %>% 
   explore_trace_interp(col = 0) + 
   ylim(0, 0.25) + 
-  scale_color_manual(values = color[3]) + 
+  scale_colour_manual(values = colour[3]) + 
   theme(legend.position = "none") + 
   ggtitle("search_better_random")
 ```
 
 ### Explore searching space
 
-We can also plot the searching points of all the three algorithms in the searching space and explore their relative position against each other using principal components. As shown in Figure \ref{1d-2var-explore-proj-pca}, the bases from better1 and better2 only search a proportion of the searching space while better_random produces a more exhausive search. The large overlapping of better1 and better_random is explained by the fact that both algorithms finds x2 in the end. 
+We can also plot the searching points of all the three algorithms in the searching space and explore their relative position against each other using principal components. As shown in Figure \ref{1d-2var-explore-proj-pca}, the bases from better1 and better2 only search a proportion of the searching space while better_random produces a more exhaustive search. The large overlapping of better1 and better_random is explained by the fact that both algorithms finds x2 in the end. 
 
 ```{r 1d-2var-explore-proj-pca, fig.cap = "\\label{1d-2var-explore-proj-pca} The projected projection basis using principal components. The bases from better1 and better2 only search a proportion of the searching space while better_random produces a more exhausive search. The large overlapping of better1 and better_random is explained by the fact that both algorithms finds x2 in the end."}
 interp1 <- kol_cdf_1d_2var_better 
@@ -853,14 +794,14 @@ bind_rows(interp1, interp2, interp3) %>%
                        rep("better_random", nrow(interp3))),
          algorithm = fct_relevel(algorithm, c("better1", "better2", "better_random"))) %>% 
   explore_proj_pca(col = algorithm) + 
-  scale_color_brewer(palette = "Dark2") 
+  scale_colour_brewer(palette = "Dark2") 
 
 
 ```
 
 
 
-# Implementation: Ferrn pacakge
+# Implementation: Ferrn package
 
 Everything is coded up in a package. Package structure
 

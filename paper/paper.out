@@ -2,22 +2,21 @@
 \BOOKMARK [1][-]{section.2}{Derivative free optimisation}{}% 2
 \BOOKMARK [2][-]{subsection.2.1}{Difficulties}{section.2}% 3
 \BOOKMARK [1][-]{section.3}{Projection pursuit guided tour}{}% 4
-\BOOKMARK [2][-]{subsection.3.1}{Notation}{section.3}% 5
-\BOOKMARK [2][-]{subsection.3.2}{Optimisation problem and existing algorithms}{section.3}% 6
-\BOOKMARK [1][-]{section.4}{Visual diagnostic system}{}% 7
-\BOOKMARK [2][-]{subsection.4.1}{Motivation}{section.4}% 8
-\BOOKMARK [2][-]{subsection.4.2}{Global object}{section.4}% 9
-\BOOKMARK [2][-]{subsection.4.3}{Simulated data}{section.4}% 10
-\BOOKMARK [1][-]{section.5}{Visual diagnostics}{}% 11
-\BOOKMARK [2][-]{subsection.5.1}{Explore the value of objective function}{section.5}% 12
-\BOOKMARK [3][-]{subsubsection.5.1.1}{Searching points}{subsection.5.1}% 13
-\BOOKMARK [3][-]{subsubsection.5.1.2}{Interpolating points}{subsection.5.1}% 14
-\BOOKMARK [3][-]{subsubsection.5.1.3}{Polishing points}{subsection.5.1}% 15
-\BOOKMARK [2][-]{subsection.5.2}{Explore searching space}{section.5}% 16
-\BOOKMARK [3][-]{subsubsection.5.2.1}{A toy example: understand different stage of search\137geodesic}{subsection.5.2}% 17
-\BOOKMARK [3][-]{subsubsection.5.2.2}{A more complex example: Choosing the initial value for polishing parameter}{subsection.5.2}% 18
-\BOOKMARK [2][-]{subsection.5.3}{A comprehensive example of diagnosing a noisy index function}{section.5}% 19
-\BOOKMARK [3][-]{subsubsection.5.3.1}{Explore index value}{subsection.5.3}% 20
-\BOOKMARK [3][-]{subsubsection.5.3.2}{Explore searching space}{subsection.5.3}% 21
-\BOOKMARK [1][-]{section.6}{Implementation: Ferrn pacakge}{}% 22
-\BOOKMARK [1][-]{section.7}{Conclusion}{}% 23
+\BOOKMARK [2][-]{subsection.3.1}{Optimisation problem and existing algorithms}{section.3}% 5
+\BOOKMARK [1][-]{section.4}{Visual diagnostic system}{}% 6
+\BOOKMARK [2][-]{subsection.4.1}{Motivation}{section.4}% 7
+\BOOKMARK [2][-]{subsection.4.2}{Global object}{section.4}% 8
+\BOOKMARK [2][-]{subsection.4.3}{Simulated data}{section.4}% 9
+\BOOKMARK [1][-]{section.5}{Visual diagnostics}{}% 10
+\BOOKMARK [2][-]{subsection.5.1}{Explore the value of objective function}{section.5}% 11
+\BOOKMARK [3][-]{subsubsection.5.1.1}{Searching points}{subsection.5.1}% 12
+\BOOKMARK [3][-]{subsubsection.5.1.2}{Interpolating points}{subsection.5.1}% 13
+\BOOKMARK [3][-]{subsubsection.5.1.3}{Polishing points}{subsection.5.1}% 14
+\BOOKMARK [2][-]{subsection.5.2}{Explore searching space}{section.5}% 15
+\BOOKMARK [3][-]{subsubsection.5.2.1}{A toy example: understand different stage of search\137geodesic}{subsection.5.2}% 16
+\BOOKMARK [3][-]{subsubsection.5.2.2}{A more complex example: Choosing the initial value for polishing parameter}{subsection.5.2}% 17
+\BOOKMARK [2][-]{subsection.5.3}{A comprehensive example of diagnosing a noisy index function}{section.5}% 18
+\BOOKMARK [3][-]{subsubsection.5.3.1}{Explore index value}{subsection.5.3}% 19
+\BOOKMARK [3][-]{subsubsection.5.3.2}{Explore searching space}{subsection.5.3}% 20
+\BOOKMARK [1][-]{section.6}{Implementation: Ferrn package}{}% 21
+\BOOKMARK [1][-]{section.7}{Conclusion}{}% 22

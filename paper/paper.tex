@@ -145,9 +145,9 @@ usually used to evaluate and compare the performance of different
 algorithms but it can easily become tedious because the code will have
 to be modified significantly when comparing different parameters in the
 algorithms. For example, a categorical variable with 5 levels can be
-easily mapped onto color while mapping another categorical variable with
-30 levels will not make the plot informative. Thus the plot needs to be
-re-designed to better suits the characteristics of the parameter
+easily mapped onto colour while mapping another categorical variable
+with 30 levels will not make the plot informative. Thus the plot needs
+to be re-designed to better suits the characteristics of the parameter
 (whether the parameter is a scalar or a matrix? whether the parameter is
 quantitative or categorical? If categorical, how many levels does the
 parameter have?). This motivates the design of a visual diagnostic
@@ -281,10 +281,10 @@ data matrix, an n-d projection can be seen as a linear transformation
 that maps the projection basis \(\mathbf{A}\) onto a scalar value \(I\),
 this function is commonly known as the projection pursuit index (PPI)
 function, or the index function and can be used to measure the
-``interestingness'' of the projection. A number of indice functions have
+``interestingness'' of the projection. A number of index functions have
 been proposed in the literature including Legendre index
-\citep{friedman1974projection}, hermite index
-\citep{hall1989polynomial}, natural hermite index
+\citep{friedman1974projection}, Hermite index
+\citep{hall1989polynomial}, natural Hermite index
 \citep{cook1993projection}, chi-square index
 \citep{posse1995projection}, LDA index \citep{lee2005projection} and PDA
 index \citep{lee2010projection}.
@@ -301,91 +301,15 @@ called \emph{guided tour}. Tour explores the multivariate data
 \emph{interactively} via playing a series of projections, that form a
 \emph{tour path} and guided tour uses the path that is geodesically the
 shortest. Details of the mathematical construction of a tour path can be
-found in \citet{buja2005computational}. Guided tour, along with other
-types of tour, has been implemented in the \emph{tourr} package in R,
-available on the Comprehensive R Archive Network at
+found in \citet{buja2005computational}. {[}Maybe add the sketch for
+illustrating tour path.{]} Guided tour, along with other types of tour,
+has been implemented in the \emph{tourr} package in R, available on the
+Comprehensive R Archive Network at
 \url{https://cran.r-project.org/web/packages/tourr/}
 \citep{wickham2011tourrpackage}.
 
-\hypertarget{notation}{%
-\subsection{Notation}\label{notation}}
-
-For a projection basis, let the three-subscript notation
-\[\mathbf{A}_{jlk}\] represent the projection matrix in iteration \(j\)
-with either a searching index \(l\) or an interpolation index \(k\). The
-placeholder \(*\) will be the substitue for the non-applicable index. To
-give two examples, \(\mathbf{A}_{12*}\) denotes the second searching
-basis in the first iteration; \(\mathbf{A}_{1*2}\) denotes the second
-interpolation basis in the first iteration.
-
-If we are being pedantic, all the target bases, except the starting
-basis, should have a searching index since it is the last candidate
-basis that successfully allows the optimisation algorithm to end and
-output a new basis for interpolation. If we denotes the length of each
-search (number of basis searched in each iteration) as
-\(l_1, l_2, \cdots, l_J\) and the length of each interpolation is
-\(k_1, k_2, \cdots, k_J\) , then the searching index for target basis in
-each iteration will become
-\(\mathbf{A}_{1l_1*}, \mathbf{A}_{2l_2*}, \cdots, \mathbf{A}_{Jl_J*}\).
-We simplify this notation for target bases by using a superscript as
-\[\mathbf{A}^{0}, \mathbf{A}^{1}, \mathbf{A}^{2}, \cdots, \mathbf{A}^{J}\]
-where \(\mathbf{A}^{0}\) is the starting basis. Notice that in the case
-when the complex notation can't be avoided, we shall separate each index
-using a comma and write the index in brackets if necessary. Using the
-notation above, all the bases on the interpolation path (including
-target and interpolation bases) can be written as in Equation
-\ref{eq:interp-path}.
-
-\begin{equation}
-\{ 
-\mathbf{A}^0, 
-\mathbf{A}^1, 
-\mathbf{A}_{1 \ast 1}, 
-\mathbf{A}_{1 \ast 2},
-\cdots, 
-\mathbf{A}^2, 
-\mathbf{A}_{2 \ast 1}, 
-\mathbf{A}_{2 \ast 2}, 
-\cdots, 
-\mathbf{A}^J,
-\mathbf{A}_{J \ast 1}, 
-\mathbf{A}_{J \ast 2}, 
-\cdots, 
-\mathbf{A}_{J \ast K},
-\}
-\label{eq:interp-path}
-\end{equation}
-
-where \(K\) denotes the last interpolating index. A visual
-representation of the interpolation path ( for iteration one) modified
-from \citet{buja2005computational} is shown in Figure \ref{tour-path}.
-If we use a dot to represent a plane in the searching space, the
-searching points along with the current and target basis in iteration
-one can sketched in Figure \ref{searching-points}. Combine the two
-above, we can write all the bases in the first iteration (including the
-starting basis) in its natural ordering as in Equation \ref{eq:vectorA}.
-
-\begin{equation}
-\{
-\mathbf{A}^{0}, 
-\mathbf{A}_{1 1\ast}, 
-\mathbf{A}_{1 2\ast}, 
-\cdots, 
-\mathbf{A}^{1},
-\mathbf{A}_{1\ast 1}, 
-\mathbf{A}_{1\ast 2},  
-\cdots, 
-\mathbf{A}_{1\ast k_1}
-\}
-\label{eq:vectorA}
-\end{equation}
-
 \begin{figure}
-\includegraphics[width=1\linewidth,height=0.6\textheight]{/Users/hzha400/Documents/3.PhD/paper-tour-vis/figures/tour_path_increasing} \caption{\label{tour-path}An illustration of the tour path}\label{fig:tour-path}
-\end{figure}
-
-\begin{figure}
-\includegraphics[width=1\linewidth,height=0.6\textheight]{/Users/hzha400/Documents/3.PhD/paper-tour-vis/figures/tour_path_increasing} \caption{\label{searching-points}An illustration of the tour path}\label{fig:searching-points}
+\includegraphics[width=1\linewidth,height=0.6\textheight]{/Users/hzha400/Documents/3.PhD/research/paper-tour-vis/figures/tour_path_increasing} \caption{\label{tour-path}An illustration of the tour path}\label{fig:tour-path}
 \end{figure}
 
 \hypertarget{optimisation-problem-and-existing-algorithms}{%
@@ -400,28 +324,28 @@ final projection basis
 optimisation problem:
 
 \begin{align}
-&\arg \max_{\mathbf{A} \in \mathcal{A}} f(\mathbf{A}) \\
+&\arg \max_{\mathbf{A} \in \mathcal{A}} f(\mathbf{X} \cdot \mathbf{A}) \\
 s.t. & \mathcal{A} = \{ \forall \mathbf{a}_i, \mathbf{a}_j \in \mathbf{A}: \lVert \mathbf{a}_i \rVert = 1 \text{ and } \mathbf{a}_i \mathbf{a}_j = 0 \}
 \end{align}
 
 via an iterative search of target basis:
 \(\{\mathbf{A}^0, \mathbf{A}^1, \mathbf{A}^2, \cdots \cdots \mathbf{A}^J\}\).
 
-There are three existing methods for optimisating PPI function and we
+There are three existing methods for optimising PPI function and we
 review them below.
 
 \citet{posse1995projection} proposed a stochastic direct search method,
-a random search algorithm. Given a current basis \(\mathbf{A}^{j-1}\), a
-candidate basis \(\mathbf{A}_{jl*}\) is sampled in the neighbourhood
-defined by the radius of the p-dimensional sphere, \(\alpha\) of the
-current basis \(\mathbf{A}^{j}\) by
-\(\mathbf{A}_{jl*} = \mathbf{A}^{j-1} + \alpha \mathbf{A}_{rand}\). If
-the candidate basis has a higher index value than the current basis, it
-is outputed as the target basis \(\mathbf{A}^{j}\) along with other
+a random search algorithm. Given a current basis
+\(\mathbf{A}_{\text{cur}}\), a candidate basis \(\mathbf{A}_{t}\) is
+sampled in the neighbourhood defined by the radius of the p-dimensional
+sphere, \(\alpha\) of the current basis \(\mathbf{A}_{t}\) by
+\(\mathbf{A}_{t} = \mathbf{A}_{\text{cur}} + \alpha \mathbf{A}_{rand}\).
+If the candidate basis has a higher index value than the current basis,
+it is outputted as the target basis \(\mathbf{A}_{t}\) along with other
 metadata and the current iteration stops. If no basis is found to have
 higher index value after the maximum number of tries \(l_{\max}\), the
 algorithm stops with nothing outputted. \(c\) is the halfing parameter
-and when \(c > 30\), the nieghbourhood parameter \(\alpha\) in the next
+and when \(c > 30\), the neighbourhood parameter \(\alpha\) in the next
 iteration will be reduced by half. The algorithm for a random search is
 summarised in Algorithm \ref{random-search}.
 
@@ -429,14 +353,15 @@ summarised in Algorithm \ref{random-search}.
 \SetAlgoLined
   \SetKwInOut{Input}{input}
   \SetKwInOut{Output}{output}
-    \Input{The current projection basis: $\mathbf{A}^{j-1}$; The index function: $f$}
-    \Output{The global object; The target basis: $\mathbf{A}^{j}$}
+    \Input{The current projection basis: $\mathbf{A}_{\text{cur}}$; The index function: $f$}
+    \Output{The target basis: $\mathbf{A}_{t+1}$}
   initialisation\;
+  Set $l = 1$\;
   \While{$l < l_{\max}$}{
-    Generate $\mathbf{A}_{jl*} = \mathbf{A}^{j-1} + \alpha \mathbf{A}_{\text{rand}}$ ensuring $\mathbf{A}_{j, l,*}$ is orthonormal\;
-    Compute $I_{jl*}  = f(\mathbf{A}_{jl*})$\;
-    \eIf{$I_{jl*} > I^{j-1}$}{
-      $A^{j} = A_{jl*}$, $I^{j} = I_{jl*}$\;
+    Generate $\mathbf{A}_{l} = \mathbf{A}_{\text{cur}} + \alpha \mathbf{A}_{\text{rand}}$ ensuring $\mathbf{A}_{l}$ is orthonormal\;
+    Compute $I_{l}  = f(\mathbf{A}_{l})$\;
+    \eIf{$I_{l} > I_{\text{cur}}$}{
+      \KwRet{$\mathbf{A}_{l}$} \;
       }{
       $c = c + 1$\;
       }
@@ -460,17 +385,18 @@ summarisation of the steps.
 \SetAlgoLined
 \SetKwInOut{Input}{input}
   \SetKwInOut{Output}{output}
-    \Input{The current projection basis: $\mathbf{A}^{j-1}$; The index function: $f$}
-    \Output{The global object; The target basis: $\mathbf{A}^{j}$}
+    \Input{The current projection basis: $\mathbf{A}_{\text{cur}}$; The index function: $f$}
+    \Output{The target basis: $\mathbf{A}_{**}$}
   initialisation\;
+  Set $l = 1$\;
   \While{$l < l_{\max}$}{
-    Generate ten bases in five random directions: $\mathbf{A}_{jl*}: \mathbf{A}_{j,(l + 9), *}$ within a small neighbourhood $\text{dist}$\;
-    Find the direction with the largest index value: $\mathbf{A}_{j, l_{d}, *}$\;
-    Construct the geodesic from $\mathbf{A}^{j-1}$ to $\mathbf{A}_{j, l_{d}, *}$\;
-    Find $\mathbf{A}_{j,l_g, *}$ on the geodesic that has the largest index value \;
-    Compute $I_{j,l_g, *} = f(\mathbf{A}_{j,l_g, *})$, $p_{\text{diff}} = (I_{j,l_g, *} - I^{j-1})/I_{j,l_g, *}$\;
+    Generate ten bases in five random directions: $\mathbf{A}_{l}: \mathbf{A}_{l+9}$ within a small neighbourhood $\text{dist}$\;
+    Find the direction with the largest index value: $\mathbf{A}_{*}$ where $l < * < l+ 9$\;
+    Construct the geodesic $\mathcal{G}$ from $\mathbf{A}_{\text{cur}}$ to $\mathbf{A}_{*}$\;
+    Find $\mathbf{A}_{**}$ on the geodesic $\mathcal{G}$ that has the largest index value \;
+    Compute $I_{**} = f(\mathbf{A}_{**})$, $p_{\text{diff}} = (I_{**} - I_{\text{cur}})/I_{**}$\;
       \If{$p_{\text{diff}} > 0.001$}{
-        $A^{j} = A_{j,l_g, *}$, $I^{j} = I_{j,l_g, *}$\;
+         \KwRet{$\mathbf{A}_{**}$} \;
       }
     $l = l + 1$\;
   }
@@ -481,17 +407,17 @@ summarisation of the steps.
 Simulated annealing
 \citep[\citet{kirkpatrick1983optimization}]{bertsimas1993simulated} is a
 non-derivative procedure based on a non-increasing cooling scheme
-\(T(l)\). Given an initial \(T_0\), the temperature at iteration \(l\)
-is defined as \(T(l) = \frac{T_0}{log(l + 1)}\). The simulated annealing
+\(T(t)\). Given an initial \(T_0\), the temperature at iteration \(t\)
+is defined as \(T(t) = \frac{T_0}{log(t + 1)}\). The simulated annealing
 algorithm works as follows. Given a neighbourhood parameter \(\alpha\)
 and a randomly generated orthonormal basis \(A_{rand}\), a candidate
 basis is constructed as
-\(\mathbf{A}_{jl*} = (1 - \alpha)\mathbf{A}^{j} + \alpha \mathbf{A}_{rand}\).
+\(\mathbf{A}_{t+1} = (1 - \alpha)\mathbf{A}_{t} + \alpha \mathbf{A}_{rand}\).
 If the index value of the candidate basis is larger than the one of the
 current basis, the candidate basis becomes the target basis. If it is
 smaller, the candidate is accepted with probability
-\(P= \min\left\{\exp\left[\frac{I^{j-1} - I_{jl*}}{T(l)}\right],1\right\}\)
-where \(I^{j-1}\) and \(I_{jl*}\) are the index value of the current and
+\(P= \min\left\{\exp\left[\frac{I_{t+1} - I_{t}}{T(t)}\right],1\right\}\)
+where \(I_{t}\) and \(I_{t+1}\) are the index value of the current and
 candidate basis respectively. The algorithm can be summarised as in
 Algorithm \ref{simulated_annealing}.
 
@@ -499,19 +425,20 @@ Algorithm \ref{simulated_annealing}.
 \SetAlgoLined
 \SetKwInOut{Input}{input}
   \SetKwInOut{Output}{output}
-    \Input{The current projection basis: $\mathbf{A}^{j-1}$; The index function: $f$}
+    \Input{The current projection basis: $\mathbf{A}_{\text{cur}}$; The index function: $f$}
     \Output{The global object; The target basis: $\mathbf{A}^{j}$}
   initialisation\;
   \While{$l < l_{\max}$}{
-    Generate $\mathbf{A}_{jl*} = (1 - \alpha)\mathbf{A}^{j-1} + \alpha \mathbf{A}_{rand}$ ensuring $\mathbf{A}_{jl*}$ is orthonormal \;
-    Commpute $I_{jl*} = f(\mathbf{A}_{jl*})$ and $T(l) = \frac{T_0}{\log(l + 1)}$\;
-      \eIf{$I_{jl*} > I^{j-1}$}{
-        $A^{j} = A_{jl*}$, $I^{j} = I_{jl*}$\;
+    Set $l = 0$\;
+    Generate $\mathbf{A}_{l} = (1 - \alpha)\mathbf{A}_{\text{cur}} + \alpha \mathbf{A}_{rand}$ ensuring $\mathbf{A}_{l}$ is orthonormal \;
+    Compute $I_{l} = f(\mathbf{A}_{l})$ and $T(l) = \frac{T_0}{\log(l + 1)}$\;
+      \eIf{$I_{l} > I_{\text{cur}}$}{
+        \KwRet{$\mathbf{A}_{l}$} \;
       }{
-        Compute $P= \min\left\{\exp\left[\frac{I^{j-1} - I_{jl*}}{T(l)}\right],1\right\}$\;
+        Compute $P= \min\left\{\exp\left[\frac{I_{\text{cur}} -I_{l}}{T(l)}\right],1\right\}$\;
         Draw $D$ from a uniform distribution: $D \sim \text{Unif(0, 1)}$\;
         \If{$P > D$}{
-          $A^{j} = A_{jl*}$, $I^{j} = I_{jl*}$\;
+           \KwRet{$\mathbf{A}_{l}$} \;
         }
       }
     $l = l + 1$\;
@@ -575,92 +502,54 @@ a \emph{global object} is constructed as the data frame supplied to the
 visual diagnostic plots to better suit the characters of iterative
 optimisation algorithms. Given an optimisation algorithm, two primary
 variables of interest are the \emph{decision variable: \(\mathbf{A}\)}
-and the \emph{value of the objective function: \(I\)}. To further
-simplify the notation for \(\mathbf{A}\), we write the bases as a column
-vector denoting by a single subscript by their natural ordering as in
-Equation \ref{vector-basis}.
+and the \emph{value of the objective function: \(I\)}, which is the
+projection basis and index value repsectively in projection pursuit.
+\emph{State: \(S\)} is another variable of great importance since it
+labels \(\mathbf{A}\) and \(I\) by the stage they are in the whole
+search-and-interpolate process.
 
-\begin{equation}
-\{
-\mathbf{A}_0, 
-\mathbf{A}_1, 
-\mathbf{A}_2, 
-\cdots,
-\mathbf{A}_T
-\label{vector-basis}
-\}
-\end{equation}
+\emph{Iterators} indexes the data collected and prescribes the the
+natural ordering of each observation in different levels. \emph{\(t\)}
+is a unique identifier that has an increment of one for each observation
+and \emph{\(j\)} is the counter for each search-and-interpolate round.
+{[}add a bit more for \emph{\(l\)} after decide whether to combine \(l\)
+and \(k\). {]}
 
-where \(T\) is the total number of plane serached by the optimisation
-algorithm including all the target planes, all the interpolating planes
-and all the candidate planes but NOT the starting plane.
-
-\emph{Iterators} indexes the data collected and has a time series
-feature that prescribes the its natural ordering of the decision varible
-in the searching. The simpliest iterator, \emph{index per observation:
-\(t\)}, is a unique identifier for each observation in the data. For
-each level of iteration, we design two types of indices: \emph{index per
-iteration: \(j\)} is fixed for each observations in one iteration and
-has an increment of one once a new iteration starts. \emph{index within
-iteration: \(l\)} has an increment of one for each observation in an
-iteartion and starts over from one once a new iteration starts. A sketch
-of the difference between these three iterators is provided in Figure
-\ref{iterators}. In projection pursuit optimisation algorithms, there is
-one level of iteartion and hence exists three iterators: \texttt{id}
-indices each observation by a unique number; \texttt{tries} is the index
-per iteration iterator that gets updated once a search-and-interpolate
-step is finished; and \texttt{loop} is the index within iteration
-iterator and starts over from one at the beginning of a new
-\texttt{tries}. We give the interpolating basis a different index \(k\)
-for projection pursuit guided tour. It is similar in nature to \(l\) but
-is specific for interpolating bases, which is usually not part of the
-optimisation.
-
-\begin{figure}
-\includegraphics[width=1\linewidth,height=0.25\textheight]{/Users/hzha400/Documents/3.PhD/paper-tour-vis/figures/iterators} \caption{\label{iterators} A sketch of the design of iterators in iterative algorithms.}\label{fig:iterators}
-\end{figure}
-
-There could exist other parameters that are also of our interest but
-can't be classified as one of the three categories. They are defined
-under the fourth category: \emph{other parameter of interest: \(S\)}. In
-projection pursuit, three other parameters of our interest includes
-\texttt{method}, \texttt{alpha} and \texttt{info}. \texttt{method}
-identifies the name of the searching method used and we are interested
-in comparing the performance between different algorithms under direct
-search. The neighbourhood parameter \texttt{alpha} controls the size of
-the sampling space and we are interested to understand how the searching
-space shrinks as the algorithm progresses. \texttt{info} labels
-different stages in the searching process. A sketch of the global object
-for projection pursuit guided tour is presented in Figure
+There are other parameters that are of our interest and we denote them
+as \emph{\(V_{p}\)}. In projection pursuit, this includes
+\(V_1 = \text{method}\), denoting the name of the searching method used
+and \(V_2 = \text{alpha}\), which is a neighbourhood parameter that
+controls the size in sampling candidate bases. A sketch of the global
+object for projection pursuit guided tour is presented in Figure
 \ref{fig:glb-obj}. The full data structure can thus be shown as in
 Equation \ref{eq:data-structure}.
 
 \begin{equation}
 \left[
-\begin{array}{c|cc|ccc|ccc}
-t & \mathbf{A} & I & j &  l  & k & S_{1}& \cdots & S_{p}\\
+\begin{array}{c|ccc|ccc|ccc}
+t & \mathbf{A} & I & S & j &  l  & k & V_{1}& \cdots & V_{p}\\
 \hline
-1 & \mathbf{A}_0 & I_0 & 0 & \ast & \ast & \ast & \cdots & \ast\\
+1 & \mathbf{A}_1 & I_1 & S_1 & 1 & 1 & \ast & V_{1, 1} & \cdots & V_{p, 1}\\
 \hline
-2 & \mathbf{A}_1 & I_1 & 1 & 1 & \ast & S_{1, 1} & \cdots & S_{1, p}\\
-3 & \mathbf{A}_2 & I_2 & 1 & 2 & \ast & S_{2, 1} & \cdots & S_{2, p}\\
-\vdots & \vdots &\vdots & \vdots &\vdots & \vdots &\vdots &\cdots &\vdots\\
-\vdots & \vdots & \vdots & 1 & l_1 & \ast & \vdots &  \cdots & \vdots\\
+2 & \mathbf{A}_2 & I_2 & S_2 & 2 & 1 & \ast & V_{1, 2} & \cdots & V_{p, 2}\\
+3 & \mathbf{A}_3 & I_3 & S_3 & 2 & 2 & \ast & V_{1, 3} & \cdots & V_{p, 3}\\
+\vdots & \vdots &\vdots &\vdots & \vdots &\vdots & \vdots &\vdots &\cdots &\vdots\\
+\vdots & \vdots & \vdots &\vdots & 2 & l_1 & \ast & \vdots &  \cdots & \vdots\\
 \hline
-\vdots &\vdots & \vdots & 1 & \ast & 1& \vdots &  \cdots & \vdots\\
-\vdots &\vdots &\vdots& 1 & \ast & 2& \vdots& \cdots & \vdots\\
-\vdots &\vdots &\vdots &\vdots  &\vdots & \vdots &\vdots &\cdots &\vdots \\
-\vdots &\vdots &\vdots & 1 & \ast & k_1&\vdots & \cdots & \vdots\\
+\vdots &\vdots & \vdots &\vdots & 2 & \ast & 1& \vdots &  \cdots & \vdots\\
+\vdots &\vdots &\vdots &\vdots & 2 & \ast & 2& \vdots& \cdots & \vdots\\
+\vdots &\vdots &\vdots &\vdots &\vdots  &\vdots & \vdots &\vdots &\cdots &\vdots \\
+\vdots &\vdots &\vdots &\vdots & 2 & \ast & k_1&\vdots & \cdots & \vdots\\
 \hline
-\vdots &\vdots &\vdots &\vdots  &\vdots & \vdots &\vdots &\cdots &\vdots \\
-T+1 & \mathbf{A}_T & I_T & J &  l_J & \ast & S_{T, 1}& \cdots & S_{T, p}\\
+\vdots &\vdots &\vdots &\vdots &\vdots  &\vdots & \vdots &\vdots &\cdots &\vdots \\
+T & \mathbf{A}_T & I_T &S_T  & J &  l_J & \ast & V_{1, T}& \cdots & V_{p, T}\\
 \end{array}
 \right]
 \label{eq:data-structure}
 \end{equation}
 
 \begin{figure}
-\includegraphics[width=1\linewidth,height=0.2\textheight]{/Users/hzha400/Documents/3.PhD/paper-tour-vis/figures/global_obj} \caption{\label{glb-obj}The global object in projection pursuit guided tour.}\label{fig:glb-obj}
+\includegraphics[width=1\linewidth,height=0.2\textheight]{/Users/hzha400/Documents/3.PhD/research/paper-tour-vis/figures/global_obj} \caption{\label{glb-obj}The global object in projection pursuit guided tour.}\label{fig:glb-obj}
 \end{figure}
 
 \hypertarget{simulated-data}{%
@@ -668,7 +557,7 @@ T+1 & \mathbf{A}_T & I_T & J &  l_J & \ast & S_{T, 1}& \cdots & S_{T, p}\\
 
 We first simulate some random variables of size 1000 with different
 structures. \texttt{x1}, \texttt{x8}, \texttt{x9} and \texttt{x10} are
-simulated from normal distribution iwth zero mean and variance of one as
+simulated from normal distribution with zero mean and variance of one as
 in equation \ref{eq:sim-norm}. When using projection pursuit to explore
 the data structure based on its departure from normality, the entry in
 the projection basis for these variables should be close to zero in
@@ -746,7 +635,7 @@ of the projection pursuit optimisation. We will present:
 
 In the first two sections, we will first provide a toy example that is
 easy to grasp and then more examples that can help us to understand the
-algorithm and parameter choice. Remeber the research question we raised
+algorithm and parameter choice. Remember the research question we raised
 earlier, the purpose of visual diagnostics is to understand:
 
 \begin{itemize}
@@ -762,7 +651,7 @@ The first question can be answered using a static plot with x-axis
 showing the progression of the optimisation and y-axis showing the value
 of the objective function. The second question can be addressed via
 visualising the rotating high dimensional space or its projection on the
-reduced 2D space. Thus animated visualisation is needed to preceive the
+reduced 2D space. Thus animated visualisation is needed to perceive the
 optimisation path in the searching space.
 
 Since the global object is already tidy, not further tidying steps is
@@ -813,15 +702,15 @@ exploring index value can be defined in three layers as:
   \begin{itemize}
   \tightlist
   \item
-    data: group by \texttt{tries} and filter the observations in the
-    group that have count greater than \texttt{cutoff\ =\ 15}.
+    data: group by \(j\) and filter the observations in the group that
+    have count greater than \texttt{cutoff\ =\ 15}.
   \item
-    x: \texttt{tries} is mapped to the x-axis
+    x: \(j\) is mapped to the x-axis
   \item
-    y: the index value after statistical transformation
-    \(y = \{Q_q(I_{jlk} \cdot \mathds{1} (j = x, k = \ast))\}\) is
-    mapped to the y-axis where \(q\) takes one of \(0, 25, 50, 75, 100\)
-    and \(Q_q(x)\) finds the qth-quantile for the vector \(x\).
+    y: the statistical transformed index value:
+    \(Q_q(I_{T} \cdot \mathds{1} (S = \text{search}))\) is mapped to the
+    y-axis where \(q\) takes one of \(0, 25, 50, 75, 100\) and
+    \(Q_q(x)\) finds the qth-quantile for the vector \(x\).
     \(\mathds{1}(.)\) is the identity operator.
   \end{itemize}
 \item
@@ -830,12 +719,12 @@ exploring index value can be defined in three layers as:
   \begin{itemize}
   \tightlist
   \item
-    data: group by \texttt{tries} and filter the observations in the
-    group that have count less than \texttt{cutoff\ =\ 15}.
+    data: group by \(j\) and filter the observations in the group that
+    have count less than \texttt{cutoff\ =\ 15}.
   \item
-    x: \texttt{tries} is mapped to the x-axis
+    x: \(j\) is mapped to the x-axis
   \item
-    y: \texttt{index\_val} is mapped to the y-axis
+    y: \(I\) is mapped to the y-axis
   \end{itemize}
 \item
   Layer 3: line geom
@@ -843,12 +732,11 @@ exploring index value can be defined in three layers as:
   \begin{itemize}
   \tightlist
   \item
-    data: filter the points with the highest index value in each
-    \texttt{tries}
+    data: filter the points with the highest index value in group \(j\)
   \item
-    x: \texttt{tries} is mapped to the x-axis
+    x: \(j\) is mapped to the x-axis
   \item
-    y: \texttt{index\_val} is mapped to the y-axis
+    y: \(I\) is mapped to the y-axis
   \end{itemize}
 \end{itemize}
 
@@ -894,13 +782,12 @@ modified plot definition is shown below:
   \begin{itemize}
   \tightlist
   \item
-    data: filter the observations with \texttt{info} being
-    \texttt{interpolation} and mutate \texttt{id} to be the row number
-    of the subsetted tibble
+    data: filter the observations with \(S = \text{interpolation}\) and
+    mutate \(t\) to be the row number of the subsetted tibble
   \item
-    x: \texttt{id} is mapped to the x-axis
+    x: \(t\) is mapped to the x-axis
   \item
-    y: \texttt{index\_val} is mapped to the y-axis
+    y: \(I\) is mapped to the y-axis
   \end{itemize}
 \item
   Layer 2: line geom
@@ -908,7 +795,7 @@ modified plot definition is shown below:
   \begin{itemize}
   \tightlist
   \item
-    using line goemetry for the same data and aesthetics
+    using line geometry for the same data and aesthetics
   \end{itemize}
 \end{itemize}
 
@@ -925,12 +812,11 @@ value may not be monotone: we could reach a basis with higher index
 value than the target basis on the interpolation path. In this sense, we
 would be better off using the basis with the highest index value on the
 interpolation path as the current basis for the next iteration (rather
-than using the target basis).
-
-Hence, an interruption is constructed to accept the interpolating bases
-only up to the one with the largest index value. After implementing this
-interruption, the search finds higher final index value with fewer steps
-as shown in the right panel of Figure \ref{interruption}.
+than using the target basis). Hence, an interruption is constructed to
+accept the interpolating bases only up to the one with the largest index
+value. After implementing this interruption, the search finds higher
+final index value with fewer steps as shown in the right panel of Figure
+\ref{interruption}.
 
 \begin{figure}
 \centering
@@ -1011,25 +897,18 @@ points is as follows:
   \begin{itemize}
   \tightlist
   \item
-    data: filter the observations with \texttt{info} being
-    \texttt{interpolation}; bind the global object from optimisation and
-    interpolation and form polishing; mutate \texttt{id} to be the row
-    number of the binded tibble.
+    data: filter the observations with \(S = \text{interpolation}\);
+    bind the global object from optimisation and interpolation and form
+    polishing; mutate \(t\) to be the row number of the binded tibble.
   \item
-    x: \texttt{id} is mapped to the x-axis
+    x: \(t\) is mapped to the x-axis
   \item
-    y: \texttt{index\_val} is mapped to the y-axis
+    y: \(I\) is mapped to the y-axis
   \item
-    color: \texttt{method} is mapped to the color aesthetic
+    colour: \(V\) is mapped to the colour aesthetic
   \end{itemize}
 \item
   Layer 2: line geom
-
-  \begin{itemize}
-  \tightlist
-  \item
-    using line goemetry for the same data and aesthetics
-  \end{itemize}
 \end{itemize}
 
 \hypertarget{another-example-polish}{%
@@ -1045,7 +924,7 @@ Figure \ref{trace-compare}, both trials attain the same index value
 after polishing while the small \texttt{max.tries} of 25 is not
 sufficient for \texttt{search\_better} to find its global maximum and we
 will need to adjust the \texttt{max.tries} argument for the search to
-succiciently explore the parameter space.
+sufficiently explore the parameter space.
 
 \begin{figure}
 \centering
@@ -1084,16 +963,9 @@ visualisation can thus be defined as
   \item
     y: the projected basis on the second principal component
   \item
-    color: an variable of interest is mapped onto color
+    colour: \(V\) is mapped to the colour aesthetic
   \end{itemize}
 \end{itemize}
-
-While explore the reduced space is an initial attempt to understand the
-searching space, there are existing technology for rotating a higher
-dimensional space for visualisation. Geozoo is an option. It generates
-random points on the high dimensional space and we can overlay it with
-the points on the optimisation path to visualise the spread of it on the
-high-D sphere.
 
 \hypertarget{a-toy-example-understand-different-stage-of-search_geodesic}{%
 \subsubsection{A toy example: understand different stage of
@@ -1115,7 +987,7 @@ continues.
 \begin{figure}
 \centering
 \includegraphics{paper_files/figure-latex/pca-1.pdf}
-\caption{\label{pca}PCA plot of search geodesic Coloring by info allows
+\caption{\label{pca}PCA plot of search geodesic colouring by info allows
 for better understanding of each stage in the geodesic search}
 \end{figure}
 
@@ -1134,7 +1006,7 @@ an appropriate initial value to use after \texttt{search\_geodesic}. The
 problem is a 1D projection of the small dataset using
 \texttt{search\_geodesic} and followed by \texttt{search\_polish}. The
 top-left panel of Figure \ref{polish-alpha} displays all the projection
-bases on the first two principal components, colored by the
+bases on the first two principal components, coloured by the
 \texttt{polish\_alpha}. We can observe that rather than concentrating on
 the ending basis from \texttt{search\_geodesic} as what polishing step
 is designed, \texttt{search\_polish} searches a much larger vector
@@ -1156,6 +1028,15 @@ alpha will search near the ending basis. Both intialisations reach the
 same ending index values.}
 \end{figure}
 
+While explore the reduced space is an initial attempt to understand the
+searching space, there are existing technology for rotating a higher
+dimensional space for visualisation. Geozoo is an option. It generates
+random points on the high dimensional space and we can overlay it with
+the points on the optimisation path to visualise the spread of it on the
+high-D sphere.
+
+{[}add example from geozoo{]}
+
 \newpage
 
 \hypertarget{a-comprehensive-example-of-diagnosing-a-noisy-index-function}{%
@@ -1169,7 +1050,7 @@ index function based on Kolmogorov test, compares the difference between
 the 1D projected data, \(\mathbf{P}_{n \times 1}\) and a randomly
 generated normal distribution, \(y_n\) based on the empirical cumulated
 distribution function (ECDF). Denotes the ECDF function as \(F(u)\) with
-subscript incidating the variable, the Kolmogorove statistics defined by
+subscript indicating the variable, the Kolmogorov statistics defined by
 
 \[\max \left[F_{\mathbf{P}}(u) - F_{y}(u)\right]\]
 
@@ -1195,7 +1076,7 @@ that
   Both algorithms reach a similar final index value after polishing
 \end{itemize}
 
-Polishing step has done much more work to find the final index value ub
+Polishing step has done much more work to find the final index value in
 \texttt{search\_geodesic} than \texttt{search\_better} and this
 indicates \texttt{kol\_cdf} function favours of a random search method
 than ascent method.
@@ -1251,7 +1132,7 @@ searching space and explore their relative position against each other
 using principal components. As shown in Figure
 \ref{1d-2var-explore-proj-pca}, the bases from better1 and better2 only
 search a proportion of the searching space while better\_random produces
-a more exhausive search. The large overlapping of better1 and
+a more exhaustive search. The large overlapping of better1 and
 better\_random is explained by the fact that both algorithms finds x2 in
 the end.
 
@@ -1266,9 +1147,9 @@ better\_random is explained by the fact that both algorithms finds x2 in
 the end.}
 \end{figure}
 
-\hypertarget{implementation-ferrn-pacakge}{%
+\hypertarget{implementation-ferrn-package}{%
 \section{Implementation: Ferrn
-pacakge}\label{implementation-ferrn-pacakge}}
+package}\label{implementation-ferrn-package}}
 
 Everything is coded up in a package. Package structure
 
