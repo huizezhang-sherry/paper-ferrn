@@ -458,50 +458,65 @@ Notice that the three algorithms above constitute one search. The
 outputted basis is then sent to construct the interpolation and one such
 search-and-interpolate step is one round.
 
+\newpage
+
 \hypertarget{vis-diag}{%
 \section{Visual diagnostic system}\label{vis-diag}}
-
-{[}I would expand this section more as the core contribution. ppp{]}
 
 \hypertarget{motivation}{%
 \subsection{Motivation}\label{motivation}}
 
-Random search methods has a black-box mechanism and focuses solely on
-finding the global maximum point, while the projection pursuit explores
-the data with an aim to discover the potential underlying structure and
-thus is interested in how the algorithm finds its maximum. This
-motivates us \textbf{to develop a visual diagnostic system for exploring
-the optimisation searching path}.
+We can see from Figure \ref{tour-path} that only the data projected
+using the outputted bases and interpolated bases are animated by tour;
+none of the searching bases are presented in teh tour animation. The
+optimisation algorithms in projection pursuit, although has been
+demonstrated to find the global maximum in various literature we
+referred above, focuses solely on finding the global maximum and remains
+as black-box machanisms. There has been fewer tools available to explore
+how each algorithm iteratively finds its maximum and compare how
+different algorithms searches the parameter space. Visualisation has
+been widely used for exploring and understanding data. Presenting
+information in a graphical manner often allows people to see information
+they would otherwise not seen. This motivates us \textbf{to develop a
+visual framework to diagnose optimisation algorithms in projection
+pursuit with a aim to understand and compare different existing
+algorithms.} This study is meaningful because \textbf{as more complex
+index functions are proposed, only an appropriate optimisation algorithm
+allows us to find the projection basis that presents interesting
+underlying structure in the data}.
 
-The necessity of developing such a system rather than simply producing
-different diagnostic plots is because the diagnostics of each variable
-requires a different function and these functions can't be scaled to
-other problems. Thus we want to establish a set of rules that can
-generalise the diagnostic of iterative algorithms.
+The idea of generalised framwork for diagnostic plots is inspired by the
+concept of grammar of graphic \citep{wickham2010layered}, which powers
+the primary graphical system in R, ggplot2 \citep{ggplot2}. In grammar
+of graphic, plots are not defined by its appearance (i.e.~boxplot,
+histogram, scatter plot etc) but by ``stacked layers''. Using this
+design, ggplot doesn't have to develop a gazillion of functions that
+each produces a different type of plot from a different data structure.
+Instead, it aesthetically maps variables (and its statistical
+transformation) in a dataset to different geometric objects (points,
+lines, box-and-whisker etc) and builds the plot through overlaying
+different layers. There are different ways to represent the same data in
+rectangular form. Certain cleaning steps are needed, before using
+ggplot2, to bring the data into a tidy data format
+\citep{wickham2014tidy} where 1) each observation forms a row; 2) each
+variable forms a column and 3) each type of observational unit forms a
+table. In a tidy format, data wrangling and visualisation are greatly
+simplified.
 
-The idea of generalising all the diagnostic plots under one framework is
-inspired by the concept of \emph{grammar of
-graphic}\citep{wickham2010layered}, which powers the primary graphical
-system in R, ggplot2 \citep{ggplot2}. In grammar of graphic, plots are
-not defined by its appearance (i.e.~boxplot, histogram, scatter plot
-etc) but by ``stacked layers''. By this design, ggplot doesn't need to
-develop a gazillion of functions that each produces a different type of
-plot. Instead, it aesthetically maps the variables to the geometric
-objects and builds the plot through different layers.
+Hence the study \textbf{contributes to set up a tidy data structure for
+collecting observations from optimisation algorithms and prescribe a set
+of rules for generalising diagnostic plots for optimisation algorithms,
+specifically those used for projection pursuit.}
 
 \hypertarget{global-object}{%
 \subsection{Global object}\label{global-object}}
 
-Tidy data, as introduced in \citep{wickham2014tidy}, has three criteria:
-1) each observation forms a row, 2) each variable forms a column and 3)
-each type of observational unit forms a table. The adoption of tidy data
-makes it easier for data wrangling and visualisation. For our visual
-diagnostics, global object is a such data construction with key
-components in optimisation algorithms and is designed for making
-diagnostic plots easier. In the optimisation algorithms for projection
-pursuit, two key elements are the projection basis: \(\mathbf{A}\) and
-the index value: \(I\). State: \(S\) labels the observation with
-detailed stage of searching or interpolation.
+For our visual diagnostics, global object is a such data construction
+with key components in optimisation algorithms and is designed for
+making diagnostic plots easier. In the optimisation algorithms for
+projection pursuit, two key elements are the projection basis:
+\(\mathbf{A}\) and the index value: \(I\). State: \(S\) labels the
+observation with detailed stage of searching or interpolation.
 
 Multiple iterators are needed to index the data collected at different
 levels. \(t\) is a unique identifier that prescribes the natural
