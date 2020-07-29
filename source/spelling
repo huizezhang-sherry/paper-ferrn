@@ -19,6 +19,7 @@ eIf
 eq
 etc
 Ferrn
+ferrn
 forall
 frac
 geodesically
@@ -42,8 +43,10 @@ jl
 Jl
 jlk
 kol
+KwRet
 Legendre
 lVert
+m
 mapsto
 mathbb
 mathbf
@@ -72,6 +75,7 @@ sim
 simplist
 summarisation
 tibble
+th
 tourr
 Unif
 var

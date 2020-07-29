@@ -51,7 +51,7 @@ Derivative free methods provides another option to optimise the objective functi
 
 The remainder of the paper is organised as follows. Section \ref{DFO} gives a general overview of optimisation methods, specifically derivative free optimisation. 
 Section \ref{tour} introduces the optimisation problem in a specific problem: projection pursuit guided tour and existing derivative free algorithms for solving it. 
-Section \ref{vis-diag} and \ref{vis-diag-plots} together present the new construction of a visual diagnostic framework that unveil the blackbox of optimisation. Section \ref{vis-diag} focues on motivational ideas and data structure and Section \ref{vis-diag-plots} provides definitions of different diagnostic plots using grammar of graphic and examples. 
+Section \ref{vis-diag} and \ref{vis-diag-plots} together present the new construction of a visual diagnostic framework that unveil the black-box of optimisation. Section \ref{vis-diag} focuses on motivational ideas and data structure and Section \ref{vis-diag-plots} provides definitions of different diagnostic plots using grammar of graphic and examples. 
 Finally, \ref{implementation} mentions the R package: ferrn that implements the visual diagnostics described above.
 
 # Derivative free optimisation {#DFO}
@@ -229,7 +229,7 @@ Simulated annealing [@bertsimas1993simulated, @kirkpatrick1983optimization] is a
 \SetAlgoLined
 \SetKwInOut{Input}{input}
   \SetKwInOut{Output}{output}
-    \Input{The current projection basis: $\mathbf{A}_{\text{cur}}$; The index function: $f$; Initial termperature: $T_0$}
+    \Input{The current projection basis: $\mathbf{A}_{\text{cur}}$; The index function: $f$; Initial temperature: $T_0$}
     \Output{The global object; The target basis: $\mathbf{A}_{l}$}
   initialisation\;
   Set $l = 1$\;
@@ -269,9 +269,9 @@ Notice that the three algorithms above constitute one search. The outputted basi
 ## Motivation
 <!-- Visual diagnostics can be real-time or post-run. Real time diagnostic directly uses the data produced in the algorithm to produce visual representation and thus doesn't need to store the data.   This section focuses on the definition and production of post-run diagnostics and the next section discusses real-time diagnostics. -->
 
-We can see from Figure \ref{tour-path} that only the data projected using the outputted bases and interpolated bases are animated by tour; none of the searching bases are presented in teh tour animation. The optimisation algorithms in projection pursuit, although has been demonstrated to find the global maximum in various literature we referred above, focuses solely on finding the global maximum and remains as black-box machanisms. There has been fewer tools available to explore how each algorithm iteratively finds its maximum and compare how different algorithms searches the parameter space. Visualisation has been widely used for exploring and understanding data. Presenting information in a graphical manner often allows people to see information they would otherwise not seen. This motivates us **to develop a visual framework to diagnose optimisation algorithms in projection pursuit with a aim to understand and compare different existing algorithms.** This study is meaningful because **as more complex index functions are proposed, only an appropriate optimisation algorithm allows us to find the projection basis that presents interesting underlying structure in the data**.
+We can see from Figure \ref{tour-path} that only the data projected using the outputted bases and interpolated bases are animated by tour; none of the searching bases are presented in the tour animation. The optimisation algorithms in projection pursuit, although has been demonstrated to find the global maximum in various literature we referred above, focuses solely on finding the global maximum and remains as black-box mechanisms There has been fewer tools available to explore how each algorithm iteratively finds its maximum and compare how different algorithms searches the parameter space. Visualisation has been widely used for exploring and understanding data. Presenting information in a graphical manner often allows people to see information they would otherwise not seen. This motivates us **to develop a visual framework to diagnose optimisation algorithms in projection pursuit with a aim to understand and compare different existing algorithms.** This study is meaningful because **as more complex index functions are proposed, only an appropriate optimisation algorithm allows us to find the projection basis that presents interesting underlying structure in the data**.
 
-The idea of generalised framwork for diagnostic plots is inspired by the concept of grammar of graphic [@wickham2010layered], which powers the primary graphical system in R, ggplot2 [@ggplot2]. In grammar of graphic, plots are not defined by its appearance (i.e. boxplot, histogram, scatter plot etc) but by "stacked layers". Using this design, ggplot doesn't have to develop a gazillion of functions that each produces a different type of plot from a different data structure. Instead, it aesthetically maps variables (and its statistical transformation) in a dataset to different geometric objects (points, lines, box-and-whisker etc) and builds the plot through overlaying different layers. There are different ways to represent the same data in rectangular form. Certain cleaning steps are needed, before using ggplot2, to bring the data into a tidy data format [@wickham2014tidy] where 1) each observation forms a row; 2) each variable forms a column and 3) each type of observational unit forms a table. In a tidy format, data wrangling and visualisation are greatly simplified.
+The idea of generalised framework for diagnostic plots is inspired by the concept of grammar of graphic [@wickham2010layered], which powers the primary graphical system in R, ggplot2 [@ggplot2]. In grammar of graphic, plots are not defined by its appearance (i.e. boxplot, histogram, scatter plot etc) but by "stacked layers". Using this design, ggplot doesn't have to develop a gazillion of functions that each produces a different type of plot from a different data structure. Instead, it aesthetically maps variables (and its statistical transformation) in a dataset to different geometric objects (points, lines, box-and-whisker etc) and builds the plot through overlaying different layers. There are different ways to represent the same data in rectangular form. Certain cleaning steps are needed, before using ggplot2, to bring the data into a tidy data format [@wickham2014tidy] where 1) each observation forms a row; 2) each variable forms a column and 3) each type of observational unit forms a table. In a tidy format, data wrangling and visualisation are greatly simplified.
 
 Hence the study **contributes to set up a tidy data structure for collecting observations from optimisation algorithms and prescribe a set of rules for generalising diagnostic plots for optimisation algorithms, specifically those used for projection pursuit.** 
 
@@ -339,7 +339,7 @@ T^\prime & \mathbf{A}_{T^\prime} & I_{T^\prime} &S_{T^\prime}  & J+1 &  l_{J+1} 
 \text{search} \\
 \text{search} \\
 \vdots \\
-\text{search (outputed basis)} \\
+\text{search (outputted basis)} \\
 \hline
 \text{interpolate} \\
 \text{interpolate} \\
