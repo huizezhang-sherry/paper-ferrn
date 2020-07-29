@@ -22,7 +22,7 @@
 \addtolength{\topmargin}{-.8in}%
 
 %% load any required packages here
-\usepackage{amssymb, amsmath, mathtools, dsfont} \usepackage[ruled,vlined, linesnumbered]{algorithm2e}
+\usepackage{amssymb, amsmath, mathtools, dsfont, bbm} \usepackage[ruled,vlined, linesnumbered]{algorithm2e}
 
 \usepackage{color}
 \usepackage{fancyvrb}
@@ -154,19 +154,18 @@ parameter have?). This motivates the design of a visual diagnostic
 framework for optimisation algorithms based on the idea of a
 \emph{global object}.
 
-The paper is organised as follows. Section \ref{DFO} gives a general
-literature review of optimisation, specifically derivative free
-optimisation. Section \ref{vis-diag} presents the new idea of
-constructing a systematic visual framework that diagnoses the components
-of an optimisation procedure (parameters, searching path, etc). The rest
-of the paper serves as a comprehensive example of using the visual
-diagnostics on one particular problem: \emph{projection pursuit guided
-tour}. Some background knowledge of projection pursuit guided tour is
-provided in Section \ref{tour}. Section \ref{apply} applies the concepts
-proposed in section \ref{vis-diag} in the tour problem and sets up the
-data. The last section, Section \ref{plots}, presents the visual
-diagnostic plots and explains how they can help to understand different
-aspects of the optimisation in tour.
+The remainder of the paper is organised as follows. Section \ref{DFO}
+gives a general overview of optimisation methods, specifically
+derivative free optimisation. Section \ref{tour} introduces the
+optimisation problem in a specific problem: projection pursuit guided
+tour and existing derivative free algorithms for solving it. Section
+\ref{vis-diag} and \ref{vis-diag-plots} together present the new
+construction of a visual diagnostic framework that unveil the blackbox
+of optimisation. Section \ref{vis-diag} focues on motivational ideas and
+data structure and Section \ref{vis-diag-plots} provides definitions of
+different diagnostic plots using grammar of graphic and examples.
+Finally, \ref{implementation} mentions the R package: ferrn that
+implements the visual diagnostics described above.
 
 \hypertarget{DFO}{%
 \section{Derivative free optimisation}\label{DFO}}
@@ -256,71 +255,75 @@ optimisation}
   see if noisy function
 \end{itemize}
 
+\newpage
+
 \hypertarget{tour}{%
 \section{Projection pursuit guided tour}\label{tour}}
 
-From Section \ref{tour}, we presents a comprehensive case study on how
-to use the visual diagnostics to explore the optimisation in a specific
-problem: projection pursuit guided tour. Section \ref{tour} aims to
-provide non-experts with an overview of the problem content and the
-existing optimisation procedures used in projection pursuit guided tour.
-For those who are already familiar with the techniques, feel free to
-skip this section.
-
 The optimisation problem we're interested in is in the context of
-projection pursuit. Coined by \citet{friedman1974projection}, projection
-pursuit is a method that detects the interesting structure
-(i.e.~clustering, outliers and skewness) of multivariate data via
-projecting it in lower dimensions. Let \(\mathbf{X}_{n \times p}\) be a
-data matrix, an n-d projection can be seen as a linear transformation
-\(T: \mathbb{R}^p \mapsto \mathbb{R}^d\) defined by
+projection pursuit guided tour. Coined by
+\citet{friedman1974projection}, projection pursuit detects interesting
+structures (i.e.~clustering, outliers and skewness) in multivariate data
+via projecting it in lower dimensions. Let \(\mathbf{X}_{n \times p}\)
+be the data matrix, an n-d projection can be seen as a linear
+transformation \(T: \mathbb{R}^p \mapsto \mathbb{R}^d\) defined by
 \(\mathbf{P} = \mathbf{X} \cdot \mathbf{A}\), where
 \(\mathbf{P}_{n \times d}\) is the projected data and
 \(\mathbf{A}_{p\times d}\) is the projection basis. Define
 \(f: \mathbb{R}^{p \times d} \mapsto \mathbb{R}\) be an index function
-that maps the projection basis \(\mathbf{A}\) onto a scalar value \(I\),
-this function is commonly known as the projection pursuit index (PPI)
-function, or the index function and can be used to measure the
+that maps the projection basis \(\mathbf{A}\) onto a scalar index value
+\(I\), this function is commonly known as the projection pursuit index
+(PPI) function, or the index function and is used to measure the
 ``interestingness'' of the projection. A number of index functions have
-been proposed in the literature including Legendre index
-\citep{friedman1974projection}, Hermite index
+been proposed in the literature to detect different data structures,
+including Legendre index \citep{friedman1974projection}, Hermite index
 \citep{hall1989polynomial}, natural Hermite index
 \citep{cook1993projection}, chi-square index
 \citep{posse1995projection}, LDA index \citep{lee2005projection} and PDA
 index \citep{lee2010projection}.
 
-As \citet{friedman1974projection} noted ``\ldots{}, the technique use
-for maximising the projection index strongly influences both the
-statistical and the computational aspects of the procedure.'' A suitable
-optimisation procedure is needed to find the projection angle that
-maximises the PPI and the quality of the optimisation largely affect the
-interesting projections one could possibly observe.
+In their initial paper, \citet{friedman1974projection} noted that
+``\ldots{}, the technique use for maximising the projection index
+strongly influences both the statistical and the computational aspects
+of the procedure.'' Hence, effective optimisation algorithms are
+necessary for projection pursuit to find bases that give interesting
+projections. While we leave the formal construction the optimisation
+problem and existing algorithms in section \ref{tour-optim}, we want to
+emphasizes here that given a random starting (current) basis, projection
+pursuit repetitively searches for candidate bases nearby and outputs a
+target basis once it finds one with higher index value than the current
+basis. The target basis becomes the current basis in the next iteration
+and the searching continues until no better basis can be found or the
+termination criteria are reached.
 
-Projection pursuit is usually used in conjunction with a tour method
-called \emph{guided tour}. Tour explores the multivariate data
-\emph{interactively} via playing a series of projections, that form a
-\emph{tour path} and guided tour uses the path that is geodesically the
-shortest. Details of the mathematical construction of a tour path can be
-found in \citet{buja2005computational}. {[}Maybe add the sketch for
-illustrating tour path.{]} Guided tour, along with other types of tour,
-has been implemented in the \emph{tourr} package in R, available on the
-Comprehensive R Archive Network at
+A tour method, guided tour is usually used in conjunction with
+projection pursuit to interactively explore multivariate data. Tour
+plays an animation on the projected data which is constructed using the
+bases outputted by projection pursuit and their interpolations. Guided
+tour constructs the interpolation using the shortest geodesic path
+between two outputted bases and we refer readers to
+\citet{buja2005computational} for details of the mathematical
+construction of the interpolation basis Figure \ref{tour-path} shows a
+sketch of the tour path consisting of the blue frames produced by
+projection pursuit and the white frames, which interpolates two blue
+frames. The tour method has been implemented in the \emph{tourr} package
+in R, available on the Comprehensive R Archive Network at
 \url{https://cran.r-project.org/web/packages/tourr/}
 \citep{wickham2011tourrpackage}.
 
 \begin{figure}
-\includegraphics[width=1\linewidth,height=0.6\textheight]{/Users/hzha400/Documents/3.PhD/research/paper-tour-vis/figures/tour_path_increasing} \caption{\label{tour-path}An illustration of the tour path}\label{fig:tour-path}
+\includegraphics[width=1\linewidth,height=0.6\textheight]{/Users/hzha400/Documents/3.PhD/research/paper-tour-vis/figures/tour_path_keynote/tour_path_keynote.001} \caption{\label{tour-path}An illustration of the tour path}\label{fig:tour-path}
 \end{figure}
 
-\hypertarget{optimisation-problem-and-existing-algorithms}{%
+\hypertarget{tour-optim}{%
 \subsection{Optimisation problem and existing
-algorithms}\label{optimisation-problem-and-existing-algorithms}}
+algorithms}\label{tour-optim}}
 
 Now we begin to formulate the optimisation problem. Given a randomly
-generated starting basis \(\mathbf{A}^0\), projection pursuit finds the
+generated starting basis \(\mathbf{A}_1\), projection pursuit finds the
 final projection basis
-\(\mathbf{A}^J = [\mathbf{a}_1, \cdots, \mathbf{a}_d]\), where
-\(\mathbf{a}_i\) is a \(p \times 1\) vector, satisfies the following
+\(\mathbf{A}_T = [\mathbf{a}_1, \cdots, \mathbf{a}_d]\), where
+\(\mathbf{a}_i \in \mathbb{R}^{p}\), satisfies the following
 optimisation problem:
 
 \begin{align}
@@ -328,35 +331,35 @@ optimisation problem:
 s.t. & \mathcal{A} = \{ \forall \mathbf{a}_i, \mathbf{a}_j \in \mathbf{A}: \lVert \mathbf{a}_i \rVert = 1 \text{ and } \mathbf{a}_i \mathbf{a}_j = 0 \}
 \end{align}
 
-via an iterative search of target basis:
-\(\{\mathbf{A}^0, \mathbf{A}^1, \mathbf{A}^2, \cdots \cdots \mathbf{A}^J\}\).
+There are three existing algorithms.
 
-There are three existing methods for optimising PPI function and we
-review them below.
-
-\citet{posse1995projection} proposed a stochastic direct search method,
-a random search algorithm. Given a current basis
-\(\mathbf{A}_{\text{cur}}\), a candidate basis \(\mathbf{A}_{t}\) is
-sampled in the neighbourhood defined by the radius of the p-dimensional
-sphere, \(\alpha\) of the current basis \(\mathbf{A}_{t}\) by
-\(\mathbf{A}_{t} = \mathbf{A}_{\text{cur}} + \alpha \mathbf{A}_{rand}\).
-If the candidate basis has a higher index value than the current basis,
-it is outputted as the target basis \(\mathbf{A}_{t}\) along with other
-metadata and the current iteration stops. If no basis is found to have
-higher index value after the maximum number of tries \(l_{\max}\), the
-algorithm stops with nothing outputted. \(c\) is the halfing parameter
-and when \(c > 30\), the neighbourhood parameter \(\alpha\) in the next
-iteration will be reduced by half. The algorithm for a random search is
-summarised in Algorithm \ref{random-search}.
+\citet{posse1995projection} proposed a random search algorithm that
+samples a candidate basis \(\mathbf{A}_{l}\) in the neighbourhood of the
+current basis \(\mathbf{A}_{\text{cur}}\) by
+\(\mathbf{A}_{l} = \mathbf{A}_{\text{cur}} + \alpha \mathbf{A}_{rand}\),
+where \(\alpha\) controls the radius of the sampling neighbourhood and
+\(\mathbf{A}_{rand}\) is a randomly generated matrix with the same
+dimension as \(\mathbf{A}_{\text{cur}}\). The optimiser keeps sampling
+bases near the current basis until it finds one with higher index value
+than the current basis and then outputs it for guided tour to construct
+the interpolation path. A new round of search continues to find a better
+basis after the interpolation finishes. The halfing parameter \(c\) with
+default value of 30 is designed to adjust the searching neighbourhood
+\(\alpha\). When the search needs to sample more than \(c\) number of
+basis to find an outputted basis, the neighbourhood parameter \(\alpha\)
+will be reduced by half in the next iteration. If the optimiser can't
+find a better basis within the maximum number of tries \(l_{\max}\), the
+algorithm stops. The algorithm is summarised in Algorithm
+\ref{random-search} for one iteration.
 
 \begin{algorithm}
 \SetAlgoLined
   \SetKwInOut{Input}{input}
   \SetKwInOut{Output}{output}
     \Input{The current projection basis: $\mathbf{A}_{\text{cur}}$; The index function: $f$}
-    \Output{The target basis: $\mathbf{A}_{t+1}$}
+    \Output{The target basis: $\mathbf{A}_{l}$}
   initialisation\;
-  Set $l = 1$\;
+  Set $l = 1$ and $c = 0$\;
   \While{$l < l_{\max}$}{
     Generate $\mathbf{A}_{l} = \mathbf{A}_{\text{cur}} + \alpha \mathbf{A}_{\text{rand}}$ ensuring $\mathbf{A}_{l}$ is orthonormal\;
     Compute $I_{l}  = f(\mathbf{A}_{l})$\;
@@ -372,14 +375,19 @@ summarised in Algorithm \ref{random-search}.
 \end{algorithm}
 
 \citet{cook1995grand} explained the use of a gradient ascent
-optimisation with the assumption that the index function is continuous
+optimisation with an assumption that the index function is continuous
 and differentiable. Since some indices could be non-differentiable, the
-computation of derivative is replaced by a pseudo-derivative of
-evaluating five randomly generated directions in a tiny nearby
-neighbourhood. Taking a step on the straight derivative direction has
-been modified to maximise the projection pursuit index along the
-geodesic direction. See Algorithm \ref{search-geodesic} for a
-summarisation of the steps.
+derivative is replaced by a pseudo-derivative of evaluating five
+randomly generated directions in a tiny nearby neighbourhood. Once the
+best direction is determined, the optimiser finds the best projection
+\(\mathbf{A}_{**}\) on the geodesic between the current basis
+\(\mathbf{A}_{\text{cur}}\) and the best directional basis
+\(\mathbf{A}_{*}\). If the percentage change in the index value between
+\(\mathbf{A}_{**}\) and \(\mathbf{A}_{\text{cur}}\) is greater than a
+threshold value, \(\mathbf{A}_{**}\) is outputted for the current
+iteration to construct the interpolation or the algorithm repeats the
+above steps until \(l_{\max}\) is reached and the searching terminates.
+Algorithm \ref{search-geodesic} summarise the steps in geodesic search.
 
 \begin{algorithm}
 \SetAlgoLined
@@ -407,29 +415,28 @@ summarisation of the steps.
 Simulated annealing
 \citep[\citet{kirkpatrick1983optimization}]{bertsimas1993simulated} is a
 non-derivative procedure based on a non-increasing cooling scheme
-\(T(t)\). Given an initial \(T_0\), the temperature at iteration \(t\)
-is defined as \(T(t) = \frac{T_0}{log(t + 1)}\). The simulated annealing
-algorithm works as follows. Given a neighbourhood parameter \(\alpha\)
-and a randomly generated orthonormal basis \(A_{rand}\), a candidate
-basis is constructed as
+\(T(l)\). Given an initial \(T_0\), the temperature at iteration \(l\)
+is defined as \(T(l) = \frac{T_0}{\log(l + 1)}\). The simulated
+annealing algorithm works as follows. Given a neighbourhood parameter
+\(\alpha\) and a randomly generated orthonormal basis \(A_{rand}\), a
+candidate basis is sampled by
 \(\mathbf{A}_{t+1} = (1 - \alpha)\mathbf{A}_{t} + \alpha \mathbf{A}_{rand}\).
 If the index value of the candidate basis is larger than the one of the
-current basis, the candidate basis becomes the target basis. If it is
-smaller, the candidate is accepted with probability
-\(P= \min\left\{\exp\left[\frac{I_{t+1} - I_{t}}{T(t)}\right],1\right\}\)
-where \(I_{t}\) and \(I_{t+1}\) are the index value of the current and
-candidate basis respectively. The algorithm can be summarised as in
-Algorithm \ref{simulated_annealing}.
+current basis, the candidate basis is outputted. While if it is smaller,
+the candidate has another chance of being accepted with probability
+\(P= \min\left\{\exp\left[\frac{I_{cur} - I_{l}}{T(l)}\right],1\right\}\)
+where \(I_{\cdot}\) denotes the index value of a given basis. The
+algorithm can be summarised as in Algorithm \ref{simulated_annealing}.
 
 \begin{algorithm}
 \SetAlgoLined
 \SetKwInOut{Input}{input}
   \SetKwInOut{Output}{output}
-    \Input{The current projection basis: $\mathbf{A}_{\text{cur}}$; The index function: $f$}
-    \Output{The global object; The target basis: $\mathbf{A}^{j}$}
+    \Input{The current projection basis: $\mathbf{A}_{\text{cur}}$; The index function: $f$; Initial termperature: $T_0$}
+    \Output{The global object; The target basis: $\mathbf{A}_{l}$}
   initialisation\;
+  Set $l = 1$\;
   \While{$l < l_{\max}$}{
-    Set $l = 0$\;
     Generate $\mathbf{A}_{l} = (1 - \alpha)\mathbf{A}_{\text{cur}} + \alpha \mathbf{A}_{rand}$ ensuring $\mathbf{A}_{l}$ is orthonormal \;
     Compute $I_{l} = f(\mathbf{A}_{l})$ and $T(l) = \frac{T_0}{\log(l + 1)}$\;
       \eIf{$I_{l} > I_{\text{cur}}$}{
@@ -447,22 +454,9 @@ Algorithm \ref{simulated_annealing}.
   \label{simulated_annealing}
 \end{algorithm}
 
-Below listed several features characterise the optimisation procedures
-needed in projection pursuit
-
-\begin{itemize}
-\item
-  \emph{Being able to handle non-differentiable PPI function}: The PPI
-  function could be non-differentiable, thus derivative free methods are
-  preferred.
-\item
-  \emph{Being able to optimise with constraints}: The constraint comes
-  from projection matrix being an orthonormal matrix.
-\item
-  \emph{Being able to find both local and global maximum}: Although the
-  primary interest is to find the global maximum, local maximum could
-  also reveal structures in the data that are of our interest.
-\end{itemize}
+Notice that the three algorithms above constitute one search. The
+outputted basis is then sent to construct the interpolation and one such
+search-and-interpolate step is one round.
 
 \hypertarget{vis-diag}{%
 \section{Visual diagnostic system}\label{vis-diag}}
@@ -473,10 +467,11 @@ needed in projection pursuit
 \subsection{Motivation}\label{motivation}}
 
 Random search methods has a black-box mechanism and focuses solely on
-finding the global maximum point, while the projection pursuit problem
-we have aims at \emph{exploring} the data and thus is interested in how
-the algorithm finds its maximum. This motivates us \textbf{to develop a
-visual diagnostic system for exploring the optimisation searching path}.
+finding the global maximum point, while the projection pursuit explores
+the data with an aim to discover the potential underlying structure and
+thus is interested in how the algorithm finds its maximum. This
+motivates us \textbf{to develop a visual diagnostic system for exploring
+the optimisation searching path}.
 
 The necessity of developing such a system rather than simply producing
 different diagnostic plots is because the diagnostics of each variable
@@ -497,56 +492,122 @@ objects and builds the plot through different layers.
 \hypertarget{global-object}{%
 \subsection{Global object}\label{global-object}}
 
-Ggplot requires a data frame that contains all the variables to plot and
-a \emph{global object} is constructed as the data frame supplied to the
-visual diagnostic plots to better suit the characters of iterative
-optimisation algorithms. Given an optimisation algorithm, two primary
-variables of interest are the \emph{decision variable: \(\mathbf{A}\)}
-and the \emph{value of the objective function: \(I\)}, which is the
-projection basis and index value repsectively in projection pursuit.
-\emph{State: \(S\)} is another variable of great importance since it
-labels \(\mathbf{A}\) and \(I\) by the stage they are in the whole
-search-and-interpolate process.
+Tidy data, as introduced in \citep{wickham2014tidy}, has three criteria:
+1) each observation forms a row, 2) each variable forms a column and 3)
+each type of observational unit forms a table. The adoption of tidy data
+makes it easier for data wrangling and visualisation. For our visual
+diagnostics, global object is a such data construction with key
+components in optimisation algorithms and is designed for making
+diagnostic plots easier. In the optimisation algorithms for projection
+pursuit, two key elements are the projection basis: \(\mathbf{A}\) and
+the index value: \(I\). State: \(S\) labels the observation with
+detailed stage of searching or interpolation.
 
-\emph{Iterators} indexes the data collected and prescribes the the
-natural ordering of each observation in different levels. \emph{\(t\)}
-is a unique identifier that has an increment of one for each observation
-and \emph{\(j\)} is the counter for each search-and-interpolate round.
-{[}add a bit more for \emph{\(l\)} after decide whether to combine \(l\)
-and \(k\). {]}
+Multiple iterators are needed to index the data collected at different
+levels. \(t\) is a unique identifier that prescribes the natural
+ordering of each observation; \(j\) is the counter for each
+search-and-interpolate round, which remains the same for within one
+round and has an increment of one once a new round starts. \(l\) is the
+counter for each search/interpolation allowing us to know how many basis
+has the algorithm searched before finding one to output.
 
 There are other parameters that are of our interest and we denote them
 as \emph{\(V_{p}\)}. In projection pursuit, this includes
-\(V_1 = \text{method}\), denoting the name of the searching method used
-and \(V_2 = \text{alpha}\), which is a neighbourhood parameter that
-controls the size in sampling candidate bases. A sketch of the global
-object for projection pursuit guided tour is presented in Figure
-\ref{fig:glb-obj}. The full data structure can thus be shown as in
-Equation \ref{eq:data-structure}.
+\(V_1 = \text{method}\), which tags the name of the algorithm used and
+\(V_2 = \text{alpha}\), which is the neighbourhood parameter that
+controls the size in sampling candidate bases. The data structure can
+thus be shown as in Equation \ref{eq:data-structure}.
 
 \begin{equation}
 \left[
-\begin{array}{c|ccc|ccc|ccc}
-t & \mathbf{A} & I & S & j &  l  & k & V_{1}& \cdots & V_{p}\\
+\begin{array}{c|ccc|cc|cc}
+t & \mathbf{A} & I & S & j &  l  & V_{1} & V_{2}\\
 \hline
-1 & \mathbf{A}_1 & I_1 & S_1 & 1 & 1 & \ast & V_{1, 1} & \cdots & V_{p, 1}\\
+1 & \mathbf{A}_1 & I_1 & S_1 & 1 & 1 & V_{11} & V_{21}\\
 \hline
-2 & \mathbf{A}_2 & I_2 & S_2 & 2 & 1 & \ast & V_{1, 2} & \cdots & V_{p, 2}\\
-3 & \mathbf{A}_3 & I_3 & S_3 & 2 & 2 & \ast & V_{1, 3} & \cdots & V_{p, 3}\\
-\vdots & \vdots &\vdots &\vdots & \vdots &\vdots & \vdots &\vdots &\cdots &\vdots\\
-\vdots & \vdots & \vdots &\vdots & 2 & l_1 & \ast & \vdots &  \cdots & \vdots\\
+2 & \mathbf{A}_2 & I_2 & S_2 & 2 & 1  & V_{12}  & V_{22}\\
+3 & \mathbf{A}_3 & I_3 & S_3 & 2 & 2  & V_{13}  & V_{23}\\
+\vdots & \vdots &\vdots &\vdots  &\vdots & \vdots &\vdots  &\vdots\\
+\vdots & \vdots & \vdots &\vdots & 2 & l_2 & \vdots  & \vdots\\
 \hline
-\vdots &\vdots & \vdots &\vdots & 2 & \ast & 1& \vdots &  \cdots & \vdots\\
-\vdots &\vdots &\vdots &\vdots & 2 & \ast & 2& \vdots& \cdots & \vdots\\
-\vdots &\vdots &\vdots &\vdots &\vdots  &\vdots & \vdots &\vdots &\cdots &\vdots \\
-\vdots &\vdots &\vdots &\vdots & 2 & \ast & k_1&\vdots & \cdots & \vdots\\
+\vdots &\vdots & \vdots &\vdots & 2  & 1& \vdots & \vdots\\
+\vdots &\vdots &\vdots &\vdots & 2 & 2& \vdots &  \vdots\\
+\vdots &\vdots &\vdots &\vdots &\vdots & \vdots & \vdots  &\vdots \\
+\vdots &\vdots &\vdots &\vdots & 2 & k_2 &\vdots  & \vdots\\
 \hline
-\vdots &\vdots &\vdots &\vdots &\vdots  &\vdots & \vdots &\vdots &\cdots &\vdots \\
-T & \mathbf{A}_T & I_T &S_T  & J &  l_J & \ast & V_{1, T}& \cdots & V_{p, T}\\
+\vdots &\vdots &\vdots &\vdots &\vdots & \vdots &\vdots &\vdots \\
+\hline
+\vdots & \vdots & \vdots &\vdots  & J &  1 & \vdots & \vdots \\
+\vdots &\vdots &\vdots &\vdots &\vdots & \vdots &\vdots &\vdots \\
+T & \mathbf{A}_T & I_T &S_T  & J &  l_{J} & V_{1T}& V_{2T}\\
+\hline
+\vdots &\vdots & \vdots &\vdots & J  & 1& \vdots & \vdots\\
+\vdots &\vdots &\vdots &\vdots &\vdots & \vdots & \vdots  &\vdots \\
+\vdots &\vdots &\vdots &\vdots & J & k_J &\vdots  & \vdots\\
+\hline
+\vdots& \vdots & \vdots & \vdots & J+1 & 1 & \vdots& \vdots\\
+\vdots &\vdots &\vdots &\vdots &\vdots & \vdots &\vdots &\vdots \\
+T^\prime & \mathbf{A}_{T^\prime} & I_{T^\prime} &S_{T^\prime}  & J+1 &  l_{J+1} & V_{1T^\prime}& V_{2T^\prime}\\
+\end{array}
+\right]
+= 
+\left[
+\begin{array}{c}
+\text{column name} \\
+\hline
+\text{search (start basis)} \\
+\hline
+\text{search} \\
+\text{search} \\
+\vdots \\
+\text{search (outputed basis)} \\
+\hline
+\text{interpolate} \\
+\text{interpolate} \\
+\vdots \\
+\text{interpolate} \\
+\hline
+\vdots \\
+\hline
+\text{search} \\
+\vdots \\
+\text{search (final basis)} \\
+\hline
+\text{interpolate} \\
+\vdots \\
+\text{interpolate} \\
+\hline
+\text{search (no output)} \\
+\vdots \\
+\text{search (no output)} \\
 \end{array}
 \right]
 \label{eq:data-structure}
 \end{equation}
+
+where \(T^{\prime} = T + k_{J}+ l_{J+1}\). Note that we deliberately
+denote the last round of search as \(j = J+1\) and in that round there
+is no output/interpolation basis and the algorithm terminates. This
+notation allows us to denote the last complete search-and-interpolate
+round as round \(J\) and hence the final basis is \(A_T\) and highest
+index value found is \(I_T\).
+
+{[}outside the paper: I find the notation of current/target basis is
+confusing because the target basis in round \(j\) becomes the current
+basis in round \(j+1\). Also, when we start to have polish, the target
+basis may not be the current basis in the next round\ldots{} The place
+where current/target is most appropriate is probably when describing the
+interpolation where the first one is always the current basis and the
+last is always the target basis. I think it is better to leave this
+language in the code{]}
+
+A sketch of the global object for projection pursuit guided tour is
+presented in Figure \ref{fig:glb-obj}.
+
+{[}I feel this sketch was initially useful but now since we have the
+data matrix and the printed output of the global object, it doesn't any
+additional information. I'm still keeping it here but we may need to
+remove it if it's not useful :({]}
 
 \begin{figure}
 \includegraphics[width=1\linewidth,height=0.2\textheight]{/Users/hzha400/Documents/3.PhD/research/paper-tour-vis/figures/global_obj} \caption{\label{glb-obj}The global object in projection pursuit guided tour.}\label{fig:glb-obj}
@@ -555,18 +616,18 @@ T & \mathbf{A}_T & I_T &S_T  & J &  l_J & \ast & V_{1, T}& \cdots & V_{p, T}\\
 \hypertarget{simulated-data}{%
 \subsection{Simulated data}\label{simulated-data}}
 
-We first simulate some random variables of size 1000 with different
+We simulate some random variables of size 1000 with different
 structures. \texttt{x1}, \texttt{x8}, \texttt{x9} and \texttt{x10} are
 simulated from normal distribution with zero mean and variance of one as
 in equation \ref{eq:sim-norm}. When using projection pursuit to explore
 the data structure based on its departure from normality, the entry in
 the projection basis for these variables should be close to zero in
-theory. \texttt{x2} to \texttt{x7} are mixture of normal distribution
+theory. \texttt{x2} to \texttt{x7} are mixture of normal distributions
 with different weights and locations. Equation \ref{eq:sim-x2} to
-\ref{eq:sim-x7} show the distribution of each variables and Figure
-\ref{origin-data} shows the histogram of each variable except
-\texttt{x3}. All the variables are then scaled to ensure the mixture has
-variance of one.
+\ref{eq:sim-x7} outlines the distribution where each variable is
+simulated from and Figure \ref{origin-data} shows the histogram of each
+variable except \texttt{x3}. All the variables are then scaled to have
+variance of one before running the projection pursuit.
 
 \begin{align}
 x_1 \overset{d}{=} x_8 \overset{d}{=} x_9 \overset{d}{=} x_{10}& \sim \mathcal{N}(0, 1) \label{eq:sim-norm} \\
@@ -591,34 +652,40 @@ x3}
 \end{figure}
 
 We form our first dataset using variable \texttt{x1}, \texttt{x2},
-\texttt{x8}, \texttt{x9} and \texttt{x10} and supply it to one of the
-above algorithm, say \texttt{search\_geodesic} in the \texttt{tourr}
-package. When the optimisation ends, the global object will be stored
-and printed (it can be turned off by supplying argument
-\texttt{print\ =\ FALSE}). Additional messages during the optimisation
-can be displayed by \texttt{verbose\ =\ TRUE}. Below shows the first
-five rows of the global object. The global object meets the definition
-of tidy data introduced in \citep{wickham2014tidy} where each
-observation forms a row, each variable forms a column and each type of
-observational unit forms a table. The adoption of tidy data makes it
-easier for data wrangling and visualisation, which powers the visual
-diagnostics system introduced in this paper.
+\texttt{x8}, \texttt{x9} and \texttt{x10} and run the guided tour with
+optimiser \texttt{search\_better}. When the optimisation ends, the
+global object will be stored and printed (it can be turned off by
+supplying argument \texttt{print\ =\ FALSE}). Additional messages during
+the optimisation can be displayed by argument \texttt{verbose\ =\ TRUE}.
+Below shows the first ten rows of the global object. Notice that the
+tibble object allows the list-column \texttt{basis} to be printed out
+nicely with the dimension of the projection basis readily available.
+
+{[}I notice that in the implementation the loop index for interpolation
+starts from 0 rather than 1. Need more investigation to see if it is
+easy to change it to 1 or we will have to change the definition of the
+data structure.{]}
 
 \newpage
 
 \begin{verbatim}
-## # A tibble: 5 x 8
-##   basis             index_val tries info           loop method       alpha    id
-##   <list>                <dbl> <dbl> <chr>         <dbl> <chr>        <dbl> <int>
-## 1 <dbl[,1] [5 x 1]>     0.749     1 start            NA <NA>           0.5     1
-## 2 <dbl[,1] [5 x 1]>     0.730     1 random_search     1 search_bett~   0.5     2
-## 3 <dbl[,1] [5 x 1]>     0.743     1 random_search     2 search_bett~   0.5     3
-## 4 <dbl[,1] [5 x 1]>     0.736     1 random_search     3 search_bett~   0.5     4
-## 5 <dbl[,1] [5 x 1]>     0.747     1 random_search     4 search_bett~   0.5     5
+## # A tibble: 10 x 8
+##       id basis             index_val info         tries  loop method       alpha
+##    <int> <list>                <dbl> <chr>        <dbl> <dbl> <chr>        <dbl>
+##  1     1 <dbl[,1] [5 x 1]>     0.749 new_basis        1     1 <NA>           0.5
+##  2     2 <dbl[,1] [5 x 1]>     0.730 random_sear~     2     1 search_bett~   0.5
+##  3     3 <dbl[,1] [5 x 1]>     0.743 random_sear~     2     2 search_bett~   0.5
+##  4     4 <dbl[,1] [5 x 1]>     0.736 random_sear~     2     3 search_bett~   0.5
+##  5     5 <dbl[,1] [5 x 1]>     0.747 random_sear~     2     4 search_bett~   0.5
+##  6     6 <dbl[,1] [5 x 1]>     0.725 random_sear~     2     5 search_bett~   0.5
+##  7     7 <dbl[,1] [5 x 1]>     0.752 new_basis        2     6 search_bett~   0.5
+##  8     8 <dbl[,1] [5 x 1]>     0.749 interpolati~     2     0 search_bett~  NA  
+##  9     9 <dbl[,1] [5 x 1]>     0.750 interpolati~     2     1 search_bett~  NA  
+## 10    10 <dbl[,1] [5 x 1]>     0.750 interpolati~     2     2 search_bett~  NA
 \end{verbatim}
 
-\hypertarget{visual-diagnostics}{%
-\section{Visual diagnostics}\label{visual-diagnostics}}
+\hypertarget{vis-diag-plots}{%
+\section{Visual diagnostic plots}\label{vis-diag-plots}}
 
 Below we will present several examples of diagnosing different aspects
 of the projection pursuit optimisation. We will present:
@@ -707,11 +774,11 @@ exploring index value can be defined in three layers as:
   \item
     x: \(j\) is mapped to the x-axis
   \item
-    y: the statistical transformed index value:
-    \(Q_q(I_{T} \cdot \mathds{1} (S = \text{search}))\) is mapped to the
-    y-axis where \(q\) takes one of \(0, 25, 50, 75, 100\) and
-    \(Q_q(x)\) finds the qth-quantile for the vector \(x\).
-    \(\mathds{1}(.)\) is the identity operator.
+    y: the statistical transformed index value: \(Q_q(I^{\prime}_t)\) is
+    mapped to the y-axis where \(Q_q(x)\) finds the
+    \(0, 25, 50, 75, 100\)th-quantile for the vector \(x\) and
+    \(I^{\prime}_t\) is the index value of all the searching bases
+    defined in Matrix \ref{eq:data-structure}.
   \end{itemize}
 \item
   Layer 2: point geom
@@ -1147,9 +1214,8 @@ better\_random is explained by the fact that both algorithms finds x2 in
 the end.}
 \end{figure}
 
-\hypertarget{implementation-ferrn-package}{%
-\section{Implementation: Ferrn
-package}\label{implementation-ferrn-package}}
+\hypertarget{implementation}{%
+\section{Implementation: Ferrn package}\label{implementation}}
 
 Everything is coded up in a package. Package structure
 
