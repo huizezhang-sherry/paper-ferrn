@@ -160,10 +160,10 @@ derivative free optimisation. Section \ref{tour} introduces the
 optimisation problem in a specific problem: projection pursuit guided
 tour and existing derivative free algorithms for solving it. Section
 \ref{vis-diag} and \ref{vis-diag-plots} together present the new
-construction of a visual diagnostic framework that unveil the blackbox
-of optimisation. Section \ref{vis-diag} focues on motivational ideas and
-data structure and Section \ref{vis-diag-plots} provides definitions of
-different diagnostic plots using grammar of graphic and examples.
+construction of a visual diagnostic framework that unveil the black-box
+of optimisation. Section \ref{vis-diag} focuses on motivational ideas
+and data structure and Section \ref{vis-diag-plots} provides definitions
+of different diagnostic plots using grammar of graphic and examples.
 Finally, \ref{implementation} mentions the R package: ferrn that
 implements the visual diagnostics described above.
 
@@ -260,21 +260,19 @@ optimisation}
 \hypertarget{tour}{%
 \section{Projection pursuit guided tour}\label{tour}}
 
-The optimisation problem we're interested in is in the context of
-projection pursuit guided tour. Coined by
-\citet{friedman1974projection}, projection pursuit detects interesting
-structures (i.e.~clustering, outliers and skewness) in multivariate data
-via projecting it in lower dimensions. Let \(\mathbf{X}_{n \times p}\)
-be the data matrix, an n-d projection can be seen as a linear
-transformation \(T: \mathbb{R}^p \mapsto \mathbb{R}^d\) defined by
-\(\mathbf{P} = \mathbf{X} \cdot \mathbf{A}\), where
+Coined by \citet{friedman1974projection}, projection pursuit detects
+interesting structures (i.e.~clustering, outliers and skewness) in
+multivariate data via projecting onto lower dimensions. Let
+\(\mathbf{X}_{n \times p}\) be the data matrix, an n-d projection can be
+seen as a linear transformation \(T: \mathbb{R}^p \mapsto \mathbb{R}^d\)
+defined by \(\mathbf{P} = \mathbf{X} \cdot \mathbf{A}\), where
 \(\mathbf{P}_{n \times d}\) is the projected data and
 \(\mathbf{A}_{p\times d}\) is the projection basis. Define
 \(f: \mathbb{R}^{p \times d} \mapsto \mathbb{R}\) be an index function
-that maps the projection basis \(\mathbf{A}\) onto a scalar index value
-\(I\), this function is commonly known as the projection pursuit index
-(PPI) function, or the index function and is used to measure the
-``interestingness'' of the projection. A number of index functions have
+that maps the projection basis \(\mathbf{A}\) onto an index value \(I\),
+this function is commonly known as the projection pursuit index (PPI)
+function, or the index function and is used to measure the
+``interestingness'' of a projection. A number of index functions have
 been proposed in the literature to detect different data structures,
 including Legendre index \citep{friedman1974projection}, Hermite index
 \citep{hall1989polynomial}, natural Hermite index
@@ -286,15 +284,15 @@ In their initial paper, \citet{friedman1974projection} noted that
 ``\ldots{}, the technique use for maximising the projection index
 strongly influences both the statistical and the computational aspects
 of the procedure.'' Hence, effective optimisation algorithms are
-necessary for projection pursuit to find bases that give interesting
-projections. While we leave the formal construction the optimisation
-problem and existing algorithms in section \ref{tour-optim}, we want to
-emphasizes here that given a random starting (current) basis, projection
-pursuit repetitively searches for candidate bases nearby and outputs a
-target basis once it finds one with higher index value than the current
-basis. The target basis becomes the current basis in the next iteration
-and the searching continues until no better basis can be found or the
-termination criteria are reached.
+necessary for projection pursuit to find the bases that give interesting
+projections. While we leave the formal construction of the optimisation
+problem and existing algorithms in section \ref{tour-optim}, we outlines
+the general idea here. Given a random starting (current) basis,
+projection pursuit repetitively searches for candidate bases nearby
+until it finds one with higher index value than the current basis. In
+the second round, that basis becomes the current basis and the
+repetitive sampling continues. The process ends until no better basis
+can be found or one of the termination criteria is reached.
 
 A tour method, guided tour is usually used in conjunction with
 projection pursuit to interactively explore multivariate data. Tour
@@ -302,12 +300,12 @@ plays an animation on the projected data which is constructed using the
 bases outputted by projection pursuit and their interpolations. Guided
 tour constructs the interpolation using the shortest geodesic path
 between two outputted bases and we refer readers to
-\citet{buja2005computational} for details of the mathematical
-construction of the interpolation basis Figure \ref{tour-path} shows a
-sketch of the tour path consisting of the blue frames produced by
-projection pursuit and the white frames, which interpolates two blue
-frames. The tour method has been implemented in the \emph{tourr} package
-in R, available on the Comprehensive R Archive Network at
+\citet{buja2005computational} for the mathematical details. Figure
+\ref{tour-path} shows a sketch of the tour path consisting of the blue
+frames produced by the projection pursuit optimisation algorithm and the
+white frames, which are the interpolations between two blue frames. The
+tour method has been implemented in the \emph{tourr} package in R,
+available on the Comprehensive R Archive Network at
 \url{https://cran.r-project.org/web/packages/tourr/}
 \citep{wickham2011tourrpackage}.
 
@@ -432,7 +430,7 @@ algorithm can be summarised as in Algorithm \ref{simulated_annealing}.
 \SetAlgoLined
 \SetKwInOut{Input}{input}
   \SetKwInOut{Output}{output}
-    \Input{The current projection basis: $\mathbf{A}_{\text{cur}}$; The index function: $f$; Initial termperature: $T_0$}
+    \Input{The current projection basis: $\mathbf{A}_{\text{cur}}$; The index function: $f$; Initial temperature: $T_0$}
     \Output{The global object; The target basis: $\mathbf{A}_{l}$}
   initialisation\;
   Set $l = 1$\;
@@ -467,41 +465,42 @@ search-and-interpolate step is one round.
 \subsection{Motivation}\label{motivation}}
 
 We can see from Figure \ref{tour-path} that only the data projected
-using the outputted bases and interpolated bases are animated by tour;
-none of the searching bases are presented in teh tour animation. The
-optimisation algorithms in projection pursuit, although has been
-demonstrated to find the global maximum in various literature we
-referred above, focuses solely on finding the global maximum and remains
-as black-box machanisms. There has been fewer tools available to explore
-how each algorithm iteratively finds its maximum and compare how
-different algorithms searches the parameter space. Visualisation has
-been widely used for exploring and understanding data. Presenting
-information in a graphical manner often allows people to see information
-they would otherwise not seen. This motivates us \textbf{to develop a
-visual framework to diagnose optimisation algorithms in projection
-pursuit with a aim to understand and compare different existing
-algorithms.} This study is meaningful because \textbf{as more complex
-index functions are proposed, only an appropriate optimisation algorithm
-allows us to find the projection basis that presents interesting
-underlying structure in the data}.
+using the outputted and interpolated bases are animated by tour; none of
+the searching bases sampled by the optimsiation algorithms are presented
+in the tour animation. Although these algorithms have been demonstrated
+to find the global maximum in various literature as we cited above, they
+focus solely on finding the global maximum and fewer tools are available
+to explore how each algorithm searches the parameter space and compare
+the results between different algorithms.
 
-The idea of generalised framwork for diagnostic plots is inspired by the
-concept of grammar of graphic \citep{wickham2010layered}, which powers
-the primary graphical system in R, ggplot2 \citep{ggplot2}. In grammar
-of graphic, plots are not defined by its appearance (i.e.~boxplot,
-histogram, scatter plot etc) but by ``stacked layers''. Using this
-design, ggplot doesn't have to develop a gazillion of functions that
-each produces a different type of plot from a different data structure.
-Instead, it aesthetically maps variables (and its statistical
-transformation) in a dataset to different geometric objects (points,
-lines, box-and-whisker etc) and builds the plot through overlaying
-different layers. There are different ways to represent the same data in
-rectangular form. Certain cleaning steps are needed, before using
-ggplot2, to bring the data into a tidy data format
-\citep{wickham2014tidy} where 1) each observation forms a row; 2) each
-variable forms a column and 3) each type of observational unit forms a
-table. In a tidy format, data wrangling and visualisation are greatly
-simplified.
+Visualisation has been widely used in exploratory data analysis.
+Presenting information in a graphical format often allows people to see
+information they would otherwise not seen. This motivates us \textbf{to
+develop a visual framework to diagnose optimisation algorithms in
+projection pursuit with a aim to understand and compare different
+existing algorithms.} This study is meaningful because \textbf{as more
+complex index functions are proposed based on statistical theory, only
+computationally effective optimisation algorithms allow us to find the
+projection basis that presents interesting structure in the data}.
+
+The idea of generalised framework for diagnostic plots is inspired by
+the concept of grammar of graphic \citep{wickham2010layered}, which
+powers the primary graphical system in R, ggplot2 \citep{ggplot2}. In
+grammar of graphic, plots are not defined by its appearance
+(i.e.~boxplot, histogram, scatter plot etc) but by ``stacked layers''.
+Using this design, ggplot doesn't have to develop a gazillion of
+functions that each produces a different type of plot from a different
+data structure. Instead, it aesthetically maps variables (and its
+statistical transformation) in a dataset to different geometric objects
+(points, lines, box-and-whisker etc) and builds the plot through
+overlaying different layers.
+
+There are different ways to represent the same data in rectangular form.
+Certain cleaning steps are needed, before using ggplot2, to bring the
+data into a tidy data format \citep{wickham2014tidy} where 1) each
+observation forms a row; 2) each variable forms a column and 3) each
+type of observational unit forms a table. In a tidy format, data
+wrangling and visualisation are greatly simplified.
 
 Hence the study \textbf{contributes to set up a tidy data structure for
 collecting observations from optimisation algorithms and prescribe a set
@@ -511,27 +510,27 @@ specifically those used for projection pursuit.}
 \hypertarget{global-object}{%
 \subsection{Global object}\label{global-object}}
 
-For our visual diagnostics, global object is a such data construction
-with key components in optimisation algorithms and is designed for
-making diagnostic plots easier. In the optimisation algorithms for
-projection pursuit, two key elements are the projection basis:
-\(\mathbf{A}\) and the index value: \(I\). State: \(S\) labels the
-observation with detailed stage of searching or interpolation.
+Global object is a data construction with key components from
+optimisation algorithms and is designed for making diagnostic plots
+easier. In the optimisation algorithms for projection pursuit, three key
+elements are 1) projection bases: \(\mathbf{A}\), 2) index values: \(I\)
+and 3) State: \(S\), which labels the observation with detailed stage of
+searching or interpolation.
 
 Multiple iterators are needed to index the data collected at different
 levels. \(t\) is a unique identifier that prescribes the natural
 ordering of each observation; \(j\) is the counter for each
-search-and-interpolate round, which remains the same for within one
-round and has an increment of one once a new round starts. \(l\) is the
+search-and-interpolate round, which remains the same within one round
+and has an increment of one once a new round starts. \(l\) is the
 counter for each search/interpolation allowing us to know how many basis
-has the algorithm searched before finding one to output.
+the algorithm has searched before finding one to output.
 
 There are other parameters that are of our interest and we denote them
 as \emph{\(V_{p}\)}. In projection pursuit, this includes
 \(V_1 = \text{method}\), which tags the name of the algorithm used and
-\(V_2 = \text{alpha}\), which is the neighbourhood parameter that
-controls the size in sampling candidate bases. The data structure can
-thus be shown as in Equation \ref{eq:data-structure}.
+\(V_2 = \text{alpha}\), the neighbourhood parameter that controls the
+size in sampling candidate bases. The data structure can thus be shown
+as in Equation \ref{eq:data-structure}.
 
 \begin{equation}
 \left[
@@ -575,7 +574,7 @@ T^\prime & \mathbf{A}_{T^\prime} & I_{T^\prime} &S_{T^\prime}  & J+1 &  l_{J+1} 
 \text{search} \\
 \text{search} \\
 \vdots \\
-\text{search (outputed basis)} \\
+\text{search (outputted basis)} \\
 \hline
 \text{interpolate} \\
 \text{interpolate} \\
