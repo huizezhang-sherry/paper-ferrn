@@ -542,7 +542,7 @@ Boxplot is a suitable candidate that provides five points summary of the data, h
 - Layer 1: boxplot geom
   - data: group by $j$ and filter the observations in the group that have count greater than `cutoff = 15`.
   - x: $j$ is mapped to the x-axis
-  - y: the statistical transformed index value: $Q_q(I^{\prime}_t)$ is mapped to the y-axis where $Q_q(x)$ finds the $0, 25, 50, 75, 100$th-quantile for the vector $x$ and $I^{\prime}_t$ is the index value of all the searching bases defined in Matrix \ref{eq:data-structure}.
+  - y: the statistical transformed index value: $Q_{I^{\prime}_t}(q)$ is mapped to the y-axis where $Q_X(q)$, $q = 0, 25, 50, 75, 100$ finds the qth-quantile of $X$ and $I^{\prime}_t$ denotes the index value of all the searching bases defined in Matrix \ref{eq:data-structure}.
 
 
 
