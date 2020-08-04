@@ -102,15 +102,15 @@
 
 \bigskip
 \begin{abstract}
-Friedman \& Tukey commented on their intial paper on projection pursuit
-in 1974 that ``the technique use for maximising the projection index
+Friedman \& Tukey commented on their initial paper on projection pursuit
+in 1974 that ``the technique used for maximising the projection index
 strongly influences both the statistical and the computational aspects
 of the procedure.'' While many projection pursuit indices have been
 proposed in the literature, few concerns the optimisation procedure. In
 this paper, we developed a system of diagnostics aiming to visually
 learn how the optimisation procedures find its way towards the optimum.
-This diagnostic system can be applied to more general to help
-practitioner to unveil the black-box in randomised iteartive
+This diagnostic system can be applied more generally to help
+practitioner to unveil the black-box in randomised iterative
 (optimisation) algorithms. An R package, ferrn, has been created to
 implement this diagnostic system.
 \end{abstract}
@@ -127,7 +127,7 @@ implement this diagnostic system.
 
 In an optimization problem the goal is to find the best solution within
 the space of all feasible solutions which typically is represented by a
-set of constraints. The problem consists on optimizing an objective
+set of constraints. The problem consists in optimizing an objective
 function \(f: S \rightarrow \Re\) with \(S \in \Re^n\) in a reduced
 spaced given by the problem constraints to either minimize or maximize a
 function\ldots{}. Gradient based optimization has been typically used to
@@ -136,10 +136,10 @@ derivatives of an objective function are unavailable or unreliable and
 therefore traditional methods based on derivatives are not the best
 option to solve an optimization problem.
 
-Derivative free methods provides another option to optimise the
+Derivative free methods provide another option to optimise the
 objective function without evaluating any gradient or Hessian
-information and a particular class of methods: direct search, has gained
-its popularity through its conceptual simplicity. However, the whole
+information and a particular class of methods, direct search, has gained
+popularity through its conceptual simplicity. However, the whole
 searching process in the algorithm remains a black-box. Plots are
 usually used to evaluate and compare the performance of different
 algorithms but it can easily become tedious because the code will have
@@ -147,7 +147,7 @@ to be modified significantly when comparing different parameters in the
 algorithms. For example, a categorical variable with 5 levels can be
 easily mapped onto colour while mapping another categorical variable
 with 30 levels will not make the plot informative. Thus the plot needs
-to be re-designed to better suits the characteristics of the parameter
+to be re-designed to better suit the characteristics of the parameter
 (whether the parameter is a scalar or a matrix? whether the parameter is
 quantitative or categorical? If categorical, how many levels does the
 parameter have?). This motivates the design of a visual diagnostic
@@ -164,7 +164,7 @@ construction of a visual diagnostic framework that unveil the black-box
 of optimisation. Section \ref{vis-diag} focuses on motivational ideas
 and data structure and Section \ref{vis-diag-plots} provides definitions
 of different diagnostic plots using grammar of graphic and examples.
-Finally, \ref{implementation} mentions the R package: ferrn that
+Finally, Section \ref{implementation} mentions the R package: ferrn that
 implements the visual diagnostics described above.
 
 \hypertarget{DFO}{%
@@ -178,7 +178,7 @@ these problems. One common class of methods in DFO is
 \emph{Direct-search methods}. Coined by \citet{hooke1961direct}, direct
 search methods don't require any gradient or Hessian information and has
 gained its popularity through its simplicity in use and reliability in
-solving complicated practical problems. Depends on whether a random
+solving complicated practical problems. Depending on whether a random
 sample is used in the search, this class of methods can be further
 classified as \emph{stochastic} or \emph{deterministic}. The stochastic
 version of the direct-search methods will be the main optimisation
@@ -192,12 +192,12 @@ procedure analysed in this paper.
 {[}Are we using projection pursuit/guided tour to better understand the
 convergence of optimization algorithms visually in combination with the
 algorithms discussed below? Or we are focusing on the optimisation
-problem only within the project pursuit context? Some of the problems
+problem only within the projection pursuit context? Some of the problems
 listed below are also applicable to optimization problem in general too.
 ppp{]}
 
-Below listed several issues in projection pursuit optimisation. Some are
-general optimisation problems, while others are more specific for PP
+Below are listed several issues in projection pursuit optimisation. Some are
+general optimisation problems, while others are more specific to PP
 optimisation.
 
 \begin{itemize}
@@ -206,7 +206,7 @@ optimisation.
   relatively easy with developed algorithms, it is generally hard to
   guarantee global maximum in a problem where the objective function is
   complex or the number of decision variables is large. Also, there are
-  discussions on how to avoid getting trapped in a local optimal in the
+  discussions on how to avoid getting trapped in a local optimum in the
   literature.
 \item
   \emph{optimising non-smooth function}: When the objective function is
@@ -216,24 +216,24 @@ optimisation.
   solve these problems.
 \item
   \emph{computation speed}: The optimisation procedure needs to be fast
-  to compute since tours produces real-time animation of the projected
+  to compute since tours produce real-time animation of the projected
   data.
 \item
   \emph{consistency result in stochastic optimisation}: In stochastic
   algorithm, researchers usually set a seed to ensure the algorithm
-  producing the same result for every run. This practice supports
+  produces the same result for every run. This practice supports
   reproducibility, while less efforts has been made to guarantee
   different seeds will provide the same result.
 \item
   \emph{high-dimensional decision variable}: In projection pursuit, the
   decision variable includes all the entries in the projection matrix,
-  which is high-dimensional. Researcher would be better off if they can
+  which is high-dimensional. Researchers would be better off if they could
   understand the relative position of different projection matrix in the
   high-dimensional space.
 \item
   \emph{role of interpolation in PP optimisation}: An optimisation
   procedure usually involves iteratively finding projection bases that
-  maximises the index function, while tour requires geodesic
+  maximise the index function, while tour requires geodesic
   interpolation between these bases to produce a continuous view for the
   users. It would be interesting to see if the interpolated bases could,
   in reverse, help the optimisation reach faster convergence.
@@ -268,7 +268,7 @@ seen as a linear transformation \(T: \mathbb{R}^p \mapsto \mathbb{R}^d\)
 defined by \(\mathbf{P} = \mathbf{X} \cdot \mathbf{A}\), where
 \(\mathbf{P}_{n \times d}\) is the projected data and
 \(\mathbf{A}_{p\times d}\) is the projection basis. Define
-\(f: \mathbb{R}^{p \times d} \mapsto \mathbb{R}\) be an index function
+\(f: \mathbb{R}^{p \times d} \mapsto \mathbb{R}\) to be an index function
 that maps the projection basis \(\mathbf{A}\) onto an index value \(I\),
 this function is commonly known as the projection pursuit index (PPI)
 function, or the index function and is used to measure the
@@ -281,14 +281,14 @@ including Legendre index \citep{friedman1974projection}, Hermite index
 index \citep{lee2010projection}.
 
 In their initial paper, \citet{friedman1974projection} noted that
-``\ldots{}, the technique use for maximising the projection index
+``\ldots{}, the technique used for maximising the projection index
 strongly influences both the statistical and the computational aspects
 of the procedure.'' Hence, effective optimisation algorithms are
 necessary for projection pursuit to find the bases that give interesting
 projections. While we leave the formal construction of the optimisation
-problem and existing algorithms in section \ref{tour-optim}, we outlines
+problem and existing algorithms to section \ref{tour-optim}, we outline
 the general idea here. Given a random starting (current) basis,
-projection pursuit repetitively searches for candidate bases nearby
+projection pursuit repeatedly searches for candidate bases nearby
 until it finds one with higher index value than the current basis. In
 the second round, that basis becomes the current basis and the
 repetitive sampling continues. The process ends until no better basis
@@ -341,7 +341,7 @@ dimension as \(\mathbf{A}_{\text{cur}}\). The optimiser keeps sampling
 bases near the current basis until it finds one with higher index value
 than the current basis and then outputs it for guided tour to construct
 the interpolation path. A new round of search continues to find a better
-basis after the interpolation finishes. The halfing parameter \(c\) with
+basis after the interpolation finishes. The halving parameter \(c\) with
 default value of 30 is designed to adjust the searching neighbourhood
 \(\alpha\). When the search needs to sample more than \(c\) number of
 basis to find an outputted basis, the neighbourhood parameter \(\alpha\)
@@ -416,9 +416,9 @@ non-derivative procedure based on a non-increasing cooling scheme
 \(T(l)\). Given an initial \(T_0\), the temperature at iteration \(l\)
 is defined as \(T(l) = \frac{T_0}{\log(l + 1)}\). The simulated
 annealing algorithm works as follows. Given a neighbourhood parameter
-\(\alpha\) and a randomly generated orthonormal basis \(A_{rand}\), a
+\(\alpha\) and a randomly generated orthonormal basis \(\mathbf{A}_{\text{rand}}\), a
 candidate basis is sampled by
-\(\mathbf{A}_{t+1} = (1 - \alpha)\mathbf{A}_{t} + \alpha \mathbf{A}_{rand}\).
+\(\mathbf{A}_{t+1} = (1 - \alpha)\mathbf{A}_{t} + \alpha \mathbf{A}_{\text{rand}}\).
 If the index value of the candidate basis is larger than the one of the
 current basis, the candidate basis is outputted. While if it is smaller,
 the candidate has another chance of being accepted with probability
@@ -435,14 +435,14 @@ algorithm can be summarised as in Algorithm \ref{simulated_annealing}.
   initialisation\;
   Set $l = 1$\;
   \While{$l < l_{\max}$}{
-    Generate $\mathbf{A}_{l} = (1 - \alpha)\mathbf{A}_{\text{cur}} + \alpha \mathbf{A}_{rand}$ ensuring $\mathbf{A}_{l}$ is orthonormal \;
+    Generate $\mathbf{A}_{l} = (1 - \alpha)\mathbf{A}_{\text{cur}} + \alpha \mathbf{A}_{\text{rand}}$ ensuring $\mathbf{A}_{l}$ is orthonormal \;
     Compute $I_{l} = f(\mathbf{A}_{l})$ and $T(l) = \frac{T_0}{\log(l + 1)}$\;
       \eIf{$I_{l} > I_{\text{cur}}$}{
         \KwRet{$\mathbf{A}_{l}$} \;
       }{
         Compute $P= \min\left\{\exp\left[\frac{I_{\text{cur}} -I_{l}}{T(l)}\right],1\right\}$\;
-        Draw $D$ from a uniform distribution: $D \sim \text{Unif(0, 1)}$\;
-        \If{$P > D$}{
+        Draw $U$ from a uniform distribution: $U \sim \text{Unif(0, 1)}$\;
+        \If{$P > U$}{
            \KwRet{$\mathbf{A}_{l}$} \;
         }
       }
@@ -475,9 +475,9 @@ the results between different algorithms.
 
 Visualisation has been widely used in exploratory data analysis.
 Presenting information in a graphical format often allows people to see
-information they would otherwise not seen. This motivates us \textbf{to
+information they would otherwise not see. This motivates us \textbf{to
 develop a visual framework to diagnose optimisation algorithms in
-projection pursuit with a aim to understand and compare different
+projection pursuit with the aim to understand and compare different
 existing algorithms.} This study is meaningful because \textbf{as more
 complex index functions are proposed based on statistical theory, only
 computationally effective optimisation algorithms allow us to find the
@@ -488,7 +488,7 @@ the concept of grammar of graphic \citep{wickham2010layered}, which
 powers the primary graphical system in R, ggplot2 \citep{ggplot2}. In
 grammar of graphic, plots are not defined by its appearance
 (i.e.~boxplot, histogram, scatter plot etc) but by ``stacked layers''.
-Using this design, ggplot doesn't have to develop a gazillion of
+Using this design, ggplot does not have to develop a gazillion of
 functions that each produces a different type of plot from a different
 data structure. Instead, it aesthetically maps variables (and its
 statistical transformation) in a dataset to different geometric objects
@@ -633,15 +633,15 @@ remove it if it's not useful :({]}
 We simulate some random variables of size 1000 with different
 structures. \texttt{x1}, \texttt{x8}, \texttt{x9} and \texttt{x10} are
 simulated from normal distribution with zero mean and variance of one as
-in equation \ref{eq:sim-norm}. When using projection pursuit to explore
+in equation \eqref{eq:sim-norm}. When using projection pursuit to explore
 the data structure based on its departure from normality, the entry in
 the projection basis for these variables should be close to zero in
 theory. \texttt{x2} to \texttt{x7} are mixture of normal distributions
-with different weights and locations. Equation \ref{eq:sim-x2} to
-\ref{eq:sim-x7} outlines the distribution where each variable is
+with different weights and locations. Equation \eqref{eq:sim-x2} to
+\eqref{eq:sim-x7} outlines the distribution where each variable is
 simulated from and Figure \ref{origin-data} shows the histogram of each
 variable except \texttt{x3}. All the variables are then scaled to have
-variance of one before running the projection pursuit.
+unit variance before running the projection pursuit.
 
 \begin{align}
 x_1 \overset{d}{=} x_8 \overset{d}{=} x_9 \overset{d}{=} x_{10}& \sim \mathcal{N}(0, 1) \label{eq:sim-norm} \\
@@ -665,7 +665,7 @@ x_7 &\sim 0.5 \mathcal{N}(-5, 1) + 0.5 \mathcal{N}(5, 1)
 x3}
 \end{figure}
 
-We form our first dataset using variable \texttt{x1}, \texttt{x2},
+We form our first dataset using variables \texttt{x1}, \texttt{x2},
 \texttt{x8}, \texttt{x9} and \texttt{x10} and run the guided tour with
 optimiser \texttt{search\_better}. When the optimisation ends, the
 global object will be stored and printed (it can be turned off by
@@ -750,7 +750,7 @@ into visualisation.
 \subsubsection{Searching points}\label{searching-points}}
 
 A primary interest of diagnosing an optimisation algorithm is to study
-how it finds its optimal progressively. We could plot the index value
+how it finds its optimum progressively. We could plot the index value
 across its natural ordering, however, different iterations may have
 different number of points and, towards the end of the search there
 could easily be hundreds of bases being tested before the target basis
@@ -763,13 +763,13 @@ index value (since it prescribes the next geodesic interpolation and
 future searches).
 
 Boxplot is a suitable candidate that provides five points summary of the
-data, however it has one drawback: it doesn't report the number of point
+data, however it has one drawback: it does not report the number of points
 in each box. We may risk losing information on how many points it takes
 to find the target basis by displaying the boxplot alone for all
 \texttt{tries}. Thus, the number of point in each iteration is displayed
 at the bottom of each box and we provide options to switch iteration
 with small number of points to a point geometry, which is achieved via
-an \texttt{cutoff} argument. A line geometry is also added to link the
+a \texttt{cutoff} argument. A line geometry is also added to link the
 points with the largest index value in each iteration. This helps to
 visualise the improvement made in each iteration. Using the concept of
 \emph{gramma of graphics} \citep{wickham2010layered}, the plot for
@@ -825,31 +825,31 @@ exploring index value can be defined in three layers as:
 \paragraph{Toy example: exploring searching
 points}\label{toy-example-exploring-searching-points}}
 
-We choose variable \texttt{x1}, \texttt{x2}, \texttt{x3}, \texttt{x8},
+We choose variables \texttt{x1}, \texttt{x2}, \texttt{x3}, \texttt{x8},
 \texttt{x9} and \texttt{x10} to perform a 2D projection with tour.
 Parameter \texttt{search\_f\ =\ tour::search\_better} and
 \texttt{max.tries\ =\ 500} is used. The index value of the searching
-points are shown in Figure \ref{points}. Label at the bottom indicates
+points are shown in Figure \ref{points}. The label at the bottom indicates
 the number of observations in each iteration and facilitates the choice
 of \texttt{cutoff} argument (by default \texttt{cutoff\ =\ 15}). We
 learn that the \texttt{search\_better} quickly finds better projection
-basis with higher index value at first and the takes longer to find a
+basis with higher index value at first and then takes longer to find a
 better one later.
 
 \begin{figure}
 \centering
 \includegraphics{paper_files/figure-latex/points-tries-1.pdf}
 \caption{\label{points}A comparison of plotting the same search points
-with different plot designs. The left plot doesn't efficiently use the
-plot space to convey information from the plot while the right plot
+with different plot designs. The left plot does not use the
+plot space efficiently to convey information from the plot while the right plot
 provides good summarisation of data and number of points in each tries.}
 \end{figure}
 
 \hypertarget{interpolating-points}{%
 \subsubsection{Interpolating points}\label{interpolating-points}}
 
-Sometimes, rather than explore the searching points, we may be
-interested in explore the points on the interpolation path (target and
+Sometimes, rather than exploring the searching points, we may be
+interested in exploring the points on the interpolation path (target and
 interpolating points) since these points will be played by the tour
 animation. Since interpolation paths are geodesically the shortest, a
 summarisation using boxplot geometry is no longer needed. The slightly
@@ -886,7 +886,7 @@ Interruption}\label{a-more-complex-example-interruption}}
 
 We use the same dataset as the toy example above to explore the search
 function \texttt{search\_better} and we want to learn how the index
-value changes on the interpolation path for \texttt{holes} index. From
+value changes on the interpolation path for the \texttt{holes} index. From
 the left panel of Figure \ref{interruption}, we observe that when
 interpolating from the current basis to the target basis, the index
 value may not be monotone: we could reach a basis with higher index
@@ -895,7 +895,7 @@ would be better off using the basis with the highest index value on the
 interpolation path as the current basis for the next iteration (rather
 than using the target basis). Hence, an interruption is constructed to
 accept the interpolating bases only up to the one with the largest index
-value. After implementing this interruption, the search finds higher
+value. After implementing this interruption, the search finds a higher
 final index value with fewer steps as shown in the right panel of Figure
 \ref{interruption}.
 
@@ -903,7 +903,7 @@ final index value with fewer steps as shown in the right panel of Figure
 \centering
 \includegraphics{paper_files/figure-latex/interruption-1.pdf}
 \caption{\label{interruption}Trace plots of the interpolated basis with
-and without the interruption. The interruption stops the interpolation
+and without interruption. The interruption stops the interpolation
 when the index value starts to decrease at id = 60. The implementation
 of the interuption finds an ending basis with higher index value using
 fewer steps.}
@@ -938,7 +938,7 @@ the four stopping criteria is satisfied:
 \item
   the searching neighbourhood can't be too small
 \item
-  the number of iteration can't exceed the \texttt{max.tries}
+  the number of iteration can't exceed \texttt{max.tries}
 \end{enumerate}
 
 The usage of search\_polish is as follows. After the first search, the
@@ -967,7 +967,7 @@ same.
 \end{Highlighting}
 \end{Shaded}
 
-Slight variation of plot definition due to the addition of polishing
+A slight variation of the plot definition due to the addition of polishing
 points is as follows:
 
 \begin{itemize}
@@ -1013,7 +1013,7 @@ sufficiently explore the parameter space.
 \caption{\label{trace-compare}Breakdown of index value when using
 different max.tries in search better in conjunction with search polish.
 Both attain the same final index value after the polishing while using a
-max.tries 25 is not sufficient to find the ture maximum.}
+\texttt{max.tries} of 25 is not sufficient to find the true maximum.}
 \end{figure}
 
 \newpage
@@ -1062,7 +1062,7 @@ start basis, a directional search is conducted in a narrow neighbourhood
 on five random directions. The best one is picked and a line search is
 then run on the geodesic direction to find the target basis. The
 starting and target bases are then interpolated. In the next iteration,
-the target basis becomes the current basis and then procedures
+the target basis becomes the current basis and then the procedures
 continues.
 
 \begin{figure}
@@ -1078,7 +1078,7 @@ polishing
 parameter}\label{a-more-complex-example-choosing-the-initial-value-for-polishing-parameter}}
 
 \emph{Example: initial value for polishing alpha}
-\texttt{search\_polish} is a brutal-force algorithm that evaluate 1000
+\texttt{search\_polish} is a brute-force algorithm that evaluate 1000
 points in the neighbourhood at each loop. Setting an appropriate initial
 value for polish\_alpha would avoid wasting search on large vector space
 that are not likely to produce higher index value. The default initial
@@ -1134,7 +1134,6 @@ distribution function (ECDF). Denotes the ECDF function as \(F(u)\) with
 subscript indicating the variable, the Kolmogorov statistics defined by
 
 \[\max \left[F_{\mathbf{P}}(u) - F_{y}(u)\right]\]
-
 can be seen as a function of the projection matrix
 \(\mathbf{A}_{p \times 1}\) and hence a valid index function.
 
@@ -1174,16 +1173,16 @@ well.}
 
 Now we enlarge the dataset to include two informative variables:
 \texttt{x2} and \texttt{x3} and remain 1D projection. In this case, two
-local maximum appear when projection matrix being \([0, 1, 0, 0, 0, 0]\)
+local maxima appear with projection matrix being \([0, 1, 0, 0, 0, 0]\)
 and \([0, 0, 1 ,0, 0, 0]\).
 
 Using different seeds in \texttt{search\_better} allows us to find both
-local maximum as in Figure \ref{1d-2var-different-seeds}. Comparing the
+local maxima as in Figure \ref{1d-2var-different-seeds}. Comparing the
 maximum of both, we can see that the global maximum happens when
 \texttt{x2} is found. It is natural to ask then if there is an algorithm
 that can find the global maximum without trying on different seeds?
 \texttt{search\_better\_random} manages to do it via a
-metropolis-hasting random search as shown in Figure
+Metropolis-Hasting random search as shown in Figure
 \ref{1d-2var-better-random}, although at a higher cost of number of
 points to evaluate.
 
@@ -1208,13 +1207,13 @@ number of iteration is needed.}
 \hypertarget{explore-searching-space}{%
 \subsubsection{Explore searching space}\label{explore-searching-space}}
 
-We can also plot the searching points of all the three algorithms in the
+We can also plot the searching points of all three algorithms in the
 searching space and explore their relative position against each other
 using principal components. As shown in Figure
 \ref{1d-2var-explore-proj-pca}, the bases from better1 and better2 only
 search a proportion of the searching space while better\_random produces
 a more exhaustive search. The large overlapping of better1 and
-better\_random is explained by the fact that both algorithms finds x2 in
+better\_random is explained by the fact that both algorithms find x2 in
 the end.
 
 \begin{figure}
