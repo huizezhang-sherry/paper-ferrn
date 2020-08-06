@@ -306,10 +306,10 @@ There are other parameters that are of our interest and we denote them as *$V_{p
 \begin{array}{c|ccc|cc|cc}
 t & \mathbf{A} & I & S & j &  l  & V_{1} & V_{2}\\
 \hline
-1 & \mathbf{A}_1 & I_1 & S_1 & 1 & 1 & V_{11} & V_{21}\\
+1 & \mathbf{A}_1 & I_1 & S_1 & 1 & 1 & V_{11} & V_{12}\\
 \hline
-2 & \mathbf{A}_2 & I_2 & S_2 & 2 & 1  & V_{12}  & V_{22}\\
-3 & \mathbf{A}_3 & I_3 & S_3 & 2 & 2  & V_{13}  & V_{23}\\
+2 & \mathbf{A}_2 & I_2 & S_2 & 2 & 1  & V_{21}  & V_{22}\\
+3 & \mathbf{A}_3 & I_3 & S_3 & 2 & 2  & V_{31}  & V_{32}\\
 \vdots & \vdots &\vdots &\vdots  &\vdots & \vdots &\vdots  &\vdots\\
 \vdots & \vdots & \vdots &\vdots & 2 & l_2 & \vdots  & \vdots\\
 \hline
@@ -322,7 +322,7 @@ t & \mathbf{A} & I & S & j &  l  & V_{1} & V_{2}\\
 \hline
 \vdots & \vdots & \vdots &\vdots  & J &  1 & \vdots & \vdots \\
 \vdots &\vdots &\vdots &\vdots &\vdots & \vdots &\vdots &\vdots \\
-T & \mathbf{A}_T & I_T &S_T  & J &  l_{J} & V_{1T}& V_{2T}\\
+T & \mathbf{A}_T & I_T &S_T  & J &  l_{J} & V_{T1}& V_{T2}\\
 \hline
 \vdots &\vdots & \vdots &\vdots & J  & 1& \vdots & \vdots\\
 \vdots &\vdots &\vdots &\vdots &\vdots & \vdots & \vdots  &\vdots \\
@@ -330,7 +330,7 @@ T & \mathbf{A}_T & I_T &S_T  & J &  l_{J} & V_{1T}& V_{2T}\\
 \hline
 \vdots& \vdots & \vdots & \vdots & J+1 & 1 & \vdots& \vdots\\
 \vdots &\vdots &\vdots &\vdots &\vdots & \vdots &\vdots &\vdots \\
-T^\prime & \mathbf{A}_{T^\prime} & I_{T^\prime} &S_{T^\prime}  & J+1 &  l_{J+1} & V_{1T^\prime}& V_{2T^\prime}\\
+T^\prime & \mathbf{A}_{T^\prime} & I_{T^\prime} &S_{T^\prime}  & J+1 &  l_{J+1} & V_{T^\prime 1}& V_{T^\prime 2}\\
 \end{array}
 \right]
 = 

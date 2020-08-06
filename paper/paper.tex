@@ -109,11 +109,7 @@ of the procedure.'' While many projection pursuit indices have been
 proposed in the literature, few concerns the optimisation procedure. In
 this paper, we developed a system of diagnostics aiming to visually
 learn how the optimisation procedures find its way towards the optimum.
-<<<<<<< HEAD
 This diagnostic system can be applied to more generally to help
-=======
-This diagnostic system can be applied more generally to help
->>>>>>> 5368a129bf1391c5666f7d998d79a39373779905
 practitioner to unveil the black-box in randomised iterative
 (optimisation) algorithms. An R package, ferrn, has been created to
 implement this diagnostic system.
@@ -199,8 +195,8 @@ problem only within the projection pursuit context? Some of the problems
 listed below are also applicable to optimization problem in general too.
 ppp{]}
 
-Below are listed several issues in projection pursuit optimisation. Some are
-general optimisation problems, while others are more specific to PP
+Below are listed several issues in projection pursuit optimisation. Some
+are general optimisation problems, while others are more specific too PP
 optimisation.
 
 \begin{itemize}
@@ -230,9 +226,9 @@ optimisation.
 \item
   \emph{high-dimensional decision variable}: In projection pursuit, the
   decision variable includes all the entries in the projection matrix,
-  which is high-dimensional. Researchers would be better off if they could
-  understand the relative position of different projection matrix in the
-  high-dimensional space.
+  which is high-dimensional. Researchers would be better off if they
+  could understand the relative position of different projection matrix
+  in the high-dimensional space.
 \item
   \emph{role of interpolation in PP optimisation}: An optimisation
   procedure usually involves iteratively finding projection bases that
@@ -271,10 +267,10 @@ seen as a linear transformation \(T: \mathbb{R}^p \mapsto \mathbb{R}^d\)
 defined by \(\mathbf{P} = \mathbf{X} \cdot \mathbf{A}\), where
 \(\mathbf{P}_{n \times d}\) is the projected data and
 \(\mathbf{A}_{p\times d}\) is the projection basis. Define
-\(f: \mathbb{R}^{p \times d} \mapsto \mathbb{R}\) to be an index function
-that maps the projection basis \(\mathbf{A}\) onto an index value \(I\),
-this function is commonly known as the projection pursuit index (PPI)
-function, or the index function and is used to measure the
+\(f: \mathbb{R}^{p \times d} \mapsto \mathbb{R}\) to be an index
+function that maps the projection basis \(\mathbf{A}\) onto an index
+value \(I\), this function is commonly known as the projection pursuit
+index (PPI) function, or the index function and is used to measure the
 ``interestingness'' of a projection. A number of index functions have
 been proposed in the literature to detect different data structures,
 including Legendre index \citep{friedman1974projection}, Hermite index
@@ -291,12 +287,11 @@ necessary for projection pursuit to find the bases that give interesting
 projections. While we leave the formal construction of the optimisation
 problem and existing algorithms to section \ref{tour-optim}, we outline
 the general idea here. Given a random starting (current) basis,
-projection pursuit repeatedly searches for candidate bases nearby
-until it finds one with higher index value than the current basis. In
-the second round, that basis becomes the current basis and the
-repetitive sampling continues. The process ends until no better basis
-can be found or one of the termination criteria is reached.
-
+projection pursuit repeatedly searches for candidate bases nearby until
+it finds one with higher index value than the current basis. In the
+second round, that basis becomes the current basis and the repetitive
+sampling continues. The process ends until no better basis can be found
+or one of the termination criteria is reached.
 
 A tour method, guided tour is usually used in conjunction with
 projection pursuit to interactively explore multivariate data. Tour
@@ -420,8 +415,8 @@ non-derivative procedure based on a non-increasing cooling scheme
 \(T(l)\). Given an initial \(T_0\), the temperature at iteration \(l\)
 is defined as \(T(l) = \frac{T_0}{\log(l + 1)}\). The simulated
 annealing algorithm works as follows. Given a neighbourhood parameter
-\(\alpha\) and a randomly generated orthonormal basis \(\mathbf{A}_{\text{rand}}\), a
-candidate basis is sampled by
+\(\alpha\) and a randomly generated orthonormal basis
+\(A_{\text{rand}}\), a candidate basis is sampled by
 \(\mathbf{A}_{t+1} = (1 - \alpha)\mathbf{A}_{t} + \alpha \mathbf{A}_{\text{rand}}\).
 If the index value of the candidate basis is larger than the one of the
 current basis, the candidate basis is outputted. While if it is smaller,
@@ -541,10 +536,10 @@ as in Equation \ref{eq:data-structure}.
 \begin{array}{c|ccc|cc|cc}
 t & \mathbf{A} & I & S & j &  l  & V_{1} & V_{2}\\
 \hline
-1 & \mathbf{A}_1 & I_1 & S_1 & 1 & 1 & V_{11} & V_{21}\\
+1 & \mathbf{A}_1 & I_1 & S_1 & 1 & 1 & V_{11} & V_{12}\\
 \hline
-2 & \mathbf{A}_2 & I_2 & S_2 & 2 & 1  & V_{12}  & V_{22}\\
-3 & \mathbf{A}_3 & I_3 & S_3 & 2 & 2  & V_{13}  & V_{23}\\
+2 & \mathbf{A}_2 & I_2 & S_2 & 2 & 1  & V_{21}  & V_{22}\\
+3 & \mathbf{A}_3 & I_3 & S_3 & 2 & 2  & V_{31}  & V_{32}\\
 \vdots & \vdots &\vdots &\vdots  &\vdots & \vdots &\vdots  &\vdots\\
 \vdots & \vdots & \vdots &\vdots & 2 & l_2 & \vdots  & \vdots\\
 \hline
@@ -557,7 +552,7 @@ t & \mathbf{A} & I & S & j &  l  & V_{1} & V_{2}\\
 \hline
 \vdots & \vdots & \vdots &\vdots  & J &  1 & \vdots & \vdots \\
 \vdots &\vdots &\vdots &\vdots &\vdots & \vdots &\vdots &\vdots \\
-T & \mathbf{A}_T & I_T &S_T  & J &  l_{J} & V_{1T}& V_{2T}\\
+T & \mathbf{A}_T & I_T &S_T  & J &  l_{J} & V_{T1}& V_{T2}\\
 \hline
 \vdots &\vdots & \vdots &\vdots & J  & 1& \vdots & \vdots\\
 \vdots &\vdots &\vdots &\vdots &\vdots & \vdots & \vdots  &\vdots \\
@@ -565,10 +560,10 @@ T & \mathbf{A}_T & I_T &S_T  & J &  l_{J} & V_{1T}& V_{2T}\\
 \hline
 \vdots& \vdots & \vdots & \vdots & J+1 & 1 & \vdots& \vdots\\
 \vdots &\vdots &\vdots &\vdots &\vdots & \vdots &\vdots &\vdots \\
-T^\prime & \mathbf{A}_{T^\prime} & I_{T^\prime} &S_{T^\prime}  & J+1 &  l_{J+1} & V_{1T^\prime}& V_{2T^\prime}\\
+T^\prime & \mathbf{A}_{T^\prime} & I_{T^\prime} &S_{T^\prime}  & J+1 &  l_{J+1} & V_{T^\prime 1}& V_{T^\prime 2}\\
 \end{array}
 \right]
-=
+= 
 \left[
 \begin{array}{c}
 \text{column name} \\
@@ -637,12 +632,12 @@ remove it if it's not useful :({]}
 We simulate some random variables of size 1000 with different
 structures. \texttt{x1}, \texttt{x8}, \texttt{x9} and \texttt{x10} are
 simulated from normal distribution with zero mean and variance of one as
-in equation \eqref{eq:sim-norm}. When using projection pursuit to explore
+in equation \ref{eq:sim-norm}. When using projection pursuit to explore
 the data structure based on its departure from normality, the entry in
 the projection basis for these variables should be close to zero in
 theory. \texttt{x2} to \texttt{x7} are mixture of normal distributions
-with different weights and locations. Equation \eqref{eq:sim-x2} to
-\eqref{eq:sim-x7} outlines the distribution where each variable is
+with different weights and locations. Equation \ref{eq:sim-x2} to
+\ref{eq:sim-x7} outlines the distribution where each variable is
 simulated from and Figure \ref{origin-data} shows the histogram of each
 variable except \texttt{x3}. All the variables are then scaled to have
 unit variance before running the projection pursuit.
@@ -650,7 +645,7 @@ unit variance before running the projection pursuit.
 \begin{align}
 x_1 \overset{d}{=} x_8 \overset{d}{=} x_9 \overset{d}{=} x_{10}& \sim \mathcal{N}(0, 1) \label{eq:sim-norm} \\
 x_2 &\sim 0.5 \mathcal{N}(-3, 1) + 0.5 \mathcal{N}(3, 1)\label{eq:sim-x2}\\
-\Pr(x_3) &=
+\Pr(x_3) &= 
 \begin{cases}
 0.5 & \text{if $x_3 = -1$ or $1$}\\
 0 & \text{otherwise}
@@ -658,7 +653,7 @@ x_2 &\sim 0.5 \mathcal{N}(-3, 1) + 0.5 \mathcal{N}(3, 1)\label{eq:sim-x2}\\
 x_4 &\sim 0.25 \mathcal{N}(-3, 1) + 0.75 \mathcal{N}(3, 1) \label{eq:sim-x4}\\
 x_5 &\sim \frac{1}{3} \mathcal{N}(-5, 1) + \frac{1}{3} \mathcal{N}(0, 1) + \frac{1}{3} \mathcal{N}(5, 1)\label{eq:sim-x5}\\
 x_6 &\sim 0.45 \mathcal{N}(-5, 1) + 0.1 \mathcal{N}(0, 1) + 0.45 \mathcal{N}(5, 1)\label{eq:sim-x6}\\
-x_7 &\sim 0.5 \mathcal{N}(-5, 1) + 0.5 \mathcal{N}(5, 1)
+x_7 &\sim 0.5 \mathcal{N}(-5, 1) + 0.5 \mathcal{N}(5, 1) 
 \label{eq:sim-x7}
 \end{align}
 
@@ -697,8 +692,8 @@ data structure.{]}
 ##  5     5 <dbl[,1] [5 x 1]>     0.747 random_sear~     2     4 search_bett~   0.5
 ##  6     6 <dbl[,1] [5 x 1]>     0.725 random_sear~     2     5 search_bett~   0.5
 ##  7     7 <dbl[,1] [5 x 1]>     0.752 new_basis        2     6 search_bett~   0.5
-##  8     8 <dbl[,1] [5 x 1]>     0.749 interpolati~     2     0 search_bett~  NA
-##  9     9 <dbl[,1] [5 x 1]>     0.750 interpolati~     2     1 search_bett~  NA
+##  8     8 <dbl[,1] [5 x 1]>     0.749 interpolati~     2     0 search_bett~  NA  
+##  9     9 <dbl[,1] [5 x 1]>     0.750 interpolati~     2     1 search_bett~  NA  
 ## 10    10 <dbl[,1] [5 x 1]>     0.750 interpolati~     2     2 search_bett~  NA
 \end{verbatim}
 
@@ -767,13 +762,13 @@ index value (since it prescribes the next geodesic interpolation and
 future searches).
 
 Boxplot is a suitable candidate that provides five points summary of the
-data, however it has one drawback: it does not report the number of points
-in each box. We may risk losing information on how many points it takes
-to find the target basis by displaying the boxplot alone for all
+data, however it has one drawback: it does not report the number of
+points in each box. We may risk losing information on how many points it
+takes to find the target basis by displaying the boxplot alone for all
 \texttt{tries}. Thus, the number of point in each iteration is displayed
 at the bottom of each box and we provide options to switch iteration
-with small number of points to a point geometry, which is achieved via
-a \texttt{cutoff} argument. A line geometry is also added to link the
+with small number of points to a point geometry, which is achieved via a
+\texttt{cutoff} argument. A line geometry is also added to link the
 points with the largest index value in each iteration. This helps to
 visualise the improvement made in each iteration. Using the concept of
 \emph{gramma of graphics} \citep{wickham2010layered}, the plot for
@@ -833,19 +828,19 @@ We choose variables \texttt{x1}, \texttt{x2}, \texttt{x3}, \texttt{x8},
 \texttt{x9} and \texttt{x10} to perform a 2D projection with tour.
 Parameter \texttt{search\_f\ =\ tour::search\_better} and
 \texttt{max.tries\ =\ 500} is used. The index value of the searching
-points are shown in Figure \ref{points}. The label at the bottom indicates
-the number of observations in each iteration and facilitates the choice
-of \texttt{cutoff} argument (by default \texttt{cutoff\ =\ 15}). We
-learn that the \texttt{search\_better} quickly finds better projection
-basis with higher index value at first and then takes longer to find a
-better one later.
+points are shown in Figure \ref{points}. The label at the bottom
+indicates the number of observations in each iteration and facilitates
+the choice of \texttt{cutoff} argument (by default
+\texttt{cutoff\ =\ 15}). We learn that the \texttt{search\_better}
+quickly finds better projection basis with higher index value at first
+and then takes longer to find a better one later.
 
 \begin{figure}
 \centering
 \includegraphics{paper_files/figure-latex/points-tries-1.pdf}
 \caption{\label{points}A comparison of plotting the same search points
-with different plot designs. The left plot does not use the
-plot space efficiently to convey information from the plot while the right plot
+with different plot designs. The left plot does not use the plot space
+efficiently to convey information from the plot while the right plot
 provides good summarisation of data and number of points in each tries.}
 \end{figure}
 
@@ -890,8 +885,8 @@ Interruption}\label{a-more-complex-example-interruption}}
 
 We use the same dataset as the toy example above to explore the search
 function \texttt{search\_better} and we want to learn how the index
-value changes on the interpolation path for the \texttt{holes} index. From
-the left panel of Figure \ref{interruption}, we observe that when
+value changes on the interpolation path for the \texttt{holes} index.
+From the left panel of Figure \ref{interruption}, we observe that when
 interpolating from the current basis to the target basis, the index
 value may not be monotone: we could reach a basis with a higher index
 value than the target basis on the interpolation path. In this sense, we
@@ -899,7 +894,7 @@ would be better off using the basis with the highest index value on the
 interpolation path as the current basis for the next iteration (rather
 than using the target basis). Hence, an interruption is constructed to
 accept the interpolating bases only up to the one with the largest index
-value. After implementing this interruption, the search finds a higher
+value. After implementing this interruption, the search finds higher
 final index value with fewer steps as shown in the right panel of Figure
 \ref{interruption}.
 
@@ -954,7 +949,7 @@ same.
 \begin{Shaded}
 \begin{Highlighting}[]
 \KeywordTok{set.seed}\NormalTok{(}\DecValTok{123456}\NormalTok{)}
-\NormalTok{holes_2d_geo <-}\StringTok{ }\KeywordTok{animate_xy}\NormalTok{(data_mult[,}\KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{2}\NormalTok{, }\DecValTok{7}\OperatorTok{:}\DecValTok{10}\NormalTok{)],}\DataTypeTok{tour_path =}
+\NormalTok{holes_2d_geo <-}\StringTok{ }\KeywordTok{animate_xy}\NormalTok{(data_mult[,}\KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{2}\NormalTok{, }\DecValTok{7}\OperatorTok{:}\DecValTok{10}\NormalTok{)],}\DataTypeTok{tour_path =} 
                              \KeywordTok{guided_tour}\NormalTok{(}\KeywordTok{holes}\NormalTok{(), }\DataTypeTok{d =} \DecValTok{2}\NormalTok{, }
                                          \DataTypeTok{search_f =}\NormalTok{ tourr}\OperatorTok{:::}\NormalTok{search_geodesic),}
                            \DataTypeTok{rescale =} \OtherTok{FALSE}\NormalTok{, }\DataTypeTok{verbose =} \OtherTok{TRUE}\NormalTok{)}
@@ -963,7 +958,7 @@ same.
 \StringTok{  }\KeywordTok{tail}\NormalTok{(}\DecValTok{1}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }\KeywordTok{pull}\NormalTok{(basis) }\OperatorTok{%>%}\StringTok{ }\NormalTok{.[[}\DecValTok{1}\NormalTok{]]}
 
 \KeywordTok{set.seed}\NormalTok{(}\DecValTok{123456}\NormalTok{)}
-\NormalTok{holes_2d_geo_polish <-}\StringTok{ }\KeywordTok{animate_xy}\NormalTok{(data_mult[,}\KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{2}\NormalTok{, }\DecValTok{7}\OperatorTok{:}\DecValTok{10}\NormalTok{)], }\DataTypeTok{tour_path =}
+\NormalTok{holes_2d_geo_polish <-}\StringTok{ }\KeywordTok{animate_xy}\NormalTok{(data_mult[,}\KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{2}\NormalTok{, }\DecValTok{7}\OperatorTok{:}\DecValTok{10}\NormalTok{)], }\DataTypeTok{tour_path =} 
                                     \KeywordTok{guided_tour}\NormalTok{(}\KeywordTok{holes}\NormalTok{(), }\DataTypeTok{d =} \DecValTok{2}\NormalTok{, }
                                                 \DataTypeTok{search_f =}\NormalTok{ tourr}\OperatorTok{:::}\NormalTok{search_polish),}
                                   \DataTypeTok{rescale =} \OtherTok{FALSE}\NormalTok{, }\DataTypeTok{verbose =} \OtherTok{TRUE}\NormalTok{, }
@@ -971,8 +966,8 @@ same.
 \end{Highlighting}
 \end{Shaded}
 
-A slight variation of the plot definition due to the addition of polishing
-points is as follows:
+A slight variation of the plot definition due to the addition of
+polishing points is as follows:
 
 \begin{itemize}
 \tightlist
@@ -1138,6 +1133,7 @@ distribution function (ECDF). Denotes the ECDF function as \(F(u)\) with
 subscript indicating the variable, the Kolmogorov statistics defined by
 
 \[\max \left[F_{\mathbf{P}}(u) - F_{y}(u)\right]\]
+
 can be seen as a function of the projection matrix
 \(\mathbf{A}_{p \times 1}\) and hence a valid index function.
 
@@ -1181,12 +1177,12 @@ local maxima appear with projection matrix being \([0, 1, 0, 0, 0, 0]\)
 and \([0, 0, 1 ,0, 0, 0]\).
 
 Using different seeds in \texttt{search\_better} allows us to find both
-local maxima as in Figure \ref{1d-2var-different-seeds}. Comparing the
+local maxima d as in Figure \ref{1d-2var-different-seeds}. Comparing the
 maximum of both, we can see that the global maximum happens when
 \texttt{x2} is found. It is natural to ask then if there is an algorithm
 that can find the global maximum without trying on different seeds?
 \texttt{search\_better\_random} manages to do it via a
-Metropolis-Hasting random search as shown in Figure
+Metropolis-hasting random search as shown in Figure
 \ref{1d-2var-better-random}, although at a higher cost of number of
 points to evaluate.
 
