@@ -45,77 +45,45 @@ source(here::here("source/sim_data.r"))
 
 # Introduction
 
-In an optimization problem the goal is to find the best solution within the space of all feasible solutions which typically is represented by a set of constraints. The problem consists in optimizing an objective function $f: S \rightarrow \Re$ with $S \in \Re^n$ in a reduced spaced given by the problem constraints to either minimize or maximize a function.... Gradient based optimization has been typically used to solve such problems. However, there are many situations where derivatives of an objective function are unavailable or unreliable and therefore traditional methods based on derivatives are not the best option to solve an optimization problem.
+In an optimization problem the goal is to find the best solution within the space of all feasible solutions which typically is represented by a set of constraints. The problem consists in optimizing an objective function $f: S \rightarrow \Re$ with $S \in \Re^n$ in a reduced space given by the problem constraints to either minimize or maximize a function.... Gradient based optimization has been typically used to solve such problems. However, there are many situations where derivatives of an objective function are unavailable or unreliable and therefore traditional methods based on derivatives are not the best option to solve an optimization problem.
 
 Derivative free methods provide another option to optimise the objective function without evaluating any gradient or Hessian information and a particular class of methods, direct search, has gained popularity through its conceptual simplicity.  However, the whole searching process in the algorithm remains a black-box. Plots are usually used to evaluate and compare the performance of different algorithms but it can easily become tedious because the code will have to be modified significantly when comparing different parameters in the algorithms. For example, a categorical variable with 5 levels can be easily mapped onto colour while mapping another categorical variable with 30 levels will not make the plot informative. Thus the plot needs to be re-designed to better suit the characteristics of the parameter (whether the parameter is a scalar or a matrix? whether the parameter is quantitative or categorical? If categorical, how many levels does the parameter have?). This motivates the  design of a visual diagnostic framework for optimisation algorithms based on the idea of a *global object*. 
 
 The remainder of the paper is organised as follows. Section \ref{DFO} gives a general overview of optimisation methods, specifically derivative free optimisation. 
-Section \ref{tour} introduces the optimisation problem in a specific problem: projection pursuit guided tour and existing derivative free algorithms for solving it. 
-Section \ref{vis-diag} and \ref{vis-diag-plots} together present the new construction of a visual diagnostic framework that unveil the black-box of optimisation. Section \ref{vis-diag} focuses on motivational ideas and data structure and Section \ref{vis-diag-plots} provides definitions of different diagnostic plots using grammar of graphic and examples. 
+Section \ref{tour} introduces the optimisation problem in a specific context: projection pursuit guided tour and existing derivative free algorithms for solving it. 
+Section \ref{vis-diag} and \ref{vis-diag-plots} together present the new construction of a visual diagnostic framework that unveils the black-box of optimisation. Section \ref{vis-diag} focuses on motivational ideas and data structure and Section \ref{vis-diag-plots} gives definitions of different diagnostic plots using grammar of graphic and examples. 
 Finally, Section \ref{implementation} mentions the R package: ferrn that implements the visual diagnostics described above.
 
 # Derivative free optimisation {#DFO}
 
-Given an objective function $f$, one way of optimising it is to equate its gradient to zero. In modern optimisation problems, gradient information can be hard to evaluate or sometimes even impossible and Derivative-Free Optimisation (DFO) methods can be useful to approach these problems. One common class of methods in DFO is *Direct-search methods*. Coined by @hooke1961direct, direct search methods don't require any gradient or Hessian information and has gained its popularity through its simplicity in use and reliability in solving complicated practical problems. Depending on whether a random sample is used in the search, this class of methods can be further classified as *stochastic* or *deterministic*.  The stochastic version of the direct-search methods will be the main optimisation procedure analysed in this paper.
+In modern optimisation problems, gradient information can be hard to evaluate or sometimes even impossible and  Derivative-Free Optimisation (DFO) methods can be useful to approach these problems.
+A traditional and still reliable in solving complicated practical problems, is *line search method* [@fletcher2013practical]. In the context of a simple one-dimensional problem of finding the $x$ that minimises $f(x)$, line search achieves the goal via an iterative algorithm in the form of Equation \ref{eq:line-search}.
 
-[How about adding more details into derivative free methods? ppp]
+\begin{equation}
+x^{(k + 1)} = x^{(k)} + \alpha_k* d^{(k)}
+\label{eq:line-search}
+\end{equation}
 
-
-<!-- The two most common methods in DFO are *direct-search methods* and *model-based methods* and this paper dedicates to the discussion of direct-search methods, which .  -->
-
-
-<!-- A well-known example of it is the Nelder-Mead algorithm [@nelder1965simplex] and it enjoys the popularity due to its simplicity and reliability. [feel like this sentence can be expanded to include more information. xxx]. -->
-
-
-
-
-
-
-
-## Difficulties
-
-[Are we using  projection pursuit/guided tour to better understand the convergence of optimization algorithms visually in combination with the algorithms discussed below? Or we are focusing on the optimisation problem only within the projection pursuit context? Some of the problems listed below are also applicable to optimization problem in general too. ppp] 
-
-Below are listed several issues in projection pursuit optimisation. Some are general optimisation problems, while others are more specific too PP optimisation. 
-
-- *Finding global maximum*: Although finding local maximum is relatively easy with developed algorithms, it is generally hard to guarantee global maximum in a problem where the objective function is complex or the number of decision variables is large. Also, there are discussions on how to avoid getting trapped in a local optimum in the literature.
-
-- *optimising non-smooth function*: When the objective function is non-differentiable, derivative information can not be obtained, which means traditional gradient- or Hessian- based methods are not feasible. Stochastic optimisation method could be an alternative to solve these problems.
-
-- *computation speed*: The optimisation procedure needs to be fast to compute since the tour produces real-time animation of the projected data.
-
-- *consistency result in stochastic optimisation*: In stochastic algorithm, researchers usually set a seed to ensure the algorithm produces the same result for every run. This practice supports reproducibility, while less efforts has been made to guarantee different seeds will provide the same result. 
-
-- *high-dimensional decision variable*: In projection pursuit, the decision variable includes all the entries in the projection matrix, which is high-dimensional. Researchers would be better off if they could understand the relative position of different projection matrix in the high-dimensional space. 
-
-- *role of interpolation in PP optimisation*: An optimisation procedure usually involves iteratively finding projection bases that maximise the index function, while tour requires geodesic interpolation between these bases to produce a continuous view for the users. It would be interesting to see if the interpolated bases could, in reverse, help the optimisation reach faster convergence.
-
-<!-- the interpolation can be seen as giving information on the direction of the derivative. -->
-
-
-<!-- - is `search_geodesic` widely known in the research community - doesn't seem to find paper introducing this except (Cook, 1995). Any tools available to  better understand its searching process? -->
-
-*Think about how does your package help people to understand optimisation*
- 
- - diagnostic on stochastic optim
- - vis the progression of multi-parameter decision variable 
- - understanding learning rate - neighbourhood parameter
- - understand where the local & global maximum is found - trace plot - see if noisy function
-
+where $d^{(k)}$ is the searching direction in iteration $k$, and $\alpha_k$ is the step-size. Strictly speaking, $\alpha_k$ is chosen by another minimisation of $f(x^{(k)} + \alpha* d^{(k)})$ with respect to $\alpha$ and theoretical results have demonstrated the global convergence of the algorithm when the exact minimisation of $\alpha_k$ is attained [@curry1944method]. In practice, this second minimisation is rarely implemented due to its computational demanding or even the existence of such a minimisation. A more realistic approach is to impose a mandatory decrease in the objective function for each iteration: $f^{(k+1)}> f^{(k)}$ and despite we lose the guarantee on global convergence, this approach turns out to be efficient in practical problems. 
 
 \newpage
 
 # Projection pursuit guided tour {#tour}
 
-Coined by @friedman1974projection, projection pursuit detects interesting structures (i.e. clustering, outliers and skewness) in multivariate data via projecting onto lower dimensions. Let $\mathbf{X}_{n \times p}$ be the data matrix, an n-d projection can be seen as a linear transformation $T: \mathbb{R}^p \mapsto \mathbb{R}^d$ defined by $\mathbf{P} = \mathbf{X} \cdot \mathbf{A}$, where $\mathbf{P}_{n \times d}$ is the projected data and $\mathbf{A}_{p\times d}$ is the projection basis. Define $f: \mathbb{R}^{p \times d} \mapsto \mathbb{R}$ to be an index function that maps the projection basis $\mathbf{A}$ onto an index value $I$, this function is commonly known as the projection pursuit index (PPI) function, or the index function and is used to measure the "interestingness" of a projection. A number of index functions have been proposed in the literature to detect different data structures, including Legendre index [@friedman1974projection], Hermite index [@hall1989polynomial], natural Hermite index [@cook1993projection], chi-square index [@posse1995projection], LDA index [@lee2005projection] and PDA index [@lee2010projection]. 
+Modern development of the line search methods focuses on proposing different computation on the seraching direction: $d^{(k)}$ and various approximations on the step size: $\alpha_k$ catered for practical optimisation problems. The specific problem context we are interested in is called projection pursuit guided tour. 
+Projection pursuit and guided tour are two separate methods in exporatory data analysis focusing on different aspects: coined by @friedman1974projection, projection pursuit detects interesting structures (i.e. clustering, outliers and skewness) in multivariate data via low dimensions projection; whilst guided tour is a particular variation in a broader class of data visualisation method called tour.
+
+Let $\mathbf{X}_{n \times p}$ be the data matrix, an n-d projection can be seen as a linear transformation $T: \mathbb{R}^p \mapsto \mathbb{R}^d$ defined by $\mathbf{P} = \mathbf{X} \cdot \mathbf{A}$, where $\mathbf{P}_{n \times d}$ is the projected data and $\mathbf{A}_{p\times d}$ is the projection basis. Define $f: \mathbb{R}^{p \times d} \mapsto \mathbb{R}$ to be an index function that maps the projection basis $\mathbf{A}$ onto an index value $I$, this function is commonly known as the projection pursuit index (PPI) function, or the index function and is used to measure the "interestingness" of a projection. A number of index functions have been proposed in the literature to detect different data structures, including Legendre index [@friedman1974projection], Hermite index [@hall1989polynomial], natural Hermite index [@cook1993projection], chi-square index [@posse1995projection], LDA index [@lee2005projection] and PDA index [@lee2010projection]. 
 
 In their initial paper, @friedman1974projection noted that "..., the technique used for maximising the projection index strongly influences both the statistical and the computational aspects of the procedure." Hence, effective optimisation algorithms are necessary for projection pursuit to find the bases that give interesting projections. While we leave the formal construction of the optimisation problem and existing algorithms to section \ref{tour-optim}, we outline the general idea here. Given a random starting (current) basis, projection pursuit repeatedly searches for candidate bases nearby until it finds one with higher index value than the current basis. In the second round, that basis becomes the current basis and the repetitive sampling  continues. The process ends until no better basis can be found or one of the termination criteria is reached.
 
-A tour method, guided tour is usually used in conjunction with projection pursuit to interactively explore multivariate data. Tour plays an animation on the projected data which is constructed using the bases outputted by projection pursuit and their interpolations. Guided tour constructs the interpolation using the shortest geodesic path between two outputted bases and we refer readers to @buja2005computational for the mathematical details. Figure \ref{tour-path} shows a sketch of the tour path consisting of the blue frames produced by the projection pursuit optimisation algorithm and the white frames, which are the interpolations between two blue frames. The tour method has been implemented in the *tourr* package in R, available on the Comprehensive R Archive Network at [https://cran.r-project.org/web/packages/tourr/](https://cran.r-project.org/web/packages/tourr/) [@wickham2011tourrpackage]. 
+Before introducing the guided tour, we shall be familiar with the general tour method [@cook2008grand]. A tour produces animated visualisation of the high dimensional data via rotating low dimension planes. The smoothness of the animation is ensured by computing a series of intermediate planes between two low dimension planes via geodesic interpolation and we refer readers to @buja2005computational for the mathematical details. Iteratively choose different low dimension planes and interpolate between them forms a tour path. Different types of tour methods choose the low dimensional planes differently and we mention two other type of tour that are commonly used. A grand tour selects the planes randomly in the high dimensional space and hence serves as an initial exploration of the data. Manual control allows researches to fine-tuning an existing projection by gradually phase in and out one variable. 
 
+Guided tour chooses the planes produced by optimising the projection pursuit index function. Figure \ref{tour-path} shows a sketch of the tour path consisting of the blue frames produced by the projection pursuit optimisation algorithm iteratively and the white frames, which are the interpolations between two blue frames. The tour method has been implemented in the *tourr* package in R, available on the Comprehensive R Archive Network at [https://cran.r-project.org/web/packages/tourr/](https://cran.r-project.org/web/packages/tourr/) [@wickham2011tourrpackage]. 
 
-<!-- A tour path includes two major components: a *generator* that generating the target basis that has higher index value than the current basis and an *interpolator* that performing geodesic interpolation between the current and target basis. An illustration modified from [@buja2005computational] vividly depicts the tour path in guided tour. -->
-
+```{r tour-path, out.width="100%", out.height="60%", fig.cap="\\label{tour-path}An illustration of the tour path"}
+knitr::include_graphics(path = here::here("figures/tour_path_keynote/tour_path_keynote.001.jpeg"))
+```
 
 <!-- The pseudo-code below illustrates the implementation of guided tour in the tourr package. Given an projection pursuit index function and a randomly generated projection basis (current basis), the optimisation procedure produces a target basis inside `generator()`  Both the current basis and the target basis will be supplied to `tour_path()` to prepare information needed for constructing a geodesic path. This information is then used to compute a series of interpolating bases inside the `tour()` function. All the basis will be sent to create animation for visualising the tour in the `animate()` function.   -->
 
@@ -155,11 +123,6 @@ A tour method, guided tour is usually used in conjunction with projection pursui
 
 
 
-```{r tour-path, out.width="100%", out.height="60%", fig.cap="\\label{tour-path}An illustration of the tour path"}
-knitr::include_graphics(path = here::here("figures/tour_path_keynote/tour_path_keynote.001.jpeg"))
-```
-
-
 ## Optimisation problem and existing algorithms {#tour-optim}
 
 
@@ -168,8 +131,55 @@ Now we begin to formulate the optimisation problem. Given a randomly generated s
 
 \begin{align}
 &\arg \max_{\mathbf{A} \in \mathcal{A}} f(\mathbf{X} \cdot \mathbf{A}) \\
-s.t. & \mathcal{A} = \{ \forall \mathbf{a}_i, \mathbf{a}_j \in \mathbf{A}: \lVert \mathbf{a}_i \rVert = 1 \text{ and } \mathbf{a}_i \mathbf{a}_j = 0 \}
+s.t. &  \langle \mathbf{a}_i, \mathbf{a}_j \rangle = \delta_{ij}, \forall \mathbf{a}_i, \mathbf{a}_j \in \mathbf{A}
 \end{align}
+
+Where $\delta_{ij}$ is the kronecker delta that takes 1 if $i = j$ and 0 otherwise.
+
+[you wanna give more information about the characteristics of the optimisation problem before introducing existing algorithms ]
+
+
+---
+
+If the gradient information was available, the decreasing condition is 
+
+## Difficulties 
+
+(feel this section should go after the general introduction of DFO and PPGT)
+
+[Are we using  projection pursuit/guided tour to better understand the convergence of optimization algorithms visually in combination with the algorithms discussed below? Or we are focusing on the optimisation problem only within the projection pursuit context? Some of the problems listed below are also applicable to optimization problem in general too. ppp] 
+
+Below are listed several issues in projection pursuit optimisation. Some are general optimisation problems, while others are more specific too PP optimisation. 
+
+- *constraint optimisation*: our problem requires the project basis to be orthonormal
+
+- *Multivariate optimisation*: In projection pursuit, the decision variable includes all the entries in the projection matrix, which is high-dimensional. Researchers would be better off if they could understand the relative position of different projection matrix in the high-dimensional space. (multivariate optimisation)
+
+- *optimising non-smooth function*: When the objective function is non-differentiable, derivative information can not be obtained, which means traditional gradient- or Hessian- based methods are not feasible. Stochastic optimisation method could be an alternative to solve these problems. (derivative information is not available)
+
+- *Finding global maximum*: Although finding local maximum is relatively easy with developed algorithms, it is generally hard to guarantee global maximum in a problem where the objective function is complex or the number of decision variables is large. Also, there are discussions on how to avoid getting trapped in a local optimum in the literature. (the exact $\alpha$ that minimised $f(x^{(k)}+ \alpha d^{(k)})$ can be hard to find or sometiems even impossible, imposing certain decrease, how every this doesn't guarantee global convergence)
+
+Computational considerations:
+
+- *computation speed*: The optimisation procedure needs to be fast to compute since the tour produces real-time animation of the projected data.
+
+- *consistency result in stochastic optimisation*: In stochastic algorithm, researchers usually set a seed to ensure the algorithm produces the same result for every run. This practice supports reproducibility, while less efforts has been made to guarantee different seeds will provide the same result. 
+
+- *role of interpolation in PP optimisation*: An optimisation procedure usually involves iteratively finding projection bases that maximise the index function, while tour requires geodesic interpolation between these bases to produce a continuous view for the users. It would be interesting to see if the interpolated bases could, in reverse, help the optimisation reach faster convergence.
+
+<!-- the interpolation can be seen as giving information on the direction of the derivative. -->
+
+
+<!-- - is `search_geodesic` widely known in the research community - doesn't seem to find paper introducing this except (Cook, 1995). Any tools available to  better understand its searching process? -->
+
+*Think about how does your package help people to understand optimisation*
+ 
+ - diagnostic on stochastic optim
+ - vis the progression of multi-parameter decision variable 
+ - understanding learning rate - neighbourhood parameter
+ - understand where the local & global maximum is found - trace plot - see if noisy function
+
+---
 
 There are three existing algorithms.
 
