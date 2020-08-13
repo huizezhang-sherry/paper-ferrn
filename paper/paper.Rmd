@@ -377,7 +377,7 @@ x_7 &\sim 0.5 \mathcal{N}(-5, 1) + 0.5 \mathcal{N}(5, 1)
 
 ```{r origin-data, fig.cap="\\label{origin-data} The distribution of simulated data except x3"}
 origin_dt_bi <- data_mult %>% 
-  dplyr::select(-x3) %>% 
+  dplyr::select(-c(x3, x8, x9, x10)) %>% 
   gather(names, values) %>%
   mutate(names = as_factor(names))
   
@@ -388,7 +388,7 @@ origin_dt_bi %>%
   facet_wrap(vars(names), ncol = 3)
 ```
 
-We form our first dataset using variables `x1`, `x2`, `x8`, `x9` and `x10` and run the guided tour with optimiser `search_better`. When the optimisation ends, the global object will be stored and printed (it can be turned off by supplying argument `print = FALSE`). Additional messages during the optimisation can be displayed by argument `verbose = TRUE`. Below shows the first ten rows of the global object. Notice that the tibble object allows the list-column `basis` to be printed out nicely with the dimension of the projection basis readily available.
+We form our first dataset using variables `x1`, `x2`, `x8`, `x9` and `x10`,  run the guided tour with optimiser `search_better` and below shows the first ten rows of the global object.
 
 [I notice that in the implementation the loop index for interpolation starts from 0 rather than 1. Need more investigation to see if it is easy to change it to 1 or we will have to change the definition of the data structure.]
 
@@ -400,8 +400,6 @@ holes_1d_better <- animate_dist(data, tour_path = guided_tour(holes(), d = 1,
 
 #save(temp, file = here::here("vignettes", "data", "temp.rda"))
 ```
-
-\newpage
 
 ```{r glb-obj-1}
 holes_1d_better %>% 
@@ -773,6 +771,11 @@ bind_rows(interp1, interp2, interp3) %>%
 # Implementation: Ferrn package {#implementation}
 
 Everything is coded up in a package. Package structure
+
+
+When the optimisation ends, the global object will be stored and printed (it can be turned off by supplying argument `print = FALSE`). Additional messages during the optimisation can be displayed by argument `verbose = TRUE`.  Notice that the tibble object allows the list-column `basis` to be printed out nicely with the dimension of the projection basis readily available.
+
+
 
 # Conclusion
 

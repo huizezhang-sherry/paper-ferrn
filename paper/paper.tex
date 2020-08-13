@@ -655,21 +655,14 @@ x3}
 \end{figure}
 
 We form our first dataset using variables \texttt{x1}, \texttt{x2},
-\texttt{x8}, \texttt{x9} and \texttt{x10} and run the guided tour with
-optimiser \texttt{search\_better}. When the optimisation ends, the
-global object will be stored and printed (it can be turned off by
-supplying argument \texttt{print\ =\ FALSE}). Additional messages during
-the optimisation can be displayed by argument \texttt{verbose\ =\ TRUE}.
-Below shows the first ten rows of the global object. Notice that the
-tibble object allows the list-column \texttt{basis} to be printed out
-nicely with the dimension of the projection basis readily available.
+\texttt{x8}, \texttt{x9} and \texttt{x10}, run the guided tour with
+optimiser \texttt{search\_better} and below shows the first ten rows of
+the global object.
 
 {[}I notice that in the implementation the loop index for interpolation
 starts from 0 rather than 1. Need more investigation to see if it is
 easy to change it to 1 or we will have to change the definition of the
 data structure.{]}
-
-\newpage
 
 \begin{verbatim}
 ## # A tibble: 10 x 8
@@ -1221,6 +1214,13 @@ the end.}
 \section{Implementation: Ferrn package}\label{implementation}}
 
 Everything is coded up in a package. Package structure
+
+When the optimisation ends, the global object will be stored and printed
+(it can be turned off by supplying argument \texttt{print\ =\ FALSE}).
+Additional messages during the optimisation can be displayed by argument
+\texttt{verbose\ =\ TRUE}. Notice that the tibble object allows the
+list-column \texttt{basis} to be printed out nicely with the dimension
+of the projection basis readily available.
 
 \hypertarget{conclusion}{%
 \section{Conclusion}\label{conclusion}}
