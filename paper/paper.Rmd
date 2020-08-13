@@ -66,8 +66,6 @@ x^{(k + 1)} = x^{(k)} + \alpha_k* d^{(k)}
 
 where $d^{(k)}$ is the searching direction in iteration $k$, and $\alpha_k$ is the step-size. Strictly speaking, $\alpha_k$ is chosen by another minimisation of $f(x^{(k)} + \alpha* d^{(k)})$ with respect to $\alpha$ and theoretical results have demonstrated the global convergence of the algorithm when the exact minimisation of $\alpha_k$ is attained [@curry1944method]. In practice, this second minimisation is rarely implemented due to its computational demanding or even the existence of such a minimisation. A more realistic approach is to impose a mandatory decrease in the objective function for each iteration: $f^{(k+1)}> f^{(k)}$ and despite we lose the guarantee on global convergence, this approach turns out to be efficient in practical problems. 
 
-
-
 [Are we using  projection pursuit/guided tour to better understand the convergence of optimization algorithms visually in combination with the algorithms discussed below? Or we are focusing on the optimisation problem only within the projection pursuit context? Some of the problems listed below are also applicable to optimization problem in general too. ppp] 
 
 
@@ -145,18 +143,13 @@ Where $\delta_{ij}$ is the kronecker delta that takes 1 if $i = j$ and 0 otherwi
 
 There are several features of this optimisation that are worth noticing. First of all, it is a multivariate constraint optimisation problem. Since the decision variables are the entries of a projection basis, it is required to be orthonormal. It is also likely that the objective function is non-differentiable or the gradient information is simply not available. In this case, we will need to either use some approximation of the gradient or turn to derivative free methods. Given the goal of projection pursuit as finding the basis with the largest index value, the optimisation problem need to be able to find the global maximum. Along the way, locla maximum may also be of our interest since they could present unexpected interesting projections. There is also one computational consideration: the optimisation procedure needs to be easy to compute since the tour animation is played in real-time. 
 
-
-<!-- Below are listed several issues in projection pursuit optimisation. Some are general optimisation problems, while others are more specific too PP optimisation.  -->
-
 <!-- - *constraint optimisation*: our problem requires the project basis to be orthonormal -->
 
-<!-- - *Multivariate optimisation*: In projection pursuit, the decision variable includes all the entries in the projection matrix, which is high-dimensional. Researchers would be better off if they could understand the relative position of different projection matrix in the high-dimensional space. (multivariate optimisation) -->
+<!-- - *Multivariate optimisation*: In projection pursuit, the decision variable includes all the entries in the projection matrix, which is high-dimensional. Researchers would be better off if they could understand the relative position of different projection matrix in the high-dimensional space. -->
 
 <!-- - *optimising non-smooth function*: When the objective function is non-differentiable, derivative information can not be obtained, which means traditional gradient- or Hessian- based methods are not feasible. Stochastic optimisation method could be an alternative to solve these problems. (derivative information is not available) -->
 
 <!-- - *Finding global maximum*: Although finding local maximum is relatively easy with developed algorithms, it is generally hard to guarantee global maximum in a problem where the objective function is complex or the number of decision variables is large. Also, there are discussions on how to avoid getting trapped in a local optimum in the literature. (the exact $\alpha$ that minimised $f(x^{(k)}+ \alpha d^{(k)})$ can be hard to find or sometiems even impossible, imposing certain decrease, how every this doesn't guarantee global convergence) -->
-
-<!-- Computational considerations: -->
 
 <!-- - *computation speed*: The optimisation procedure needs to be fast to compute since the tour produces real-time animation of the projected data. -->
 
@@ -165,9 +158,6 @@ There are several features of this optimisation that are worth noticing. First o
 <!-- - *role of interpolation in PP optimisation*: An optimisation procedure usually involves iteratively finding projection bases that maximise the index function, while tour requires geodesic interpolation between these bases to produce a continuous view for the users. It would be interesting to see if the interpolated bases could, in reverse, help the optimisation reach faster convergence. -->
 
 <!-- the interpolation can be seen as giving information on the direction of the derivative. --> 
-
-
-<!-- - is `search_geodesic` widely known in the research community - doesn't seem to find paper introducing this except (Cook, 1995). Any tools available to  better understand its searching process? -->
 
 <!-- *Think about how does your package help people to understand optimisation* -->
 
@@ -252,21 +242,12 @@ Simulated annealing [@bertsimas1993simulated, @kirkpatrick1983optimization] modi
   \label{search-geodesic}
 \end{algorithm}
 
-<!-- Below listed several features characterise the optimisation procedures needed in projection pursuit -->
-
-<!-- - *Being able to handle non-differentiable PPI function*: The PPI function could be non-differentiable, thus derivative free methods are preferred.  -->
-
-<!-- - *Being able to optimise with constraints*: The constraint comes from projection matrix being an orthonormal matrix.  -->
-
-<!-- - *Being able to find both local and global maximum*: Although the primary interest is to find the global maximum, local maximum could also reveal structures in the data that are of our interest.  -->
-
 
 \newpage 
 
 # Visual diagnostic system {#vis-diag}
 
 ## Motivation
-<!-- Visual diagnostics can be real-time or post-run. Real time diagnostic directly uses the data produced in the algorithm to produce visual representation and thus doesn't need to store the data.   This section focuses on the definition and production of post-run diagnostics and the next section discusses real-time diagnostics. -->
 
 We can see from Figure \ref{tour-path} that only the data projected using the accepted and interpolated bases are animated by tour; none of the searching bases sampled by the optimsiation algorithms are presented in the tour animation. Although these algorithms have been demonstrated to find the global maximum in various literature as we cited above, they focus solely on finding the global maximum and fewer tools are available to explore how each algorithm searches the parameter space and compare the results between different algorithms. 
 
@@ -287,11 +268,6 @@ Hence the study **contributes to set up a tidy data structure for collecting obs
 Global object is a data construction with key components from optimisation algorithms and is designed for making diagnostic plots easier. In the optimisation algorithms for projection pursuit, three key elements are 1) projection bases: $\mathbf{A}$, 2) index values: $I$ and 3) State: $S$, which labels the observation with detailed stage of searching or interpolation.
 
 Multiple iterators are needed to index the data collected at different levels. $t$ is a unique identifier that prescribes the natural ordering of each observation; $j$ is the counter for each search-and-interpolate round, which remains the same within one round and has an increment of one once a new round starts. $l$ is the counter for each search/interpolation allowing us to know how many basis the algorithm has searched before finding one to output. 
-
-<!-- For each level of iteration, we design two types of indices: *index per iteration: $j$* is fixed for each observations in one iteration and has an increment of one once a new iteration starts. *index within iteration: $l$* has an increment of one for each observation in an iteration and starts over from one once a new iteration starts. -->
-
-<!-- In projection pursuit optimisation algorithms, there is one level of iteration and hence exists three iterators: `id` indices each observation by a unique number; `tries` is the index per iteration iterator that gets updated once a search-and-interpolate step is finished; and `loop` is the index within iteration iterator and starts over from one at the beginning of a new `tries`. We give the interpolating basis a different index $k$ for projection pursuit guided tour. It is similar in nature to $l$ but is specific for interpolating bases, which is usually not part of the optimisation. -->
-
 
 <!-- # ```{r iterators, out.width = "100%", out.height = "25%", fig.cap = "\\label{iterators} A sketch of the design of iterators in iterative algorithms."} -->
 <!-- # knitr::include_graphics(here::here("figures", "iterators.png")) -->
@@ -372,7 +348,6 @@ where $T^{\prime} = T + k_{J}+ l_{J+1}$. Note that we deliberately denote the la
 [outside the paper: I find the notation of current/target basis is confusing because the target basis in round $j$ becomes the current basis in round $j+1$. Also, when we start to have polish, the target basis may not be the current basis in the next round... The place where current/target is most appropriate is probably when describing the interpolation where the first one is always the current basis and the last is always the target basis. I think it is better to leave this language in the code]
 
 
-
 A sketch of the global object for projection pursuit guided tour is presented in Figure \ref{fig:glb-obj}. 
 
 [I feel this sketch was initially useful but now since we have the data matrix and the printed output of the global object, it doesn't any additional information. I'm still keeping it here but we may need to remove it if it's not useful :(]
@@ -380,66 +355,6 @@ A sketch of the global object for projection pursuit guided tour is presented in
 ```{r glb-obj, out.width= "100%", out.height="20%", fig.cap="\\label{glb-obj}The global object in projection pursuit guided tour."}
 knitr::include_graphics(path = here::here("figures/global_obj.png"))
 ```
-
-
-
-<!-- \begin{equation} -->
-<!-- \left[ -->
-<!-- \begin{array}{ccccccc} -->
-<!-- \ast & \mathbf{A}_{1,1,\ast} & \mathbf{A}_{2, l_1 +1,\ast} & \cdots & \mathbf{A}_{J,\sum_{i = 1}^{J-1}l_i +1,\ast} & \mathbf{A}_{J+1,\sum_{i = 1}^{J}l_i +1 ,\ast} \\ -->
-<!-- \ast & \mathbf{A}_{1,2,\ast} & \mathbf{A}_{2,l_1 +2,\ast} & \cdots & \mathbf{A}_{J,\sum_{i = 1}^{J-1}l_i +2,\ast} & \mathbf{A}_{J+1,\sum_{i = 1}^{J}l_i +2, \ast} \\ -->
-<!-- \vdots & \vdots & \vdots & \ddots & \vdots &\vdots   \\ -->
-<!-- \ast & \mathbf{A}_{1, l, \ast} & \mathbf{A}_{2, l_1 + l, \ast} & \cdots & \mathbf{A}_{J+1, \sum_{i = 1}^{J-1}l_i + l, \ast}  & \mathbf{A}_{J + 1, \sum_{i = 1}^{J}l_i + l, \ast}\\ -->
-<!-- \vdots & \vdots & \vdots & \ddots & \vdots &\vdots   \\ -->
-<!-- \ast & \mathbf{A}_{1, l_1-1, \ast} & \mathbf{A}_{2, l_1 + l_2-1, \ast} & \cdots & \mathbf{A}_{J, \sum_{i = 1}^{J-1}l_i -1, \ast} & \mathbf{A}_{J+1, \sum_{i = 1}^{J+1} l_i-1, \ast}\\ -->
-<!-- \mathbf{A}_{0,\ast,\ast} & \mathbf{A}_{1, l_1, \ast} & \mathbf{A}_{2, l_1 + l_2, \ast} & \cdots & \mathbf{A}_{J, \sum_{i = 1}^{J}l_i , \ast} & \ast\\ -->
-<!-- \hline -->
-<!-- \ast &\mathbf{A}_{1, \ast, 1} & \mathbf{A}_{2, \ast, k_1 + 1} & \cdots &\mathbf{A}_{J, \ast,\sum_{i = 1}^{J-1}k_i + 1}  & \ast\\ -->
-<!-- \ast &\mathbf{A}_{1, \ast, 2} & \mathbf{A}_{2, \ast, k_1 + 2} & \cdots &\mathbf{A}_{J, \ast, \sum_{i = 1}^{J-1}k_i +2}  & \ast \\ -->
-<!-- \vdots & \vdots & \vdots & \ddots & \vdots & \vdots \\ -->
-<!-- \ast &\mathbf{A}_{1, \ast, k} & \mathbf{A}_{2, \ast, k_1 + k} & \cdots &\mathbf{A}_{J, \ast, \sum_{i = 1}^{J-1}k_i +k}  & \ast \\ -->
-<!-- \vdots & \vdots & \vdots & \ddots & \vdots   & \vdots \\ -->
-<!-- \ast &\mathbf{A}_{1, \ast, k_1} & \mathbf{A}_{2, \ast, k_1 + k_2} & \cdots &\mathbf{A}_{J, \ast,\sum_{i = 1}^{J}k_i} & \ast \\ -->
-<!-- \end{array} -->
-<!-- \right] -->
-<!-- = -->
-<!-- \left[ -->
-<!-- \begin{array}{c} -->
-<!-- \vphantom{A^J_1}\text{candidate basis} \\ -->
-<!-- \vphantom{A^J_2}\text{candidate basis} \\ -->
-<!-- \vphantom{\vdots} \vdots \\ -->
-<!-- \vphantom{A^J_2}\text{candidate basis} \\ -->
-<!-- \vphantom{\vdots} \vdots \\ -->
-<!-- \vphantom{A^J_2}\text{candidate basis} \\ -->
-<!-- \vphantom{A^J}\text{current/target basis} \\ -->
-<!-- \hline -->
-<!-- \vphantom{\text{NULL}}\text{interpolation basis} \\ -->
-<!-- \vphantom{\text{NULL}}\text{interpolation basis} \\ -->
-<!-- \vphantom{\text{NULL}}\vdots \\ -->
-<!-- \vphantom{\text{NULL}}\text{interpolation basis} \\ -->
-<!-- \vphantom{\vdots} \vdots \\ -->
-<!-- \vphantom{\text{NULL}}\text{interpolation basis} \\ -->
-<!-- \end{array} -->
-<!-- \right] -->
-<!-- \label{eq:matrixA} -->
-<!-- \end{equation} -->
-
-
-
-
-
-<!-- An optimisation procedure can easily generate hundreds or thousands sampling points and the question becomes what are the points we want to explore... [the classification of searching or updating points goes here and people should be clear what part of the points goes to the plot - this is the data part not the plot part. ] -->
-
-<!-- In tour, all the points recorded in the global object can be divided into two broad categories: searching points and interpolating points -->
-
-<!-- - *Searching points* include the observations recorded in the searching algorithm to find the target basis. The points for target bases is also included in the searching points and there is one such point per `tries`. -->
-
-<!-- - *interpolating points* exist in the guided tour to produce continuous animated view from one target basis to another and it doesn't have `loop` value. -->
-
-<!-- The concept of grammar of graphic requires a dataset to be supplied in making a plot, thus a global object needs to be created in the iterative algorithm. The variables will be mapped into element of a graphic to explore and thus should contain all the parameters of interest. The next section shows how a global object is created in projection pursuit guided tour. -->
-
-
-<!-- In the current implementation of the `tourr` package, while the target basis generated by the projection pursuit can be accessed later via `save_history()`, interpolating bases and those randomly nearby bases generated in the optimisation are not stored. This creates difficulties for fully understand the behaviour of the optimisation and interpolation of tour in complex scenario **[need a rephrase this part].**  -->
 
 ## Simulated data
 
@@ -494,18 +409,6 @@ holes_1d_better %>%
   head(10)
 ```
 
-<!-- `tries` has an increment of one once the generator is called (equivalently a new target basis is generated); `info` records the stage the basis is in. This would include the `interpolation` stage and the detailed stage in the optimisation i.e. `direction_search`, `best_direction_search`, `line_search`and `best_line_search` for geodesic searching (`search_geodesic`); `random_search` and `new_basis` for simulating annealing (`search_better`). `loop` is the counter used for the optimisation procedure and thus will be `NA` for interpolation steps. `id` creates a sequential order of the basis.  -->
-
-<!--  Another examples is a 2D projection of the larger dataset with two informative variable (`x2` and `x7`) using search_better method. Notice in this example, the dimension of the bases becomes 6 by 2. -->
-
-
-<!-- ```{r glb-obj-2, echo = TRUE} -->
-<!-- holes_2d_better %>% head(5)  -->
-<!-- ``` -->
-
-
-
-
 # Visual diagnostic plots {#vis-diag-plots}
 
 Below we will present several examples of diagnosing different aspects of the projection pursuit optimisation. We will present:  
@@ -531,6 +434,15 @@ Since the global object is already tidy, not further tidying steps is needed, wh
 <!-- The plot design of visual diagnostics depends on the characteristics of the variables to plot. If the searching points are of interest [point geom is not good; need summarise. While updating points are more manageable -> point geom]. However, one must realise that with hundreds or thousands of searching points, exploring the sample space in animation could be slow and this is because of the time it takes to render hundreds point. [stratefy may help? - may need more work here.] -->
 
 ## Explore the value of objective function {#static}
+
+<!-- In tour, all the points recorded in the global object can be roughly divided into two broad categories: searching points and interpolating points -->
+
+<!-- - *Searching points* include the observations recorded in the searching algorithm to find the target basis. The points for target bases is also included in the searching points and there is one such point per `tries`. -->
+
+<!-- - *interpolating points* exist in the guided tour to produce continuous animated view from one target basis to another and it doesn't have `loop` value. -->
+
+
+<!-- In the current implementation of the `tourr` package, while the target basis generated by the projection pursuit can be accessed later via `save_history()`, interpolating bases and those randomly nearby bases generated in the optimisation are not stored. This creates difficulties for fully understand the behaviour of the optimisation and interpolation of tour in complex scenario **[need a rephrase this part].**  -->
 
 ### Searching points
 
