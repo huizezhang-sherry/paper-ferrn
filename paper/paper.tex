@@ -196,6 +196,13 @@ iteration: \(f^{(k+1)}> f^{(k)}\) and despite we lose the guarantee on
 global convergence, this approach turns out to be efficient in practical
 problems.
 
+{[}Are we using projection pursuit/guided tour to better understand the
+convergence of optimization algorithms visually in combination with the
+algorithms discussed below? Or we are focusing on the optimisation
+problem only within the projection pursuit context? Some of the problems
+listed below are also applicable to optimization problem in general too.
+ppp{]}
+
 \newpage
 
 \hypertarget{tour}{%
@@ -274,9 +281,10 @@ Comprehensive R Archive Network at
 \includegraphics[width=1\linewidth,height=0.6\textheight]{/Users/hzha400/Documents/3.PhD/research/paper-tour-vis/figures/tour_path_keynote/tour_path_keynote.001} \caption{\label{tour-path}An illustration of the tour path}\label{fig:tour-path}
 \end{figure}
 
+\newpage
+
 \hypertarget{tour-optim}{%
-\subsection{Optimisation problem and existing
-algorithms}\label{tour-optim}}
+\subsection{Optimisation problem}\label{tour-optim}}
 
 Now we begin to formulate the optimisation problem. Given a randomly
 generated starting basis \(\mathbf{A}_1\), projection pursuit finds the
@@ -293,129 +301,62 @@ s.t. &  \langle \mathbf{a}_i, \mathbf{a}_j \rangle = \delta_{ij}, \forall \mathb
 Where \(\delta_{ij}\) is the kronecker delta that takes 1 if \(i = j\)
 and 0 otherwise.
 
-{[}you wanna give more information about the characteristics of the
-optimisation problem before introducing existing algorithms {]}
+There are several features of this optimisation that are worth noticing.
+First of all, it is a multivariate constraint optimisation problem.
+Since the decision variables are the entries of a projection basis, it
+is required to be orthonormal. It is also likely that the objective
+function is non-differentiable or the gradient information is simply not
+available. In this case, we will need to either use some approximation
+of the gradient or turn to derivative free methods. Given the goal of
+projection pursuit as finding the basis with the largest index value,
+the optimisation problem need to be able to find the global maximum.
+Along the way, locla maximum may also be of our interest since they
+could present unexpected interesting projections. There is also one
+computational consideration: the optimisation procedure needs to be easy
+to compute since the tour animation is played in real-time.
 
-\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+\newpage
 
-If the gradient information was available, the decreasing condition is
+\hypertarget{existing-algorithms}{%
+\subsection{Existing algorithms}\label{existing-algorithms}}
 
-\hypertarget{difficulties}{%
-\subsection{Difficulties}\label{difficulties}}
-
-(feel this section should go after the general introduction of DFO and
-PPGT)
-
-{[}Are we using projection pursuit/guided tour to better understand the
-convergence of optimization algorithms visually in combination with the
-algorithms discussed below? Or we are focusing on the optimisation
-problem only within the projection pursuit context? Some of the problems
-listed below are also applicable to optimization problem in general too.
-ppp{]}
-
-Below are listed several issues in projection pursuit optimisation. Some
-are general optimisation problems, while others are more specific too PP
-optimisation.
-
-\begin{itemize}
-\item
-  \emph{constraint optimisation}: our problem requires the project basis
-  to be orthonormal
-\item
-  \emph{Multivariate optimisation}: In projection pursuit, the decision
-  variable includes all the entries in the projection matrix, which is
-  high-dimensional. Researchers would be better off if they could
-  understand the relative position of different projection matrix in the
-  high-dimensional space. (multivariate optimisation)
-\item
-  \emph{optimising non-smooth function}: When the objective function is
-  non-differentiable, derivative information can not be obtained, which
-  means traditional gradient- or Hessian- based methods are not
-  feasible. Stochastic optimisation method could be an alternative to
-  solve these problems. (derivative information is not available)
-\item
-  \emph{Finding global maximum}: Although finding local maximum is
-  relatively easy with developed algorithms, it is generally hard to
-  guarantee global maximum in a problem where the objective function is
-  complex or the number of decision variables is large. Also, there are
-  discussions on how to avoid getting trapped in a local optimum in the
-  literature. (the exact \(\alpha\) that minimised
-  \(f(x^{(k)}+ \alpha d^{(k)})\) can be hard to find or sometiems even
-  impossible, imposing certain decrease, how every this doesn't
-  guarantee global convergence)
-\end{itemize}
-
-Computational considerations:
-
-\begin{itemize}
-\item
-  \emph{computation speed}: The optimisation procedure needs to be fast
-  to compute since the tour produces real-time animation of the
-  projected data.
-\item
-  \emph{consistency result in stochastic optimisation}: In stochastic
-  algorithm, researchers usually set a seed to ensure the algorithm
-  produces the same result for every run. This practice supports
-  reproducibility, while less efforts has been made to guarantee
-  different seeds will provide the same result.
-\item
-  \emph{role of interpolation in PP optimisation}: An optimisation
-  procedure usually involves iteratively finding projection bases that
-  maximise the index function, while tour requires geodesic
-  interpolation between these bases to produce a continuous view for the
-  users. It would be interesting to see if the interpolated bases could,
-  in reverse, help the optimisation reach faster convergence.
-\end{itemize}
-
-\emph{Think about how does your package help people to understand
-optimisation}
-
-\begin{itemize}
-\tightlist
-\item
-  diagnostic on stochastic optim
-\item
-  vis the progression of multi-parameter decision variable
-\item
-  understanding learning rate - neighbourhood parameter
-\item
-  understand where the local \& global maximum is found - trace plot -
-  see if noisy function
-\end{itemize}
-
-\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
-
-There are three existing algorithms.
+Below we introduce three possible algorithms: \texttt{search\_better}
+and \texttt{search\_better\_random} are derivative free methods that
+sample candidate basis in the neighbourhood whilst
+\texttt{search\_geodesic} approximates the gradient information and acts
+as a non-derivative version of the gradient acsent.
 
 \citet{posse1995projection} proposed a random search algorithm that
 samples a candidate basis \(\mathbf{A}_{l}\) in the neighbourhood of the
 current basis \(\mathbf{A}_{\text{cur}}\) by
 \(\mathbf{A}_{l} = \mathbf{A}_{\text{cur}} + \alpha \mathbf{A}_{rand}\),
 where \(\alpha\) controls the radius of the sampling neighbourhood and
-\(\mathbf{A}_{rand}\) is a randomly generated matrix with the same
-dimension as \(\mathbf{A}_{\text{cur}}\). The optimiser keeps sampling
-bases near the current basis until it finds one with higher index value
-than the current basis and then outputs it for guided tour to construct
-the interpolation path. A new round of search continues to find a better
-basis after the interpolation finishes. The halving parameter \(c\) with
-default value of 30 is designed to adjust the searching neighbourhood
-\(\alpha\). When the search needs to sample more than \(c\) number of
-basis to find an outputted basis, the neighbourhood parameter \(\alpha\)
-will be reduced by half in the next iteration. If the optimiser can't
-find a better basis within the maximum number of tries \(l_{\max}\), the
-algorithm stops. The algorithm is summarised in Algorithm
-\ref{random-search} for one iteration.
+\(\mathbf{A}_{\text{rand}}\) is a randomly generated matrix with the
+same dimension as \(\mathbf{A}_{\text{cur}}\). The optimiser keeps
+sampling bases near the current basis until it finds one with higher
+index value than the current basis and then outputs it for guided tour
+to construct the interpolation path. A new round of search continues to
+find a better basis after the interpolation finishes. The halving
+parameter \(c\) with default value of 30 is designed to adjust the
+searching neighbourhood \(\alpha\). When the search needs to sample more
+than \(c\) number of basis to find an accpeted basis, the neighbourhood
+parameter \(\alpha\) will be reduced by half in the next iteration. If
+the optimiser can't find a better basis within the maximum number of
+tries \(l_{\max}\), the algorithm stops. The algorithm is summarised in
+Algorithm \ref{random-search} for one iteration. {[}mention
+orthonormalise to ensure the constaint is fulfilled; don't use
+derivative information but a random search{]}
 
 \begin{algorithm}
 \SetAlgoLined
   \SetKwInOut{Input}{input}
   \SetKwInOut{Output}{output}
-    \Input{The current projection basis: $\mathbf{A}_{\text{cur}}$; The index function: $f$}
-    \Output{The target basis: $\mathbf{A}_{l}$}
+    \Input{$\mathbf{A}_{\text{cur}}$, $f$, $\alpha$, $l_{\max}$} 
+    \Output{$\mathbf{A}_{l}$}
   initialisation\;
   Set $l = 1$ and $c = 0$\;
   \While{$l < l_{\max}$}{
-    Generate $\mathbf{A}_{l} = \mathbf{A}_{\text{cur}} + \alpha \mathbf{A}_{\text{rand}}$ ensuring $\mathbf{A}_{l}$ is orthonormal\;
+    Generate $\mathbf{A}_{l} = \mathbf{A}_{\text{cur}} + \alpha \mathbf{A}_{\text{rand}}$ and orthonormalise $\mathbf{A}_{l}$\;
     Compute $I_{l}  = f(\mathbf{A}_{l})$\;
     \eIf{$I_{l} > I_{\text{cur}}$}{
       \KwRet{$\mathbf{A}_{l}$} \;
@@ -424,35 +365,73 @@ algorithm stops. The algorithm is summarised in Algorithm
       }
     $l = l + 1$\;
   }
+  We repeat this loop and if $c > 30$, half the $\alpha$. Reset $c$ to zero.
   \caption{random search}
   \label{random-search}
 \end{algorithm}
 
-\citet{cook1995grand} explained the use of a gradient ascent
-optimisation with an assumption that the index function is continuous
-and differentiable. Since some indices could be non-differentiable, the
-derivative is replaced by a pseudo-derivative of evaluating five
-randomly generated directions in a tiny nearby neighbourhood. Once the
-best direction is determined, the optimiser finds the best projection
-\(\mathbf{A}_{**}\) on the geodesic between the current basis
-\(\mathbf{A}_{\text{cur}}\) and the best directional basis
-\(\mathbf{A}_{*}\). If the percentage change in the index value between
-\(\mathbf{A}_{**}\) and \(\mathbf{A}_{\text{cur}}\) is greater than a
-threshold value, \(\mathbf{A}_{**}\) is outputted for the current
-iteration to construct the interpolation or the algorithm repeats the
-above steps until \(l_{\max}\) is reached and the searching terminates.
-Algorithm \ref{search-geodesic} summarise the steps in geodesic search.
+Simulated annealing
+\citep[\citet{kirkpatrick1983optimization}]{bertsimas1993simulated}
+modifies \texttt{search\_better} based on a non-increasing cooling
+scheme \(T(l)\). Given an initial \(T_0\), the temperature at iteration
+\(l\) is defined as \(T(l) = \frac{T_0}{\log(l + 1)}\). When a candidate
+basis fails to have an index value larger than the current basis,
+simulated annealing gives it a second chance to be accepted with
+probabiliby
+\[P= \min\left\{\exp\left[-\frac{I_{cur} - I_{l}}{T(l)}\right],1\right\}\]
+where \(I_{\cdot}\) denotes the index value of a given basis. This
+implementation allows the algorithm to jump out of a local maximum and
+enables a more holistic search of the whole parameter space. This
+feature is particularly useful when the dimension of the projected space
+is smaller than the number of informative variables in the dataset
+(i.e.~a one dimenional projection of the dataset with two informative
+variables). The algorithm can be written as replacing line 5-11 of
+Algorithm \ref{random-search} with Algorithm \ref{simulated_annealing}.
+
+\begin{algorithm}
+\SetAlgoLined
+    Compute $I_{l} = f(\mathbf{A}_{l})$ and $T(l) = \frac{T_0}{\log(l + 1)}$\;
+      \eIf{$I_{l} > I_{\text{cur}}$}{
+        \KwRet{$\mathbf{A}_{l}$} \;
+      }{
+        Compute $P= \min\left\{\exp\left[-\frac{I_{\text{cur}} -I_{l}}{T(l)}\right],1\right\}$\;
+        Draw $U$ from a uniform distribution: $U \sim \text{Unif(0, 1)}$\;
+        \If{$P > U$}{
+           \KwRet{$\mathbf{A}_{l}$} \;
+        }
+      }
+  \caption{simulated annealing}
+  \label{simulated_annealing}
+\end{algorithm}
+
+\citet{cook1995grand} used a gradient ascent algorithm with
+pseudo-derivative. Instead of computing the actual gradient of the index
+function with respect to the projection basis matrix,
+\texttt{search\_geodesic} samples \(2n\) bases that are randomly
+generated on a uniform open ball with the radius controlled by the
+\(\delta\) parameter and finds the most promising one to construct the
+geodesic direction as an approximation to the graident. The \(\delta\)
+parameter is usually set to be tiny to ensure the geogesic direction is
+a good local approximation to the graident. Once the searching direction
+is determined, the optimiser finds the best projection
+\(\mathbf{A}_{**}\) on the geodesic as the candidate.
+\(\mathbf{A}_{**}\) is outputted for the current iteration if the
+percentage change in the index value between \(\mathbf{A}_{**}\) and
+\(\mathbf{A}_{\text{cur}}\) is greater than a threshold value or the
+algorithm repeats the above steps until \(l_{\max}\) is reached and the
+searching terminates. Algorithm \ref{search-geodesic} summarise the
+steps in geodesic search.
 
 \begin{algorithm}
 \SetAlgoLined
 \SetKwInOut{Input}{input}
   \SetKwInOut{Output}{output}
-    \Input{The current projection basis: $\mathbf{A}_{\text{cur}}$; The index function: $f$}
-    \Output{The target basis: $\mathbf{A}_{**}$}
+    \Input{$\mathbf{A}_{\text{cur}}$, $f$, $l_{\max}$, $n$, $\delta$}
+    \Output{$\mathbf{A}_{**}$}
   initialisation\;
   Set $l = 1$\;
   \While{$l < l_{\max}$}{
-    Generate ten bases in five random directions: $\mathbf{A}_{l}: \mathbf{A}_{l+9}$ within a small neighbourhood $\text{dist}$\;
+    Generate $2n$ bases in $n$ random directions: $\mathbf{A}_{l}: \mathbf{A}_{l+9}$ within a small neighbourhood $\delta$\;
     Find the direction with the largest index value: $\mathbf{A}_{*}$ where $l < * < l+ 9$\;
     Construct the geodesic $\mathcal{G}$ from $\mathbf{A}_{\text{cur}}$ to $\mathbf{A}_{*}$\;
     Find $\mathbf{A}_{**}$ on the geodesic $\mathcal{G}$ that has the largest index value \;
@@ -466,52 +445,6 @@ Algorithm \ref{search-geodesic} summarise the steps in geodesic search.
   \label{search-geodesic}
 \end{algorithm}
 
-Simulated annealing
-\citep[\citet{kirkpatrick1983optimization}]{bertsimas1993simulated} is a
-non-derivative procedure based on a non-increasing cooling scheme
-\(T(l)\). Given an initial \(T_0\), the temperature at iteration \(l\)
-is defined as \(T(l) = \frac{T_0}{\log(l + 1)}\). The simulated
-annealing algorithm works as follows. Given a neighbourhood parameter
-\(\alpha\) and a randomly generated orthonormal basis
-\(A_{\text{rand}}\), a candidate basis is sampled by
-\(\mathbf{A}_{t+1} = (1 - \alpha)\mathbf{A}_{t} + \alpha \mathbf{A}_{\text{rand}}\).
-If the index value of the candidate basis is larger than the one of the
-current basis, the candidate basis is outputted. While if it is smaller,
-the candidate has another chance of being accepted with probability
-\(P= \min\left\{\exp\left[\frac{I_{cur} - I_{l}}{T(l)}\right],1\right\}\)
-where \(I_{\cdot}\) denotes the index value of a given basis. The
-algorithm can be summarised as in Algorithm \ref{simulated_annealing}.
-
-\begin{algorithm}
-\SetAlgoLined
-\SetKwInOut{Input}{input}
-  \SetKwInOut{Output}{output}
-    \Input{The current projection basis: $\mathbf{A}_{\text{cur}}$; The index function: $f$; Initial temperature: $T_0$}
-    \Output{The global object; The target basis: $\mathbf{A}_{l}$}
-  initialisation\;
-  Set $l = 1$\;
-  \While{$l < l_{\max}$}{
-    Generate $\mathbf{A}_{l} = (1 - \alpha)\mathbf{A}_{\text{cur}} + \alpha \mathbf{A}_{\text{rand}}$ ensuring $\mathbf{A}_{l}$ is orthonormal \;
-    Compute $I_{l} = f(\mathbf{A}_{l})$ and $T(l) = \frac{T_0}{\log(l + 1)}$\;
-      \eIf{$I_{l} > I_{\text{cur}}$}{
-        \KwRet{$\mathbf{A}_{l}$} \;
-      }{
-        Compute $P= \min\left\{\exp\left[\frac{I_{\text{cur}} -I_{l}}{T(l)}\right],1\right\}$\;
-        Draw $U$ from a uniform distribution: $U \sim \text{Unif(0, 1)}$\;
-        \If{$P > U$}{
-           \KwRet{$\mathbf{A}_{l}$} \;
-        }
-      }
-    $l = l + 1$\;
-  }
-  \caption{simulated annealing}
-  \label{simulated_annealing}
-\end{algorithm}
-
-Notice that the three algorithms above constitute one search. The
-outputted basis is then sent to construct the interpolation and one such
-search-and-interpolate step is one round.
-
 \newpage
 
 \hypertarget{vis-diag}{%
@@ -521,7 +454,7 @@ search-and-interpolate step is one round.
 \subsection{Motivation}\label{motivation}}
 
 We can see from Figure \ref{tour-path} that only the data projected
-using the outputted and interpolated bases are animated by tour; none of
+using the accepted and interpolated bases are animated by tour; none of
 the searching bases sampled by the optimsiation algorithms are presented
 in the tour animation. Although these algorithms have been demonstrated
 to find the global maximum in various literature as we cited above, they
@@ -630,7 +563,7 @@ T^\prime & \mathbf{A}_{T^\prime} & I_{T^\prime} &S_{T^\prime}  & J+1 &  l_{J+1} 
 \text{search} \\
 \text{search} \\
 \vdots \\
-\text{search (outputted basis)} \\
+\text{search (accepted basis)} \\
 \hline
 \text{interpolate} \\
 \text{interpolate} \\
