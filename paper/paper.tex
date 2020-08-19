@@ -148,28 +148,38 @@ projection.
 The remainder of the paper is organised as follows. Section \ref{optim}
 provides the literature review of optimisation methods, specifically the
 line search methods used in projection pursuit guided tour. Section
-\ref{tour} reviews projection pursuit guided tour, form the introduces
-the optimisation problem, and introduces three main existing algorithms.
+\ref{tour} reviews projection pursuit guided tour, forms the
+optimisation problem, and introduces three main existing algorithms.
 Section \ref{vis-diag} presents the new visual diagnostics design, from
-forming the data object to the definition of different diagnostic plots.
-Section \ref{application} shows some examples of how the diagnostic
-plots designed in section \ref{vis-diag} can be applied to understand
-and compare different algorithms and how they contribute to
-modifications that improve the algorithms. Finally, Section
-\ref{implementation} describes the R package: ferrn, that implements all
-the visual diagnostics above.
+forming the data object to the definition of different diagnostic plots
+with some small examples. Section \ref{application} shows the
+applicaiton of how the diagnostic plots designed in section
+\ref{vis-diag} can be used to understand and compare different
+algorithms and how they contribute to modifications that improve the
+algorithms. Finally, Section \ref{implementation} describes the R
+package: ferrn, that implements all the visual diagnostics above.
+
+\newpage
 
 \hypertarget{optim}{%
-\section{Derivative free optimisation}\label{optim}}
+\section{Optimisation Methods}\label{optim}}
 
-In modern optimisation problems, gradient information can be hard to
-evaluate or sometimes even impossible and Derivative-Free Optimisation
-(DFO) methods can be useful to approach these problems. A traditional
-and still reliable in solving complicated practical problems, is
-\emph{line search method} \citep{fletcher2013practical}. In the context
-of a simple one-dimensional problem of finding the \(x\) that minimises
-\(f(x)\), line search achieves the goal via an iterative algorithm in
-the form of Equation \ref{eq:line-search}.
+Given an optimisation problem, two basic approaches find the optimum
+based on different thinking. An analytical approach aims to find the
+optimal solution in a finite number of steps, but a potential issue with
+it is that the close-form solution may not be available when the problem
+starts to become complex. An iterative approach, on the other hand,
+finds the optimum based on the idea of making progressive improvement to
+the current solution. An iterative method may end up finding a local
+optimum but the progressive nature of the algorithm allows the
+practitioner to decide when to stop if a desirable accuracy has been
+achieved.
+
+A traditional while often used in practice is an iteartive method called
+\emph{line search method} \citep{fletcher2013practical}. In a simple
+one-dimensional problem of finding the \(x\) that minimises \(f(x)\),
+line search achieves the goal via an iterative algorithm in the form of
+Equation \ref{eq:line-search}.
 
 \begin{equation}
 x^{(k + 1)} = x^{(k)} + \alpha_k* d^{(k)}

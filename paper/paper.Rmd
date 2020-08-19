@@ -65,10 +65,17 @@ Section \ref{vis-diag} presents the new visual diagnostics design, from forming 
 Section \ref{application} shows the applicaiton of how the diagnostic plots designed in section \ref{vis-diag} can be used to understand and compare different algorithms and how they contribute to modifications that improve the algorithms.
 Finally, Section \ref{implementation} describes the R package: ferrn, that implements all the visual diagnostics above.
 
-# Derivative free optimisation {#optim}
+\newpage
 
-In modern optimisation problems, gradient information can be hard to evaluate or sometimes even impossible and  Derivative-Free Optimisation (DFO) methods can be useful to approach these problems.
-A traditional and still reliable in solving complicated practical problems, is *line search method* [@fletcher2013practical]. In the context of a simple one-dimensional problem of finding the $x$ that minimises $f(x)$, line search achieves the goal via an iterative algorithm in the form of Equation \ref{eq:line-search}.
+# Optimisation Methods {#optim}
+
+Given an optimisation problem, two basic approaches find the optimum based on different thinking.
+An analytical approach aims to find the optimal solution in a finite number of steps, but a potential issue with it is that the close-form solution may not be available when the problem starts to become complex. 
+An iterative approach, on the other hand, finds the optimum based on the idea of making progressive improvement to the current solution. An iterative method may end up finding a local optimum but the progressive nature of the algorithm allows the practitioner to decide when to stop if a desirable accuracy has been achieved.
+
+
+
+A traditional while often used in practice is an iteartive method called *line search method* [@fletcher2013practical]. In a simple one-dimensional problem of finding the $x$ that minimises $f(x)$, line search achieves the goal via an iterative algorithm in the form of Equation \ref{eq:line-search}.
 
 \begin{equation}
 x^{(k + 1)} = x^{(k)} + \alpha_k* d^{(k)}
