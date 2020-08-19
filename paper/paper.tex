@@ -125,49 +125,42 @@ implement this diagnostic system.
 \hypertarget{introduction}{%
 \section{Introduction}\label{introduction}}
 
+Visualisation has been widely used in exploratory data analysis.
+Presenting information in a graphical format often allows people to see
+information they would otherwise not see. This motivates our work of
+creating plots to diagnose optimisation algorithms in the context of
+projection pursuit guided tour, with the aim to understand and compare
+features of different existing algorithms.
+
 In an optimization problem the goal is to find the best solution within
 the space of all feasible solutions which typically is represented by a
 set of constraints. The problem consists in optimizing an objective
-function \(f: S \rightarrow \Re\) with \(S \in \Re^n\) in a reduced
-space given by the problem constraints to either minimize or maximize a
-function\ldots{}. Gradient based optimization has been typically used to
-solve such problems. However, there are many situations where
-derivatives of an objective function are unavailable or unreliable and
-therefore traditional methods based on derivatives are not the best
-option to solve an optimization problem.
+function \(f: S \rightarrow \mathbb{R}\) with \(S \in \mathbb{R}^n\) in
+a reduced space given by the problem constraints to either minimize or
+maximize a function.
 
-Derivative free methods provide another option to optimise the objective
-function without evaluating any gradient or Hessian information and a
-particular class of methods, direct search, has gained popularity
-through its conceptual simplicity. However, the whole searching process
-in the algorithm remains a black-box. Plots are usually used to evaluate
-and compare the performance of different algorithms but it can easily
-become tedious because the code will have to be modified significantly
-when comparing different parameters in the algorithms. For example, a
-categorical variable with 5 levels can be easily mapped onto colour
-while mapping another categorical variable with 30 levels will not make
-the plot informative. Thus the plot needs to be re-designed to better
-suit the characteristics of the parameter (whether the parameter is a
-scalar or a matrix? whether the parameter is quantitative or
-categorical? If categorical, how many levels does the parameter have?).
-This motivates the design of a visual diagnostic framework for
-optimisation algorithms based on the idea of a \emph{global object}.
+Projection pursuit and guided tour are exploratory data analysis tools
+that detect interesting structure of high dimensional data through
+projection on low dimensional space. Optimisation is applied here to
+search for the low dimensional space that finds the most interesting
+projection.
 
-The remainder of the paper is organised as follows. Section \ref{DFO}
-gives a general overview of optimisation methods, specifically
-derivative free optimisation. Section \ref{tour} introduces the
-optimisation problem in a specific context: projection pursuit guided
-tour and existing derivative free algorithms for solving it. Section
-\ref{vis-diag} and \ref{vis-diag-plots} together present the new
-construction of a visual diagnostic framework that unveils the black-box
-of optimisation. Section \ref{vis-diag} focuses on motivational ideas
-and data structure and Section \ref{vis-diag-plots} gives definitions of
-different diagnostic plots using grammar of graphic and examples.
-Finally, Section \ref{implementation} mentions the R package: ferrn that
-implements the visual diagnostics described above.
+The remainder of the paper is organised as follows. Section \ref{optim}
+provides the literature review of optimisation methods, specifically the
+line search methods used in projection pursuit guided tour. Section
+\ref{tour} reviews projection pursuit guided tour, form the introduces
+the optimisation problem, and introduces three main existing algorithms.
+Section \ref{vis-diag} presents the new visual diagnostics design, from
+forming the data object to the definition of different diagnostic plots.
+Section \ref{application} shows some examples of how the diagnostic
+plots designed in section \ref{vis-diag} can be applied to understand
+and compare different algorithms and how they contribute to
+modifications that improve the algorithms. Finally, Section
+\ref{implementation} describes the R package: ferrn, that implements all
+the visual diagnostics above.
 
-\hypertarget{DFO}{%
-\section{Derivative free optimisation}\label{DFO}}
+\hypertarget{optim}{%
+\section{Derivative free optimisation}\label{optim}}
 
 In modern optimisation problems, gradient information can be hard to
 evaluate or sometimes even impossible and Derivative-Free Optimisation
@@ -450,27 +443,8 @@ steps in geodesic search.
 \hypertarget{vis-diag}{%
 \section{Visual diagnostic system}\label{vis-diag}}
 
-\hypertarget{motivation}{%
-\subsection{Motivation}\label{motivation}}
-
-We can see from Figure \ref{tour-path} that only the data projected
-using the accepted and interpolated bases are animated by tour; none of
-the searching bases sampled by the optimsiation algorithms are presented
-in the tour animation. Although these algorithms have been demonstrated
-to find the global maximum in various literature as we cited above, they
-focus solely on finding the global maximum and fewer tools are available
-to explore how each algorithm searches the parameter space and compare
-the results between different algorithms.
-
-Visualisation has been widely used in exploratory data analysis.
-Presenting information in a graphical format often allows people to see
-information they would otherwise not see. This motivates us \textbf{to
-develop a visual framework to diagnose optimisation algorithms in
-projection pursuit with the aim to understand and compare different
-existing algorithms.} This study is meaningful because \textbf{as more
-complex index functions are proposed based on statistical theory, only
-computationally effective optimisation algorithms allow us to find the
-projection basis that presents interesting structure in the data}.
+\hypertarget{global-object}{%
+\subsection{Global object}\label{global-object}}
 
 The idea of generalised framework for diagnostic plots is inspired by
 the concept of grammar of graphic \citep{wickham2010layered}, which
@@ -490,14 +464,6 @@ data into a tidy data format \citep{wickham2014tidy} where 1) each
 observation forms a row; 2) each variable forms a column and 3) each
 type of observational unit forms a table. In a tidy format, data
 wrangling and visualisation are greatly simplified.
-
-Hence the study \textbf{contributes to set up a tidy data structure for
-collecting observations from optimisation algorithms and prescribe a set
-of rules for generalising diagnostic plots for optimisation algorithms,
-specifically those used for projection pursuit.}
-
-\hypertarget{global-object}{%
-\subsection{Global object}\label{global-object}}
 
 Global object is a data construction with key components from
 optimisation algorithms and is designed for making diagnostic plots
@@ -681,7 +647,7 @@ data structure.{]}
 \end{verbatim}
 
 \hypertarget{vis-diag-plots}{%
-\section{Visual diagnostic plots}\label{vis-diag-plots}}
+\subsection{Visual diagnostic plots}\label{vis-diag-plots}}
 
 Below we will present several examples of diagnosing different aspects
 of the projection pursuit optimisation. We will present:
@@ -1209,6 +1175,9 @@ a more exhausive search. The large overlapping of better1 and
 better\_random is explained by the fact that both algorithms finds x2 in
 the end.}
 \end{figure}
+
+\hypertarget{application}{%
+\section{Application}\label{application}}
 
 \hypertarget{implementation}{%
 \section{Implementation: Ferrn package}\label{implementation}}
