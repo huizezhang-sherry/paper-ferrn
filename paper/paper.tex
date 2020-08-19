@@ -182,20 +182,20 @@ line search achieves the goal via an iterative algorithm in the form of
 Equation \ref{eq:line-search}.
 
 \begin{equation}
-x^{(k + 1)} = x^{(k)} + \alpha_k* d^{(k)}
+x^{(j + 1)} = x^{(j)} + \alpha_k* d^{(j)}
 \label{eq:line-search}
 \end{equation}
 
-where \(d^{(k)}\) is the searching direction in iteration \(k\), and
-\(\alpha_k\) is the step-size. Strictly speaking, \(\alpha_k\) is chosen
-by another minimisation of \(f(x^{(k)} + \alpha* d^{(k)})\) with respect
+where \(d^{(j)}\) is the searching direction in iteration \(j\), and
+\(\alpha_j\) is the step-size. Strictly speaking, \(\alpha_k\) is chosen
+by another minimisation of \(f(x^{(j)} + \alpha* d^{(j)})\) with respect
 to \(\alpha\) and theoretical results have demonstrated the global
-convergence of the algorithm when the exact minimisation of \(\alpha_k\)
+convergence of the algorithm when the exact minimisation of \(\alpha_j\)
 is attained \citep{curry1944method}. In practice, this second
 minimisation is rarely implemented due to its computational demanding or
 even the existence of such a minimisation. A more realistic approach is
 to impose a mandatory decrease in the objective function for each
-iteration: \(f^{(k+1)}> f^{(k)}\) and despite we lose the guarantee on
+iteration: \(f^{(j+1)}> f^{(j)}\) and despite we lose the guarantee on
 global convergence, this approach turns out to be efficient in practical
 problems.
 
@@ -212,8 +212,8 @@ ppp{]}
 \section{Projection pursuit guided tour}\label{tour}}
 
 Modern development of the line search methods focuses on proposing
-different computation on the seraching direction: \(d^{(k)}\) and
-various approximations on the step size: \(\alpha_k\) catered for
+different computation on the seraching direction: \(d^{(j)}\) and
+various approximations on the step size: \(\alpha_j\) catered for
 practical optimisation problems. The specific problem context we are
 interested in is called projection pursuit guided tour. Projection
 pursuit and guided tour are two separate methods in exporatory data
@@ -376,13 +376,13 @@ derivative information but a random search{]}
 Simulated annealing
 \citep[\citet{kirkpatrick1983optimization}]{bertsimas1993simulated}
 modifies \texttt{search\_better} based on a non-increasing cooling
-scheme \(T(l)\). Given an initial \(T_0\), the temperature at iteration
-\(l\) is defined as \(T(l) = \frac{T_0}{\log(l + 1)}\). When a candidate
+scheme \(T(j)\). Given an initial \(T_0\), the temperature at iteration
+\(k\) is defined as \(T(j) = \frac{T_0}{\log(j + 1)}\). When a candidate
 basis fails to have an index value larger than the current basis,
 simulated annealing gives it a second chance to be accepted with
 probabiliby
-\[P= \min\left\{\exp\left[-\frac{I_{cur} - I_{l}}{T(l)}\right],1\right\}\]
-where \(I_{\cdot}\) denotes the index value of a given basis. This
+\[P= \min\left\{\exp\left[-\frac{I_{cur} - I_{j}}{T(j)}\right],1\right\}\]
+where \(I_{(\cdot)}\) denotes the index value of a given basis. This
 implementation allows the algorithm to jump out of a local maximum and
 enables a more holistic search of the whole parameter space. This
 feature is particularly useful when the dimension of the projected space
@@ -393,14 +393,14 @@ Algorithm \ref{random-search} with Algorithm \ref{simulated_annealing}.
 
 \begin{algorithm}
 \SetAlgoLined
-    Compute $I_{l} = f(\mathbf{A}_{l})$ and $T(l) = \frac{T_0}{\log(l + 1)}$\;
-      \eIf{$I_{l} > I_{\text{cur}}$}{
-        \KwRet{$\mathbf{A}_{l}$} \;
+    Compute $I_{j} = f(\mathbf{A}_{j})$ and $T(k) = \frac{T_0}{\log(j + 1)}$\;
+      \eIf{$I_{j} > I_{\text{cur}}$}{
+        \KwRet{$\mathbf{A}_{j}$} \;
       }{
-        Compute $P= \min\left\{\exp\left[-\frac{I_{\text{cur}} -I_{l}}{T(l)}\right],1\right\}$\;
+        Compute $P= \min\left\{\exp\left[-\frac{I_{\text{cur}} -I_{j}}{T(j)}\right],1\right\}$\;
         Draw $U$ from a uniform distribution: $U \sim \text{Unif(0, 1)}$\;
         \If{$P > U$}{
-           \KwRet{$\mathbf{A}_{l}$} \;
+           \KwRet{$\mathbf{A}_{j}$} \;
         }
       }
   \caption{simulated annealing}
@@ -429,20 +429,20 @@ steps in geodesic search.
 \SetAlgoLined
 \SetKwInOut{Input}{input}
   \SetKwInOut{Output}{output}
-    \Input{$\mathbf{A}_{\text{cur}}$, $f$, $l_{\max}$, $n$, $\delta$}
+    \Input{$\mathbf{A}_{\text{cur}}$, $f$, $j_{\max}$, $n$, $\delta$}
     \Output{$\mathbf{A}_{**}$}
   initialisation\;
-  Set $l = 1$\;
-  \While{$l < l_{\max}$}{
-    Generate $2n$ bases in $n$ random directions: $\mathbf{A}_{l}: \mathbf{A}_{l+9}$ within a small neighbourhood $\delta$\;
-    Find the direction with the largest index value: $\mathbf{A}_{*}$ where $l < * < l+ 9$\;
+  Set $j = 1$\;
+  \While{$j < j_{\max}$}{
+    Generate $2n$ bases in $n$ random directions: $\mathbf{A}_{j}: \mathbf{A}_{j+9}$ within a small neighbourhood $\delta$\;
+    Find the direction with the largest index value: $\mathbf{A}_{*}$ where $j < * < j+ 9$\;
     Construct the geodesic $\mathcal{G}$ from $\mathbf{A}_{\text{cur}}$ to $\mathbf{A}_{*}$\;
     Find $\mathbf{A}_{**}$ on the geodesic $\mathcal{G}$ that has the largest index value \;
     Compute $I_{**} = f(\mathbf{A}_{**})$, $p_{\text{diff}} = (I_{**} - I_{\text{cur}})/I_{**}$\;
       \If{$p_{\text{diff}} > 0.001$}{
          \KwRet{$\mathbf{A}_{**}$} \;
       }
-    $l = l + 1$\;
+    $j = j + 1$\;
   }
   \caption{search geodesic}
   \label{search-geodesic}

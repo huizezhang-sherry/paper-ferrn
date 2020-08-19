@@ -76,11 +76,11 @@ An iterative approach, on the other hand, finds the optimum based on the idea of
 A traditional while often used in practice is an iteartive method called *line search method* [@fletcher2013practical]. In a simple one-dimensional problem of finding the $x$ that minimises $f(x)$, line search achieves the goal via an iterative algorithm in the form of Equation \ref{eq:line-search}.
 
 \begin{equation}
-x^{(k + 1)} = x^{(k)} + \alpha_k* d^{(k)}
+x^{(j + 1)} = x^{(j)} + \alpha_k* d^{(j)}
 \label{eq:line-search}
 \end{equation}
 
-where $d^{(k)}$ is the searching direction in iteration $k$, and $\alpha_k$ is the step-size. Strictly speaking, $\alpha_k$ is chosen by another minimisation of $f(x^{(k)} + \alpha* d^{(k)})$ with respect to $\alpha$ and theoretical results have demonstrated the global convergence of the algorithm when the exact minimisation of $\alpha_k$ is attained [@curry1944method]. In practice, this second minimisation is rarely implemented due to its computational demanding or even the existence of such a minimisation. A more realistic approach is to impose a mandatory decrease in the objective function for each iteration: $f^{(k+1)}> f^{(k)}$ and despite we lose the guarantee on global convergence, this approach turns out to be efficient in practical problems. 
+where $d^{(j)}$ is the searching direction in iteration $j$, and $\alpha_j$ is the step-size. Strictly speaking, $\alpha_k$ is chosen by another minimisation of $f(x^{(j)} + \alpha* d^{(j)})$ with respect to $\alpha$ and theoretical results have demonstrated the global convergence of the algorithm when the exact minimisation of $\alpha_j$ is attained [@curry1944method]. In practice, this second minimisation is rarely implemented due to its computational demanding or even the existence of such a minimisation. A more realistic approach is to impose a mandatory decrease in the objective function for each iteration: $f^{(j+1)}> f^{(j)}$ and despite we lose the guarantee on global convergence, this approach turns out to be efficient in practical problems. 
 
 [Are we using  projection pursuit/guided tour to better understand the convergence of optimization algorithms visually in combination with the algorithms discussed below? Or we are focusing on the optimisation problem only within the projection pursuit context? Some of the problems listed below are also applicable to optimization problem in general too. ppp] 
 
@@ -90,7 +90,7 @@ where $d^{(k)}$ is the searching direction in iteration $k$, and $\alpha_k$ is t
 
 # Projection pursuit guided tour {#tour}
 
-Modern development of the line search methods focuses on proposing different computation on the seraching direction: $d^{(k)}$ and various approximations on the step size: $\alpha_k$ catered for practical optimisation problems. The specific problem context we are interested in is called projection pursuit guided tour. 
+Modern development of the line search methods focuses on proposing different computation on the seraching direction: $d^{(j)}$ and various approximations on the step size: $\alpha_j$ catered for practical optimisation problems. The specific problem context we are interested in is called projection pursuit guided tour. 
 Projection pursuit and guided tour are two separate methods in exporatory data analysis focusing on different aspects: coined by @friedman1974projection, projection pursuit detects interesting structures (i.e. clustering, outliers and skewness) in multivariate data via low dimensions projection; whilst guided tour is a particular variation in a broader class of data visualisation method called tour.
 
 Let $\mathbf{X}_{n \times p}$ be the data matrix, an n-d projection can be seen as a linear transformation $T: \mathbb{R}^p \mapsto \mathbb{R}^d$ defined by $\mathbf{P} = \mathbf{X} \cdot \mathbf{A}$, where $\mathbf{P}_{n \times d}$ is the projected data and $\mathbf{A}_{p\times d}$ is the projection basis. Define $f: \mathbb{R}^{p \times d} \mapsto \mathbb{R}$ to be an index function that maps the projection basis $\mathbf{A}$ onto an index value $I$, this function is commonly known as the projection pursuit index (PPI) function, or the index function and is used to measure the "interestingness" of a projection. A number of index functions have been proposed in the literature to detect different data structures, including Legendre index [@friedman1974projection], Hermite index [@hall1989polynomial], natural Hermite index [@cook1993projection], chi-square index [@posse1995projection], LDA index [@lee2005projection] and PDA index [@lee2010projection]. 
@@ -213,18 +213,18 @@ Below we introduce three possible algorithms: `search_better` and `search_better
   \label{random-search}
 \end{algorithm}
 
-Simulated annealing [@bertsimas1993simulated, @kirkpatrick1983optimization] modifies `search_better` based on a non-increasing cooling scheme $T(l)$. Given an initial $T_0$, the temperature at iteration $l$ is defined as $T(l) = \frac{T_0}{\log(l + 1)}$. When a candidate basis fails to have an index value larger than the current basis, simulated annealing gives it a second chance to be accepted with probabiliby $$P= \min\left\{\exp\left[-\frac{I_{cur} - I_{l}}{T(l)}\right],1\right\}$$ where $I_{\cdot}$ denotes the index value of a given basis. This implementation allows the algorithm to jump out of a local maximum and enables a more holistic search of the whole parameter space. This feature is particularly useful when the dimension of the projected space is smaller than the number of informative variables in the dataset (i.e. a one dimenional projection of the dataset with two informative variables). The algorithm can be written as replacing line 5-11 of Algorithm \ref{random-search} with Algorithm \ref{simulated_annealing}.
+Simulated annealing [@bertsimas1993simulated, @kirkpatrick1983optimization] modifies `search_better` based on a non-increasing cooling scheme $T(j)$. Given an initial $T_0$, the temperature at iteration $k$ is defined as $T(j) = \frac{T_0}{\log(j + 1)}$. When a candidate basis fails to have an index value larger than the current basis, simulated annealing gives it a second chance to be accepted with probabiliby $$P= \min\left\{\exp\left[-\frac{I_{cur} - I_{j}}{T(j)}\right],1\right\}$$ where $I_{(\cdot)}$ denotes the index value of a given basis. This implementation allows the algorithm to jump out of a local maximum and enables a more holistic search of the whole parameter space. This feature is particularly useful when the dimension of the projected space is smaller than the number of informative variables in the dataset (i.e. a one dimenional projection of the dataset with two informative variables). The algorithm can be written as replacing line 5-11 of Algorithm \ref{random-search} with Algorithm \ref{simulated_annealing}.
 
 \begin{algorithm}
 \SetAlgoLined
-    Compute $I_{l} = f(\mathbf{A}_{l})$ and $T(l) = \frac{T_0}{\log(l + 1)}$\;
-      \eIf{$I_{l} > I_{\text{cur}}$}{
-        \KwRet{$\mathbf{A}_{l}$} \;
+    Compute $I_{j} = f(\mathbf{A}_{j})$ and $T(k) = \frac{T_0}{\log(j + 1)}$\;
+      \eIf{$I_{j} > I_{\text{cur}}$}{
+        \KwRet{$\mathbf{A}_{j}$} \;
       }{
-        Compute $P= \min\left\{\exp\left[-\frac{I_{\text{cur}} -I_{l}}{T(l)}\right],1\right\}$\;
+        Compute $P= \min\left\{\exp\left[-\frac{I_{\text{cur}} -I_{j}}{T(j)}\right],1\right\}$\;
         Draw $U$ from a uniform distribution: $U \sim \text{Unif(0, 1)}$\;
         \If{$P > U$}{
-           \KwRet{$\mathbf{A}_{l}$} \;
+           \KwRet{$\mathbf{A}_{j}$} \;
         }
       }
   \caption{simulated annealing}
@@ -239,20 +239,20 @@ Simulated annealing [@bertsimas1993simulated, @kirkpatrick1983optimization] modi
 \SetAlgoLined
 \SetKwInOut{Input}{input}
   \SetKwInOut{Output}{output}
-    \Input{$\mathbf{A}_{\text{cur}}$, $f$, $l_{\max}$, $n$, $\delta$}
+    \Input{$\mathbf{A}_{\text{cur}}$, $f$, $j_{\max}$, $n$, $\delta$}
     \Output{$\mathbf{A}_{**}$}
   initialisation\;
-  Set $l = 1$\;
-  \While{$l < l_{\max}$}{
-    Generate $2n$ bases in $n$ random directions: $\mathbf{A}_{l}: \mathbf{A}_{l+9}$ within a small neighbourhood $\delta$\;
-    Find the direction with the largest index value: $\mathbf{A}_{*}$ where $l < * < l+ 9$\;
+  Set $j = 1$\;
+  \While{$j < j_{\max}$}{
+    Generate $2n$ bases in $n$ random directions: $\mathbf{A}_{j}: \mathbf{A}_{j+9}$ within a small neighbourhood $\delta$\;
+    Find the direction with the largest index value: $\mathbf{A}_{*}$ where $j < * < j+ 9$\;
     Construct the geodesic $\mathcal{G}$ from $\mathbf{A}_{\text{cur}}$ to $\mathbf{A}_{*}$\;
     Find $\mathbf{A}_{**}$ on the geodesic $\mathcal{G}$ that has the largest index value \;
     Compute $I_{**} = f(\mathbf{A}_{**})$, $p_{\text{diff}} = (I_{**} - I_{\text{cur}})/I_{**}$\;
       \If{$p_{\text{diff}} > 0.001$}{
          \KwRet{$\mathbf{A}_{**}$} \;
       }
-    $l = l + 1$\;
+    $j = j + 1$\;
   }
   \caption{search geodesic}
   \label{search-geodesic}
