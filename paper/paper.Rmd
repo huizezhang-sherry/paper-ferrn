@@ -147,15 +147,15 @@ knitr::include_graphics(path = here::here("figures/tour_path_keynote/tour_path_k
 ## Optimisation problem  {#tour-optim}
 
 
-Now we begin to formulate the optimisation problem. Given a randomly generated starting basis $\mathbf{A}_1$, projection pursuit finds the final projection basis $\mathbf{A}_T = [\mathbf{a}_1, \cdots, \mathbf{a}_d]$, where $\mathbf{a}_i \in \mathbb{R}^{p}$, satisfies the following optimisation problem: 
+Now we begin to formulate the optimisation problem. Given a randomly generated starting basis $\mathbf{A}_1$, projection pursuit finds the final projection basis $\mathbf{A}_T$ that satisfies the following optimisation problem: 
 
 
 \begin{align}
 &\arg \max_{\mathbf{A} \in \mathcal{A}} f(\mathbf{X} \cdot \mathbf{A}) \\
-s.t. &  \langle \mathbf{a}_i, \mathbf{a}_j \rangle = \delta_{ij}, \forall \mathbf{a}_i, \mathbf{a}_j \in \mathbf{A}
+&s.t.  \mathbf{A}^{\prime} \mathbf{A} = I_d
 \end{align}
 
-Where $\delta_{ij}$ is the kronecker delta that takes 1 if $i = j$ and 0 otherwise.
+where $I_d$ is the d-dimentional identity matrix. The constraint requires the projection basis $\mathbf{A}$ to be a orthonogal matrix with each column vector being orthornormal.
 
 There are several features of this optimisation that are worth noticing. First of all, it is a multivariate constraint optimisation problem. Since the decision variables are the entries of a projection basis, it is required to be orthonormal. It is also likely that the objective function is non-differentiable or the gradient information is simply not available. In this case, we will need to either use some approximation of the gradient or turn to derivative free methods. Given the goal of projection pursuit as finding the basis with the largest index value, the optimisation problem need to be able to find the global maximum. Along the way, locla maximum may also be of our interest since they could present unexpected interesting projections. There is also one computational consideration: the optimisation procedure needs to be easy to compute since the tour animation is played in real-time. 
 
