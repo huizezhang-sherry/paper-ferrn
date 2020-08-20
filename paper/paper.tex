@@ -452,8 +452,8 @@ steps in geodesic search.
 \hypertarget{vis-diag}{%
 \section{Visual diagnostics}\label{vis-diag}}
 
-\hypertarget{global-object}{%
-\subsection{Global object}\label{global-object}}
+\hypertarget{data-structure}{%
+\subsection{Data structure}\label{data-structure}}
 
 The idea of generalised framework for diagnostic plots is inspired by
 the concept of grammar of graphic \citep{wickham2010layered}, which
@@ -593,12 +593,12 @@ remove it if it's not useful :({]}
 
 \newpage
 
-\hypertarget{plot-definition}{%
-\subsection{Plot definition}\label{plot-definition}}
+\hypertarget{plot-constructions}{%
+\subsection{Plot constructions}\label{plot-constructions}}
 
-\hypertarget{explore-searching-points}{%
-\subsubsection{Explore searching
-points}\label{explore-searching-points}}
+\hypertarget{how-hard-is-the-optimiser-working}{%
+\subsubsection{How hard is the optimiser
+working}\label{how-hard-is-the-optimiser-working}}
 
 A primary interest of diagnosing an optimisation algorithm is to study
 how it progressively finds its optimum. One way of doing it is to plot
@@ -695,17 +695,17 @@ small number of observations.
 \includegraphics{paper_files/figure-latex/toy-search-1.pdf}
 \caption{\label{toy-search}A comparison of plotting the same search
 points with different plot designs. In upper plot, points from the last
-three iteration spans the vast majority of the plotting space leaving
-the first few iterationsbeing squeezed together whilst the lower plot
-spaces each iteration evenly and present summary information easy to
+three iterations span the vast majority of the plotting space leaving
+the first few iterations being squeezed together whilst the lower plot
+spaces each iteration evenly and presents summary information easy to
 read.}
 \end{figure}
 
 \newpage
 
-\hypertarget{explore-interpolating-points}{%
-\subsubsection{Explore interpolating
-points}\label{explore-interpolating-points}}
+\hypertarget{examining-the-interpolation}{%
+\subsubsection{Examining the
+interpolation}\label{examining-the-interpolation}}
 
 Sometimes, we may be interested in exploring the points on the
 interpolation path since these are the points that will be played by the
@@ -749,9 +749,9 @@ interpolated points}
 
 \newpage
 
-\hypertarget{explore-the-searching-space}{%
-\subsubsection{Explore the searching
-space}\label{explore-the-searching-space}}
+\hypertarget{understanding-the-optimisers-coverage-of-the-search-space}{%
+\subsubsection{Understanding the optimiser's coverage of the search
+space}\label{understanding-the-optimisers-coverage-of-the-search-space}}
 
 In projection pursuit, the projection bases \(\mathbf{A}_{p \times d}\)
 are of dimension \(p \times d\) with \(p\) usually greater than two and
@@ -797,7 +797,10 @@ allows for better understanding of each stage in the geodesic search}
 \newpage
 
 \hypertarget{application}{%
-\section{Application}\label{application}}
+\section{Diagnosing an optimiser}\label{application}}
+
+{[}a paragraph that motivate the section: these optimisers are suspect
+to have problem, here is how we use the diag plot to diagnose them. {]}
 
 Below we will present several examples of diagnosing different aspects
 of the projection pursuit optimisation. We will present more examples
@@ -830,6 +833,9 @@ diagnostics is to understand:
 
 (mention optim difficulties and split the simulated data section into
 the examples!!!)
+
+\hypertarget{simulation-setup}{%
+\subsection{Simulation setup}\label{simulation-setup}}
 
 We simulate some random variables of size 1000 with different
 structures. \texttt{x1}, \texttt{x8}, \texttt{x9} and \texttt{x10} are
