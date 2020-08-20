@@ -707,12 +707,9 @@ read.}
 \subsubsection{Explore interpolating
 points}\label{explore-interpolating-points}}
 
-Sometimes, rather than exploring the searching points, we may be
-interested in exploring the points on the interpolation path (target and
-interpolating points) since these points will be played by the tour
-animation. Since interpolation paths are geodesically the shortest, a
-summarisation using boxplot geometry is no longer needed. The slightly
-modified plot definition is shown below:
+Sometimes, we may be interested in exploring the points on the
+interpolation path since these are the points that will be played by the
+tour animation. The plot definition is as follows:
 
 \begin{itemize}
 \tightlist
@@ -739,7 +736,9 @@ modified plot definition is shown below:
   \end{itemize}
 \end{itemize}
 
-\emph{Toy example} A toy example is shown in Figure \ref{toy-interp}.
+Figure \ref{toy-interp} shows the plot of interpolating points and it
+shows the algorithm starts from around 0.8 and with interpolation,
+gradually reaches over 0.95.
 
 \begin{figure}
 \centering
@@ -755,10 +754,11 @@ interpolated points}
 space}\label{explore-the-searching-space}}
 
 In projection pursuit, the projection bases \(\mathbf{A}_{p \times d}\)
-are usually of dimension \(p \times d\) and hence can't be visualised in
-a 2D plot. An option to explore the searching space of these bases is to
-explore a reduced space via principal component analysis (PCA). The
-visualisation can thus be defined as
+are of dimension \(p \times d\) with \(p\) usually greater than two and
+hence can't be visualised in a 2D plot. An option to explore the
+searching space of these bases is to explore a reduced space via
+principal component analysis (PCA). The visualisation can thus be
+defined as
 
 \begin{itemize}
 \tightlist
@@ -781,17 +781,11 @@ visualisation can thus be defined as
   \end{itemize}
 \end{itemize}
 
-\emph{A toy example: understand different stage of search\_geodesic}
-\texttt{search\_geodesic} is a two-stage ascending algorithm with four
-different stages in the search and a PCA plot useful to understand how
-the algorithm progresses and the relative position of each basis in the
-PCA projected 2D space. Starting from the start basis, a directional
+Figure 5 shows the searching space plot of a geodesic search, colored by
+different searching stages. Starting from the start basis, a directional
 search is conducted in a narrow neighbourhood on five random directions.
-The best one is picked and a line search is then run on the geodesic
-direction to find the target basis. The starting and target bases are
-then interpolated. In the next iteration, the target basis becomes the
-current basis and then the procedures continues. A toy example is shown
-in Figure \ref{toy-pca}.
+The best one is picked and an exact search finds the stepsize that
+maximises the index value and output the corresponding projection basis.
 
 \begin{figure}
 \centering
