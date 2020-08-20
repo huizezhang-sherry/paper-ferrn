@@ -261,28 +261,23 @@ Simulated annealing [@bertsimas1993simulated, @kirkpatrick1983optimization] modi
 
 \newpage 
 
-# Visual diagnostics{#vis-diag}
+# Visual diagnostics {#vis-diag}
+
+To be able to make diagnostic plot, the optimisation algorithm should populate a data structure that contains the key elements of the algorithm. When the algorithm runs, key information regarding the decision variable, objective function and hyper-parameters needs to be recorded and stored as a data object for future analysis.
 
 ## Data structure
-
-The idea of generalised framework for diagnostic plots is inspired by the concept of grammar of graphic [@wickham2010layered], which powers the primary graphical system in R, ggplot2 [@ggplot2]. In grammar of graphic, plots are not defined by its appearance (i.e. boxplot, histogram, scatter plot etc) but by "stacked layers". Using this design, ggplot does not have to develop a gazillion of functions that each produces a different type of plot from a different data structure. Instead, it aesthetically maps variables (and its statistical transformation) in a dataset to different geometric objects (points, lines, box-and-whisker etc) and builds the plot through overlaying different layers. 
-
-There are different ways to represent the same data in rectangular form. Certain cleaning steps are needed, before using ggplot2, to bring the data into a tidy data format [@wickham2014tidy] where 1) each observation forms a row; 2) each variable forms a column and 3) each type of observational unit forms a table. In a tidy format, data wrangling and visualisation are greatly simplified.
-
 
 <!-- [Do I need this paragraph to details the grammar of graphic? xxx - don't think so; not particularly relevant - assume most people know it roughly] -->
 <!-- A layer includes 1) the data that powers the plot; 2) a geometric object that represents the visual shape of the data and 3) relevant statistical transformation that transform the information in the data to the information used to draw the geometric object. An important concept in the grammar of graphic is *aesthetic mapping*. Aesthetic mapping links the variable in a dataset to information needed to produce a geometric object. For example, we map one variable on the x-axis and another on the y-axis to create a scatterplot. Another example of creating a boxplot involves 1) mapping one variable on the x-axis and 2) transforming another variable to its five-point-summary and mapping the five-point-summary to the y-axis.  -->
 
-Global object is a data construction with key components from optimisation algorithms and is designed for making diagnostic plots easier. In the optimisation algorithms for projection pursuit, three key elements are 1) projection bases: $\mathbf{A}$, 2) index values: $I$ and 3) State: $S$, which labels the observation with detailed stage of searching or interpolation.
+In the optimisation algorithms for projection pursuit, three main elements to record are 1) projection bases: $\mathbf{A}$, 2) index values: $I$, and 3) State: $S$, which labels the observation with detailed stage in the optimisation. Multiple iterators are also  needed to index the data collected at different levels. $t$ is a unique identifier that prescribes the natural ordering of each observation; $j$ is the counter for each search-and-interpolate round, which remains the same within one round and has an increment of one once a new round starts. $l$ is the counter for each search/interpolation allowing us to know how many basis the algorithm has searched before finding one to output. There are other parameters that are of our interest and we denote them as *$V_{p}$*. In projection pursuit, this includes $V_1 = \text{method}$, which tags the name of the algorithm used and $V_2 = \text{alpha}$, the neighbourhood parameter that controls the size in sampling candidate bases.  A matrix notation of the data structure is presented in Equation \ref{eq:data-structure}.
 
-Multiple iterators are needed to index the data collected at different levels. $t$ is a unique identifier that prescribes the natural ordering of each observation; $j$ is the counter for each search-and-interpolate round, which remains the same within one round and has an increment of one once a new round starts. $l$ is the counter for each search/interpolation allowing us to know how many basis the algorithm has searched before finding one to output. 
 
 <!-- # ```{r iterators, out.width = "100%", out.height = "25%", fig.cap = "\\label{iterators} A sketch of the design of iterators in iterative algorithms."} -->
 <!-- # knitr::include_graphics(here::here("figures", "iterators.png")) -->
 <!-- # ``` -->
 
 
-There are other parameters that are of our interest and we denote them as *$V_{p}$*. In projection pursuit, this includes $V_1 = \text{method}$, which tags the name of the algorithm used and $V_2 = \text{alpha}$, the neighbourhood parameter that controls the size in sampling candidate bases. The data structure can thus be shown as in Equation \ref{eq:data-structure}.
 
 \begin{equation}
 \left[
@@ -356,19 +351,24 @@ where $T^{\prime} = T + k_{J}+ l_{J+1}$. Note that we deliberately denote the la
 [outside the paper: I find the notation of current/target basis is confusing because the target basis in round $j$ becomes the current basis in round $j+1$. Also, when we start to have polish, the target basis may not be the current basis in the next round... The place where current/target is most appropriate is probably when describing the interpolation where the first one is always the current basis and the last is always the target basis. I think it is better to leave this language in the code]
 
 
-A sketch of the global object for projection pursuit guided tour is presented in Figure \ref{fig:glb-obj}. 
-
-[I feel this sketch was initially useful but now since we have the data matrix and the printed output of the global object, it doesn't any additional information. I'm still keeping it here but we may need to remove it if it's not useful :(]
-
-```{r glb-obj, out.width= "100%", out.height="20%", fig.cap="\\label{glb-obj}The global object in projection pursuit guided tour."}
+```{r glb-obj, out.width= "100%", out.height="20%", fig.cap="\\label{glb-obj}The data structure in projection pursuit guided tour."}
 knitr::include_graphics(path = here::here("figures/global_obj.png"))
 ```
+
+It is worth-noticing that the data structure constructed above meets the tidy data principal [@wickham2014tidy] that states
+
+1) each observation forms a row, 
+2) each variable forms a column, and 
+3) each type of observational unit forms a table
+
+The wrangling and visualisation of tidy data have been greatly simplified by the well-known dplyr[@dplyr] and ggplot2[@ggplot2] package.
 
 \newpage
 
 ## Plot constructions
 
-<!-- Since the global object is already tidy, not further tidying steps is needed, while certain data wrangling steps [@wickham2016rfordatascience] are still needed to transform the global object into  desirable format for one particular visualisation. To emphasize on this good practice of data analysis, we will describe the transformation steps needed for each diagnostic plots before stepping into visualisation. -->
+
+The idea of generalised framework for diagnostic plots is inspired by the concept of grammar of graphic [@wickham2010layered], which powers the primary graphical system in R, ggplot2 [@ggplot2]. In grammar of graphic, plots are not defined by its appearance (i.e. boxplot, histogram, scatter plot etc) but by "stacked layers". Using this design, ggplot does not have to develop a gazillion of functions that each produces a different type of plot from a different data structure. Instead, it aesthetically maps variables (and its statistical transformation) in a dataset to different geometric objects (points, lines, box-and-whisker etc) and builds the plot through overlaying different layers. 
 
 <!-- The plot design of visual diagnostics depends on the characteristics of the variables to plot. If the searching points are of interest [point geom is not good; need summarise. While updating points are more manageable -> point geom]. However, one must realise that with hundreds or thousands of searching points, exploring the sample space in animation could be slow and this is because of the time it takes to render hundreds point. [stratefy may help? - may need more work here.] -->
 
@@ -503,6 +503,8 @@ holes_1d_geo %>% explore_proj_pca(col = info)
 
 # Diagnosing an optimiser {#application}
 
+
+
 [a paragraph that motivate the section: these optimisers are suspect to have problem, here is how we use the diag plot to diagnose them. ]
 
 Below we will present several examples of diagnosing different aspects of the projection pursuit optimisation. We will present more examples that can help us to understand the algorithm and parameter choice: 
@@ -553,7 +555,7 @@ origin_dt_bi %>%
   facet_wrap(vars(names), ncol = 3)
 ```
 
-We form our first dataset using variables `x1`, `x2`, `x8`, `x9` and `x10`,  run the guided tour with optimiser `search_better` and below shows the first ten rows of the global object.
+We form our first dataset using variables `x1`, `x2`, `x8`, `x9` and `x10`,  run the guided tour with optimiser `search_better` and below shows the first ten rows of the data object.
 
 [I notice that in the implementation the loop index for interpolation starts from 0 rather than 1. Need more investigation to see if it is easy to change it to 1 or we will have to change the definition of the data structure.]
 
@@ -646,7 +648,7 @@ holes_2d_geo_polish <- animate_xy(data_mult[,c(1,2, 7:10)], tour_path =
 A slight variation of the plot definition due to the addition of polishing points is as follows:
 
 - Layer 1: point geom
-  - data: filter the observations with  $S = \text{interpolation}$; bind the global object from optimisation and interpolation and form polishing; mutate $t$ to be the row number of the binded tibble.
+  - data: filter the observations with  $S = \text{interpolation}$; bind the data object from optimisation and interpolation and form polishing; mutate $t$ to be the row number of the binded tibble.
   - x: $t$ is mapped to the x-axis
   - y: $I$ is mapped to the y-axis 
   - colour: $V$ is mapped to the colour aesthetic
@@ -821,7 +823,7 @@ bind_rows(interp1, interp2, interp3) %>%
 Everything is coded up in a package. Package structure
 
 
-When the optimisation ends, the global object will be stored and printed (it can be turned off by supplying argument `print = FALSE`). Additional messages during the optimisation can be displayed by argument `verbose = TRUE`.  Notice that the tibble object allows the list-column `basis` to be printed out nicely with the dimension of the projection basis readily available.
+When the optimisation ends, the data object will be stored and printed (it can be turned off by supplying argument `print = FALSE`). Additional messages during the optimisation can be displayed by argument `verbose = TRUE`.  Notice that the tibble object allows the list-column `basis` to be printed out nicely with the dimension of the projection basis readily available.
 
 
 
