@@ -588,16 +588,16 @@ ggplot2\citep{ggplot2} package.
 \hypertarget{plot-constructions}{%
 \subsection{Plot constructions}\label{plot-constructions}}
 
-The idea of generalised framework for diagnostic plots is inspired by
-the concept of grammar of graphic \citep{wickham2010layered}, which
-powers the primary graphical system in R, ggplot2 \citep{ggplot2}. In
-grammar of graphic, plots are not defined by its appearance
-(i.e.~boxplot, histogram, scatter plot etc) but by ``stacked layers''.
-Using this design, ggplot does not have to develop a gazillion of
-functions that each produces a different type of plot from a different
-data structure. Instead, it aesthetically maps variables (and its
-statistical transformation) in a dataset to different geometric objects
-(points, lines, box-and-whisker etc) and builds the plot through
+With a constructed data object, the construction of diagnostic plots is
+inspired by the concept of grammar of graphic
+\citep{wickham2010layered}, which powers the primary graphical system in
+R, ggplot2 \citep{ggplot2}. In grammar of graphic, plots are not defined
+by its appearance (i.e.~boxplot, histogram, scatter plot etc) but by
+``stacked layers''. Using this design, ggplot does not have to develop a
+gazillion of functions that each produces a different type of plot from
+a different data structure. Instead, it aesthetically maps variables
+(and its statistical transformation) in a dataset to different geometric
+objects (points, lines, box-and-whisker etc) and builds the plot through
 overlaying different layers.
 
 \hypertarget{how-hard-is-the-optimiser-working}{%
@@ -740,9 +740,23 @@ tour animation. The plot definition is as follows:
   \end{itemize}
 \end{itemize}
 
-Figure \ref{toy-interp} shows the plot of interpolating points and it
-shows the algorithm starts from around 0.8 and with interpolation,
-gradually reaches over 0.95.
+Figure \ref{toy-interp} presents the interpolation of three different
+tour paths. The upper plot shows a desirable interpolating in each
+iteration with the index value being progressively and monotonically
+increasing. While in the middle plot, the increases towards the target
+basis is not monotonical in the last two iterations and interpolated
+basis with higher index value can be found on the tour path. The lower
+plot is constructed using \texttt{search\_better\_random}, where a basis
+with smaller index value has a probabilistic chance of being accepted
+and we can observe a much more involved pattern. In iteration three, the
+probablistic acceptance produces a monotonically decreasing
+interpolation whilst in iteration five, six and seven, with also a
+probablistic acceptance, the interpolation is now non-monotical. When
+the target basis has a higher index value, iteration eight reaches this
+basis by first decreases the index value. While the interpolation plot
+shows different possibilities of the change in index value on the tour
+path, the diagnose of the validity of each pattern and the related
+optimisation algorithms will be postponed to Section \ref{application}.
 
 \begin{figure}
 \centering

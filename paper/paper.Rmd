@@ -368,7 +368,7 @@ The wrangling and visualisation of tidy data have been greatly simplified by the
 ## Plot constructions
 
 
-The idea of generalised framework for diagnostic plots is inspired by the concept of grammar of graphic [@wickham2010layered], which powers the primary graphical system in R, ggplot2 [@ggplot2]. In grammar of graphic, plots are not defined by its appearance (i.e. boxplot, histogram, scatter plot etc) but by "stacked layers". Using this design, ggplot does not have to develop a gazillion of functions that each produces a different type of plot from a different data structure. Instead, it aesthetically maps variables (and its statistical transformation) in a dataset to different geometric objects (points, lines, box-and-whisker etc) and builds the plot through overlaying different layers. 
+With a constructed data object, the construction of diagnostic plots is inspired by the concept of grammar of graphic [@wickham2010layered], which powers the primary graphical system in R, ggplot2 [@ggplot2]. In grammar of graphic, plots are not defined by its appearance (i.e. boxplot, histogram, scatter plot etc) but by "stacked layers". Using this design, ggplot does not have to develop a gazillion of functions that each produces a different type of plot from a different data structure. Instead, it aesthetically maps variables (and its statistical transformation) in a dataset to different geometric objects (points, lines, box-and-whisker etc) and builds the plot through overlaying different layers. 
 
 <!-- The plot design of visual diagnostics depends on the characteristics of the variables to plot. If the searching points are of interest [point geom is not good; need summarise. While updating points are more manageable -> point geom]. However, one must realise that with hundreds or thousands of searching points, exploring the sample space in animation could be slow and this is because of the time it takes to render hundreds point. [stratefy may help? - may need more work here.] -->
 
@@ -423,7 +423,7 @@ Another option is to use summarisation for each iteration. Boxplot is a suitable
 
 Figure \ref{toy-search} presents a comparison between the two plotting options discussed above. Using the natural order to plot searching points distorts the point from the first few iterations and over-emphasize the searches in the last few iterations. The second plot design evenly presents the summarised information for each iteration while allow for a switch to the full information for the iteration with small number of observations.  
 
-```{r toy-search, fig.height=5.5, fig.cap="\\label{toy-search}A comparison of plotting the same search points with different plot designs. In upper plot, points from the last three iterations span the vast majority of the plotting space leaving the first few iterations being squeezed together whilst the lower plot spaces each iteration evenly and presents summary information easy to read."}
+```{r toy-search, fig.height=3, fig.cap="\\label{toy-search}A comparison of plotting the same search points with different plot designs. In upper plot, points from the last three iterations span the vast majority of the plotting space leaving the first few iterations being squeezed together whilst the lower plot spaces each iteration evenly and presents summary information easy to read."}
 
 dt <- holes_2d_better_max_tries %>%
   filter(info != "interpolation") %>% 
@@ -432,11 +432,8 @@ dt <- holes_2d_better_max_tries %>%
 p1 <- dt %>% explore_trace_search()
 
 
-p2 <- dt %>% ggplot() + 
-  geom_point(aes(x = id, y = index_val, col = as.factor(tries))) + 
-  theme(legend.position = "none")
 
-p2 / p1
+p1
 
 ```
 
@@ -452,20 +449,29 @@ Sometimes, we may be interested in exploring the points on the interpolation pat
   - y: $I$ is mapped to the y-axis 
 
 - Layer 2: line geom
-  - using line geometry for the same data and aesthetics 
+  - using line geometry for the same data and aesthetics
 
-Figure \ref{toy-interp} shows the plot of interpolating points and it shows the algorithm starts from around 0.8 and with interpolation, gradually reaches over 0.95. 
+Figure \ref{toy-interp} presents the interpolation of three different tour paths. The upper plot shows a desirable interpolating in each iteration with the index value being progressively and monotonically increasing.  While in the middle plot, the increases towards the target basis is not monotonical in the last two iterations and interpolated basis with higher index value can be found on the tour path. The lower plot is constructed using `search_better_random`, where a basis with smaller index value  has a probabilistic chance of being accepted and we can observe a much more involved pattern. In iteration three, the probablistic acceptance produces a monotonically decreasing interpolation whilst in iteration five, six and seven, with also a probablistic acceptance, the interpolation is now non-monotical. When the target basis has a higher index value, iteration eight reaches this basis by first decreases the index value. While the interpolation plot shows different possibilities of the change in index value on the tour path, the diagnose of the validity of each pattern and the related optimisation algorithms will be postponed to Section \ref{application}.
 
-```{r toy-interp, fig.height = 3, fig.cap = "\\label{toy-interp} This is a toy example of plotting interpolated points"}
+```{r toy-interp, fig.height = 8, fig.cap = "\\label{toy-interp} This is a toy example of plotting interpolated points"}
 interp <- holes_2d_better_max_tries %>% 
   filter(info == "interpolation") %>% 
   mutate(id = row_number())
 
-interp %>% 
+p1 <- interp %>% 
   ggplot(aes(x = id, y = index_val, col = as.factor(tries))) + 
   geom_point() + 
   geom_line() + 
   theme(legend.position = "bottom")
+
+
+p2 <- interrupt_no %>% explore_trace_interp() + 
+  theme(legend.position = "bottom")
+
+p3 <- holes_2d_better_random %>% explore_trace_interp() + 
+  theme(legend.position = "bottom")
+
+p1 / p2 / p3
 ```
 
 \newpage 
