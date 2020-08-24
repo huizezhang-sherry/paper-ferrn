@@ -15,7 +15,7 @@ keywords:
 - visual 
 - diagnostics 
 - R
-abstract: Friedman & Tukey commented on their initial paper on projection pursuit in 1974 that "the  technique  used  for  maximising  the  projection index strongly influences both the statistical and the computational aspects of the procedure." While many projection pursuit indices have been proposed in the literature, few concerns the optimisation procedure. In this paper, we developed a system of diagnostics aiming to visually learn how the optimisation procedures find its way towards the optimum. This diagnostic system can be applied to more generally to help practitioner to unveil the black-box in randomised iterative (optimisation) algorithms. An R package, ferrn, has been created to implement this diagnostic system.
+abstract: Friedman & Tukey commented on their initial paper on projection pursuit in 1974 that "the  technique  used  for  maximising  the  projection index strongly influences both the statistical and the computational aspects of the procedure." While many projection pursuit indices have been proposed in the literature, few concerns the optimisation procedure. In this paper, we developed a system of diagnostics aiming to visually learn how the optimisation procedures find its way towards the optimum. This diagnostic system can be applied more generally to help practitioner to unveil the black-box in randomised iterative (optimisation) algorithms. An R package, ferrn, has been created to implement this diagnostic system.
 bibliography: biblio.bib
 preamble: >
   \usepackage{amssymb, amsmath, mathtools, dsfont, bbm}
@@ -59,10 +59,10 @@ In an optimization problem the goal is to find the best solution within the spac
 Projection pursuit and guided tour are exploratory data analysis tools that detect interesting structure of high dimensional data through projection on low dimensional space. Optimisation is applied here to search for the low dimensional space that finds the most interesting projection.
 
 The remainder of the paper is organised as follows. 
-Section \ref{optim} provides the literature review of optimisation methods, specifically the line search methods used in projection pursuit guided tour. 
+Section \ref{optim} provides a literature review of optimisation methods, specifically the line search methods used in projection pursuit guided tour. 
 Section \ref{tour} reviews projection pursuit guided tour, forms the optimisation problem, and introduces three main existing algorithms.
 Section \ref{vis-diag} presents the new visual diagnostics design, from forming the data object to the definition of different diagnostic plots with some small examples. 
-Section \ref{application} shows the applicaiton of how the diagnostic plots designed in section \ref{vis-diag} can be used to understand and compare different algorithms and how they contribute to modifications that improve the algorithms.
+Section \ref{application} shows the application of how the diagnostic plots designed in section \ref{vis-diag} can be used to understand and compare different algorithms and how they contribute to modifications that improve the algorithms.
 Finally, Section \ref{implementation} describes the R package: ferrn, that implements all the visual diagnostics above.
 
 \newpage
@@ -90,7 +90,7 @@ where $d^{(j)}$ is the searching direction in iteration $j$, and $\alpha_j$ is t
 
 # Projection pursuit guided tour {#tour}
 
-Modern development of the line search methods focuses on proposing different computation on the seraching direction: $d^{(j)}$ and various approximations on the step size: $\alpha_j$ catered for practical optimisation problems. The specific problem context we are interested in is called projection pursuit guided tour. 
+Modern development of the line search methods focuses on proposing different computation on the searching direction: $d^{(j)}$ and various approximations on the step size: $\alpha_j$ catered for practical optimisation problems. The specific problem context we are interested in is called projection pursuit guided tour. 
 Projection pursuit and guided tour are two separate methods in exporatory data analysis focusing on different aspects: coined by @friedman1974projection, projection pursuit detects interesting structures (i.e. clustering, outliers and skewness) in multivariate data via low dimensions projection; whilst guided tour is a particular variation in a broader class of data visualisation method called tour.
 
 Let $\mathbf{X}_{n \times p}$ be the data matrix, an n-d projection can be seen as a linear transformation $T: \mathbb{R}^p \mapsto \mathbb{R}^d$ defined by $\mathbf{P} = \mathbf{X} \cdot \mathbf{A}$, where $\mathbf{P}_{n \times d}$ is the projected data and $\mathbf{A}_{p\times d}$ is the projection basis. Define $f: \mathbb{R}^{p \times d} \mapsto \mathbb{R}$ to be an index function that maps the projection basis $\mathbf{A}$ onto an index value $I$, this function is commonly known as the projection pursuit index (PPI) function, or the index function and is used to measure the "interestingness" of a projection. A number of index functions have been proposed in the literature to detect different data structures, including Legendre index [@friedman1974projection], Hermite index [@hall1989polynomial], natural Hermite index [@cook1993projection], chi-square index [@posse1995projection], LDA index [@lee2005projection] and PDA index [@lee2010projection]. 
