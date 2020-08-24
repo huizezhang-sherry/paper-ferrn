@@ -1,0 +1,124 @@
+---
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      navigation:
+          ratio: '16:9'
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+# css: ["presdefault.css"] 
+```
+
+```{r}
+files <- paste0("data/", list.files(here::here("data")))
+purrr::walk(.x = files, ~load(here::here(.x), env = globalenv()))
+
+source(here::here("source/indice.r"))
+source(here::here("source/sim_data.r"))
+
+
+library(tidyverse)
+library(ferrn)
+library(patchwork)
+library(ggrepel)
+```
+
+#### Diagnostics of optimisation algorithms in projection pursuit guided tour
+
+.pull-left[
+
+**Tour:** exploratory data analysis tool that can detect the structure of data 
+
+Data: $X_{n \times p}$
+
+Projection: $P_{n \times d} = X \cdot A_{p \times d}$
+
+Define a projection pursuit index: $f: \mathbb{R}^{p \times d} \mapsto \mathbb{R}$
+
+Optimisation problem:
+
+\begin{align}
+&\arg \max_{\mathbf{A} \in \mathcal{A}} f(\mathbf{X} \cdot \mathbf{A}) \\
+&s.t.  \mathbf{A}^{\prime} \mathbf{A} = I_d
+\end{align}
+
+
+Three existing algorithms:
+
+- search_better
+- search_better_random
+- search_geodesic
+
+]
+
+
+.pull-right[
+```{r fig.height=5}
+colour <- RColorBrewer::brewer.pal(3, "Dark2")
+max_1 <- kol_cdf_1d_2var_better %>% filter(index_val == max(index_val)) %>% pull(index_val)
+max_2 <- kol_cdf_1d_2var_better_2 %>% filter(index_val == max(index_val)) %>% pull(index_val)
+
+p5 <- kol_cdf_1d_2var_better %>% explore_trace_interp(col = 0) + 
+  scale_colour_manual(values = colour[1]) + ggtitle("search better, seed 123456")
+p6 <- kol_cdf_1d_2var_better_2 %>% explore_trace_interp(col = 0) + 
+  scale_colour_manual(values = colour[2]) + ggtitle("search better, seed 12345")
+
+p7 <- kol_cdf_1d_2var_better_random %>% 
+  explore_trace_interp(col = 0) + 
+  ylim(0, 0.25) + 
+  scale_colour_manual(values = colour[3]) + 
+  theme(legend.position = "none") + 
+  ggtitle("search better random") 
+
+((p5 | p6) / p7) &
+  theme(legend.position = "none") & ylim(0, 0.25) & ylab("index value")
+
+```
+
+```{r fig.height=5}
+interp1 <- kol_cdf_1d_2var_better 
+interp2 <- kol_cdf_1d_2var_better_2
+interp3 <- kol_cdf_1d_2var_better_random 
+
+dt <- bind_rows(interp1, interp2, interp3) %>% 
+  mutate(algorithm = c(rep("search better 1", nrow(interp1)), 
+                       rep("search better 2", nrow(interp2)), 
+                       rep("search better random", nrow(interp3))),
+         algorithm = fct_relevel(algorithm, c("search better 1", "search better 2", "search better random"))) %>% 
+  compute_pca() %>% 
+  `$`(combined)
+
+dt %>% filter(info == "interpolation") %>% group_by(algorithm) %>% filter(id == max(id)) -> b
+
+dt %>% 
+  ggplot(aes(x = PC1, y = PC2, color = algorithm)) + 
+  geom_point() +
+  geom_path(alpha = 0.1) + 
+  geom_point(data = b, size =10) + 
+  theme(aspect.ratio = 1) + 
+  scale_colour_brewer(palette = "Dark2") 
+  #geom_point(data = dt %>% filter(info == "start"), color = "blue") + 
+  
+```
+
+```{r eval = FALSE}
+a <- interp1 %>% compute_pca() %>% `$`(combined)
+
+a %>% ggplot(aes(x = PC1, y = PC2, color = info)) + 
+  geom_point() +  
+  geom_path() + 
+  geom_point(data = a %>% filter(info == "start")) + 
+  theme(aspect.ratio = 1)
+
+```
+
+
+]
