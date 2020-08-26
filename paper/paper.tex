@@ -109,7 +109,7 @@ of the procedure.'' While many projection pursuit indices have been
 proposed in the literature, few concerns the optimisation procedure. In
 this paper, we developed a system of diagnostics aiming to visually
 learn how the optimisation procedures find its way towards the optimum.
-This diagnostic system can be applied to more generally to help
+This diagnostic system can be applied more generally to help
 practitioner to unveil the black-box in randomised iterative
 (optimisation) algorithms. An R package, ferrn, has been created to
 implement this diagnostic system.
@@ -146,14 +146,14 @@ search for the low dimensional space that finds the most interesting
 projection.
 
 The remainder of the paper is organised as follows. Section \ref{optim}
-provides the literature review of optimisation methods, specifically the
+provides a literature review of optimisation methods, specifically the
 line search methods used in projection pursuit guided tour. Section
 \ref{tour} reviews projection pursuit guided tour, forms the
 optimisation problem, and introduces three main existing algorithms.
 Section \ref{vis-diag} presents the new visual diagnostics design, from
 forming the data object to the definition of different diagnostic plots
 with some small examples. Section \ref{application} shows the
-applicaiton of how the diagnostic plots designed in section
+application of how the diagnostic plots designed in section
 \ref{vis-diag} can be used to understand and compare different
 algorithms and how they contribute to modifications that improve the
 algorithms. Finally, Section \ref{implementation} describes the R
@@ -167,15 +167,15 @@ package: ferrn, that implements all the visual diagnostics above.
 Given an optimisation problem, two basic approaches find the optimum
 based on different thinking. An analytical approach aims to find the
 optimal solution in a finite number of steps, but a potential issue with
-it is that the close-form solution may not be available when the problem
-starts to become complex. An iterative approach, on the other hand,
-finds the optimum based on the idea of making progressive improvement to
-the current solution. An iterative method may end up finding a local
-optimum but the progressive nature of the algorithm allows the
-practitioner to decide when to stop if a desirable accuracy has been
-achieved.
+it is that the closed-form solution may not be available when the
+problem starts to become complex. An iterative approach, on the other
+hand, finds the optimum based on the idea of making progressive
+improvement to the current solution. An iterative method may end up
+finding a local optimum but the progressive nature of the algorithm
+allows the practitioner to decide when to stop if a desirable accuracy
+has been achieved.
 
-A traditional while often used in practice is an iteartive method called
+A traditional while often used in practice is an iterative method called
 \emph{line search method} \citep{fletcher2013practical}. In a simple
 one-dimensional problem of finding the \(x\) that minimises \(f(x)\),
 line search achieves the goal via an iterative algorithm in the form of
@@ -212,7 +212,7 @@ ppp{]}
 \section{Projection pursuit guided tour}\label{tour}}
 
 Modern development of the line search methods focuses on proposing
-different computation on the seraching direction: \(d^{(j)}\) and
+different computation on the searching direction: \(d^{(j)}\) and
 various approximations on the step size: \(\alpha_j\) catered for
 practical optimisation problems. The specific problem context we are
 interested in is called projection pursuit guided tour. Projection
@@ -261,10 +261,10 @@ visualisation of the high dimensional data via rotating low dimension
 planes. The smoothness of the animation is ensured by computing a series
 of intermediate planes between two low dimension planes via geodesic
 interpolation and we refer readers to \citet{buja2005computational} for
-the mathematical details. Iteratively choose different low dimension
-planes and interpolate between them forms a tour path. Different types
+the mathematical details. Iteratively choosing different low dimension
+planes and interpolating between them forms a tour path. Different types
 of tour methods choose the low dimensional planes differently and we
-mention two other type of tour that are commonly used. A grand tour
+mention two other types of tour that are commonly used. A grand tour
 selects the planes randomly in the high dimensional space and hence
 serves as an initial exploration of the data. Manual control allows
 researches to fine-tuning an existing projection by gradually phase in
@@ -299,9 +299,9 @@ optimisation problem:
 &s.t.  \mathbf{A}^{\prime} \mathbf{A} = I_d
 \end{align}
 
-where \(I_d\) is the d-dimentional identity matrix. The constraint
-requires the projection basis \(\mathbf{A}\) to be a orthonogal matrix
-with each column vector being orthornormal.
+where \(I_d\) is the d-dimensional identity matrix. The constraint
+requires the projection basis \(\mathbf{A}\) to be an orthogonal matrix
+with each column vector being orthonormal.
 
 There are several features of this optimisation that are worth noticing.
 First of all, it is a multivariate constraint optimisation problem.
@@ -311,8 +311,8 @@ function is non-differentiable or the gradient information is simply not
 available. In this case, we will need to either use some approximation
 of the gradient or turn to derivative free methods. Given the goal of
 projection pursuit as finding the basis with the largest index value,
-the optimisation problem need to be able to find the global maximum.
-Along the way, locla maximum may also be of our interest since they
+the optimisation problem needs to be able to find the global maximum.
+Along the way, local maximum may also be of our interest since they
 could present unexpected interesting projections. There is also one
 computational consideration: the optimisation procedure needs to be easy
 to compute since the tour animation is played in real-time.
@@ -326,12 +326,12 @@ Below we introduce three possible algorithms: \texttt{search\_better}
 and \texttt{search\_better\_random} are derivative free methods that
 sample candidate basis in the neighbourhood whilst
 \texttt{search\_geodesic} approximates the gradient information and acts
-as a non-derivative version of the gradient acsent.
+as a non-derivative version of the gradient ascent.
 
 \citet{posse1995projection} proposed a random search algorithm that
 samples a candidate basis \(\mathbf{A}_{l}\) in the neighbourhood of the
 current basis \(\mathbf{A}_{\text{cur}}\) by
-\(\mathbf{A}_{l} = \mathbf{A}_{\text{cur}} + \alpha \mathbf{A}_{rand}\),
+\(\mathbf{A}_{l} = \mathbf{A}_{\text{cur}} + \alpha \mathbf{A}_{\text{rand}}\),
 where \(\alpha\) controls the radius of the sampling neighbourhood and
 \(\mathbf{A}_{\text{rand}}\) is a randomly generated matrix with the
 same dimension as \(\mathbf{A}_{\text{cur}}\). The optimiser keeps
@@ -341,12 +341,12 @@ to construct the interpolation path. A new round of search continues to
 find a better basis after the interpolation finishes. The halving
 parameter \(c\) with default value of 30 is designed to adjust the
 searching neighbourhood \(\alpha\). When the search needs to sample more
-than \(c\) number of basis to find an accpeted basis, the neighbourhood
+than \(c\) number of basis to find an accepted basis, the neighbourhood
 parameter \(\alpha\) will be reduced by half in the next iteration. If
 the optimiser can't find a better basis within the maximum number of
 tries \(l_{\max}\), the algorithm stops. The algorithm is summarised in
 Algorithm \ref{random-search} for one iteration. {[}mention
-orthonormalise to ensure the constaint is fulfilled; don't use
+orthonormalise to ensure the constraint is fulfilled; don't use
 derivative information but a random search{]}
 
 \begin{algorithm}
@@ -373,20 +373,20 @@ derivative information but a random search{]}
 \end{algorithm}
 
 Simulated annealing
-\citep[\citet{kirkpatrick1983optimization}]{bertsimas1993simulated}
+\citep[\citet{bertsimas1993simulated}]{kirkpatrick1983optimization}
 modifies \texttt{search\_better} based on a non-increasing cooling
 scheme \(T(j)\). Given an initial \(T_0\), the temperature at iteration
 \(k\) is defined as \(T(j) = \frac{T_0}{\log(j + 1)}\). When a candidate
 basis fails to have an index value larger than the current basis,
 simulated annealing gives it a second chance to be accepted with
-probabiliby
-\[P= \min\left\{\exp\left[-\frac{I_{cur} - I_{j}}{T(j)}\right],1\right\}\]
+probability
+\[P= \min\left\{\exp\left[-\frac{I_{\text{cur}} - I_{j}}{T(j)}\right],1\right\}\]
 where \(I_{(\cdot)}\) denotes the index value of a given basis. This
 implementation allows the algorithm to jump out of a local maximum and
 enables a more holistic search of the whole parameter space. This
 feature is particularly useful when the dimension of the projected space
 is smaller than the number of informative variables in the dataset
-(i.e.~a one dimenional projection of the dataset with two informative
+(i.e.~a one dimensional projection of the dataset with two informative
 variables). The algorithm can be written as replacing line 5-11 of
 Algorithm \ref{random-search} with Algorithm \ref{simulated_annealing}.
 
@@ -412,16 +412,16 @@ function with respect to the projection basis matrix,
 \texttt{search\_geodesic} samples \(2n\) bases that are randomly
 generated on a uniform open ball with the radius controlled by the
 \(\delta\) parameter and finds the most promising one to construct the
-geodesic direction as an approximation to the graident. The \(\delta\)
-parameter is usually set to be tiny to ensure the geogesic direction is
-a good local approximation to the graident. Once the searching direction
+geodesic direction as an approximation to the gradient. The \(\delta\)
+parameter is usually set to be tiny to ensure the geodesic direction is
+a good local approximation to the gradient. Once the searching direction
 is determined, the optimiser finds the best projection
 \(\mathbf{A}_{**}\) on the geodesic as the candidate.
 \(\mathbf{A}_{**}\) is outputted for the current iteration if the
 percentage change in the index value between \(\mathbf{A}_{**}\) and
 \(\mathbf{A}_{\text{cur}}\) is greater than a threshold value or the
 algorithm repeats the above steps until \(l_{\max}\) is reached and the
-searching terminates. Algorithm \ref{search-geodesic} summarise the
+searching terminates. Algorithm \ref{search-geodesic} summarises the
 steps in geodesic search.
 
 \begin{algorithm}
@@ -565,8 +565,8 @@ language in the code{]}
 \includegraphics[width=1\linewidth,height=0.2\textheight]{/Users/hzha400/Documents/3.PhD/research/paper-tour-vis/figures/global_obj} \caption{\label{glb-obj}The data structure in projection pursuit guided tour.}\label{fig:glb-obj}
 \end{figure}
 
-It is worth-noticing that the data structure constructed above meets the
-tidy data principal \citep{wickham2014tidy} that states
+It is worth noticing that the data structure constructed above meets the
+tidy data principle \citep{wickham2014tidy} that states
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi})}
@@ -609,20 +609,20 @@ how it progressively finds its optimum. One way of doing it is to plot
 the index value across its natural ordering \(t\), however, it usually
 takes the algorithm much longer to find a better basis than the current
 one towards the end of the search. When plotting the searching
-observations as points in a plot, the space each iteartion take will be
+observations as points in a plot, the space each iteration takes will be
 proportional to the number of points in that iteration.
 
 Another option is to use summarisation for each iteration. Boxplot is a
 suitable candidate that provides five points summary of the data,
 however, there are two pieces of information missing from the boxplot:
 1) It does not report the number of points, and 2) the position of the
-last basis. This could be remedised by adding more layers using the
-concept of gramma of graphics. A label geometry is added at the bottom
+last basis. This could be remedied by adding more layers using the
+concept of grammar of graphics. A label geometry is added at the bottom
 of the plot to show the number of points in each iteration and a line
-geometry links the last basis in each iteration. Further, a option to
-switch betwen displaying points and boxplot geometry is helpful since
+geometry links the last basis in each iteration. Further, an option to
+switch between displaying points and boxplot geometry is helpful since
 point geometry can be more intuitive for the iteration with few
-observations. This is avhieved via a \texttt{cutoff} parameter. Below we
+observations. This is achieved via a \texttt{cutoff} parameter. Below we
 define the searching point plot based on four different component layers
 
 \begin{itemize}
@@ -633,7 +633,7 @@ define the searching point plot based on four different component layers
   \begin{itemize}
   \tightlist
   \item
-    data: group by \(j\) and filter the observations in the group that
+    data: group by \(j\) and filter the observations in the groups that
     have count greater than \texttt{cutoff\ =\ 15}.
   \item
     x: \(j\) is mapped to the x-axis
@@ -689,20 +689,20 @@ define the searching point plot based on four different component layers
 Figure \ref{toy-search} presents a comparison between the two plotting
 options discussed above. Using the natural order to plot searching
 points distorts the point from the first few iterations and
-over-emphasize the searches in the last few iterations. The second plot
+over-emphasizes the searches in the last few iterations. The second plot
 design evenly presents the summarised information for each iteration
-while allow for a switch to the full information for the iteration with
-small number of observations.
+while allowing for a switch to the full information for the iteration
+with small number of observations.
 
 \begin{figure}
 \centering
 \includegraphics{paper_files/figure-latex/toy-search-1.pdf}
 \caption{\label{toy-search}A comparison of plotting the same search
-points with different plot designs. In upper plot, points from the last
-three iterations span the vast majority of the plotting space leaving
-the first few iterations being squeezed together whilst the lower plot
-spaces each iteration evenly and presents summary information easy to
-read.}
+points with different plot designs. In the upper plot, points from the
+last three iterations span the vast majority of the plotting space
+leaving the first few iterations being squeezed together whilst the
+lower plot spaces each iteration evenly and presents summary information
+easy to read.}
 \end{figure}
 
 \newpage
@@ -741,7 +741,7 @@ tour animation. The plot definition is as follows:
 \end{itemize}
 
 Figure \ref{toy-interp} presents the interpolation of three different
-tour paths. The upper plot shows a desirable interpolating in each
+tour paths. The upper plot shows a desirable interpolation in each
 iteration with the index value being progressively and monotonically
 increasing. While in the middle plot, the increases towards the target
 basis is not monotonical in the last two iterations and interpolated
@@ -749,13 +749,13 @@ basis with higher index value can be found on the tour path. The lower
 plot is constructed using \texttt{search\_better\_random}, where a basis
 with smaller index value has a probabilistic chance of being accepted
 and we can observe a much more involved pattern. In iteration three, the
-probablistic acceptance produces a monotonically decreasing
+probabilistic acceptance produces a monotonically decreasing
 interpolation whilst in iteration five, six and seven, with also a
-probablistic acceptance, the interpolation is now non-monotical. When
+probabilistic acceptance, the interpolation is now non-monotonical. When
 the target basis has a higher index value, iteration eight reaches this
-basis by first decreases the index value. While the interpolation plot
+basis by first decreasing the index value. While the interpolation plot
 shows different possibilities of the change in index value on the tour
-path, the diagnose of the validity of each pattern and the related
+path, the diagnosis of the validity of each pattern and the related
 optimisation algorithms will be postponed to Section \ref{application}.
 
 \begin{figure}
@@ -803,7 +803,8 @@ Figure 5 shows the searching space plot of a geodesic search, colored by
 different searching stages. Starting from the start basis, a directional
 search is conducted in a narrow neighbourhood on five random directions.
 The best one is picked and an exact search finds the stepsize that
-maximises the index value and output the corresponding projection basis.
+maximises the index value and outputs the corresponding projection
+basis.
 
 \begin{figure}
 \centering
