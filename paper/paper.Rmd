@@ -355,7 +355,7 @@ where $T^{\prime} = T + k_{J}+ l_{J+1}$. Note that we deliberately denote the la
 knitr::include_graphics(path = here::here("figures/global_obj.png"))
 ```
 
-It is worth-noticing that the data structure constructed above meets the tidy data principal [@wickham2014tidy] that states
+It is worth noticing that the data structure constructed above meets the tidy data principle [@wickham2014tidy] that states
 
 1) each observation forms a row, 
 2) each variable forms a column, and 
@@ -386,18 +386,18 @@ With a constructed data object, the construction of diagnostic plots is inspired
 ### How hard is the optimiser working
 
 A primary interest of diagnosing an optimisation algorithm is to study how it progressively finds its optimum. One way of doing it is to plot the index value across its natural ordering $t$, however, it usually takes the algorithm much longer to find a better basis than the current one towards the end of the search. 
-When plotting the searching observations as points in a plot, the space each iteration take will be proportional to the number of points in that iteration.
+When plotting the searching observations as points in a plot, the space each iteration takes will be proportional to the number of points in that iteration.
 
 <!-- different iterations may have different number of points and, towards the end of the search there could easily be hundreds of bases being tested before the target basis is found. In the plot, points from those iterations towards the end will occupy the vast majority of the plot space. This motivates to use summarisation.  Rather than knowing the index value of *every* basis, we are more interested to have a general summary of all the index value in that iteration and more importantly, the basis with the largest index value (since it prescribes the next geodesic interpolation and future searches).  -->
 
 
 <!-- . We may risk losing information on how many points it takes to find the target basis by displaying the boxplot alone for all `tries`. Thus, the number of point in each iteration is displayed at the bottom of each box and we provide options to switch iteration with small number of points to a point geometry, which is achieved via a `cutoff` argument. A line geometry is also added to link the points with the largest index value in each iteration. This helps to visualise the improvement made in each iteration. Using the concept of *gramma of graphics* [@wickham2010layered], the plot for exploring index value can be defined in three layers as: -->
 
-Another option is to use summarisation for each iteration. Boxplot is a suitable candidate that provides five points summary of the data, however, there are two pieces of information missing from the boxplot: 1) It does not report the number of points, and 2) the position of the last basis. This could be remedised by adding more layers using the concept of gramma of graphics. A label geometry is added at the bottom of the plot to show the number of points in each iteration and a line geometry links the last basis in each iteration. Further, a option to switch betwen displaying points and boxplot geometry is helpful since point geometry can be more intuitive for the iteration with few observations. This is avhieved via a `cutoff` parameter. Below we define the searching point plot based on four different component layers 
+Another option is to use summarisation for each iteration. Boxplot is a suitable candidate that provides five points summary of the data, however, there are two pieces of information missing from the boxplot: 1) It does not report the number of points, and 2) the position of the last basis. This could be remedied by adding more layers using the concept of grammar of graphics. A label geometry is added at the bottom of the plot to show the number of points in each iteration and a line geometry links the last basis in each iteration. Further, an option to switch between displaying points and boxplot geometry is helpful since point geometry can be more intuitive for the iteration with few observations. This is achieved via a `cutoff` parameter. Below we define the searching point plot based on four different component layers 
 
 
 - Layer 1: boxplot geom
-  - data: group by $j$ and filter the observations in the group that have count greater than `cutoff = 15`.
+  - data: group by $j$ and filter the observations in the groups that have count greater than `cutoff = 15`.
   - x: $j$ is mapped to the x-axis
   - y: the statistical transformed index value: $Q_{I^{\prime}_t}(q)$ is mapped to the y-axis where $Q_X(q)$, $q = 0, 25, 50, 75, 100$ finds the qth-quantile of $X$ and $I^{\prime}_t$ denotes the index value of all the searching bases defined in Matrix \ref{eq:data-structure}.
 
@@ -421,9 +421,9 @@ Another option is to use summarisation for each iteration. Boxplot is a suitable
 <!-- *Example: exploring searching points* We choose variables `x1`, `x2`, `x3`, `x8`, `x9` and `x10` to perform a 2D projection with tour. Parameter `search_f = tour::search_better` and `max.tries = 500` is used. The index value of the searching points are shown in Figure \ref{toy-search}. The label at the bottom indicates the number of observations in each iteration and facilitates the choice of `cutoff` argument (by default `cutoff = 15`). We learn that the `search_better` quickly finds better projection basis with higher index value at first and then takes longer to find a better one later. -->
 
 
-Figure \ref{toy-search} presents a comparison between the two plotting options discussed above. Using the natural order to plot searching points distorts the point from the first few iterations and over-emphasize the searches in the last few iterations. The second plot design evenly presents the summarised information for each iteration while allow for a switch to the full information for the iteration with small number of observations.  
+Figure \ref{toy-search} presents a comparison between the two plotting options discussed above. Using the natural order to plot searching points distorts the point from the first few iterations and over-emphasizes the searches in the last few iterations. The second plot design evenly presents the summarised information for each iteration while allowing for a switch to the full information for the iteration with small number of observations.  
 
-```{r toy-search, fig.height=3, fig.cap="\\label{toy-search}A comparison of plotting the same search points with different plot designs. In upper plot, points from the last three iterations span the vast majority of the plotting space leaving the first few iterations being squeezed together whilst the lower plot spaces each iteration evenly and presents summary information easy to read."}
+```{r toy-search, fig.height=3, fig.cap="\\label{toy-search}A comparison of plotting the same search points with different plot designs. In the upper plot, points from the last three iterations span the vast majority of the plotting space leaving the first few iterations being squeezed together whilst the lower plot spaces each iteration evenly and presents summary information easy to read."}
 
 dt <- holes_2d_better_max_tries %>%
   filter(info != "interpolation") %>% 
@@ -451,7 +451,7 @@ Sometimes, we may be interested in exploring the points on the interpolation pat
 - Layer 2: line geom
   - using line geometry for the same data and aesthetics
 
-Figure \ref{toy-interp} presents the interpolation of three different tour paths. The upper plot shows a desirable interpolating in each iteration with the index value being progressively and monotonically increasing.  While in the middle plot, the increases towards the target basis is not monotonical in the last two iterations and interpolated basis with higher index value can be found on the tour path. The lower plot is constructed using `search_better_random`, where a basis with smaller index value  has a probabilistic chance of being accepted and we can observe a much more involved pattern. In iteration three, the probablistic acceptance produces a monotonically decreasing interpolation whilst in iteration five, six and seven, with also a probablistic acceptance, the interpolation is now non-monotical. When the target basis has a higher index value, iteration eight reaches this basis by first decreases the index value. While the interpolation plot shows different possibilities of the change in index value on the tour path, the diagnose of the validity of each pattern and the related optimisation algorithms will be postponed to Section \ref{application}.
+Figure \ref{toy-interp} presents the interpolation of three different tour paths. The upper plot shows a desirable interpolation in each iteration with the index value being progressively and monotonically increasing.  While in the middle plot, the increases towards the target basis is not monotonical in the last two iterations and interpolated basis with higher index value can be found on the tour path. The lower plot is constructed using `search_better_random`, where a basis with smaller index value  has a probabilistic chance of being accepted and we can observe a much more involved pattern. In iteration three, the probabilistic acceptance produces a monotonically decreasing interpolation whilst in iteration five, six and seven, with also a probabilistic acceptance, the interpolation is now non-monotonical. When the target basis has a higher index value, iteration eight reaches this basis by first decreasing the index value. While the interpolation plot shows different possibilities of the change in index value on the tour path, the diagnosis of the validity of each pattern and the related optimisation algorithms will be postponed to Section \ref{application}.
 
 ```{r toy-interp, fig.height = 8, fig.cap = "\\label{toy-interp} This is a toy example of plotting interpolated points"}
 interp <- holes_2d_better_max_tries %>% 
@@ -495,7 +495,7 @@ In projection pursuit, the projection bases $\mathbf{A}_{p \times d}$ are of dim
   - colour: $V$ is mapped to the colour aesthetic
   
   
-Figure 5 shows the searching space plot of a geodesic search, colored by different searching stages. Starting from the start basis, a directional search is conducted in a narrow neighbourhood on five random directions. The best one is picked and an exact search finds the stepsize that maximises the index value and output the corresponding projection basis. 
+Figure 5 shows the searching space plot of a geodesic search, colored by different searching stages. Starting from the start basis, a directional search is conducted in a narrow neighbourhood on five random directions. The best one is picked and an exact search finds the stepsize that maximises the index value and outputs the corresponding projection basis. 
 
 
 ```{r toy-pca, fig.height = 4, fig.cap = "\\label{toy-pca}PCA plot of search geodesic colouring by info allows for better understanding of each stage in the geodesic search"}
