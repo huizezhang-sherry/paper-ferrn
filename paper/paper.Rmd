@@ -423,17 +423,19 @@ Another option is to use summarisation for each iteration. Boxplot is a suitable
 
 Figure \ref{toy-search} presents a comparison between the two plotting options discussed above. Using the natural order to plot searching points distorts the point from the first few iterations and over-emphasizes the searches in the last few iterations. The second plot design evenly presents the summarised information for each iteration while allowing for a switch to the full information for the iteration with small number of observations.  
 
-```{r toy-search, fig.height=3, fig.cap="\\label{toy-search}A comparison of plotting the same search points with different plot designs. In the upper plot, points from the last three iterations span the vast majority of the plotting space leaving the first few iterations being squeezed together whilst the lower plot spaces each iteration evenly and presents summary information easy to read."}
+```{r toy-search, fig.height=5.5, fig.cap="\\label{toy-search}A comparison of plotting the same search points with different plot designs. In the upper plot, points from the last three iterations span the vast majority of the plotting space leaving the first few iterations being squeezed together whilst the lower plot spaces each iteration evenly and presents summary information easy to read."}
 
 dt <- holes_2d_better_max_tries %>%
   filter(info != "interpolation") %>% 
   mutate(id = row_number()) 
 
-p1 <- dt %>% explore_trace_search() 
+p1 <- dt %>% explore_trace_search() + 
+  ggtitle("satisfactory")
 
+p2 <- holes_2d_better %>% explore_trace_search() + 
+  ggtitle("not satisfactory")
 
-
-p1
+p1 / p2
 
 ```
 
@@ -462,14 +464,17 @@ p1 <- interp %>%
   ggplot(aes(x = id, y = index_val, col = as.factor(tries))) + 
   geom_point() + 
   geom_line() + 
-  theme(legend.position = "bottom")
+  theme(legend.position = "bottom") + 
+  ggtitle("satisfactory")
 
 
 p2 <- interrupt_no %>% explore_trace_interp() + 
-  theme(legend.position = "bottom")
+  theme(legend.position = "bottom") + 
+  ggtitle("not satisfactory")
 
 p3 <- holes_2d_better_random %>% explore_trace_interp() + 
-  theme(legend.position = "bottom")
+  theme(legend.position = "bottom") + 
+  ggtitle("maybe satisfactory?")
 
 p1 / p2 / p3
 ```
@@ -498,9 +503,99 @@ In projection pursuit, the projection bases $\mathbf{A}_{p \times d}$ are of dim
 Figure 5 shows the searching space plot of a geodesic search, colored by different searching stages. Starting from the start basis, a directional search is conducted in a narrow neighbourhood on five random directions. The best one is picked and an exact search finds the stepsize that maximises the index value and outputs the corresponding projection basis. 
 
 
-```{r toy-pca, fig.height = 4, fig.cap = "\\label{toy-pca}PCA plot of search geodesic colouring by info allows for better understanding of each stage in the geodesic search"}
+```{r toy-pca, fig.height = 6, fig.cap = "\\label{toy-pca}PCA plot of search geodesic colouring by info allows for better understanding of each stage in the geodesic search"}
+# holes_1d_geo %>% explore_proj_pca(col = info) 
+# holes_1d_better%>% explore_proj_pca(col = info) 
+# 
+# bind_rows(holes_1d_geo, holes_1d_better) %>% explore_proj_pca(col = method)
+# 
+# 
+# dt <- bind_rows(holes_1d_better, holes_1d_geo) %>% 
+#   compute_pca() %>% 
+#   `$`(combined)
+# 
+# last <- dt %>% 
+#   filter(info == "interpolation") %>% 
+#     group_by(method) %>% 
+#   filter(id == max(id))
+# 
+# start <- dt %>% filter(id == 1)
+# 
+# dt %>% 
+#   ggplot(aes(x = PC1, y = PC2, col = info)) + 
+#   geom_point() + 
+#   #facet_wrap(vars(method)) + 
+#   theme(aspect.ratio = 1, legend.position = "bottom") + 
+#   geom_point(data = last, size = 7) + 
+#   geom_point(data = start, size = 7)
+# 
+# 
+# bind_rows(holes_1d_better, holes_1d_geo) %>%
+#   filter(info == "interpolation") %>%
+#   group_by(method) %>%
+#   mutate(id = row_number()) %>%
+#   ggplot(aes(x = id, y = index_val, group = method, col = as.factor(tries))) +
+#   geom_point() +
+#   geom_line() +
+#   facet_wrap(vars(method), ncol = 2)
+# 
+# ######
+# dt <- bind_rows(holes_2d_better, holes_2d_geo) %>% 
+#   compute_pca() %>% 
+#   `$`(combined)
+# 
+# last <- dt %>% 
+#   filter(info == "interpolation") %>% 
+#     group_by(method) %>% 
+#   filter(id == max(id))
+# 
+# start <- dt %>% filter(id == 1)
+# 
+# dt %>% filter(!is.na(info)) %>% 
+#   ggplot(aes(x = PC1, y = PC2, col = info)) + 
+#   geom_point() + 
+#   geom_point(data = last, size = 7) + 
+#   geom_point(data = start, size = 7) + 
+#   facet_wrap(vars(method)) + 
+#   theme(aspect.ratio = 1, legend.position = "bottom") 
+  
+#####
+dt <- bind_rows(holes_2d_better %>% mutate(algo = "not satisfactory"), holes_2d_better_max_tries %>% mutate(algo = "satisfactory")) %>% mutate(info = ifelse(info == "start", "new_basis", info)) %>% 
+  compute_pca() %>% 
+  `$`(combined)
 
-holes_1d_geo %>% explore_proj_pca(col = info)
+last <- dt %>% 
+  filter(info == "interpolation") %>% 
+  group_by(algo) %>% 
+  filter(id == max(id))
+
+start <- dt %>% filter(id == 1)
+
+dt %>% filter(!is.na(info)) %>% 
+  ggplot() + 
+  geom_point(aes(x = PC1, y = PC2, col = info)) + 
+  geom_point(data = last, aes(x = PC1, y = PC2, col = info), size = 7) + 
+  geom_point(data = start,aes(x = PC1, y = PC2, col = info), size = 7) + 
+  facet_wrap(vars(algo)) + 
+  theme(aspect.ratio = 1, legend.position = "bottom")
+
+
+
+
+
+# bind_rows(holes_2d_better, holes_2d_geo) %>% 
+#   filter(info == "interpolation") %>% 
+#   group_by(method) %>% 
+#   mutate(id = row_number()) %>% 
+#   ggplot(aes(x = id, y = index_val, group = method, col = as.factor(tries))) + 
+#   geom_point() + 
+#   geom_line() + 
+#   facet_wrap(vars(method), ncol = 1)
+
+  
+
+
+#holes_2d_geo %>% explore_trace_interp()
 
 #xxx the info level need to be reorder to show the start and directional search points better.
 ```
