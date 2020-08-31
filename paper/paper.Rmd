@@ -429,7 +429,7 @@ dt <- holes_2d_better_max_tries %>%
   filter(info != "interpolation") %>% 
   mutate(id = row_number()) 
 
-p1 <- dt %>% explore_trace_search()
+p1 <- dt %>% explore_trace_search() 
 
 
 
@@ -500,7 +500,7 @@ Figure 5 shows the searching space plot of a geodesic search, colored by differe
 
 ```{r toy-pca, fig.height = 4, fig.cap = "\\label{toy-pca}PCA plot of search geodesic colouring by info allows for better understanding of each stage in the geodesic search"}
 
-holes_1d_geo %>% explore_proj_pca(col = info) 
+holes_1d_geo %>% explore_proj_pca(col = info)
 
 #xxx the info level need to be reorder to show the start and directional search points better.
 ```
@@ -511,27 +511,30 @@ holes_1d_geo %>% explore_proj_pca(col = info)
 
 
 
-[a paragraph that motivate the section: these optimisers are suspect to have problem, here is how we use the diag plot to diagnose them. ]
+<!-- [a paragraph that motivate the section: these optimisers are suspect to have problem, here is how we use the diag plot to diagnose them. ] -->
 
-Below we will present several examples of diagnosing different aspects of the projection pursuit optimisation. We will present more examples that can help us to understand the algorithm and parameter choice: 
-
-1) ...
-2) ...
-3) ...
-4) ...
+The three algorithms introduced in Section \ref{tour} have experienced several practical issues in application. [initial problems with tourr optim, 2-3 sentences]. These issues can be studied and investigated using the diagnostic plots constructed above.
 
 
-Remember the research question we raised earlier, the purpose of visual diagnostics is to understand: 
+<!-- Below we will present several examples of diagnosing different aspects of the projection pursuit optimisation. We will present more examples that can help us to understand the algorithm and parameter choice:  -->
 
-- Whether the algorithm has successfully found the maximum and how the index value changes throughout the algorithm?
+<!-- 1) ... -->
+<!-- 2) ... -->
+<!-- 3) ... -->
+<!-- 4) ... -->
 
-- How does the searching space look like, that is, geometrically, where are the projection bases located in the space?
 
-(mention optim difficulties and split the simulated data section into the examples!!!)
+<!-- Remember the research question we raised earlier, the purpose of visual diagnostics is to understand:  -->
+
+<!-- - Whether the algorithm has successfully found the maximum and how the index value changes throughout the algorithm? -->
+
+<!-- - How does the searching space look like, that is, geometrically, where are the projection bases located in the space? -->
+
+<!-- (mention optim difficulties and split the simulated data section into the examples!!!) -->
 
 ## Simulation setup
 
-We simulate some random variables of size 1000 with different structures. `x1`, `x8`, `x9` and `x10` are simulated from normal distribution with zero mean and variance of one as in equation \ref{eq:sim-norm}. When using projection pursuit to explore the data structure based on its departure from normality, the entry in the projection basis for these variables should be close to zero in theory. `x2` to `x7` are mixture of normal distributions with different weights and locations. Equation \ref{eq:sim-x2} to \ref{eq:sim-x7} outlines the distribution where each variable is simulated from and Figure \ref{origin-data} shows the histogram of each variable except `x3`. All the variables are then scaled to have unit variance before running the projection pursuit.
+Random variables with different structures has been simulated and the distribution of each is presented in Equation \ref{eq:sim-norm} to \ref{eq:sim-x7}. Variable `x1`, `x8`, `x9` and `x10` are normal distributed with zero mean and unit variance and `x2` to `x7` are mixture of normal distributions with different weights and locations. Figure \ref{origin-data} plots the histogram of each variable except `x3`. The mixture variables are scaled to have unit variance before running the projection pursuit.
 
 \begin{align}
 x_1 \overset{d}{=} x_8 \overset{d}{=} x_9 \overset{d}{=} x_{10}& \sim \mathcal{N}(0, 1) \label{eq:sim-norm} \\
@@ -548,7 +551,7 @@ x_7 &\sim 0.5 \mathcal{N}(-5, 1) + 0.5 \mathcal{N}(5, 1)
 \label{eq:sim-x7}
 \end{align}
 
-```{r origin-data, fig.cap="\\label{origin-data} The distribution of simulated data except x3"}
+```{r origin-data, fig.cap="\\label{origin-data} The histogram of simulated selected variables."}
 origin_dt_bi <- data_mult %>% 
   dplyr::select(-c(x3, x8, x9, x10)) %>% 
   gather(names, values) %>%
@@ -559,25 +562,6 @@ origin_dt_bi %>%
   geom_histogram(binwidth = 0.3) +
   geom_density(aes(y = 0.3 * ..count..)) +
   facet_wrap(vars(names), ncol = 3)
-```
-
-We form our first dataset using variables `x1`, `x2`, `x8`, `x9` and `x10`,  run the guided tour with optimiser `search_better` and below shows the first ten rows of the data object.
-
-[I notice that in the implementation the loop index for interpolation starts from 0 rather than 1. Need more investigation to see if it is easy to change it to 1 or we will have to change the definition of the data structure.]
-
-```{r code, eval = FALSE}
-set.seed(123456)
-holes_1d_better <- animate_dist(data, tour_path = guided_tour(holes(), d = 1,
-                                           search_f =  search_better),
-                  rescale = FALSE, verbose = TRUE)
-
-#save(temp, file = here::here("vignettes", "data", "temp.rda"))
-```
-
-```{r glb-obj-1}
-holes_1d_better %>% 
-  dplyr::select(id, basis, index_val, info, tries, loop, method, alpha) %>% 
-  head(10)
 ```
 
 ## A more complex example: Interruption
@@ -832,7 +816,29 @@ Everything is coded up in a package. Package structure
 When the optimisation ends, the data object will be stored and printed (it can be turned off by supplying argument `print = FALSE`). Additional messages during the optimisation can be displayed by argument `verbose = TRUE`.  Notice that the tibble object allows the list-column `basis` to be printed out nicely with the dimension of the projection basis readily available.
 
 
+We form our first dataset using variables `x1`, `x2`, `x8`, `x9` and `x10`,  run the guided tour with optimiser `search_better` and below shows the first ten rows of the data object.
+
+
+```{r code, eval = FALSE}
+set.seed(123456)
+holes_1d_better <- animate_dist(data, tour_path = guided_tour(holes(), d = 1,
+                                           search_f =  search_better),
+                  rescale = FALSE, verbose = TRUE)
+
+#save(temp, file = here::here("vignettes", "data", "temp.rda"))
+```
+
+\newpage
+
+```{r glb-obj-1}
+holes_1d_better %>% 
+  dplyr::select(id, basis, index_val, info, tries, loop, method, alpha) %>% 
+  head(10)
+```
+
 
 # Conclusion
 
 \clearpage
+
+
