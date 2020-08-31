@@ -458,8 +458,9 @@ algorithm. When the algorithm runs, key information regarding the
 decision variable, objective function and hyper-parameters needs to be
 recorded and stored as a data object for future analysis.
 
-\hypertarget{data-structure}{%
-\subsection{Data structure}\label{data-structure}}
+\hypertarget{data-structure-for-diagnostics}{%
+\subsection{Data structure for
+diagnostics}\label{data-structure-for-diagnostics}}
 
 In the optimisation algorithms for projection pursuit, three main
 elements to record are 1) projection bases: \(\mathbf{A}\), 2) index
@@ -583,11 +584,6 @@ The wrangling and visualisation of tidy data have been greatly
 simplified by the well-known dplyr\citep{dplyr} and
 ggplot2\citep{ggplot2} package.
 
-\newpage
-
-\hypertarget{plot-constructions}{%
-\subsection{Plot constructions}\label{plot-constructions}}
-
 With a constructed data object, the construction of diagnostic plots is
 inspired by the concept of grammar of graphic
 \citep{wickham2010layered}, which powers the primary graphical system in
@@ -600,9 +596,9 @@ a different data structure. Instead, it aesthetically maps variables
 objects (points, lines, box-and-whisker etc) and builds the plot through
 overlaying different layers.
 
-\hypertarget{how-hard-is-the-optimiser-working}{%
-\subsubsection{How hard is the optimiser
-working}\label{how-hard-is-the-optimiser-working}}
+\hypertarget{check-how-hard-the-optimiser-is-working}{%
+\subsection{Check how hard the optimiser is
+working}\label{check-how-hard-the-optimiser-is-working}}
 
 A primary interest of diagnosing an optimisation algorithm is to study
 how it progressively finds its optimum. One way of doing it is to plot
@@ -707,9 +703,9 @@ easy to read.}
 
 \newpage
 
-\hypertarget{examining-the-interpolation}{%
-\subsubsection{Examining the
-interpolation}\label{examining-the-interpolation}}
+\hypertarget{examining-the-interpolation-progress}{%
+\subsection{Examining the interpolation
+progress}\label{examining-the-interpolation-progress}}
 
 Sometimes, we may be interested in exploring the points on the
 interpolation path since these are the points that will be played by the
@@ -813,61 +809,46 @@ basis.
 allows for better understanding of each stage in the geodesic search}
 \end{figure}
 
+\hypertarget{animating-the-diagnostic-plots}{%
+\subsection{Animating the diagnostic
+plots}\label{animating-the-diagnostic-plots}}
+
+all the plots above can be animated if wanted - importance is how the
+data is moving around
+
+show an example of some snap shots of the animation and provide a
+link\ldots{} for animated pca plot
+
+\hypertarget{the-tour-looking-at-itself}{%
+\subsection{The tour looking at
+itself}\label{the-tour-looking-at-itself}}
+
+show the path of the tour on a sphere. (full data dimension
+animation\ldots{})
+
+include the tour animation (geozoo)
+
 \newpage
 
 \hypertarget{application}{%
 \section{Diagnosing an optimiser}\label{application}}
 
-{[}a paragraph that motivate the section: these optimisers are suspect
-to have problem, here is how we use the diag plot to diagnose them. {]}
-
-Below we will present several examples of diagnosing different aspects
-of the projection pursuit optimisation. We will present more examples
-that can help us to understand the algorithm and parameter choice:
-
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi})}
-\tightlist
-\item
-  \ldots{}
-\item
-  \ldots{}
-\item
-  \ldots{}
-\item
-  \ldots{}
-\end{enumerate}
-
-Remember the research question we raised earlier, the purpose of visual
-diagnostics is to understand:
-
-\begin{itemize}
-\item
-  Whether the algorithm has successfully found the maximum and how the
-  index value changes throughout the algorithm?
-\item
-  How does the searching space look like, that is, geometrically, where
-  are the projection bases located in the space?
-\end{itemize}
-
-(mention optim difficulties and split the simulated data section into
-the examples!!!)
+The three algorithms introduced in Section \ref{tour} have experienced
+several practical issues in application. {[}initial problems with tourr
+optim, 2-3 sentences{]}. These issues can be studied and investigated
+using the diagnostic plots constructed above.
 
 \hypertarget{simulation-setup}{%
 \subsection{Simulation setup}\label{simulation-setup}}
 
-We simulate some random variables of size 1000 with different
-structures. \texttt{x1}, \texttt{x8}, \texttt{x9} and \texttt{x10} are
-simulated from normal distribution with zero mean and variance of one as
-in equation \ref{eq:sim-norm}. When using projection pursuit to explore
-the data structure based on its departure from normality, the entry in
-the projection basis for these variables should be close to zero in
-theory. \texttt{x2} to \texttt{x7} are mixture of normal distributions
-with different weights and locations. Equation \ref{eq:sim-x2} to
-\ref{eq:sim-x7} outlines the distribution where each variable is
-simulated from and Figure \ref{origin-data} shows the histogram of each
-variable except \texttt{x3}. All the variables are then scaled to have
-unit variance before running the projection pursuit.
+Random variables with different structures has been simulated and the
+distribution of each is presented in Equation \ref{eq:sim-norm} to
+\ref{eq:sim-x7}. Variable \texttt{x1}, \texttt{x8}, \texttt{x9} and
+\texttt{x10} are normal distributed with zero mean and unit variance and
+\texttt{x2} to \texttt{x7} are mixture of normal distributions with
+different weights and locations. Figure \ref{origin-data} plots the
+histogram of each variable except \texttt{x3}. The mixture variables are
+scaled to have unit variance before running the projection pursuit.
 
 \begin{align}
 x_1 \overset{d}{=} x_8 \overset{d}{=} x_9 \overset{d}{=} x_{10}& \sim \mathcal{N}(0, 1) \label{eq:sim-norm} \\
@@ -887,39 +868,13 @@ x_7 &\sim 0.5 \mathcal{N}(-5, 1) + 0.5 \mathcal{N}(5, 1)
 \begin{figure}
 \centering
 \includegraphics{paper_files/figure-latex/origin-data-1.pdf}
-\caption{\label{origin-data} The distribution of simulated data except
-x3}
+\caption{\label{origin-data} The histogram of simulated selected
+variables.}
 \end{figure}
 
-We form our first dataset using variables \texttt{x1}, \texttt{x2},
-\texttt{x8}, \texttt{x9} and \texttt{x10}, run the guided tour with
-optimiser \texttt{search\_better} and below shows the first ten rows of
-the data object.
-
-{[}I notice that in the implementation the loop index for interpolation
-starts from 0 rather than 1. Need more investigation to see if it is
-easy to change it to 1 or we will have to change the definition of the
-data structure.{]}
-
-\begin{verbatim}
-## # A tibble: 10 x 8
-##       id basis             index_val info         tries  loop method       alpha
-##    <int> <list>                <dbl> <chr>        <dbl> <dbl> <chr>        <dbl>
-##  1     1 <dbl[,1] [5 x 1]>     0.749 new_basis        1     1 <NA>           0.5
-##  2     2 <dbl[,1] [5 x 1]>     0.730 random_sear~     2     1 search_bett~   0.5
-##  3     3 <dbl[,1] [5 x 1]>     0.743 random_sear~     2     2 search_bett~   0.5
-##  4     4 <dbl[,1] [5 x 1]>     0.736 random_sear~     2     3 search_bett~   0.5
-##  5     5 <dbl[,1] [5 x 1]>     0.747 random_sear~     2     4 search_bett~   0.5
-##  6     6 <dbl[,1] [5 x 1]>     0.725 random_sear~     2     5 search_bett~   0.5
-##  7     7 <dbl[,1] [5 x 1]>     0.752 new_basis        2     6 search_bett~   0.5
-##  8     8 <dbl[,1] [5 x 1]>     0.749 interpolati~     2     0 search_bett~  NA  
-##  9     9 <dbl[,1] [5 x 1]>     0.750 interpolati~     2     1 search_bett~  NA  
-## 10    10 <dbl[,1] [5 x 1]>     0.750 interpolati~     2     2 search_bett~  NA
-\end{verbatim}
-
-\hypertarget{a-more-complex-example-interruption}{%
-\subsection{A more complex example:
-Interruption}\label{a-more-complex-example-interruption}}
+\hypertarget{a-problem-of-not-monotonic}{%
+\subsection{A problem of not
+monotonic}\label{a-problem-of-not-monotonic}}
 
 We use the same dataset as the toy example above to explore the search
 function \texttt{search\_better} and we want to learn how the index
@@ -946,8 +901,9 @@ interuption finds an ending basis with higher index value using fewer
 steps.}
 \end{figure}
 
-\hypertarget{another-example-polish}{%
-\subsection{Another example: Polish}\label{another-example-polish}}
+\hypertarget{close-but-not-close-enough}{%
+\subsection{Close but not close
+enough}\label{close-but-not-close-enough}}
 
 In principle, all the optimisation routines should result in the same
 output for the same problem while this may not be the case in real
@@ -1098,9 +1054,9 @@ high-D sphere.
 
 {[}add example from geozoo{]}
 
-\hypertarget{a-comprehensive-example-of-diagnosing-a-noisy-index-function}{%
-\subsection{A comprehensive example of diagnosing a noisy index
-function}\label{a-comprehensive-example-of-diagnosing-a-noisy-index-function}}
+\hypertarget{seeing-the-signal-in-the-noise}{%
+\subsection{Seeing the signal in the
+noise}\label{seeing-the-signal-in-the-noise}}
 
 The interpolation path of holes index, as seen in Figure
 \ref{interruption}, is smooth, while this may not be the case for more
@@ -1115,9 +1071,6 @@ subscript indicating the variable, the Kolmogorov statistics defined by
 
 can be seen as a function of the projection matrix
 \(\mathbf{A}_{p \times 1}\) and hence a valid index function.
-
-\hypertarget{explore-index-value}{%
-\subsubsection{Explore index value}\label{explore-index-value}}
 
 Figure \ref{kol-cdf} compares the tracing plot of the interpolating
 points when using different optimisation algorithms:
@@ -1183,9 +1136,6 @@ problem above will result in finding the global maximum but much larger
 number of iteration is needed.}
 \end{figure}
 
-\hypertarget{explore-searching-space}{%
-\subsubsection{Explore searching space}\label{explore-searching-space}}
-
 We can also plot the searching points of all three algorithms in the
 searching space and explore their relative position against each other
 using principal components. As shown in Figure
@@ -1217,6 +1167,29 @@ Additional messages during the optimisation can be displayed by argument
 \texttt{verbose\ =\ TRUE}. Notice that the tibble object allows the
 list-column \texttt{basis} to be printed out nicely with the dimension
 of the projection basis readily available.
+
+We form our first dataset using variables \texttt{x1}, \texttt{x2},
+\texttt{x8}, \texttt{x9} and \texttt{x10}, run the guided tour with
+optimiser \texttt{search\_better} and below shows the first ten rows of
+the data object.
+
+\newpage
+
+\begin{verbatim}
+## # A tibble: 10 x 8
+##       id basis             index_val info         tries  loop method       alpha
+##    <int> <list>                <dbl> <chr>        <dbl> <dbl> <chr>        <dbl>
+##  1     1 <dbl[,1] [5 x 1]>     0.749 new_basis        1     1 <NA>           0.5
+##  2     2 <dbl[,1] [5 x 1]>     0.730 random_sear~     2     1 search_bett~   0.5
+##  3     3 <dbl[,1] [5 x 1]>     0.743 random_sear~     2     2 search_bett~   0.5
+##  4     4 <dbl[,1] [5 x 1]>     0.736 random_sear~     2     3 search_bett~   0.5
+##  5     5 <dbl[,1] [5 x 1]>     0.747 random_sear~     2     4 search_bett~   0.5
+##  6     6 <dbl[,1] [5 x 1]>     0.725 random_sear~     2     5 search_bett~   0.5
+##  7     7 <dbl[,1] [5 x 1]>     0.752 new_basis        2     6 search_bett~   0.5
+##  8     8 <dbl[,1] [5 x 1]>     0.749 interpolati~     2     0 search_bett~  NA  
+##  9     9 <dbl[,1] [5 x 1]>     0.750 interpolati~     2     1 search_bett~  NA  
+## 10    10 <dbl[,1] [5 x 1]>     0.750 interpolati~     2     2 search_bett~  NA
+\end{verbatim}
 
 \hypertarget{conclusion}{%
 \section{Conclusion}\label{conclusion}}
