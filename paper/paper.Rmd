@@ -265,7 +265,7 @@ Simulated annealing [@kirkpatrick1983optimization, @bertsimas1993simulated] modi
 
 To be able to make diagnostic plot, the optimisation algorithm should populate a data structure that contains the key elements of the algorithm. When the algorithm runs, key information regarding the decision variable, objective function and hyper-parameters needs to be recorded and stored as a data object for future analysis.
 
-## Data structure for diagnostics
+## Data structure for diagnostics 
 
 <!-- [Do I need this paragraph to details the grammar of graphic? xxx - don't think so; not particularly relevant - assume most people know it roughly] -->
 <!-- A layer includes 1) the data that powers the plot; 2) a geometric object that represents the visual shape of the data and 3) relevant statistical transformation that transform the information in the data to the information used to draw the geometric object. An important concept in the grammar of graphic is *aesthetic mapping*. Aesthetic mapping links the variable in a dataset to information needed to produce a geometric object. For example, we map one variable on the x-axis and another on the y-axis to create a scatterplot. Another example of creating a boxplot involves 1) mapping one variable on the x-axis and 2) transforming another variable to its five-point-summary and mapping the five-point-summary to the y-axis.  -->
@@ -437,7 +437,7 @@ p1 / p2
 
 \newpage
 
-## Examining the interpolation progress
+## Examining the optimisation progress
 
 Sometimes, we may be interested in exploring the points on the interpolation path since these are the points that will be played by the tour animation. The plot definition is as follows:
 
@@ -476,6 +476,7 @@ p1 / p2 / p3
 ```
 
 \newpage 
+
 ## Understanding the optimiser's coverage of the search space
 
 In projection pursuit, the projection bases $\mathbf{A}_{p \times d}$ are of dimension $p \times d$ with $p$ usually greater than two and hence can't be visualised in a 2D plot. An option to explore the searching space of these bases is to explore a reduced space via principal component analysis (PCA). The visualisation can thus be defined as
@@ -607,6 +608,7 @@ show the path of the tour on a sphere. (full data dimension animation...)
 
 include the tour animation (geozoo)
 
+
 \newpage
 
 # Diagnosing an optimiser {#application}
@@ -666,7 +668,7 @@ origin_dt_bi %>%
   facet_wrap(vars(names), ncol = 3)
 ```
 
-## A problem of not monotonic
+## A problem of not monotinic
 
 ```{r interpolation}
 #points is always included in the newest version
@@ -799,6 +801,9 @@ p2 <- bind_rows(holes_2d_better_max_tries, holes_2d_better_max_tries_polish) %>%
 <!-- (p1 | p2) / (p3 | p4) + plot_layout(guides = "collect") -->
 <!-- ``` -->
 
+
+
+
 *Example: initial value for polishing alpha* `search_polish` is a brute-force algorithm that evaluate 1000 points in the neighbourhood at each loop. Setting an appropriate initial value for polish_alpha would avoid wasting search on large vector space that are not likely to produce higher index value. The default initial value for polishing step is 0.5 and we are interested in whether this is an appropriate initial value to use after `search_geodesic`. The problem is a 1D projection of the small dataset using `search_geodesic` and followed by `search_polish`. The top-left panel of Figure \ref{polish-alpha} displays all the projection bases on the first two principal components, coloured by the `polish_alpha`. We can observe that rather than concentrating on the ending basis from `search_geodesic` as what polishing step is designed, `search_polish` searches a much larger vector space, which is unnecessary. Thus a customised smaller initial value for `polish_alpha` would be ideal. One way to do this is to initialised `polish_alpha` as the projection distance between the last two target bases. The top-right panel of Figure \ref{polish-alpha} shows a more desirable concentrated searching space near the ending basis. Both specifications of initial value allow the searches to reach the same ending index values. 
 
 
@@ -833,7 +838,7 @@ While explore the reduced space is an initial attempt to understand the searchin
 <!-- ``` -->
 
 
-## Seeing the signal in the noise
+## Seeing the signal in the noise 
 
 The interpolation path of holes index, as seen in Figure \ref{interruption}, is smooth, while this may not be the case for more complicated index functions. `kol_cdf` index, an 1D projection index function based on Kolmogorov test, compares the difference between the 1D projected data, $\mathbf{P}_{n \times 1}$ and a randomly generated normal distribution, $y_n$ based on the empirical cumulated distribution function (ECDF). Denotes the ECDF function as $F(u)$ with subscript indicating the variable,  the Kolmogorov statistics defined by
 
