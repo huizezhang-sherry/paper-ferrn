@@ -668,7 +668,7 @@ origin_dt_bi %>%
   facet_wrap(vars(names), ncol = 3)
 ```
 
-## A problem of not monotinic
+## A problem of not monotonic
 
 ```{r interpolation}
 #points is always included in the newest version
