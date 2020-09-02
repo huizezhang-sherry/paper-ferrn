@@ -426,10 +426,12 @@ dt <- holes_2d_better_max_tries %>%
   mutate(id = row_number()) 
 
 p1 <- dt %>% explore_trace_search() + 
-  ggtitle("satisfactory")
+  ggtitle("satisfactory") + 
+  scale_color_botanical(palette = "daisy")
 
 p2 <- holes_2d_better %>% explore_trace_search() + 
-  ggtitle("not satisfactory")
+  ggtitle("not satisfactory") + 
+  scale_color_botanical(palette = "daisy")
 
 p1 / p2
 
@@ -452,25 +454,14 @@ Sometimes, we may be interested in exploring the points on the interpolation pat
 Figure \ref{toy-interp} presents the interpolation of three different tour paths. The upper plot shows a desirable interpolation in each iteration with the index value being progressively and monotonically increasing.  While in the middle plot, the increases towards the target basis is not monotonical in the last two iterations and interpolated basis with higher index value can be found on the tour path. The lower plot is constructed using `search_better_random`, where a basis with smaller index value  has a probabilistic chance of being accepted and we can observe a much more involved pattern. In iteration three, the probabilistic acceptance produces a monotonically decreasing interpolation whilst in iteration five, six and seven, with also a probabilistic acceptance, the interpolation is now non-monotonical. When the target basis has a higher index value, iteration eight reaches this basis by first decreasing the index value. While the interpolation plot shows different possibilities of the change in index value on the tour path, the diagnosis of the validity of each pattern and the related optimisation algorithms will be postponed to Section \ref{application}.
 
 ```{r toy-interp, fig.height = 8, fig.cap = "\\label{toy-interp} This is a toy example of plotting interpolated points"}
-interp <- holes_2d_better_max_tries %>% 
-  filter(info == "interpolation") %>% 
-  mutate(id = row_number())
+p1 <- holes_2d_better_max_tries %>% explore_trace_interp() + theme(legend.position = "none") + 
+  scale_color_botanical(palette = "fern_brown")
 
-p1 <- interp %>% 
-  ggplot(aes(x = id, y = index_val, col = as.factor(tries))) + 
-  geom_point() + 
-  geom_line() + 
-  theme(legend.position = "bottom") + 
-  ggtitle("satisfactory")
+p2 <- interrupt_no %>% explore_trace_interp() + theme(legend.position = "none") + 
+  scale_color_botanical(palette = "fern_green")
 
-
-p2 <- interrupt_no %>% explore_trace_interp() + 
-  theme(legend.position = "bottom") + 
-  ggtitle("not satisfactory")
-
-p3 <- holes_2d_better_random %>% explore_trace_interp() + 
-  theme(legend.position = "bottom") + 
-  ggtitle("maybe satisfactory?")
+p3 <- holes_2d_better_random %>% explore_trace_interp() + theme(legend.position = "none") + 
+  scale_color_botanical(palette = "acacia")
 
 p1 / p2 / p3
 ```
@@ -556,17 +547,25 @@ Figure 5 shows the searching space plot of a geodesic search, colored by differe
 #   theme(aspect.ratio = 1, legend.position = "bottom") 
   
 #####
+# theory <- matrix(c(0,0, 1,0,0,0, 0, 1, 0, 0,0,0), ncol = 2)
+# index <- holes()
+# index(as.matrix(data_mult) %*% theory)
+# 
+# 
+# theory <-orthonormalise(matrix(c(0,0.2, 0.7,0,0,0, 0, 0.7, 0.2, 0,0,0), ncol = 2))
+# theory 
+# index <- holes()
+# index(as.matrix(data_mult) %*% get_last_basis(holes_2d_better))
+
+
 dt <- bind_rows(holes_2d_better %>% mutate(algo = "not satisfactory"), holes_2d_better_max_tries %>% mutate(algo = "satisfactory")) %>% mutate(info = ifelse(info == "start", "new_basis", info)) %>% 
   compute_pca() %>% 
   `$`(combined)
-
 last <- dt %>% 
   filter(info == "interpolation") %>% 
   group_by(algo) %>% 
   filter(id == max(id))
-
 start <- dt %>% filter(id == 1)
-
 dt %>% filter(!is.na(info)) %>% 
   ggplot() + 
   geom_point(aes(x = PC1, y = PC2, col = info)) + 
@@ -574,9 +573,6 @@ dt %>% filter(!is.na(info)) %>%
   geom_point(data = start,aes(x = PC1, y = PC2, col = info), size = 7) + 
   facet_wrap(vars(algo)) + 
   theme(aspect.ratio = 1, legend.position = "bottom")
-
-
-
 
 
 # bind_rows(holes_2d_better, holes_2d_geo) %>% 
