@@ -1008,38 +1008,6 @@ Both attain the same final index value after the polishing while using a
 \texttt{max.tries} of 25 is not sufficient to find the true maximum.}
 \end{figure}
 
-\emph{Example: initial value for polishing alpha}
-\texttt{search\_polish} is a brute-force algorithm that evaluate 1000
-points in the neighbourhood at each loop. Setting an appropriate initial
-value for polish\_alpha would avoid wasting search on large vector space
-that are not likely to produce higher index value. The default initial
-value for polishing step is 0.5 and we are interested in whether this is
-an appropriate initial value to use after \texttt{search\_geodesic}. The
-problem is a 1D projection of the small dataset using
-\texttt{search\_geodesic} and followed by \texttt{search\_polish}. The
-top-left panel of Figure \ref{polish-alpha} displays all the projection
-bases on the first two principal components, coloured by the
-\texttt{polish\_alpha}. We can observe that rather than concentrating on
-the ending basis from \texttt{search\_geodesic} as what polishing step
-is designed, \texttt{search\_polish} searches a much larger vector
-space, which is unnecessary. Thus a customised smaller initial value for
-\texttt{polish\_alpha} would be ideal. One way to do this is to
-initialised \texttt{polish\_alpha} as the projection distance between
-the last two target bases. The top-right panel of Figure
-\ref{polish-alpha} shows a more desirable concentrated searching space
-near the ending basis. Both specifications of initial value allow the
-searches to reach the same ending index values.
-
-\begin{figure}
-\centering
-\includegraphics{paper_files/figure-latex/polish-alpha-1.pdf}
-\caption{\label{polish-alpha}PCA plot of two different polish alpha
-initialisations. A default polish alpha = 0.5 searches a larger space
-that is unncessary while a small customised initial value of polish
-alpha will search near the ending basis. Both intialisations reach the
-same ending index values.}
-\end{figure}
-
 While explore the reduced space is an initial attempt to understand the
 searching space, there are existing technology for rotating a higher
 dimensional space for visualisation. Geozoo is an option. It generates
@@ -1139,17 +1107,6 @@ search a proportion of the searching space while better\_random produces
 a more exhaustive search. The large overlapping of better1 and
 better\_random is explained by the fact that both algorithms find x2 in
 the end.
-
-\begin{figure}
-\centering
-\includegraphics{paper_files/figure-latex/1d-2var-explore-proj-pca-1.pdf}
-\caption{\label{1d-2var-explore-proj-pca} The projected projection basis
-using principal components. The bases from better1 and better2 only
-search a proportion of the searching space while better\_random produces
-a more exhausive search. The large overlapping of better1 and
-better\_random is explained by the fact that both algorithms finds x2 in
-the end.}
-\end{figure}
 
 \hypertarget{implementation}{%
 \section{Implementation: Ferrn package}\label{implementation}}

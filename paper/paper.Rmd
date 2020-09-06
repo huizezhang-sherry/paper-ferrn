@@ -32,6 +32,7 @@ library(tidyverse)
 library(ferrn)
 library(patchwork)
 library(ggrepel)
+library(tourr)
 ```
 
 ```{r load-data}
@@ -491,106 +492,24 @@ Figure 5 shows the searching space plot of a geodesic search, colored by differe
 
 
 ```{r toy-pca, fig.height = 6, fig.cap = "\\label{toy-pca}PCA plot of search geodesic colouring by info allows for better understanding of each stage in the geodesic search"}
-# holes_1d_geo %>% explore_proj_pca(col = info) 
-# holes_1d_better%>% explore_proj_pca(col = info) 
-# 
-# bind_rows(holes_1d_geo, holes_1d_better) %>% explore_proj_pca(col = method)
-# 
-# 
-# dt <- bind_rows(holes_1d_better, holes_1d_geo) %>% 
-#   compute_pca() %>% 
-#   `$`(combined)
-# 
-# last <- dt %>% 
-#   filter(info == "interpolation") %>% 
-#     group_by(method) %>% 
-#   filter(id == max(id))
-# 
-# start <- dt %>% filter(id == 1)
-# 
-# dt %>% 
-#   ggplot(aes(x = PC1, y = PC2, col = info)) + 
-#   geom_point() + 
-#   #facet_wrap(vars(method)) + 
-#   theme(aspect.ratio = 1, legend.position = "bottom") + 
-#   geom_point(data = last, size = 7) + 
-#   geom_point(data = start, size = 7)
-# 
-# 
-# bind_rows(holes_1d_better, holes_1d_geo) %>%
-#   filter(info == "interpolation") %>%
-#   group_by(method) %>%
-#   mutate(id = row_number()) %>%
-#   ggplot(aes(x = id, y = index_val, group = method, col = as.factor(tries))) +
-#   geom_point() +
-#   geom_line() +
-#   facet_wrap(vars(method), ncol = 2)
-# 
-# ######
-# dt <- bind_rows(holes_2d_better, holes_2d_geo) %>% 
-#   compute_pca() %>% 
-#   `$`(combined)
-# 
-# last <- dt %>% 
-#   filter(info == "interpolation") %>% 
-#     group_by(method) %>% 
-#   filter(id == max(id))
-# 
-# start <- dt %>% filter(id == 1)
-# 
-# dt %>% filter(!is.na(info)) %>% 
-#   ggplot(aes(x = PC1, y = PC2, col = info)) + 
-#   geom_point() + 
-#   geom_point(data = last, size = 7) + 
-#   geom_point(data = start, size = 7) + 
-#   facet_wrap(vars(method)) + 
-#   theme(aspect.ratio = 1, legend.position = "bottom") 
-  
-#####
-# theory <- matrix(c(0,0, 1,0,0,0, 0, 1, 0, 0,0,0), ncol = 2)
-# index <- holes()
-# index(as.matrix(data_mult) %*% theory)
-# 
-# 
-# theory <-orthonormalise(matrix(c(0,0.2, 0.7,0,0,0, 0, 0.7, 0.2, 0,0,0), ncol = 2))
-# theory 
-# index <- holes()
-# index(as.matrix(data_mult) %*% get_last_basis(holes_2d_better))
-
-
-dt <- bind_rows(holes_2d_better %>% mutate(algo = "not satisfactory"), holes_2d_better_max_tries %>% mutate(algo = "satisfactory")) %>% mutate(info = ifelse(info == "start", "new_basis", info)) %>% 
+dt <- bind_rows(holes_2d_better %>% mutate(algo = "not satisfactory"), 
+                holes_2d_better_max_tries %>% mutate(algo = "satisfactory")) %>% 
+ bind_rows(holes_2d_theory %>% mutate(algo = "satisfactory")) %>% 
+  bind_rows(holes_2d_theory %>% mutate(algo = "not satisfactory")) %>% 
+  mutate(algo = fct_relevel(algo, c("satisfactory", "not satisfactory")))%>% 
   compute_pca() %>% 
-  `$`(combined)
-last <- dt %>% 
-  filter(info == "interpolation") %>% 
-  group_by(algo) %>% 
-  filter(id == max(id))
-start <- dt %>% filter(id == 1)
-dt %>% filter(!is.na(info)) %>% 
-  ggplot() + 
-  geom_point(aes(x = PC1, y = PC2, col = info)) + 
-  geom_point(data = last, aes(x = PC1, y = PC2, col = info), size = 7) + 
-  geom_point(data = start,aes(x = PC1, y = PC2, col = info), size = 7) + 
-  facet_wrap(vars(algo)) + 
-  theme(aspect.ratio = 1, legend.position = "bottom")
+  `$`(aug)
 
 
-# bind_rows(holes_2d_better, holes_2d_geo) %>% 
-#   filter(info == "interpolation") %>% 
-#   group_by(method) %>% 
-#   mutate(id = row_number()) %>% 
-#   ggplot(aes(x = id, y = index_val, group = method, col = as.factor(tries))) + 
-#   geom_point() + 
-#   geom_line() + 
-#   facet_wrap(vars(method), ncol = 1)
+dt %>% explore_proj_pca(facet = algo, size = 7, alpha = 0.5)
+#dt %>% explore_proj_pca(facet = algo, axis = 2)
 
-  
-
-
-#holes_2d_geo %>% explore_trace_interp()
-
-#xxx the info level need to be reorder to show the start and directional search points better.
 ```
+
+
+
+
+
 
 ## Animating the diagnostic plots
 
@@ -758,14 +677,10 @@ Again using the same data, we are interested to compare the effect of different 
 
 ```{r polish, fig.asp=0.5,fig.cap="\\label{trace-compare}Breakdown of index value when using different max.tries in search better in conjunction with search polish. Both attain the same final index value after the polishing while using a `max.tries` of 25 is not sufficient to find the true maximum."}
 
-p1 <- bind_rows(holes_2d_better, holes_2d_better_polish) %>% 
-  explore_trace_interp(col = method) + ggtitle("max.tries = 25")
-
-p2 <- bind_rows(holes_2d_better_max_tries, holes_2d_better_max_tries_polish) %>% 
-  explore_trace_interp(col = method) + ggtitle("max.tries = 500")
-
-(p1 | p2) &
-  theme(legend.position = "none") 
+holes_2d_better %>% mutate(max_tries = 25) %>% 
+  dplyr::bind_rows(holes_2d_better_max_tries %>% mutate(max_tries = 500)) %>% 
+  explore_trace_interp(col = max_tries, facet = max_tries) + 
+  theme(legend.position = "none")
 ```
 
 
@@ -800,25 +715,25 @@ p2 <- bind_rows(holes_2d_better_max_tries, holes_2d_better_max_tries_polish) %>%
 
 
 
-*Example: initial value for polishing alpha* `search_polish` is a brute-force algorithm that evaluate 1000 points in the neighbourhood at each loop. Setting an appropriate initial value for polish_alpha would avoid wasting search on large vector space that are not likely to produce higher index value. The default initial value for polishing step is 0.5 and we are interested in whether this is an appropriate initial value to use after `search_geodesic`. The problem is a 1D projection of the small dataset using `search_geodesic` and followed by `search_polish`. The top-left panel of Figure \ref{polish-alpha} displays all the projection bases on the first two principal components, coloured by the `polish_alpha`. We can observe that rather than concentrating on the ending basis from `search_geodesic` as what polishing step is designed, `search_polish` searches a much larger vector space, which is unnecessary. Thus a customised smaller initial value for `polish_alpha` would be ideal. One way to do this is to initialised `polish_alpha` as the projection distance between the last two target bases. The top-right panel of Figure \ref{polish-alpha} shows a more desirable concentrated searching space near the ending basis. Both specifications of initial value allow the searches to reach the same ending index values. 
+<!-- *Example: initial value for polishing alpha* `search_polish` is a brute-force algorithm that evaluate 1000 points in the neighbourhood at each loop. Setting an appropriate initial value for polish_alpha would avoid wasting search on large vector space that are not likely to produce higher index value. The default initial value for polishing step is 0.5 and we are interested in whether this is an appropriate initial value to use after `search_geodesic`. The problem is a 1D projection of the small dataset using `search_geodesic` and followed by `search_polish`. The top-left panel of Figure \ref{polish-alpha} displays all the projection bases on the first two principal components, coloured by the `polish_alpha`. We can observe that rather than concentrating on the ending basis from `search_geodesic` as what polishing step is designed, `search_polish` searches a much larger vector space, which is unnecessary. Thus a customised smaller initial value for `polish_alpha` would be ideal. One way to do this is to initialised `polish_alpha` as the projection distance between the last two target bases. The top-right panel of Figure \ref{polish-alpha} shows a more desirable concentrated searching space near the ending basis. Both specifications of initial value allow the searches to reach the same ending index values.  -->
 
 
-```{r polish-alpha, fig.cap = "\\label{polish-alpha}PCA plot of two different polish alpha initialisations. A default polish alpha = 0.5 searches a larger space that is unncessary while a small customised initial value of polish alpha will search near the ending basis. Both intialisations reach the same ending index values. "}
-p1 <- bind_rows(holes_1d_geo, holes_1d_geo_polish_default_alpha) %>% 
-  explore_proj_pca(col = as.factor(alpha))
+<!-- ```{r polish-alpha, fig.cap = "\\label{polish-alpha}PCA plot of two different polish alpha initialisations. A default polish alpha = 0.5 searches a larger space that is unncessary while a small customised initial value of polish alpha will search near the ending basis. Both intialisations reach the same ending index values. "} -->
+<!-- p1 <- bind_rows(holes_1d_geo, holes_1d_geo_polish_default_alpha) %>%  -->
+<!--   explore_proj_pca(col = as.factor(alpha)) -->
 
-p2 <- bind_rows(holes_1d_geo, holes_1d_geo_polish) %>% 
-  explore_proj_pca(col = as.factor(alpha))
+<!-- p2 <- bind_rows(holes_1d_geo, holes_1d_geo_polish) %>%  -->
+<!--   explore_proj_pca(col = as.factor(alpha)) -->
 
-p3 <- bind_rows(holes_1d_geo, holes_1d_geo_polish_default_alpha) %>%
-  explore_trace_interp(col = method) + ylim(0.75, 0.95)
+<!-- p3 <- bind_rows(holes_1d_geo, holes_1d_geo_polish_default_alpha) %>% -->
+<!--   explore_trace_interp(col = method) + ylim(0.75, 0.95) -->
 
-p4 <- bind_rows(holes_1d_geo, holes_1d_geo_polish) %>% 
-  explore_trace_interp(col = method) +  ylim(0.75, 0.95)
+<!-- p4 <- bind_rows(holes_1d_geo, holes_1d_geo_polish) %>%  -->
+<!--   explore_trace_interp(col = method) +  ylim(0.75, 0.95) -->
 
-((p1 | p2) /(p3 | p4)) +  plot_layout(heights = c(2, 1)) & theme(legend.position = "none") 
+<!-- ((p1 | p2) /(p3 | p4)) +  plot_layout(heights = c(2, 1)) & theme(legend.position = "none")  -->
 
-```
+<!-- ``` -->
 
 
 
@@ -865,7 +780,7 @@ Now we enlarge the dataset to include two informative variables: `x2` and `x3` a
 Using different seeds in `search_better` allows us to find both local maxima d as in Figure \ref{1d-2var-different-seeds}. Comparing the maximum of both, we can see that the global maximum happens when `x2` is found. It is natural to ask then if there is an algorithm that can find the global maximum without trying on different seeds? `search_better_random` manages to do it via a Metropolis-hasting random search as shown in Figure \ref{1d-2var-better-random}, although at a higher cost of number of points to evaluate. 
 
 ```{r 1d-2var-different-seeds,  fig.asp=0.5, fig.cap="\\label{1d-2var-different-seeds}The trace plot search better in a 1D projection problem with two informative variables using different seeds (without polishing). Since there are two informative variables, setting different value for seed will lead search better to find either of the local maximum."}
-colour <- RColorBrewer::brewer.pal(3, "Dark2")
+colour <- ferrn::botanical_pal()(3)
 p5 <- kol_cdf_1d_2var_better %>% explore_trace_interp(col = 0) + 
   scale_colour_manual(values = colour[2]) + ggtitle("search_better, seed 123456")
 p6 <- kol_cdf_1d_2var_better_2 %>% explore_trace_interp(col = 0) + 
@@ -885,21 +800,21 @@ kol_cdf_1d_2var_better_random %>%
 
 We can also plot the searching points of all three algorithms in the searching space and explore their relative position against each other using principal components. As shown in Figure \ref{1d-2var-explore-proj-pca}, the bases from better1 and better2 only search a proportion of the searching space while better_random produces a more exhaustive search. The large overlapping of better1 and better_random is explained by the fact that both algorithms find x2 in the end. 
 
-```{r 1d-2var-explore-proj-pca, fig.cap = "\\label{1d-2var-explore-proj-pca} The projected projection basis using principal components. The bases from better1 and better2 only search a proportion of the searching space while better_random produces a more exhausive search. The large overlapping of better1 and better_random is explained by the fact that both algorithms finds x2 in the end."}
-interp1 <- kol_cdf_1d_2var_better 
-interp2 <- kol_cdf_1d_2var_better_2
-interp3 <- kol_cdf_1d_2var_better_random 
+<!-- ```{r 1d-2var-explore-proj-pca, fig.cap = "\\label{1d-2var-explore-proj-pca} The projected projection basis using principal components. The bases from better1 and better2 only search a proportion of the searching space while better_random produces a more exhausive search. The large overlapping of better1 and better_random is explained by the fact that both algorithms finds x2 in the end."} -->
+<!-- interp1 <- kol_cdf_1d_2var_better  -->
+<!-- interp2 <- kol_cdf_1d_2var_better_2 -->
+<!-- interp3 <- kol_cdf_1d_2var_better_random  -->
 
-bind_rows(interp1, interp2, interp3) %>% 
-  mutate(algorithm = c(rep("better1", nrow(interp1)), 
-                       rep("better2", nrow(interp2)), 
-                       rep("better_random", nrow(interp3))),
-         algorithm = fct_relevel(algorithm, c("better1", "better2", "better_random"))) %>% 
-  explore_proj_pca(col = algorithm) + 
-  scale_colour_brewer(palette = "Dark2") 
+<!-- dt <- bind_rows(interp1, interp2, interp3) %>%  -->
+<!--   mutate(algorithm = c(rep("better 1", nrow(interp1)),  -->
+<!--                        rep("better 2", nrow(interp2)),  -->
+<!--                        rep("better random", nrow(interp3))), -->
+<!--          algorithm = fct_relevel(algorithm, c("better 1", "better 2", "better random")))  -->
 
-
-```
+<!-- dt %>%  -->
+<!--   explore_proj_pca(col = algorithm, alpha = 0.5) +  -->
+<!--   scale_colour_manual(values = color(3))  -->
+<!-- ``` -->
 
 
 
