@@ -492,23 +492,18 @@ Figure 5 shows the searching space plot of a geodesic search, colored by differe
 
 
 ```{r toy-pca, fig.height = 6, fig.cap = "\\label{toy-pca}PCA plot of search geodesic colouring by info allows for better understanding of each stage in the geodesic search"}
-dt <- bind_rows(holes_2d_better %>% mutate(algo = "not satisfactory"), 
-                holes_2d_better_max_tries %>% mutate(algo = "satisfactory")) %>% 
- bind_rows(holes_2d_theory %>% mutate(algo = "satisfactory")) %>% 
-  bind_rows(holes_2d_theory %>% mutate(algo = "not satisfactory")) %>% 
-  mutate(algo = fct_relevel(algo, c("satisfactory", "not satisfactory")))%>% 
-  compute_pca() %>% 
+dt <- bind_rows(holes_2d_better %>% mutate(algo = "not satisfactory"),
+                holes_2d_better_max_tries %>% mutate(algo = "satisfactory")) %>%
+ bind_rows(holes_2d_theory %>% mutate(algo = "satisfactory")) %>%
+  bind_rows(holes_2d_theory %>% mutate(algo = "not satisfactory")) %>%
+  mutate(algo = fct_relevel(algo, c("satisfactory", "not satisfactory")))%>%
+  compute_pca() %>%
   `$`(aug)
 
 
 dt %>% explore_proj_pca(facet = algo, size = 7, alpha = 0.5)
 #dt %>% explore_proj_pca(facet = algo, axis = 2)
-
 ```
-
-
-
-
 
 
 ## Animating the diagnostic plots
@@ -517,9 +512,19 @@ all the plots above can be animated if wanted - importance is how the data is mo
 
 show an example of some snap shots  of the animation and provide a link... for animated pca plot
 
+```{r animated-pca, fig.height = 8, fig.cap = "\\label{animated-pca} 16 frames from animated PCA plot ." }
+rl <- lapply(list.files(here::here("figures/animated_pca/"),full.names = TRUE)[1:16], png::readPNG)
+gl <-  lapply(rl, grid::rasterGrob)
+gridExtra::grid.arrange(grobs=gl)
+```
+
+
+
 ## The tour looking at itself
 
 show the path of the tour on a sphere. (full data dimension animation...)
+
+
 
 include the tour animation (geozoo)
 
@@ -821,6 +826,10 @@ We can also plot the searching points of all three algorithms in the searching s
 
 # Implementation: Ferrn package {#implementation}
 
+1. how does the printed data object looks like?
+
+Do I talk about the work done in the tourr package?
+
 Everything is coded up in a package. Package structure
 
 
@@ -846,6 +855,13 @@ holes_1d_better %>%
   dplyr::select(id, basis, index_val, info, tries, loop, method, alpha) %>% 
   head(10)
 ```
+
+2. 
+
+
+
+
+
 
 
 # Conclusion
