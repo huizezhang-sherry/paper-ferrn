@@ -532,28 +532,7 @@ include the tour animation (geozoo)
 
 # Diagnosing an optimiser {#application}
 
-
-
-<!-- [a paragraph that motivate the section: these optimisers are suspect to have problem, here is how we use the diag plot to diagnose them. ] -->
-
-The three algorithms introduced in Section \ref{tour} have experienced several practical issues in application. [initial problems with tourr optim, 2-3 sentences]. These issues can be studied and investigated using the diagnostic plots constructed above.
-
-
-<!-- Below we will present several examples of diagnosing different aspects of the projection pursuit optimisation. We will present more examples that can help us to understand the algorithm and parameter choice:  -->
-
-<!-- 1) ... -->
-<!-- 2) ... -->
-<!-- 3) ... -->
-<!-- 4) ... -->
-
-
-<!-- Remember the research question we raised earlier, the purpose of visual diagnostics is to understand:  -->
-
-<!-- - Whether the algorithm has successfully found the maximum and how the index value changes throughout the algorithm? -->
-
-<!-- - How does the searching space look like, that is, geometrically, where are the projection bases located in the space? -->
-
-<!-- (mention optim difficulties and split the simulated data section into the examples!!!) -->
+For a particular index function, the best algorithm to optimise is related to the character of the index and the data. If the index function is smooth and has single maximum, all of the three algorithms introduced above can find maximum.  When multiple optima are presented, `search_better` may stuck in the local maximum. When the index function is non-smooth, `search_geodesic` may even fail to find the maximum. In this section, examples will be presented  to outline how the diagnostic plots can be used to compare the performance of the algorithms in different scenarios.
 
 ## Simulation setup
 

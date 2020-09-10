@@ -842,10 +842,15 @@ include the tour animation (geozoo)
 \hypertarget{application}{%
 \section{Diagnosing an optimiser}\label{application}}
 
-The three algorithms introduced in Section \ref{tour} have experienced
-several practical issues in application. {[}initial problems with tourr
-optim, 2-3 sentences{]}. These issues can be studied and investigated
-using the diagnostic plots constructed above.
+For a particular index function, the best algorithm to optimise is
+related to the character of the index and the data. If the index
+function is smooth and has single maximum, all of the three algorithms
+introduced above can find maximum. When multiple optima are presented,
+\texttt{search\_better} may stuck in the local maximum. When the index
+function is non-smooth, \texttt{search\_geodesic} may even fail to find
+the maximum. In this section, examples will be presented to outline how
+the diagnostic plots can be used to compare the performance of the
+algorithms in different scenarios.
 
 \hypertarget{simulation-setup}{%
 \subsection{Simulation setup}\label{simulation-setup}}
