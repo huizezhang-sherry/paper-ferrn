@@ -773,9 +773,16 @@ Figure \ref{kol-cdf} compares the tracing plot of the interpolating points when 
 Polishing step has done much more work to find the final index value in `search_geodesic` than `search_better` and this indicates `kol_cdf` function favours of a random search method than ascent method. 
 
 ```{r kol-cdf,fig.asp=0.5, fig.cap = "\\label{kol-cdf}Comparison of two different searching methods: search_geodesic and search_better on 1D projection problem for a noisier index: kol_cdf. The geodesic search rely heavily on the polishing step to find the final index value while search better works well."}
-p1 <- bind_rows(kol_cdf_1d_geodesic, kol_cdf_1d_geodesic_polish) %>% explore_trace_interp(col = method)  + ggtitle("search_geodesic")
+# p1 <- bind_rows(kol_1d_geo, kol_1d_geodesic_polish) %>% explore_trace_interp(col = method)  + ggtitle("search_geodesic")
+# 
+# p2 <- bind_rows(kol_1d_better, kol_1d_better_polish) %>% explore_trace_interp(col = method) + ggtitle("search_better")
+# 
+# (p1 | p2 ) & theme(legend.position = "bottom") & ylim(0, 0.23)
 
-p2 <- bind_rows(kol_cdf_1d_better, kol_cdf_1d_better_polish) %>% explore_trace_interp(col = method) + ggtitle("search_better")
+
+p1 <- kol_1d_geo %>% explore_trace_interp(col = method)  + ggtitle("search_geodesic")
+
+p2 <- kol_1d_better %>% explore_trace_interp(col = method) + ggtitle("search_better")
 
 (p1 | p2 ) & theme(legend.position = "bottom") & ylim(0, 0.23)
 ```
@@ -786,16 +793,16 @@ Using different seeds in `search_better` allows us to find both local maxima d a
 
 ```{r 1d-2var-different-seeds,  fig.asp=0.5, fig.cap="\\label{1d-2var-different-seeds}The trace plot search better in a 1D projection problem with two informative variables using different seeds (without polishing). Since there are two informative variables, setting different value for seed will lead search better to find either of the local maximum."}
 colour <- ferrn::botanical_pal()(3)
-p5 <- kol_cdf_1d_2var_better %>% explore_trace_interp(col = 0) + 
+p5 <- kol_1d_2var_better %>% explore_trace_interp(col = 0) + 
   scale_colour_manual(values = colour[2]) + ggtitle("search_better, seed 123456")
-p6 <- kol_cdf_1d_2var_better_2 %>% explore_trace_interp(col = 0) + 
+p6 <- kol_1d_2var_better_2 %>% explore_trace_interp(col = 0) + 
   scale_colour_manual(values = colour[1]) + ggtitle("search_better, seed 12345")
 
 (p5 | p6) & theme(legend.position = "none") & ylim(0, 0.25)
 ```
 
 ```{r 1d-2var-better-random, fig.asp=0.5, fig.cap = "\\label{1d-2var-better-random}Using search better random for the problem above will result in finding the global maximum but much larger number of iteration is needed."}
-kol_cdf_1d_2var_better_random %>% 
+kol_1d_2var_better_random %>% 
   explore_trace_interp(col = 0) + 
   ylim(0, 0.25) + 
   scale_colour_manual(values = colour[3]) + 
