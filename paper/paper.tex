@@ -324,30 +324,33 @@ to compute since the tour animation is played in real-time.
 
 Below we introduce three possible algorithms: \texttt{search\_better}
 and \texttt{search\_better\_random} are derivative free methods that
-sample candidate basis in the neighbourhood whilst
-\texttt{search\_geodesic} approximates the gradient information and acts
-as a non-derivative version of the gradient ascent.
+sample candidate bases in the neighbourhood, whilst
+\texttt{search\_geodesic} is an analogue of gradient ascent on the
+manifold of the projection basis.
 
-\citet{posse1995projection} proposed a random search algorithm that
-samples a candidate basis \(\mathbf{A}_{l}\) in the neighbourhood of the
-current basis \(\mathbf{A}_{\text{cur}}\) by
-\(\mathbf{A}_{l} = \mathbf{A}_{\text{cur}} + \alpha \mathbf{A}_{\text{rand}}\),
+\texttt{search\_better} is a random search device that samples a
+candidate basis \(\mathbf{A}_{l}\) in the neighbourhood of the current
+basis \(\mathbf{A}_{\text{cur}}\) by
+\(\mathbf{A}_{l} = (1- \alpha)\mathbf{A}_{\text{cur}} + \alpha \mathbf{A}_{\text{rand}}\)
 where \(\alpha\) controls the radius of the sampling neighbourhood and
 \(\mathbf{A}_{\text{rand}}\) is a randomly generated matrix with the
-same dimension as \(\mathbf{A}_{\text{cur}}\). The optimiser keeps
-sampling bases near the current basis until it finds one with higher
-index value than the current basis and then outputs it for guided tour
-to construct the interpolation path. A new round of search continues to
-find a better basis after the interpolation finishes. The halving
-parameter \(c\) with default value of 30 is designed to adjust the
-searching neighbourhood \(\alpha\). When the search needs to sample more
-than \(c\) number of basis to find an accepted basis, the neighbourhood
-parameter \(\alpha\) will be reduced by half in the next iteration. If
-the optimiser can't find a better basis within the maximum number of
-tries \(l_{\max}\), the algorithm stops. The algorithm is summarised in
-Algorithm \ref{random-search} for one iteration. {[}mention
-orthonormalise to ensure the constraint is fulfilled; don't use
-derivative information but a random search{]}
+same dimension as \(\mathbf{A}_{\text{cur}}\). \(\mathbf{A}_{l}\) is
+then orthogonalised to ensure the orthonormal constraint is fulfilled.
+When a basis is found with index value higher than the current basis
+\(\mathbf{A}_{\text{cur}}\), the search terminates and outputs the basis
+for guided tour to construct an interpolation path. The next iteration
+of search begins after adjusting \(\alpha\) by a cooling parameter:
+\(\alpha_{j+1} = \alpha_j * \text{cooling}\). Another termination
+condition is when the maximum number of iteration \(l_{\max}\) is
+reached. A slightly different cooling scheme has been proposed by
+\citet{posse1995projection} to include a halving parameter \(c\). Rather
+than reducing the radius of the searching neighbourhood, \(\alpha\), at
+each iteration, Posse's design only adjust \(\alpha\) if the last search
+takes more than \(c\) times to find an accepted basis to avoid the
+searching space being reduced too fast. The algorithm of
+\texttt{search\_better} is summarised in Algorithm \ref{random-search}.
+{[}mention orthonormalise to ensure the constraint is fulfilled; don't
+use derivative information but a random search{]}
 
 \begin{algorithm}
 \SetAlgoLined
@@ -356,92 +359,92 @@ derivative information but a random search{]}
     \Input{$\mathbf{A}_{\text{cur}}$, $f$, $\alpha$, $l_{\max}$} 
     \Output{$\mathbf{A}_{l}$}
   initialisation\;
-  Set $l = 1$ and $c = 0$\;
+  Set $l = 1$\;
   \While{$l < l_{\max}$}{
-    Generate $\mathbf{A}_{l} = \mathbf{A}_{\text{cur}} + \alpha \mathbf{A}_{\text{rand}}$ and orthonormalise $\mathbf{A}_{l}$\;
+    Generate $\mathbf{A}_{l} = (1- \alpha)\mathbf{A}_{\text{cur}} + \alpha \mathbf{A}_{\text{rand}}$ and orthogonise $\mathbf{A}_{l}$\;
     Compute $I_{l}  = f(\mathbf{A}_{l})$\;
-    \eIf{$I_{l} > I_{\text{cur}}$}{
+    \If{$I_{l} > I_{\text{cur}}$}{
       \KwRet{$\mathbf{A}_{l}$} \;
-      }{
-      $c = c + 1$\;
       }
     $l = l + 1$\;
   }
-  We repeat this loop and if $c > 30$, half the $\alpha$. Reset $c$ to zero.
   \caption{random search}
   \label{random-search}
 \end{algorithm}
 
 Simulated annealing
-\citep[\citet{bertsimas1993simulated}]{kirkpatrick1983optimization}
-modifies \texttt{search\_better} based on a non-increasing cooling
-scheme \(T(j)\). Given an initial \(T_0\), the temperature at iteration
-\(k\) is defined as \(T(j) = \frac{T_0}{\log(j + 1)}\). When a candidate
-basis fails to have an index value larger than the current basis,
-simulated annealing gives it a second chance to be accepted with
+\citep[\citet{bertsimas1993simulated}]{kirkpatrick1983optimization} uses
+the same sampling process as \texttt{search\_better} but allow a
+probabilistic acceptance of a basis with lower index value based on a
+cooling scheme \(T(l)\). Given an initial \(T_0\), the temperature at
+iteration \(l\) is defined as \(T(l) = \frac{T_0}{\log(l + 1)}\). When a
+candidate basis fails to have an index value larger than the current
+basis, simulated annealing gives it a second chance to be accepted with
 probability
-\[P= \min\left\{\exp\left[-\frac{I_{\text{cur}} - I_{j}}{T(j)}\right],1\right\}\]
+\[P= \min\left\{\exp\left[-\frac{I_{\text{cur}} - I_{l}}{T(l)}\right],1\right\}\]
 where \(I_{(\cdot)}\) denotes the index value of a given basis. This
 implementation allows the algorithm to jump out of a local maximum and
 enables a more holistic search of the whole parameter space. This
 feature is particularly useful when the dimension of the projected space
 is smaller than the number of informative variables in the dataset
 (i.e.~a one dimensional projection of the dataset with two informative
-variables). The algorithm can be written as replacing line 5-11 of
+variables). The algorithm can be written as replacing line 5-8 of
 Algorithm \ref{random-search} with Algorithm \ref{simulated_annealing}.
 
 \begin{algorithm}
 \SetAlgoLined
-    Compute $I_{j} = f(\mathbf{A}_{j})$ and $T(k) = \frac{T_0}{\log(j + 1)}$\;
-      \eIf{$I_{j} > I_{\text{cur}}$}{
-        \KwRet{$\mathbf{A}_{j}$} \;
+    Compute $I_{l} = f(\mathbf{A}_{l})$ and $T(l) = \frac{T_0}{\log(l + 1)}$\;
+      \eIf{$I_{l} > I_{\text{cur}}$}{
+        \KwRet{$\mathbf{A}_{l}$} \;
       }{
-        Compute $P= \min\left\{\exp\left[-\frac{I_{\text{cur}} -I_{j}}{T(j)}\right],1\right\}$\;
+        Compute $P= \min\left\{\exp\left[-\frac{I_{\text{cur}} -I_{l}}{T(l)}\right],1\right\}$\;
         Draw $U$ from a uniform distribution: $U \sim \text{Unif(0, 1)}$\;
         \If{$P > U$}{
-           \KwRet{$\mathbf{A}_{j}$} \;
+           \KwRet{$\mathbf{A}_{l}$} \;
         }
       }
   \caption{simulated annealing}
   \label{simulated_annealing}
 \end{algorithm}
 
-\citet{cook1995grand} used a gradient ascent algorithm with
-pseudo-derivative. Instead of computing the actual gradient of the index
-function with respect to the projection basis matrix,
-\texttt{search\_geodesic} samples \(2n\) bases that are randomly
-generated on a uniform open ball with the radius controlled by the
-\(\delta\) parameter and finds the most promising one to construct the
-geodesic direction as an approximation to the gradient. The \(\delta\)
-parameter is usually set to be tiny to ensure the geodesic direction is
-a good local approximation to the gradient. Once the searching direction
-is determined, the optimiser finds the best projection
-\(\mathbf{A}_{**}\) on the geodesic as the candidate.
+\citet{cook1995grand} used a gradient ascent algorithm on the manifold
+of the projection bases. In gradient ascent, one first find the
+direction for improvment via computing the gradient information. In
+\texttt{search\_geodesic}, \(2n\) bases are first generated in a tiny
+neighbourhood of the current basis, controlled by the neighbourhood
+parameter \(\delta\). A geodesic is then constructed using the current
+basis and one of the \(2n\) bases that have the highest index value. If
+the neighbourhood parameter \(\delta\) is tiny, the geodesic constructed
+is an analogue of the gradient information in the curved space and can
+work as the searching direction. In gradient ascent, the next step is to
+conduct a line search to find the best improvement along the gradient
+direction. In \texttt{search\_geodesic}, this step is replaced by
+optimising the index value along the geodesic direction constructed
+before over an 90 degree angle from \(-\pi/4\) to \(\pi/4\). The optima
 \(\mathbf{A}_{**}\) is outputted for the current iteration if the
 percentage change in the index value between \(\mathbf{A}_{**}\) and
-\(\mathbf{A}_{\text{cur}}\) is greater than a threshold value or the
-algorithm repeats the above steps until \(l_{\max}\) is reached and the
-searching terminates. Algorithm \ref{search-geodesic} summarises the
-steps in geodesic search.
+\(\mathbf{A}_{\text{cur}}\) is greater than a threshold value. As above,
+another termination condition is when \(l_{\max}\) is reached. Algorithm
+\ref{search-geodesic} summarises the steps in geodesic search.
 
 \begin{algorithm}
 \SetAlgoLined
 \SetKwInOut{Input}{input}
   \SetKwInOut{Output}{output}
-    \Input{$\mathbf{A}_{\text{cur}}$, $f$, $j_{\max}$, $n$, $\delta$}
+    \Input{$\mathbf{A}_{\text{cur}}$, $f$, $l_{\max}$, $n = 5$, $\delta$}
     \Output{$\mathbf{A}_{**}$}
   initialisation\;
-  Set $j = 1$\;
-  \While{$j < j_{\max}$}{
-    Generate $2n$ bases in $n$ random directions: $\mathbf{A}_{j}: \mathbf{A}_{j+9}$ within a small neighbourhood $\delta$\;
-    Find the direction with the largest index value: $\mathbf{A}_{*}$ where $j < * < j+ 9$\;
+  Set $l = 1$\;
+  \While{$l < l_{\max}$}{
+    Generate $2n$ bases in a small neighbourhood, $\delta$, of $\mathbf{A}_{\text{cur}}$ and ensure orthogonality \;
+    Find the one with the largest index value: $\mathbf{A}_{*}$\;
     Construct the geodesic $\mathcal{G}$ from $\mathbf{A}_{\text{cur}}$ to $\mathbf{A}_{*}$\;
-    Find $\mathbf{A}_{**}$ on the geodesic $\mathcal{G}$ that has the largest index value \;
+    Optimise the index value on the geodesic $\mathcal{G}$ over a 90 degree window to produce the optima $\mathbf{A}_{**}$  \;
     Compute $I_{**} = f(\mathbf{A}_{**})$, $p_{\text{diff}} = (I_{**} - I_{\text{cur}})/I_{**}$\;
       \If{$p_{\text{diff}} > 0.001$}{
          \KwRet{$\mathbf{A}_{**}$} \;
       }
-    $j = j + 1$\;
+    $l = l + 1$\;
   }
   \caption{search geodesic}
   \label{search-geodesic}
