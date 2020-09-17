@@ -33,6 +33,7 @@ library(ferrn)
 library(patchwork)
 library(ggrepel)
 library(tourr)
+library(gganimate)
 ```
 
 ```{r load-data}
@@ -470,7 +471,7 @@ p1 / p2 / p3
 
 ## Understanding the optimiser's coverage of the search space
 
-In projection pursuit, the projection bases $\mathbf{A}_{p \times d}$ are of dimension $p \times d$ with $p$ usually greater than two and hence can't be visualised in a 2D plot. An option to explore the searching space of these bases is to explore a reduced space via principal component analysis (PCA). The visualisation can thus be defined as
+The projection bases $\mathbf{A}_{p \times d}$ live on the surface of a $p \times d$ dimension sphere, where this dimension can easily go from 5 to 10. This makes viewing the original space hard. An easier alternative is to view the reduced space via some dimensional reduction methods i.e. Principal component analysis. The visualisation can thus be defined as
 
 <!-- We first flat each projection bases $\mathbf{A}$ to a row vector and stack them by rows. This gives a matrix of dimension $n$ by $(p*d)$. Centering and scaling are usually done before performing PCA and we denotes the pre-processed matrix as $\tilde{\mathbf{A}}_{n \times (p \times d)}$. By definition, the principal components maximise the variance of the projection bases in the reduced space. Using lagrange multipler, this is equivalent to find the eigenvector of the variance-covariance matrix: $\Sigma = \tilde{\mathbf{A}}^T\tilde{\mathbf{A}}$. Decomposing $\tilde{\mathbf{A}}$ using singular value decomposition (SVD) gives $$\tilde{\mathbf{A}} = \mathbf{U} \mathbf{\lambda} \mathbf{V}$$ and hence the variance-covariance matrix -->
 
@@ -486,46 +487,94 @@ In projection pursuit, the projection bases $\mathbf{A}_{p \times d}$ are of dim
   - y: the projected basis on the second principal component
   - colour: $V$ is mapped to the colour aesthetic
   
+Figure \ref{toy-pca} shows the first two principal components of two searching paths. A Hollow sphere with the same dimension is overlaid to emphasize the imposition of orthonormal constraint. Starting from the same position, two searching methods takes different paths to get to the two final bases with the same data projection $Y$ (the two correspond to a rotation of the data in the projection). The distinction between the two is that `search_better()` also involve some random evaluation in the sphere due to its sampling process while `search_geodesic()` doesn't. This stochastic rather than deterministic approach can be useful in more complex scenario.
   
-Figure 5 shows the searching space plot of a geodesic search, colored by different searching stages. Starting from the start basis, a directional search is conducted in a narrow neighbourhood on five random directions. The best one is picked and an exact search finds the stepsize that maximises the index value and outputs the corresponding projection basis. 
+  
+  
+
+
 
 
 ```{r toy-pca, fig.height = 6, fig.cap = "\\label{toy-pca}PCA plot of search geodesic colouring by info allows for better understanding of each stage in the geodesic search"}
-dt <- bind_rows(holes_2d_better %>% mutate(algo = "not satisfactory"),
-                holes_2d_better_max_tries %>% mutate(algo = "satisfactory")) %>%
- bind_rows(holes_2d_theory %>% mutate(algo = "satisfactory")) %>%
-  bind_rows(holes_2d_theory %>% mutate(algo = "not satisfactory")) %>%
-  mutate(algo = fct_relevel(algo, c("satisfactory", "not satisfactory")))%>%
-  compute_pca() %>%
-  `$`(aug)
+# dt <- bind_rows(holes_2d_better %>% mutate(algo = "not satisfactory"),
+#                 holes_2d_better_max_tries %>% mutate(algo = "satisfactory")) %>%
+#  bind_rows(holes_2d_theory %>% mutate(algo = "satisfactory")) %>%
+#   bind_rows(holes_2d_theory %>% mutate(algo = "not satisfactory")) %>%
+#   mutate(algo = fct_relevel(algo, c("satisfactory", "not satisfactory")))%>%
+#   compute_pca() %>%
+#   `$`(aug)
+# 
+# 
+# dt %>% explore_proj_pca(facet = algo, size = 7, alpha = 0.5)
+# #dt %>% explore_proj_pca(facet = algo, axis = 2)
 
+path1 <- holes_1d_geo$basis %>% 
+  flatten_dbl() %>% 
+  matrix(ncol = 5, byrow = TRUE)
+path2 <- holes_1d_better$basis %>% 
+  flatten_dbl() %>% 
+  matrix(ncol = 5, byrow = TRUE)
+set.seed(1)
+sphere <- geozoo::sphere.hollow(p = 5, n = 1000)$point
+theoretical <- matrix(c(0, 1, 0, 0, 0,
+                        0, -1, 0, 0, 0), nrow = 2, byrow = TRUE)
 
-dt %>% explore_proj_pca(facet = algo, size = 7, alpha = 0.5)
-#dt %>% explore_proj_pca(facet = algo, axis = 2)
+dt <- rbind(sphere, path1, path2, theoretical)
+pca <- dt %>% prcomp()
+#summary(pca)
+pca_pred <- predict(pca) %>%
+  as_tibble() %>%
+  mutate(method = c(rep("sphere", nrow(sphere)),
+                    holes_1d_geo$method,
+                    holes_1d_better$method,
+                    rep("theoretical", 2))) %>%
+  group_by(method) %>%
+  mutate(id = row_number(),
+         id = ifelse(method == "sphere", 1, id)) %>%
+  ungroup()
+
+p <- pca_pred %>%
+  ggplot(aes(x = PC1, y = PC2, color = method))+
+  geom_point() +
+  geom_point(data = pca_pred %>% filter(method == "theoretical"), 
+             size = 10) + 
+  theme(aspect.ratio = 1) +
+  scale_color_botanical(palette = "cherry") 
+
+p
 ```
 
 
 ## Animating the diagnostic plots
 
-all the plots above can be animated if wanted - importance is how the data is moving around 
+An animated plot can be useful because it allows us to track the progression of the optimsiation, especially in the case of inspecting the search space.
 
-show an example of some snap shots  of the animation and provide a link... for animated pca plot
 
-```{r animated-pca, fig.height = 8, fig.cap = "\\label{animated-pca} 16 frames from animated PCA plot ." }
-rl <- lapply(list.files(here::here("figures/animated_pca/"),full.names = TRUE)[1:16], png::readPNG)
-gl <-  lapply(rl, grid::rasterGrob)
-gridExtra::grid.arrange(grobs=gl)
+<!-- all the plots above can be animated if wanted - importance is how the data is moving around  -->
+
+<!-- show an example of some snap shots  of the animation and provide a link... for animated pca plot -->
+
+<!-- This is particularly useful when plotting the PCA plot since it allways us to tract the progress of the search. -->
+
+<!-- The projection bases live in a high dimensional sphere, whch cna be simulated using `geozoo` package. -->
+
+<!-- The reason to simulate random points on the hihg dimensiaon sphere is to emphasize  taht the projection bases lives on the surface of the sphere. -->
+
+```{r cache = TRUE, eval=FALSE}
+# rl <- lapply(list.files(here::here("figures/animated_pca_1d/"),full.names = TRUE)[62:78], png::readPNG)
+# gl <-  lapply(rl, grid::rasterGrob)
+# gridExtra::grid.arrange(grobs=gl)
+p +
+  transition_states(id) +
+  shadow_mark()
 ```
-
 
 
 ## The tour looking at itself
 
-show the path of the tour on a sphere. (full data dimension animation...)
+As mentioned previously, the orthonormal constraint regulates the projection basis to be living on the surface of a unit sphere. The visualisation of the projection basis on its original $p \times d$ dimension can be done through an animated rotation of the $p \times d$ diemnsion sphere with the searching path overlaid. The high dimensional geometry can be simulated using the package `geozoo` and the animated rotation can be done via a regular grand tour or a slice tour [@laa2020slice].
 
-
-
-include the tour animation (geozoo)
+Compared with the PCA plot, this animated rotation display requires skills of the viewer to preceive the high dimensional space in rotation and what the viewers gain is a much holistic view of the path in the space in the sense that PCA does a further projection on the projection basis along with the hollow sphere, which gives the view that maixmises the variance. While the animated rotation display gives the view from different anlges and the PCA plot consitutes one frame from the animated rotaiton display.
 
 
 \newpage
