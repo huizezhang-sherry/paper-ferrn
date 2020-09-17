@@ -1,14 +1,19 @@
 library(tidyverse)
 library(geozoo)
 library(tourr)
+library(ferrn)
+library(gganimate)
+files <- paste0("data/", list.files(here::here("data")))
+purrr::walk(.x = files, ~load(here::here(.x), env = globalenv()))
 pca <- rbind(holes_1d_better,
              holes_1d_geo) %>%
   compute_pca()
 
 pca$aug %>%
-  ggplot(aes(x = PC1, y = PC2, col = as.factor(method))) +
+  ggplot(aes(x = PC1, y = PC2, col = as.factor(info))) +
   geom_point() +
-  theme(aspect.ratio = 1)
+  theme(aspect.ratio = 1) +
+  facet_wrap(vars(method))
 
 # 1) only sphere
 set.seed(1)
@@ -52,18 +57,34 @@ color <- c(rep(pal[1], nrow(sphere)),
 animate_xy(dt, col = color, cex_slice = 0.8)
 animate_slice(dt, col = color)
 
-dt <- rbind(sphere, path1, path2)
+##### PCA
+theoretical <- matrix(c(0, 1, 0, 0, 0,
+                        0, -1, 0, 0, 0), nrow = 2, byrow = TRUE)
+
+dt <- rbind(sphere, path1, path2, theoretical)
 pca <- dt %>% prcomp()
 summary(pca)
-p1 <- predict(pca) %>%
+pca_pred <- predict(pca) %>%
   as_tibble() %>%
   mutate(method = c(rep("sphere", nrow(sphere)),
                     holes_1d_geo$method,
-                    holes_1d_better$method)) %>%
-  ggplot(aes(x = PC1, y = PC2, color = method)) +
+                    holes_1d_better$method,
+                    rep("theoretical", 2))) %>%
+  group_by(method) %>%
+  mutate(id = row_number(),
+         id = ifelse(method == "sphere", 1, id)) %>%
+  ungroup()
+
+p <- pca_pred %>%
+  ggplot(aes(x = PC1, y = PC2, color = as.factor(method)))+
   geom_point() +
   theme(aspect.ratio = 1) +
-  scale_color_brewer(palette = "Dark2")
+  scale_color_brewer(palette = "Dark2") +
+  transition_states(id) +
+  shadow_mark()
+
+animate(p, nframes = 350, device = "png",
+        renderer = file_renderer("figures/animated_pca_1d", prefix = "gganim_plot", overwrite = TRUE))
 
 # PCA gives therpojection that maximises the varaince
 # hence can be interpreted as the spread of search on the high dimensional sphere
@@ -77,6 +98,19 @@ p1 <- predict(pca) %>%
 # because the grand tour does't allow you to see the hollow structure of the sphere
 # another way to say is that slice tour helps to preceive the hollow sphere better than grand tour
 
+dt <- rbind(sphere, path2, path1)
+pca <- dt %>% prcomp()
+summary(pca)
+p1 <- predict(pca) %>%
+  as_tibble() %>%
+  mutate(method = c(rep("sphere", nrow(sphere)),
+                    holes_1d_better$method,
+                    holes_1d_geo$method)) %>%
+  ggplot(aes(x = -PC2, y = PC1, color = method)) +
+  geom_point() +
+  theme(aspect.ratio = 1) +
+  scale_color_manual(values = pal)
+
 
 dt <- rbind(sphere, path2)
 pca <- dt %>% prcomp()
@@ -88,7 +122,7 @@ p2 <- predict(pca) %>%
   ggplot(aes(x = -PC2, y = PC1, color = method)) +
   geom_point() +
   theme(aspect.ratio = 1) +
-  scale_color_brewer(palette = "Dark2")
+  scale_color_manual(values = pal[c(1, 3)])
 
 
 dt <- rbind(sphere, path1)
@@ -101,9 +135,14 @@ p3 <- predict(pca) %>%
   ggplot(aes(x = PC1, y = PC2, color = method)) +
   geom_point() +
   theme(aspect.ratio = 1) +
-  scale_color_brewer(palette = "Dark2" )
+  scale_color_manual(values = pal[c(2, 3)])
 
+library(patchwork)
 (p1 | p2 | p3) & theme(legend.position = "bottom")
+
+scales::show_col(botanical_palettes$cherry)
+#"#524340": brown "#B4B754": green "#F3B422": yellow "#D5A04D": soil
+pal <- c("#524340", "#616a41", "#D5A04D")
 
 
 ####### 2D
