@@ -146,7 +146,7 @@ knitr::include_graphics(path = here::here("figures/tour_path_keynote/tour_path_k
 
 \newpage
 
-## Optimisation problem  {#tour-optim}
+## Optimisation in the tour {#tour-optim}
 
 
 Now we begin to formulate the optimisation problem. Given a randomly generated starting basis $\mathbf{A}_1$, projection pursuit finds the final projection basis $\mathbf{A}_T$ that satisfies the following optimisation problem: 
@@ -573,12 +573,18 @@ path2 <- holes_1d_better$basis %>%
   flatten_dbl() %>% matrix(ncol = 5, byrow = TRUE)
 dt <- rbind(sphere, path1, path2)
 colnames(dt) <- c(map_chr(1:5, ~paste0("x", .x)))
-pal <- c("#1B9E77","#D95F02","#7570B3", "#E7298A")
+pal <- c("#D3D3D3","#D95F02","#7570B3", "#E7298A")
 color <- c(rep(pal[1], nrow(sphere)),
            rep(pal[2], nrow(path1)),
            rep(pal[3], nrow(path2)))
-animate_xy(dt, col = color, cex_slice = 0.8)
-animate_slice(dt, col = color)
+cex <- c(rep(1, nrow(sphere)),
+         rep(2, nrow(path1)), 
+         rep(2, nrow(path2)))
+#save_history(animate_xy(dt, col = color, cex = cex))
+
+# save history and play to find the view similar to the PCA view 
+
+animate_slice(dt, col = color, pch_other = 20)
 
 ```
 
