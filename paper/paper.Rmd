@@ -26,7 +26,7 @@ editor_options:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE,root.dir = here::here())
 
 library(tidyverse)
 library(ferrn)
@@ -492,7 +492,7 @@ The visualisation can thus be defined as
 Figure \ref{toy-pca} shows the first two principal components of two search paths. Starting from the same position, two searching methods take different paths to get its final bases. There are two theoretical bases because they correspond to the same data projection $Y$ with a 180 degree rotation. What differentiate the two optimisers is that `search_better()` also involve random evaluation of points in the sphere during its sampling process while `search_geodesic()` doesn't and this stochastic rather than deterministic approach can be useful in complex scenario.
 
 
-```{r toy-pca, fig.height = 6, fig.cap = "\\label{toy-pca}PCA plot of search geodesic colouring by info allows for better understanding of each stage in the geodesic search"}
+```{r toy-pca, fig.height = 4, fig.cap = "\\label{toy-pca}PCA plot of search geodesic colouring by info allows for better understanding of each stage in the geodesic search"}
 path1 <- holes_1d_geo$basis %>% 
   flatten_dbl() %>% 
   matrix(ncol = 5, byrow = TRUE)
@@ -524,8 +524,8 @@ p <- pca_pred %>%
   geom_point(data = pca_pred %>% filter(method == "theoretical"), 
              size = 10) + 
   geom_point(data = pca_pred %>% filter(method %in% c("search_better", "search_geodesic") & id == 1), size = 10) + 
-  theme(aspect.ratio = 1) +
-  scale_color_botanical(palette = "cherry") 
+  theme(aspect.ratio = 1) + 
+  scale_color_botanical(palette = "cherry")
 
 p
 ```
@@ -545,16 +545,21 @@ Animating the plots introduced above is useful, especially in the case of PCA po
 
 <!-- The reason to simulate random points on the hihg dimensiaon sphere is to emphasize  taht the projection bases lives on the surface of the sphere. -->
 
-```{r cache = TRUE, eval=FALSE}
-# rl <- lapply(list.files(here::here("figures/animated_pca_1d/"),full.names = TRUE)[62:78], png::readPNG)
-# gl <-  lapply(rl, grid::rasterGrob)
-# gridExtra::grid.arrange(grobs=gl)
-ani <- p +
-  transition_states(id) +
-  shadow_mark()
+```{r fig.cap = "THis is the caption", fig.height=4, fig.align="center"}
+# ani <- p + theme(legend.position = "none") +
+#   transition_states(id) +
+#   shadow_mark()
+# 
+# animate(ani, nframes = 350, device = "png",
+#         renderer = file_renderer("figures/pca/",
+#                                  prefix = "pca", overwrite = TRUE))
 
-animate(ani, nframes = 350)
-anim_save(ani, nframes = 350, filename = "figures/animated_pca_1d")
+
+frames <- c("0002", "0058", "0078", "0117", "0172", "0350")
+ani <- paste0(here::here("figures/"), "pca/", "pca", frames, ".png")
+rl <- lapply(ani, png::readPNG)
+gl <-  lapply(rl, grid::rasterGrob)
+wrap_plots(gl) 
 ```
 
 
@@ -564,28 +569,54 @@ Viewing the bases on the reduced space via PCA shed some lights on the space the
 
 Compare to the PCA plot, the animated rotation (tour) display gives a more holistic view of the search of the optimiser and these additional information gained from the animation is cruicial. This is because in essense, PCA presents one reduced space that maximises the variance and it inherently amplifies the spread of the randomly evaluated bases in the search since they have larger variance than the bases on the interpolation path. Hence when the interest is to view the interpolation path in the space, an animated rotation display provides the view of high dimension from different angles.
 
-```{r eval = FALSE}
+```{r fig.cap="THis is te caption"}
 set.seed(1)
 sphere <- geozoo::sphere.hollow(p = 5, n = 1000)$point
-path1 <- holes_1d_geo$basis %>% 
+path1 <- holes_1d_better$basis %>% 
   flatten_dbl() %>% matrix(ncol = 5, byrow = TRUE)
-path2 <- holes_1d_better$basis %>% 
+path2 <- holes_1d_geo$basis %>% 
   flatten_dbl() %>% matrix(ncol = 5, byrow = TRUE)
-dt <- rbind(sphere, path1, path2)
+theoretical <- matrix(c(0, 1, 0, 0, 0,
+                        0, -1, 0, 0, 0), nrow = 2, byrow = TRUE)
+start <- get_start(holes_1d_better) %>% pull(basis) %>% .[[1]] %>% matrix(nrow = 1)
+dt <- rbind(sphere, path1, path2, theoretical, start)
 colnames(dt) <- c(map_chr(1:5, ~paste0("x", .x)))
-pal <- c("#D3D3D3","#D95F02","#7570B3", "#E7298A")
+pal <- c("#D3D3D3",c("#524340",  #orchre
+                     "#B4B754",  # green
+                     "#F3B422" # yellow
+                     ))
 color <- c(rep(pal[1], nrow(sphere)),
            rep(pal[2], nrow(path1)),
-           rep(pal[3], nrow(path2)))
+           rep(pal[3], nrow(path2)),
+           rep(pal[4], 2), 
+           pal[2] # for start
+           )
 cex <- c(rep(1, nrow(sphere)),
-         rep(2, nrow(path1)), 
-         rep(2, nrow(path2)))
-#save_history(animate_xy(dt, col = color, cex = cex))
+         rep(1.5, nrow(path1)), 
+         rep(1.5, nrow(path2)), 
+         rep(5, 2), 
+         5 # for start
+         )
 
-# save history and play to find the view similar to the PCA view 
+#animate_xy(dt, col = color, cex = cex, tour_path = grand_tour()) # trial
 
-animate_slice(dt, col = color, pch_other = 20)
 
+# set.seed(123)
+# render(
+#   dt,
+#   tour_path = grand_tour(),
+#   dev = "png",
+#   display = display_xy(col=color,cex = cex, axes = "bottomleft"),
+#   rescale = FALSE,
+#   frames = 500,
+#   here::here("figures","tour", "tour%03d.png")
+# )
+
+frames <- c("001", "143", "078", "117", "172", "350")
+ani <- paste0(here::here("figures/"), "tour/", "tour", frames, ".png")
+rl <- lapply(ani, png::readPNG)
+gl <-  lapply(rl, grid::rasterGrob)
+wrap_plots(gl) 
 ```
 
 
@@ -723,7 +754,7 @@ Again using the same data, we are interested to compare the effect of different 
 
 holes_2d_better %>% mutate(max_tries = 25) %>% 
   dplyr::bind_rows(holes_2d_better_max_tries %>% mutate(max_tries = 500)) %>% 
-  explore_trace_interp(col = max_tries, facet = max_tries) + 
+  explore_trace_interp(col = max_tries) + 
   theme(legend.position = "none")
 ```
 
