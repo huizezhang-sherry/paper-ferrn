@@ -18,7 +18,7 @@ keywords:
 abstract: Friedman & Tukey commented on their initial paper on projection pursuit in 1974 that "the  technique  used  for  maximising  the  projection index strongly influences both the statistical and the computational aspects of the procedure." While many projection pursuit indices have been proposed in the literature, few concerns the optimisation procedure. In this paper, we developed a system of diagnostics aiming to visually learn how the optimisation procedures find its way towards the optimum. This diagnostic system can be applied more generally to help practitioner to unveil the black-box in randomised iterative (optimisation) algorithms. An R package, ferrn, has been created to implement this diagnostic system.
 bibliography: biblio.bib
 preamble: >
-  \usepackage{amssymb, amsmath, mathtools, dsfont, bbm}
+  \usepackage{amssymb, amsmath, mathtools, dsfont, bbm, array}
   \usepackage[ruled,vlined, linesnumbered]{algorithm2e}
 output: rticles::asa_article
 editor_options: 
@@ -505,7 +505,7 @@ theoretical <- matrix(c(0, 1, 0, 0, 0,
                         0, -1, 0, 0, 0), nrow = 2, byrow = TRUE)
 
 dt <- rbind(sphere, path1, path2, theoretical)
-pca <- dt %>% prcomp()
+pca <- dt %>% prcomp(scale. = TRUE)
 #summary(pca)
 pca_pred <- predict(pca) %>%
   as_tibble() %>%
@@ -554,7 +554,6 @@ Animating the plots introduced above is useful, especially in the case of PCA po
 #         renderer = file_renderer("figures/pca/",
 #                                  prefix = "pca", overwrite = TRUE))
 
-
 frames <- c("0002", "0058", "0078", "0117", "0172", "0350")
 ani <- paste0(here::here("figures/"), "pca/", "pca", frames, ".png")
 rl <- lapply(ani, png::readPNG)
@@ -597,6 +596,7 @@ cex <- c(rep(1, nrow(sphere)),
          rep(5, 2), 
          5 # for start
          )
+
 
 #animate_xy(dt, col = color, cex = cex, tour_path = grand_tour()) # trial
 
@@ -901,7 +901,7 @@ We can also plot the searching points of all three algorithms in the searching s
 
 
 
-# Implementation: Ferrn package {#implementation}
+# Implementation {#implementation}
 
 1. how does the printed data object looks like?
 
@@ -909,12 +909,9 @@ Do I talk about the work done in the tourr package?
 
 Everything is coded up in a package. Package structure
 
+The implementation of this projection has been divided into two pacakges, where the data collection happens when a tour is running and hence implemented in the existing `tourr` package. The diagnostics of the algorithm via plots and other auxiliary functions have been implemented in a new pacakge, `ferrn`. 
 
-When the optimisation ends, the data object will be stored and printed (it can be turned off by supplying argument `print = FALSE`). Additional messages during the optimisation can be displayed by argument `verbose = TRUE`.  Notice that the tibble object allows the list-column `basis` to be printed out nicely with the dimension of the projection basis readily available.
-
-
-We form our first dataset using variables `x1`, `x2`, `x8`, `x9` and `x10`,  run the guided tour with optimiser `search_better` and below shows the first ten rows of the data object.
-
+When the optimisation ends, the data object will be stored and printed (it can be turned off by supplying argument `print = FALSE`). Additional messages during the optimisation can be displayed by argument `verbose = TRUE`.  Notice that the tibble object allows the list-column `basis` to be printed out nicely with the dimension of the projection basis readily available. Below presents a sample of the data object. 
 
 ```{r code, eval = FALSE}
 set.seed(123456)
@@ -930,15 +927,64 @@ holes_1d_better <- animate_dist(data, tour_path = guided_tour(holes(), d = 1,
 ```{r glb-obj-1}
 holes_1d_better %>% 
   dplyr::select(id, basis, index_val, info, tries, loop, method, alpha) %>% 
-  head(10)
+  head(10) 
 ```
 
-2. 
+
+Once the data object has been obtained, `ferrn` provides four automatic diagnostic plots introduced in Section \ref{vis-diag}. The overall structure is ....
+
+## Extract pieces from the data object 
+
+Several auxiliary functions provides a handy solution to extract certain component in the data object. For example, `get_best()` extracts the final basis found by the algorithm and `get_interp()` extracts the interpolation observations and renumber the id for a continuous numbering that being supplied to `explore_trace_interp()`. 
+
+
+## Bind more information
+
+`bind_*` functions allow users to incorporate further useful information into the data object. Given a simulated dataset, the basis that can produce the most interesting projection is known and users can use `bind_theoretical()` to incorporate this best possible basis:
+
+```{r eval = FALSE, echo = TRUE}
+theo_best <- matrix(c(0, 1, 0, 0, 0), nrow = 5)
+holes_1d_better %>% 
+  bind_theoretical(matrix = theo_best, index = tourr::holes(), data_raw = data) 
+```
+
+`bind_random(_matrix)` generates a large number of points on the surface of a high dimensional sphere and attaches it to the original data object. This is particularly useful for exploring the search space in `explore_space_pca()` and `explore_space_tour()` since the space of the projection basis is a high dimensional sphere and overlaying the bases with random points on the sphere provides better perception to view these plots. 
+
+```{r eval = FALSE, echo = TRUE}
+holes_1d_better %>% bind_random() %>% tail()
+```
+
+## Botanical color palette and reorder factor levels 
+
+A handful of color from Australian domestic plants has been incorporated as the main color theme of the package, which inlcudes fern, cherry, banksia, acacia and daisy. 
 
 
 
-
-
+\begin{table}
+\centering
+\begin{tabular}{|wl{5cm} wl{5cm}|}
+\hline
+\multicolumn{2}{|l|}{\textbf{Main functions}}\\
+\multicolumn{2}{|l|}{explore\_trace\_search()}\\
+\multicolumn{2}{|l|}{explore\_trace\_interp()}\\
+\multicolumn{2}{|l|}{explore\_space\_pca() }\\
+\multicolumn{2}{|l|}{explore\_space\_tour()}\\
+& \\
+\multicolumn{2}{|l|}{\textbf{Auxiliary functions}}\\
+get\_best() & bind\_theoretical() \\
+get\_start() & bind\_random() \\
+get\_interp() & bind\_random\_matrix() \\
+get\_search\_count() & \\
+get\_basis\_matrix() & \\
+& \\
+relevel\_geo() & botanical\_palettes() \\
+relevel\_better() & botanical\_pal() \\
+& scale\_color\_botanical()\\
+\hline
+\end{tabular}
+\caption{A glossary of functions available in ferrn package. The main functions are four automatic plotting functions and auxiliary functions provides easier extraction (get\_*) and binding (bind\_*) of the data object.}
+\label{table:ferrn-glossary}
+\end{table}
 
 
 # Conclusion

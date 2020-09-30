@@ -22,7 +22,7 @@
 \addtolength{\topmargin}{-.8in}%
 
 %% load any required packages here
-\usepackage{amssymb, amsmath, mathtools, dsfont, bbm} \usepackage[ruled,vlined, linesnumbered]{algorithm2e}
+\usepackage{amssymb, amsmath, mathtools, dsfont, bbm, array} \usepackage[ruled,vlined, linesnumbered]{algorithm2e}
 
 \usepackage{color}
 \usepackage{fancyvrb}
@@ -1155,7 +1155,7 @@ better\_random is explained by the fact that both algorithms find x2 in
 the end.
 
 \hypertarget{implementation}{%
-\section{Implementation: Ferrn package}\label{implementation}}
+\section{Implementation}\label{implementation}}
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -1168,16 +1168,18 @@ Do I talk about the work done in the tourr package?
 
 Everything is coded up in a package. Package structure
 
+The implementation of this projection has been divided into two
+pacakges, where the data collection happens when a tour is running and
+hence implemented in the existing \texttt{tourr} package. The
+diagnostics of the algorithm via plots and other auxiliary functions
+have been implemented in a new pacakge, \texttt{ferrn}.
+
 When the optimisation ends, the data object will be stored and printed
 (it can be turned off by supplying argument \texttt{print\ =\ FALSE}).
 Additional messages during the optimisation can be displayed by argument
 \texttt{verbose\ =\ TRUE}. Notice that the tibble object allows the
 list-column \texttt{basis} to be printed out nicely with the dimension
-of the projection basis readily available.
-
-We form our first dataset using variables \texttt{x1}, \texttt{x2},
-\texttt{x8}, \texttt{x9} and \texttt{x10}, run the guided tour with
-optimiser \texttt{search\_better} and below shows the first ten rows of
+of the projection basis readily available. Below presents a sample of
 the data object.
 
 \newpage
@@ -1198,11 +1200,85 @@ the data object.
 ## 10    10 <dbl[,1] [5 x 1]>     0.750 interpolati~     2     3 search_bett~  NA
 \end{verbatim}
 
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
-\setcounter{enumi}{1}
-\item
-\end{enumerate}
+Once the data object has been obtained, \texttt{ferrn} provides four
+automatic diagnostic plots introduced in Section \ref{vis-diag}. The
+overall structure is \ldots{}.
+
+\hypertarget{extract-pieces-from-the-data-object}{%
+\subsection{Extract pieces from the data
+object}\label{extract-pieces-from-the-data-object}}
+
+Several auxiliary functions provides a handy solution to extract certain
+component in the data object. For example, \texttt{get\_best()} extracts
+the final basis found by the algorithm and \texttt{get\_interp()}
+extracts the interpolation observations and renumber the id for a
+continuous numbering that being supplied to
+\texttt{explore\_trace\_interp()}.
+
+\hypertarget{bind-more-information}{%
+\subsection{Bind more information}\label{bind-more-information}}
+
+\texttt{bind\_*} functions allow users to incorporate further useful
+information into the data object. Given a simulated dataset, the basis
+that can produce the most interesting projection is known and users can
+use \texttt{bind\_theoretical()} to incorporate this best possible
+basis:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{theo_best <-}\StringTok{ }\KeywordTok{matrix}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{0}\NormalTok{, }\DecValTok{0}\NormalTok{, }\DecValTok{0}\NormalTok{), }\DataTypeTok{nrow =} \DecValTok{5}\NormalTok{)}
+\NormalTok{holes_1d_better }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{bind_theoretical}\NormalTok{(}\DataTypeTok{matrix =}\NormalTok{ theo_best, }\DataTypeTok{index =}\NormalTok{ tourr}\OperatorTok{::}\KeywordTok{holes}\NormalTok{(), }\DataTypeTok{data_raw =}\NormalTok{ data) }
+\end{Highlighting}
+\end{Shaded}
+
+\texttt{bind\_random(\_matrix)} generates a large number of points on
+the surface of a high dimensional sphere and attaches it to the original
+data object. This is particularly useful for exploring the search space
+in \texttt{explore\_space\_pca()} and \texttt{explore\_space\_tour()}
+since the space of the projection basis is a high dimensional sphere and
+overlaying the bases with random points on the sphere provides better
+perception to view these plots.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{holes_1d_better }\OperatorTok{%>%}\StringTok{ }\KeywordTok{bind_random}\NormalTok{() }\OperatorTok{%>%}\StringTok{ }\KeywordTok{tail}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{botanical-color-palette-and-reorder-factor-levels}{%
+\subsection{Botanical color palette and reorder factor
+levels}\label{botanical-color-palette-and-reorder-factor-levels}}
+
+A handful of color from Australian domestic plants has been incorporated
+as the main color theme of the package, which inlcudes fern, cherry,
+banksia, acacia and daisy.
+
+\begin{table}
+\centering
+\begin{tabular}{|wl{5cm} wl{5cm}|}
+\hline
+\multicolumn{2}{|l|}{\textbf{Main functions}}\\
+\multicolumn{2}{|l|}{explore\_trace\_search()}\\
+\multicolumn{2}{|l|}{explore\_trace\_interp()}\\
+\multicolumn{2}{|l|}{explore\_space\_pca() }\\
+\multicolumn{2}{|l|}{explore\_space\_tour()}\\
+& \\
+\multicolumn{2}{|l|}{\textbf{Auxiliary functions}}\\
+get\_best() & bind\_theoretical() \\
+get\_start() & bind\_random() \\
+get\_interp() & bind\_random\_matrix() \\
+get\_search\_count() & \\
+get\_basis\_matrix() & \\
+& \\
+relevel\_geo() & botanical\_palettes() \\
+relevel\_better() & botanical\_pal() \\
+& scale\_color\_botanical()\\
+\hline
+\end{tabular}
+\caption{A glossary of functions available in ferrn package. The main functions are four automatic plotting functions and auxiliary functions provides easier extraction (get\_*) and binding (bind\_*) of the data object.}
+\label{table:ferrn-glossary}
+\end{table}
 
 \hypertarget{conclusion}{%
 \section{Conclusion}\label{conclusion}}
