@@ -456,13 +456,13 @@ Figure \ref{toy-interp} presents the interpolation of three different tour paths
 
 ```{r toy-interp, fig.height = 8, fig.cap = "\\label{toy-interp} This is a toy example of plotting interpolated points"}
 p1 <- holes_2d_better_max_tries %>% explore_trace_interp() + theme(legend.position = "none") + 
-  scale_color_botanical(palette = "fern_brown")
+  scale_color_botanical(palette = "fern")
 
 p2 <- interrupt_no %>% explore_trace_interp() + theme(legend.position = "none") + 
-  scale_color_botanical(palette = "fern_green")
+  scale_color_botanical(palette = "fern")
 
 p3 <- holes_2d_better_random %>% explore_trace_interp() + theme(legend.position = "none") + 
-  scale_color_botanical(palette = "acacia")
+  scale_color_botanical(palette = "fern")
 
 p1 / p2 / p3
 ```
@@ -492,40 +492,51 @@ The visualisation can thus be defined as
 Figure \ref{toy-pca} shows the first two principal components of two search paths. Starting from the same position, two searching methods take different paths to get its final bases. There are two theoretical bases because they correspond to the same data projection $Y$ with a 180 degree rotation. What differentiate the two optimisers is that `search_better()` also involve random evaluation of points in the sphere during its sampling process while `search_geodesic()` doesn't and this stochastic rather than deterministic approach can be useful in complex scenario.
 
 
-```{r toy-pca, fig.height = 4, fig.cap = "\\label{toy-pca}PCA plot of search geodesic colouring by info allows for better understanding of each stage in the geodesic search"}
-path1 <- holes_1d_geo$basis %>% 
-  flatten_dbl() %>% 
-  matrix(ncol = 5, byrow = TRUE)
-path2 <- holes_1d_better$basis %>% 
-  flatten_dbl() %>% 
-  matrix(ncol = 5, byrow = TRUE)
-set.seed(1)
-sphere <- geozoo::sphere.hollow(p = 5, n = 1000)$point
-theoretical <- matrix(c(0, 1, 0, 0, 0,
-                        0, -1, 0, 0, 0), nrow = 2, byrow = TRUE)
+```{r toy-pca, fig.height = 6, fig.cap = "\\label{toy-pca}PCA plot of search geodesic colouring by info allows for better understanding of each stage in the geodesic search"}
+# path1 <- holes_1d_geo$basis %>% 
+#   flatten_dbl() %>% 
+#   matrix(ncol = 5, byrow = TRUE)
+# path2 <- holes_1d_better$basis %>% 
+#   flatten_dbl() %>% 
+#   matrix(ncol = 5, byrow = TRUE)
+# set.seed(1)
+# sphere <- geozoo::sphere.hollow(p = 5, n = 1000)$point
+# theoretical <- matrix(c(0, 1, 0, 0, 0,
+#                         0, -1, 0, 0, 0), nrow = 2, byrow = TRUE)
+# 
+# dt <- rbind(sphere, path1, path2, theoretical)
+# pca <- dt %>% prcomp(scale. = TRUE)
+# #summary(pca)
+# pca_pred <- predict(pca) %>%
+#   as_tibble() %>%
+#   mutate(method = c(rep("sphere", nrow(sphere)),
+#                     holes_1d_geo$method,
+#                     holes_1d_better$method,
+#                     rep("theoretical", 2))) %>%
+#   group_by(method) %>%
+#   mutate(id = row_number(),
+#          id = ifelse(method == "sphere", 1, id)) %>%
+#   ungroup()
+# 
+# p <- pca_pred %>%
+#   ggplot(aes(x = PC1, y = PC2, color = method))+
+#   geom_point() +
+#   geom_point(data = pca_pred %>% filter(method == "theoretical"), 
+#              size = 10) + 
+#   geom_point(data = pca_pred %>% filter(method %in% c("search_better", "search_geodesic") & id == 1), size = 10) + 
+#   theme(aspect.ratio = 1) + 
+#   scale_color_botanical(palette = "cherry")
+# 
+# p
 
-dt <- rbind(sphere, path1, path2, theoretical)
-pca <- dt %>% prcomp(scale. = TRUE)
-#summary(pca)
-pca_pred <- predict(pca) %>%
-  as_tibble() %>%
-  mutate(method = c(rep("sphere", nrow(sphere)),
-                    holes_1d_geo$method,
-                    holes_1d_better$method,
-                    rep("theoretical", 2))) %>%
-  group_by(method) %>%
-  mutate(id = row_number(),
-         id = ifelse(method == "sphere", 1, id)) %>%
-  ungroup()
-
-p <- pca_pred %>%
-  ggplot(aes(x = PC1, y = PC2, color = method))+
-  geom_point() +
-  geom_point(data = pca_pred %>% filter(method == "theoretical"), 
-             size = 10) + 
-  geom_point(data = pca_pred %>% filter(method %in% c("search_better", "search_geodesic") & id == 1), size = 10) + 
-  theme(aspect.ratio = 1) + 
-  scale_color_botanical(palette = "cherry")
+p <- bind_rows(holes_1d_geo, holes_1d_better) %>% 
+  bind_theoretical(matrix(c(0, 1, 0, 0, 0), nrow = 5), 
+                   index = tourr::holes(), raw_data = data) %>% 
+  bind_theoretical(matrix(c(0, -1, 0, 0,0), nrow = 5), 
+                   index = tourr::holes(), raw_data  = data)%>%
+  explore_space_pca(col = method)  + 
+  scale_color_botanical(palette = "cherry") + 
+  theme(legend.position = "bottom")
 
 p
 ```
@@ -549,6 +560,14 @@ Animating the plots introduced above is useful, especially in the case of PCA po
 # ani <- p + theme(legend.position = "none") +
 #   transition_states(id) +
 #   shadow_mark()
+# 
+# ani <- bind_rows(holes_1d_geo, holes_1d_better) %>% 
+#   bind_theoretical(matrix(c(0, 1, 0, 0, 0), nrow = 5), 
+#                    index = tourr::holes(), raw_data = data) %>% 
+#   bind_theoretical(matrix(c(0, -1, 0, 0,0), nrow = 5), 
+#                    index = tourr::holes(), raw_data  = data)%>%
+#   explore_space_pca(col = method, animate = TRUE)  + 
+#   scale_color_botanical(palette = "cherry") 
 # 
 # animate(ani, nframes = 350, device = "png",
 #         renderer = file_renderer("figures/pca/",
@@ -903,12 +922,7 @@ We can also plot the searching points of all three algorithms in the searching s
 
 # Implementation {#implementation}
 
-1. how does the printed data object looks like?
-
-Do I talk about the work done in the tourr package?
-
-Everything is coded up in a package. Package structure
-
+(further notice on the implementation in the tour package will be discussed in the tour developer meeting.)
 The implementation of this projection has been divided into two pacakges, where the data collection happens when a tour is running and hence implemented in the existing `tourr` package. The diagnostics of the algorithm via plots and other auxiliary functions have been implemented in a new pacakge, `ferrn`. 
 
 When the optimisation ends, the data object will be stored and printed (it can be turned off by supplying argument `print = FALSE`). Additional messages during the optimisation can be displayed by argument `verbose = TRUE`.  Notice that the tibble object allows the list-column `basis` to be printed out nicely with the dimension of the projection basis readily available. Below presents a sample of the data object. 
@@ -930,39 +944,75 @@ holes_1d_better %>%
   head(10) 
 ```
 
+\newpage
 
-Once the data object has been obtained, `ferrn` provides four automatic diagnostic plots introduced in Section \ref{vis-diag}. The overall structure is ....
+Once the data object has been obtained, the package, `ferrn`, provides automatic diagnostic plots as described in Section \ref{vis-diag}. The structure of package functionality has been outlined in Table \ref{table:ferrn-glossary}. The four main functions plots, `explore_trace_search()`, `explore_trace_interp()`, `explore_space_pca()`, and `explore_space_tour()`, produce the diagnostic plots upon a simple supply of the data objects. Auxiliary functions, `get_*()` and `bind_*()`, provide handy solutions to extract certain components in the data object. They modulate the extraction and binding procedures in the main functions while being convenient to use on their own. 
+
+```{r eval = FALSE, echo = TRUE}
+# Below are codes that generate the plots in Section 4 
+# using functions from ferrn package
+bind_rows(holes_2d_better_max_tries %>% mutate(max_tries = 500), 
+          holes_2d_better %>% mutate(max_tries = 25)) %>% 
+  explore_trace_search(group = max_tries)
+```
+
+```{r eval = FALSE, echo = TRUE}
+bind_rows(holes_2d_better_max_tries %>% mutate(group = "max_tries: 500"), 
+          interrupt_no %>% mutate(group = "no interruption"), 
+          holes_2d_better_random %>% mutate(group = "better_random")) %>% 
+  mutate(group = fct_relevel(group, c("max_tries: 500", 
+                                      "no interruption", 
+                                      "better_random"))) %>% 
+  explore_trace_interp(group = group) + 
+  theme(legend.position = "none")
+```
+
+```{r eval = FALSE, echo = TRUE}
+bind_rows(holes_1d_geo, holes_1d_better) %>% 
+  bind_theoretical(matrix(c(0, 1, 0, 0, 0), nrow = 5), 
+                   index = tourr::holes(), raw_data = data) %>% 
+  bind_theoretical(matrix(c(0, -1, 0, 0,0), nrow = 5), 
+                   index = tourr::holes(), raw_data  = data)%>%
+  explore_space_pca(col = method)  + 
+  scale_color_botanical(palette = "cherry")
+```
+
+```{r eval = FALSE, echo = TRUE}
+bind_rows(holes_1d_geo, holes_1d_better) %>% 
+  explore_space_tour(color = method)
+```
+
 
 ## Extract pieces from the data object 
 
-Several auxiliary functions provides a handy solution to extract certain component in the data object. For example, `get_best()` extracts the final basis found by the algorithm and `get_interp()` extracts the interpolation observations and renumber the id for a continuous numbering that being supplied to `explore_trace_interp()`. 
+ `get_*()` extract and, in some cases, manipulate certain components from the existing data object, for example,  `get_best()` extracts the best basis found by the algorithm and `get_interp()` extracts the observations in the interpolation and prepare them ready to be supplied to `explore_trace_interp()`. 
 
+## Bind external information
 
-## Bind more information
+`bind_*()` incorporate additional information that is outside the tour optimisation. Given a simulated dataset, the most interesting projection is known ahead of time, so does its basis.  `bind_theoretical()` can be utilised to incorporate this best possible basis to the existing data object with the supply of the index function and original data for producing the index value. This binding is used in the space plots to compare the position of the theoretical best basis to the ones being searched by the algorithm. The following chunk presents its usage.
 
-`bind_*` functions allow users to incorporate further useful information into the data object. Given a simulated dataset, the basis that can produce the most interesting projection is known and users can use `bind_theoretical()` to incorporate this best possible basis:
-
-```{r eval = FALSE, echo = TRUE}
+```{r bind-theoretical-demo, eval = FALSE, echo = TRUE}
 theo_best <- matrix(c(0, 1, 0, 0, 0), nrow = 5)
 holes_1d_better %>% 
-  bind_theoretical(matrix = theo_best, index = tourr::holes(), data_raw = data) 
+  bind_theoretical(matrix = theo_best, index = tourr::holes(), raw_data = data) 
 ```
 
-`bind_random(_matrix)` generates a large number of points on the surface of a high dimensional sphere and attaches it to the original data object. This is particularly useful for exploring the search space in `explore_space_pca()` and `explore_space_tour()` since the space of the projection basis is a high dimensional sphere and overlaying the bases with random points on the sphere provides better perception to view these plots. 
-
-```{r eval = FALSE, echo = TRUE}
-holes_1d_better %>% bind_random() %>% tail()
-```
+`bind_random()` and `bind_random_matrix()` generates a large number of points on the surface of a high dimensional sphere and attaches it to the existing data object. This is also useful in the space plots since it preserves the spherical structure of the spaces of the projection bases, in the computation of PCA for `explore_space_pca()` and animation of `explore_space_tour()`. 
 
 ## Botanical color palette and reorder factor levels 
 
-A handful of color from Australian domestic plants has been incorporated as the main color theme of the package, which inlcudes fern, cherry, banksia, acacia and daisy. 
+A collection of color palettes from Australian native plants has been created to match the theme of the package Quantitative palettes, daisy, banksia and cherry, are recommended for comparing between algorithms, while sequantial palettes, fern and acacia are better for trace plots. These color palettes can be accessed via 
 
+- `scale_color_botanical(palette = "...")` for ggplot constructions, and 
+
+- `explore_space_tour(..., color = botantical_palettes$...)` for a full space exploration
+
+When colored by `info`, users may want to map a particular color to a certain level to emphasize certain elements in the algorithm, `relevel_*()` allows the user to manipulate the level in the `info` column in the data object with the default being the chronological order that each level occurs in the optimisation.
 
 
 \begin{table}
 \centering
-\begin{tabular}{|wl{5cm} wl{5cm}|}
+\begin{tabular}{|wl{5cm} wl{6cm}|}
 \hline
 \multicolumn{2}{|l|}{\textbf{Main functions}}\\
 \multicolumn{2}{|l|}{explore\_trace\_search()}\\
@@ -977,12 +1027,13 @@ get\_interp() & bind\_random\_matrix() \\
 get\_search\_count() & \\
 get\_basis\_matrix() & \\
 & \\
-relevel\_geo() & botanical\_palettes() \\
-relevel\_better() & botanical\_pal() \\
+relevel\_geo() & botanical\_palettes:  fern, acacia\\
+relevel\_better() & \hspace{3mm} daisy, banksia, and cherry\\
+& botanical\_pal() \\
 & scale\_color\_botanical()\\
 \hline
 \end{tabular}
-\caption{A glossary of functions available in ferrn package. The main functions are four automatic plotting functions and auxiliary functions provides easier extraction (get\_*) and binding (bind\_*) of the data object.}
+\caption{A glossary of functions available in ferrn package. The main functions are four automatic plotting functions and auxiliary functions provides easier manipulation on the data object.}
 \label{table:ferrn-glossary}
 \end{table}
 

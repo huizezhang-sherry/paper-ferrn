@@ -1157,22 +1157,13 @@ the end.
 \hypertarget{implementation}{%
 \section{Implementation}\label{implementation}}
 
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
-\tightlist
-\item
-  how does the printed data object looks like?
-\end{enumerate}
-
-Do I talk about the work done in the tourr package?
-
-Everything is coded up in a package. Package structure
-
-The implementation of this projection has been divided into two
-pacakges, where the data collection happens when a tour is running and
-hence implemented in the existing \texttt{tourr} package. The
-diagnostics of the algorithm via plots and other auxiliary functions
-have been implemented in a new pacakge, \texttt{ferrn}.
+(further notice on the implementation in the tour package will be
+discussed in the tour developer meeting.) The implementation of this
+projection has been divided into two pacakges, where the data collection
+happens when a tour is running and hence implemented in the existing
+\texttt{tourr} package. The diagnostics of the algorithm via plots and
+other auxiliary functions have been implemented in a new pacakge,
+\texttt{ferrn}.
 
 When the optimisation ends, the data object will be stored and printed
 (it can be turned off by supplying argument \texttt{print\ =\ FALSE}).
@@ -1200,63 +1191,130 @@ the data object.
 ## 10    10 <dbl[,1] [5 x 1]>     0.750 interpolati~     2     3 search_bett~  NA
 \end{verbatim}
 
-Once the data object has been obtained, \texttt{ferrn} provides four
-automatic diagnostic plots introduced in Section \ref{vis-diag}. The
-overall structure is \ldots{}.
+\newpage
+
+Once the data object has been obtained, the package, \texttt{ferrn},
+provides automatic diagnostic plots as described in Section
+\ref{vis-diag}. The structure of package functionality has been outlined
+in Table \ref{table:ferrn-glossary}. The four main functions plots,
+\texttt{explore\_trace\_search()}, \texttt{explore\_trace\_interp()},
+\texttt{explore\_space\_pca()}, and \texttt{explore\_space\_tour()},
+produce the diagnostic plots upon a simple supply of the data objects.
+Auxiliary functions, \texttt{get\_*()} and \texttt{bind\_*()}, provide
+handy solutions to extract certain components in the data object. They
+modulate the extraction and binding procedures in the main functions
+while being convenient to use on their own.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Below are codes that generate the plots in Section 4 }
+\CommentTok{# using functions from ferrn package}
+\KeywordTok{bind_rows}\NormalTok{(holes_2d_better_max_tries }\OperatorTok{%>%}\StringTok{ }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{max_tries =} \DecValTok{500}\NormalTok{), }
+\NormalTok{          holes_2d_better }\OperatorTok{%>%}\StringTok{ }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{max_tries =} \DecValTok{25}\NormalTok{)) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{explore_trace_search}\NormalTok{(}\DataTypeTok{group =}\NormalTok{ max_tries)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{bind_rows}\NormalTok{(holes_2d_better_max_tries }\OperatorTok{%>%}\StringTok{ }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{group =} \StringTok{"max_tries: 500"}\NormalTok{), }
+\NormalTok{          interrupt_no }\OperatorTok{%>%}\StringTok{ }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{group =} \StringTok{"no interruption"}\NormalTok{), }
+\NormalTok{          holes_2d_better_random }\OperatorTok{%>%}\StringTok{ }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{group =} \StringTok{"better_random"}\NormalTok{)) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{group =} \KeywordTok{fct_relevel}\NormalTok{(group, }\KeywordTok{c}\NormalTok{(}\StringTok{"max_tries: 500"}\NormalTok{, }
+                                      \StringTok{"no interruption"}\NormalTok{, }
+                                      \StringTok{"better_random"}\NormalTok{))) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{explore_trace_interp}\NormalTok{(}\DataTypeTok{group =}\NormalTok{ group) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{theme}\NormalTok{(}\DataTypeTok{legend.position =} \StringTok{"none"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{bind_rows}\NormalTok{(holes_1d_geo, holes_1d_better) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{bind_theoretical}\NormalTok{(}\KeywordTok{matrix}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{0}\NormalTok{, }\DecValTok{0}\NormalTok{, }\DecValTok{0}\NormalTok{), }\DataTypeTok{nrow =} \DecValTok{5}\NormalTok{), }
+                   \DataTypeTok{index =}\NormalTok{ tourr}\OperatorTok{::}\KeywordTok{holes}\NormalTok{(), }\DataTypeTok{raw_data =}\NormalTok{ data) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{bind_theoretical}\NormalTok{(}\KeywordTok{matrix}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{-1}\NormalTok{, }\DecValTok{0}\NormalTok{, }\DecValTok{0}\NormalTok{,}\DecValTok{0}\NormalTok{), }\DataTypeTok{nrow =} \DecValTok{5}\NormalTok{), }
+                   \DataTypeTok{index =}\NormalTok{ tourr}\OperatorTok{::}\KeywordTok{holes}\NormalTok{(), }\DataTypeTok{raw_data  =}\NormalTok{ data)}\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{explore_space_pca}\NormalTok{(}\DataTypeTok{col =}\NormalTok{ method)  }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{scale_color_botanical}\NormalTok{(}\DataTypeTok{palette =} \StringTok{"cherry"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{bind_rows}\NormalTok{(holes_1d_geo, holes_1d_better) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{explore_space_tour}\NormalTok{(}\DataTypeTok{color =}\NormalTok{ method)}
+\end{Highlighting}
+\end{Shaded}
 
 \hypertarget{extract-pieces-from-the-data-object}{%
 \subsection{Extract pieces from the data
 object}\label{extract-pieces-from-the-data-object}}
 
-Several auxiliary functions provides a handy solution to extract certain
-component in the data object. For example, \texttt{get\_best()} extracts
-the final basis found by the algorithm and \texttt{get\_interp()}
-extracts the interpolation observations and renumber the id for a
-continuous numbering that being supplied to
+\texttt{get\_*()} extract and, in some cases, manipulate certain
+components from the existing data object, for example,
+\texttt{get\_best()} extracts the best basis found by the algorithm and
+\texttt{get\_interp()} extracts the observations in the interpolation
+and prepare them ready to be supplied to
 \texttt{explore\_trace\_interp()}.
 
-\hypertarget{bind-more-information}{%
-\subsection{Bind more information}\label{bind-more-information}}
+\hypertarget{bind-external-information}{%
+\subsection{Bind external information}\label{bind-external-information}}
 
-\texttt{bind\_*} functions allow users to incorporate further useful
-information into the data object. Given a simulated dataset, the basis
-that can produce the most interesting projection is known and users can
-use \texttt{bind\_theoretical()} to incorporate this best possible
-basis:
+\texttt{bind\_*()} incorporate additional information that is outside
+the tour optimisation. Given a simulated dataset, the most interesting
+projection is known ahead of time, so does its basis.
+\texttt{bind\_theoretical()} can be utilised to incorporate this best
+possible basis to the existing data object with the supply of the index
+function and original data for producing the index value. This binding
+is used in the space plots to compare the position of the theoretical
+best basis to the ones being searched by the algorithm. The following
+chunk presents its usage.
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{theo_best <-}\StringTok{ }\KeywordTok{matrix}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{0}\NormalTok{, }\DecValTok{0}\NormalTok{, }\DecValTok{0}\NormalTok{), }\DataTypeTok{nrow =} \DecValTok{5}\NormalTok{)}
 \NormalTok{holes_1d_better }\OperatorTok{%>%}\StringTok{ }
-\StringTok{  }\KeywordTok{bind_theoretical}\NormalTok{(}\DataTypeTok{matrix =}\NormalTok{ theo_best, }\DataTypeTok{index =}\NormalTok{ tourr}\OperatorTok{::}\KeywordTok{holes}\NormalTok{(), }\DataTypeTok{data_raw =}\NormalTok{ data) }
+\StringTok{  }\KeywordTok{bind_theoretical}\NormalTok{(}\DataTypeTok{matrix =}\NormalTok{ theo_best, }\DataTypeTok{index =}\NormalTok{ tourr}\OperatorTok{::}\KeywordTok{holes}\NormalTok{(), }\DataTypeTok{raw_data =}\NormalTok{ data) }
 \end{Highlighting}
 \end{Shaded}
 
-\texttt{bind\_random(\_matrix)} generates a large number of points on
-the surface of a high dimensional sphere and attaches it to the original
-data object. This is particularly useful for exploring the search space
-in \texttt{explore\_space\_pca()} and \texttt{explore\_space\_tour()}
-since the space of the projection basis is a high dimensional sphere and
-overlaying the bases with random points on the sphere provides better
-perception to view these plots.
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{holes_1d_better }\OperatorTok{%>%}\StringTok{ }\KeywordTok{bind_random}\NormalTok{() }\OperatorTok{%>%}\StringTok{ }\KeywordTok{tail}\NormalTok{()}
-\end{Highlighting}
-\end{Shaded}
+\texttt{bind\_random()} and \texttt{bind\_random\_matrix()} generates a
+large number of points on the surface of a high dimensional sphere and
+attaches it to the existing data object. This is also useful in the
+space plots since it preserves the spherical structure of the spaces of
+the projection bases, in the computation of PCA for
+\texttt{explore\_space\_pca()} and animation of
+\texttt{explore\_space\_tour()}.
 
 \hypertarget{botanical-color-palette-and-reorder-factor-levels}{%
 \subsection{Botanical color palette and reorder factor
 levels}\label{botanical-color-palette-and-reorder-factor-levels}}
 
-A handful of color from Australian domestic plants has been incorporated
-as the main color theme of the package, which inlcudes fern, cherry,
-banksia, acacia and daisy.
+A collection of color palettes from Australian native plants has been
+created to match the theme of the package Quantitative palettes, daisy,
+banksia and cherry, are recommended for comparing between algorithms,
+while sequantial palettes, fern and acacia are better for trace plots.
+These color palettes can be accessed via
+
+\begin{itemize}
+\item
+  \texttt{scale\_color\_botanical(palette\ =\ "...")} for ggplot
+  constructions, and
+\item
+  \texttt{explore\_space\_tour(...,\ color\ =\ botantical\_palettes\$...)}
+  for a full space exploration
+\end{itemize}
+
+When colored by \texttt{info}, users may want to map a particular color
+to a certain level to emphasize certain elements in the algorithm,
+\texttt{relevel\_*()} allows the user to manipulate the level in the
+\texttt{info} column in the data object with the default being the
+chronological order that each level occurs in the optimisation.
 
 \begin{table}
 \centering
-\begin{tabular}{|wl{5cm} wl{5cm}|}
+\begin{tabular}{|wl{5cm} wl{6cm}|}
 \hline
 \multicolumn{2}{|l|}{\textbf{Main functions}}\\
 \multicolumn{2}{|l|}{explore\_trace\_search()}\\
@@ -1271,12 +1329,13 @@ get\_interp() & bind\_random\_matrix() \\
 get\_search\_count() & \\
 get\_basis\_matrix() & \\
 & \\
-relevel\_geo() & botanical\_palettes() \\
-relevel\_better() & botanical\_pal() \\
+relevel\_geo() & botanical\_palettes:  fern, acacia\\
+relevel\_better() & \hspace{3mm} daisy, banksia, and cherry\\
+& botanical\_pal() \\
 & scale\_color\_botanical()\\
 \hline
 \end{tabular}
-\caption{A glossary of functions available in ferrn package. The main functions are four automatic plotting functions and auxiliary functions provides easier extraction (get\_*) and binding (bind\_*) of the data object.}
+\caption{A glossary of functions available in ferrn package. The main functions are four automatic plotting functions and auxiliary functions provides easier manipulation on the data object.}
 \label{table:ferrn-glossary}
 \end{table}
 
