@@ -78,7 +78,8 @@
 
 \if0\blind
 {
-  \title{\bf Title here}
+  \title{\bf Visual diagnostics for constrained optimisation with application to
+guided tours}
 
   \author{
         Author 1 \thanks{The authors gratefully acknowledge \ldots{}} \\
@@ -95,7 +96,8 @@
   \bigskip
   \bigskip
   \begin{center}
-    {\LARGE\bf Title here}
+    {\LARGE\bf Visual diagnostics for constrained optimisation with application to
+guided tours}
   \end{center}
   \medskip
 } \fi
@@ -838,7 +840,7 @@ natural order.
 
 }
 
-\caption{THis is the caption}\label{fig:unnamed-chunk-1}
+\caption{\label{toy-pca-aniamted}A selected number of frames from the animated PCA plot. With animation, it is easier to track the progrssion from the start to finish in each algorithm.}\label{fig:unnamed-chunk-1}
 \end{figure}
 
 \hypertarget{the-tour-looking-at-itself}{%
@@ -853,20 +855,26 @@ to play the rotation of the object in animation. This can be done via a
 regular grand tour or a slice tour \citep{laa2020slice}, which
 emphasizes the points that are close to a section of the sphere.
 
-Compare to the PCA plot, the animated rotation (tour) display gives a
-more holistic view of the search of the optimiser and these additional
-information gained from the animation is cruicial. This is because in
-essense, PCA presents one reduced space that maximises the variance and
-it inherently amplifies the spread of the randomly evaluated bases in
-the search since they have larger variance than the bases on the
-interpolation path. Hence when the interest is to view the interpolation
-path in the space, an animated rotation display provides the view of
-high dimension from different angles.
+Compare to the PCA plot, the animated rotation (tour) display, in Figure
+\ref{toy-tour}, gives a more holistic view of the search of the
+optimiser and these additional information gained from the animation is
+cruicial. This is because in essense, PCA presents one reduced space
+that maximises the variance and it inherently amplifies the spread of
+the randomly evaluated bases in the search since they have larger
+variance than the bases on the interpolation path. Hence when the
+interest is to view the interpolation path in the space, an animated
+rotation display provides the view of high dimension from different
+angles.
 
 \begin{figure}
 \centering
-\includegraphics{paper_files/figure-latex/unnamed-chunk-2-1.pdf}
-\caption{THis is te caption}
+\includegraphics{paper_files/figure-latex/toy-tour-1.pdf}
+\caption{\label{toy-tour}A selected number of frames from the tour
+animation for viewing the 5D space of all the projection bases. The
+second frame on the top row view the space from a direction that is
+close to the one in PCA plot. The tour animation allows for a more
+holistic view of the full space in high dimensions from different
+angles.}
 \end{figure}
 
 \newpage
@@ -1173,8 +1181,6 @@ list-column \texttt{basis} to be printed out nicely with the dimension
 of the projection basis readily available. Below presents a sample of
 the data object.
 
-\newpage
-
 \begin{verbatim}
 ## # A tibble: 10 x 8
 ##       id basis             index_val info         tries  loop method       alpha
@@ -1191,156 +1197,111 @@ the data object.
 ## 10    10 <dbl[,1] [5 x 1]>     0.750 interpolati~     2     3 search_bett~  NA
 \end{verbatim}
 
-\newpage
-
 Once the data object has been obtained, the package, \texttt{ferrn},
 provides automatic diagnostic plots as described in Section
-\ref{vis-diag}. The structure of package functionality has been outlined
-in Table \ref{table:ferrn-glossary}. The four main functions plots,
-\texttt{explore\_trace\_search()}, \texttt{explore\_trace\_interp()},
-\texttt{explore\_space\_pca()}, and \texttt{explore\_space\_tour()},
-produce the diagnostic plots upon a simple supply of the data objects.
-Auxiliary functions, \texttt{get\_*()} and \texttt{bind\_*()}, provide
-handy solutions to extract certain components in the data object. They
-modulate the extraction and binding procedures in the main functions
-while being convenient to use on their own.
+\ref{vis-diag}. The structure of package functionality has been listed
+below.
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{# Below are codes that generate the plots in Section 4 }
-\CommentTok{# using functions from ferrn package}
-\KeywordTok{bind_rows}\NormalTok{(holes_2d_better_max_tries }\OperatorTok{%>%}\StringTok{ }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{max_tries =} \DecValTok{500}\NormalTok{), }
-\NormalTok{          holes_2d_better }\OperatorTok{%>%}\StringTok{ }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{max_tries =} \DecValTok{25}\NormalTok{)) }\OperatorTok{%>%}\StringTok{ }
-\StringTok{  }\KeywordTok{explore_trace_search}\NormalTok{(}\DataTypeTok{group =}\NormalTok{ max_tries)}
-\end{Highlighting}
-\end{Shaded}
+\textbf{Main functions}
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\KeywordTok{bind_rows}\NormalTok{(holes_2d_better_max_tries }\OperatorTok{%>%}\StringTok{ }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{group =} \StringTok{"max_tries: 500"}\NormalTok{), }
-\NormalTok{          interrupt_no }\OperatorTok{%>%}\StringTok{ }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{group =} \StringTok{"no interruption"}\NormalTok{), }
-\NormalTok{          holes_2d_better_random }\OperatorTok{%>%}\StringTok{ }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{group =} \StringTok{"better_random"}\NormalTok{)) }\OperatorTok{%>%}\StringTok{ }
-\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{group =} \KeywordTok{fct_relevel}\NormalTok{(group, }\KeywordTok{c}\NormalTok{(}\StringTok{"max_tries: 500"}\NormalTok{, }
-                                      \StringTok{"no interruption"}\NormalTok{, }
-                                      \StringTok{"better_random"}\NormalTok{))) }\OperatorTok{%>%}\StringTok{ }
-\StringTok{  }\KeywordTok{explore_trace_interp}\NormalTok{(}\DataTypeTok{group =}\NormalTok{ group) }\OperatorTok{+}\StringTok{ }
-\StringTok{  }\KeywordTok{theme}\NormalTok{(}\DataTypeTok{legend.position =} \StringTok{"none"}\NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
+\begin{itemize}
+\tightlist
+\item
+  \texttt{explore\_trace\_search()}: produce summary plots, as shown in
+  Figure \ref{toy-search}
+\item
+  \texttt{explore\_trace\_interp()}: produce trace plots for the
+  interpolation points, as shown in Figure \ref{toy-interp}
+\item
+  \texttt{explore\_space\_pca()}: produce plots of projection basis on
+  the reduced space by PCA, as shown in Figure \ref{toy-pca}. Animated
+  version in Figure \ref{toy-pca-aniamted} can be acquired via the
+  argument \texttt{animate\ =\ TRUE}
+\item
+  \texttt{explore\_space\_tour()}: produce animated tour view on the
+  full space of the projection bases, as shown in Figure \ref{toy-tour}
+\end{itemize}
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\KeywordTok{bind_rows}\NormalTok{(holes_1d_geo, holes_1d_better) }\OperatorTok{%>%}\StringTok{ }
-\StringTok{  }\KeywordTok{bind_theoretical}\NormalTok{(}\KeywordTok{matrix}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{0}\NormalTok{, }\DecValTok{0}\NormalTok{, }\DecValTok{0}\NormalTok{), }\DataTypeTok{nrow =} \DecValTok{5}\NormalTok{), }
-                   \DataTypeTok{index =}\NormalTok{ tourr}\OperatorTok{::}\KeywordTok{holes}\NormalTok{(), }\DataTypeTok{raw_data =}\NormalTok{ data) }\OperatorTok{%>%}\StringTok{ }
-\StringTok{  }\KeywordTok{bind_theoretical}\NormalTok{(}\KeywordTok{matrix}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{-1}\NormalTok{, }\DecValTok{0}\NormalTok{, }\DecValTok{0}\NormalTok{,}\DecValTok{0}\NormalTok{), }\DataTypeTok{nrow =} \DecValTok{5}\NormalTok{), }
-                   \DataTypeTok{index =}\NormalTok{ tourr}\OperatorTok{::}\KeywordTok{holes}\NormalTok{(), }\DataTypeTok{raw_data  =}\NormalTok{ data)}\OperatorTok{%>%}
-\StringTok{  }\KeywordTok{explore_space_pca}\NormalTok{(}\DataTypeTok{col =}\NormalTok{ method)  }\OperatorTok{+}\StringTok{ }
-\StringTok{  }\KeywordTok{scale_color_botanical}\NormalTok{(}\DataTypeTok{palette =} \StringTok{"cherry"}\NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\KeywordTok{bind_rows}\NormalTok{(holes_1d_geo, holes_1d_better) }\OperatorTok{%>%}\StringTok{ }
-\StringTok{  }\KeywordTok{explore_space_tour}\NormalTok{(}\DataTypeTok{color =}\NormalTok{ method)}
-\end{Highlighting}
-\end{Shaded}
-
-\hypertarget{extract-pieces-from-the-data-object}{%
-\subsection{Extract pieces from the data
-object}\label{extract-pieces-from-the-data-object}}
-
-\texttt{get\_*()} extract and, in some cases, manipulate certain
-components from the existing data object, for example,
-\texttt{get\_best()} extracts the best basis found by the algorithm and
-\texttt{get\_interp()} extracts the observations in the interpolation
-and prepare them ready to be supplied to
-\texttt{explore\_trace\_interp()}.
-
-\hypertarget{bind-external-information}{%
-\subsection{Bind external information}\label{bind-external-information}}
-
-\texttt{bind\_*()} incorporate additional information that is outside
-the tour optimisation. Given a simulated dataset, the most interesting
-projection is known ahead of time, so does its basis.
-\texttt{bind\_theoretical()} can be utilised to incorporate this best
-possible basis to the existing data object with the supply of the index
-function and original data for producing the index value. This binding
-is used in the space plots to compare the position of the theoretical
-best basis to the ones being searched by the algorithm. The following
-chunk presents its usage.
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\NormalTok{theo_best <-}\StringTok{ }\KeywordTok{matrix}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{0}\NormalTok{, }\DecValTok{0}\NormalTok{, }\DecValTok{0}\NormalTok{), }\DataTypeTok{nrow =} \DecValTok{5}\NormalTok{)}
-\NormalTok{holes_1d_better }\OperatorTok{%>%}\StringTok{ }
-\StringTok{  }\KeywordTok{bind_theoretical}\NormalTok{(}\DataTypeTok{matrix =}\NormalTok{ theo_best, }\DataTypeTok{index =}\NormalTok{ tourr}\OperatorTok{::}\KeywordTok{holes}\NormalTok{(), }\DataTypeTok{raw_data =}\NormalTok{ data) }
-\end{Highlighting}
-\end{Shaded}
-
-\texttt{bind\_random()} and \texttt{bind\_random\_matrix()} generates a
-large number of points on the surface of a high dimensional sphere and
-attaches it to the existing data object. This is also useful in the
-space plots since it preserves the spherical structure of the spaces of
-the projection bases, in the computation of PCA for
-\texttt{explore\_space\_pca()} and animation of
-\texttt{explore\_space\_tour()}.
-
-\hypertarget{botanical-color-palette-and-reorder-factor-levels}{%
-\subsection{Botanical color palette and reorder factor
-levels}\label{botanical-color-palette-and-reorder-factor-levels}}
-
-A collection of color palettes from Australian native plants has been
-created to match the theme of the package Quantitative palettes, daisy,
-banksia and cherry, are recommended for comparing between algorithms,
-while sequantial palettes, fern and acacia are better for trace plots.
-These color palettes can be accessed via
+\textbf{Auxiliary functions}
 
 \begin{itemize}
 \item
-  \texttt{scale\_color\_botanical(palette\ =\ "...")} for ggplot
-  constructions, and
+  \texttt{get\_*()} extract and, in some cases, manipulate certain
+  components from the existing data object.
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \texttt{get\_best()}: extract the best basis found by the algorithm
+  \item
+    \texttt{get\_start()}: extract the starting basis
+  \item
+    \texttt{get\_interp()}: extract the observations in the
+    interpolation and prepare to be supplied to
+    \texttt{explore\_trace\_interp()}.
+  \item
+    \texttt{get\_search\_count()}: produce the summary table of the
+    number of observation in each iteration and prepare to be supplied
+    to \texttt{explore\_trace\_search()}
+  \item
+    \texttt{get\_basis\_matrix()}: flattern all the bases into a row and
+    stack them to form a large matrix for
+    \texttt{explore\_space\_tour()}
+  \end{itemize}
 \item
-  \texttt{explore\_space\_tour(...,\ color\ =\ botantical\_palettes\$...)}
-  for a full space exploration
+  \texttt{bind\_*()} incorporate additional information that is outside
+  the tour optimisation.
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \texttt{bind\_theoretical()}: incorporate the best possible basis to
+    the existing data object with the supply of the index function and
+    original data for producing the index value.
+  \item
+    \texttt{bind\_random()}: generates a large number of points on the
+    surface of a high dimensional sphere and attaches it to the existing
+    data object and output as a tibble object.
+    \texttt{bind\_random\_matrix()} returns a matrix.
+  \end{itemize}
+\item
+  Color and relevel
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \texttt{botanical\_palettes}: a collection of color palettes from
+    Australian native plants Quantitative palettes include daisy,
+    banksia and cherry and sequantial palettes cotain fern and acacia.
+  \item
+    \texttt{botanical\_pal()}: a color interpolator useful for
+    \texttt{scale\_color\_botanical()}
+  \item
+    \texttt{scale\_color\_botanical()}: a ggplot construction for using
+    botanical palettes.
+  \item
+    \texttt{relevel\_geo()}: manipulate the level in the \texttt{info}
+    column in the data object when geodesic search is used
+  \item
+    \texttt{relevel\_better()}: manipulate the level in the
+    \texttt{info} column in the data object when search\_better related
+    search is used
+  \end{itemize}
 \end{itemize}
-
-When colored by \texttt{info}, users may want to map a particular color
-to a certain level to emphasize certain elements in the algorithm,
-\texttt{relevel\_*()} allows the user to manipulate the level in the
-\texttt{info} column in the data object with the default being the
-chronological order that each level occurs in the optimisation.
-
-\begin{table}
-\centering
-\begin{tabular}{|wl{5cm} wl{6cm}|}
-\hline
-\multicolumn{2}{|l|}{\textbf{Main functions}}\\
-\multicolumn{2}{|l|}{explore\_trace\_search()}\\
-\multicolumn{2}{|l|}{explore\_trace\_interp()}\\
-\multicolumn{2}{|l|}{explore\_space\_pca() }\\
-\multicolumn{2}{|l|}{explore\_space\_tour()}\\
-& \\
-\multicolumn{2}{|l|}{\textbf{Auxiliary functions}}\\
-get\_best() & bind\_theoretical() \\
-get\_start() & bind\_random() \\
-get\_interp() & bind\_random\_matrix() \\
-get\_search\_count() & \\
-get\_basis\_matrix() & \\
-& \\
-relevel\_geo() & botanical\_palettes:  fern, acacia\\
-relevel\_better() & \hspace{3mm} daisy, banksia, and cherry\\
-& botanical\_pal() \\
-& scale\_color\_botanical()\\
-\hline
-\end{tabular}
-\caption{A glossary of functions available in ferrn package. The main functions are four automatic plotting functions and auxiliary functions provides easier manipulation on the data object.}
-\label{table:ferrn-glossary}
-\end{table}
 
 \hypertarget{conclusion}{%
 \section{Conclusion}\label{conclusion}}
+
+This paper has illustrated setting up a data object that can be used for
+diagnosing a complex optimisation procedure. The ideas were illustrated
+using the optimisers available for projection pursuit guided tour. Here
+the constraint is the orthornormality condition of the projection bases.
+The approach used here could be broadly applied to understand other
+constrained optimisers.
+
+something about the diagnostic plots
+
+summarise what we have done and what might be done in the future.
 
 \clearpage
 

@@ -1,5 +1,5 @@
 ---
-title: Title here
+title: "Visual diagnostics for constrained optimisation with application to guided tours"
 blinded: 0
 authors: 
   
@@ -556,7 +556,7 @@ Animating the plots introduced above is useful, especially in the case of PCA po
 
 <!-- The reason to simulate random points on the hihg dimensiaon sphere is to emphasize  taht the projection bases lives on the surface of the sphere. -->
 
-```{r fig.cap = "THis is the caption", fig.height=4, fig.align="center"}
+```{r fig.cap = "\\label{toy-pca-aniamted}A selected number of frames from the animated PCA plot. With animation, it is easier to track the progrssion from the start to finish in each algorithm.", fig.height=4, fig.align="center"}
 # ani <- p + theme(legend.position = "none") +
 #   transition_states(id) +
 #   shadow_mark()
@@ -585,9 +585,9 @@ wrap_plots(gl)
 
 Viewing the bases on the reduced space via PCA shed some lights on the space the optimisers have explored, the visualisation on the original $p \times d$ dimension enables a stereoscopic view of the search. To view a high dimensional ($d \ge 3$) object on a screen, an approach is to play the rotation of the object in animation. This can be done via a regular grand tour or a slice tour [@laa2020slice], which emphasizes the points that are close to a section of the sphere.
 
-Compare to the PCA plot, the animated rotation (tour) display gives a more holistic view of the search of the optimiser and these additional information gained from the animation is cruicial. This is because in essense, PCA presents one reduced space that maximises the variance and it inherently amplifies the spread of the randomly evaluated bases in the search since they have larger variance than the bases on the interpolation path. Hence when the interest is to view the interpolation path in the space, an animated rotation display provides the view of high dimension from different angles.
+Compare to the PCA plot, the animated rotation (tour) display, in Figure \ref{toy-tour}, gives a more holistic view of the search of the optimiser and these additional information gained from the animation is cruicial. This is because in essense, PCA presents one reduced space that maximises the variance and it inherently amplifies the spread of the randomly evaluated bases in the search since they have larger variance than the bases on the interpolation path. Hence when the interest is to view the interpolation path in the space, an animated rotation display provides the view of high dimension from different angles.
 
-```{r fig.cap="THis is te caption"}
+```{r toy-tour, fig.cap="\\label{toy-tour}A selected number of frames from the tour animation for viewing the 5D space of all the projection bases. The second frame on the top row view the space from a direction that is close to the one in PCA plot. The tour animation allows for a more holistic view of the full space in high dimensions from different angles."}
 set.seed(1)
 sphere <- geozoo::sphere.hollow(p = 5, n = 1000)$point
 path1 <- holes_1d_better$basis %>% 
@@ -936,7 +936,6 @@ holes_1d_better <- animate_dist(data, tour_path = guided_tour(holes(), d = 1,
 #save(temp, file = here::here("vignettes", "data", "temp.rda"))
 ```
 
-\newpage
 
 ```{r glb-obj-1}
 holes_1d_better %>% 
@@ -944,11 +943,43 @@ holes_1d_better %>%
   head(10) 
 ```
 
-\newpage
 
-Once the data object has been obtained, the package, `ferrn`, provides automatic diagnostic plots as described in Section \ref{vis-diag}. The structure of package functionality has been outlined in Table \ref{table:ferrn-glossary}. The four main functions plots, `explore_trace_search()`, `explore_trace_interp()`, `explore_space_pca()`, and `explore_space_tour()`, produce the diagnostic plots upon a simple supply of the data objects. Auxiliary functions, `get_*()` and `bind_*()`, provide handy solutions to extract certain components in the data object. They modulate the extraction and binding procedures in the main functions while being convenient to use on their own. 
+Once the data object has been obtained, the package, `ferrn`, provides automatic diagnostic plots as described in Section \ref{vis-diag}. The structure of package functionality has been listed below.
 
-```{r eval = FALSE, echo = TRUE}
+**Main functions**
+
+- `explore_trace_search()`: produce summary plots, as shown in Figure \ref{toy-search}
+- `explore_trace_interp()`: produce trace plots for the interpolation points, as shown in Figure \ref{toy-interp}
+- `explore_space_pca() `: produce plots of projection basis on the reduced space by PCA, as shown in Figure \ref{toy-pca}. Animated version in Figure \ref{toy-pca-aniamted} can be acquired via the argument `animate = TRUE`
+- `explore_space_tour()`: produce animated tour view on the full space of the projection bases, as shown in Figure \ref{toy-tour}
+
+**Auxiliary functions**
+
+-  `get_*()` extract and, in some cases, manipulate certain components from the existing data object.
+    - `get_best()`: extract the best basis found by the algorithm
+    - `get_start()`: extract the starting basis
+    - `get_interp()`: extract the observations in the interpolation and prepare to be supplied to `explore_trace_interp()`. 
+    - `get_search_count()`: produce the summary table of the number of observation in each iteration and prepare to be supplied to `explore_trace_search()`
+    - `get_basis_matrix()`: flattern all the bases into a row and stack them to form a large matrix for `explore_space_tour()`
+    
+- `bind_*()` incorporate additional information that is outside the tour optimisation.
+
+  - `bind_theoretical()`: incorporate the best possible basis to the existing data object with the supply of the index function and original data for producing the index value. 
+  - `bind_random()`: generates a large number of points on the surface of a high dimensional sphere and attaches it to the existing data object and output as a tibble object. `bind_random_matrix()` returns a matrix. 
+  
+  <!-- This binding is used in the space plots to compare the position of the theoretical best basis to the ones being searched by the algorithm. The following chunk presents its usage -->
+<!-- These are also useful in the space plots since it preserves the spherical structure of the spaces of the projection bases, in the computation of PCA for `explore_space_pca()` and animation of `explore_space_tour()`.  -->
+  
+
+- Color and relevel
+  - `botanical_palettes`:  a collection of color palettes from Australian native plants Quantitative palettes include daisy, banksia and cherry and sequantial palettes cotain fern and acacia.
+  - `botanical_pal()`: a color interpolator useful for `scale_color_botanical()`
+  - `scale_color_botanical()`: a ggplot construction for using botanical palettes. 
+  - `relevel_geo()`: manipulate the level in the `info` column in the data object when geodesic search is used
+  - `relevel_better()`: manipulate the level in the `info` column in the data object when search_better related search is used
+
+
+```{r eval = FALSE}
 # Below are codes that generate the plots in Section 4 
 # using functions from ferrn package
 bind_rows(holes_2d_better_max_tries %>% mutate(max_tries = 500), 
@@ -956,7 +987,7 @@ bind_rows(holes_2d_better_max_tries %>% mutate(max_tries = 500),
   explore_trace_search(group = max_tries)
 ```
 
-```{r eval = FALSE, echo = TRUE}
+```{r eval = FALSE}
 bind_rows(holes_2d_better_max_tries %>% mutate(group = "max_tries: 500"), 
           interrupt_no %>% mutate(group = "no interruption"), 
           holes_2d_better_random %>% mutate(group = "better_random")) %>% 
@@ -967,7 +998,7 @@ bind_rows(holes_2d_better_max_tries %>% mutate(group = "max_tries: 500"),
   theme(legend.position = "none")
 ```
 
-```{r eval = FALSE, echo = TRUE}
+```{r eval = FALSE}
 bind_rows(holes_1d_geo, holes_1d_better) %>% 
   bind_theoretical(matrix(c(0, 1, 0, 0, 0), nrow = 5), 
                    index = tourr::holes(), raw_data = data) %>% 
@@ -977,68 +1008,18 @@ bind_rows(holes_1d_geo, holes_1d_better) %>%
   scale_color_botanical(palette = "cherry")
 ```
 
-```{r eval = FALSE, echo = TRUE}
+```{r eval = FALSE}
 bind_rows(holes_1d_geo, holes_1d_better) %>% 
   explore_space_tour(color = method)
 ```
 
-
-## Extract pieces from the data object 
-
- `get_*()` extract and, in some cases, manipulate certain components from the existing data object, for example,  `get_best()` extracts the best basis found by the algorithm and `get_interp()` extracts the observations in the interpolation and prepare them ready to be supplied to `explore_trace_interp()`. 
-
-## Bind external information
-
-`bind_*()` incorporate additional information that is outside the tour optimisation. Given a simulated dataset, the most interesting projection is known ahead of time, so does its basis.  `bind_theoretical()` can be utilised to incorporate this best possible basis to the existing data object with the supply of the index function and original data for producing the index value. This binding is used in the space plots to compare the position of the theoretical best basis to the ones being searched by the algorithm. The following chunk presents its usage.
-
-```{r bind-theoretical-demo, eval = FALSE, echo = TRUE}
-theo_best <- matrix(c(0, 1, 0, 0, 0), nrow = 5)
-holes_1d_better %>% 
-  bind_theoretical(matrix = theo_best, index = tourr::holes(), raw_data = data) 
-```
-
-`bind_random()` and `bind_random_matrix()` generates a large number of points on the surface of a high dimensional sphere and attaches it to the existing data object. This is also useful in the space plots since it preserves the spherical structure of the spaces of the projection bases, in the computation of PCA for `explore_space_pca()` and animation of `explore_space_tour()`. 
-
-## Botanical color palette and reorder factor levels 
-
-A collection of color palettes from Australian native plants has been created to match the theme of the package Quantitative palettes, daisy, banksia and cherry, are recommended for comparing between algorithms, while sequantial palettes, fern and acacia are better for trace plots. These color palettes can be accessed via 
-
-- `scale_color_botanical(palette = "...")` for ggplot constructions, and 
-
-- `explore_space_tour(..., color = botantical_palettes$...)` for a full space exploration
-
-When colored by `info`, users may want to map a particular color to a certain level to emphasize certain elements in the algorithm, `relevel_*()` allows the user to manipulate the level in the `info` column in the data object with the default being the chronological order that each level occurs in the optimisation.
-
-
-\begin{table}
-\centering
-\begin{tabular}{|wl{5cm} wl{6cm}|}
-\hline
-\multicolumn{2}{|l|}{\textbf{Main functions}}\\
-\multicolumn{2}{|l|}{explore\_trace\_search()}\\
-\multicolumn{2}{|l|}{explore\_trace\_interp()}\\
-\multicolumn{2}{|l|}{explore\_space\_pca() }\\
-\multicolumn{2}{|l|}{explore\_space\_tour()}\\
-& \\
-\multicolumn{2}{|l|}{\textbf{Auxiliary functions}}\\
-get\_best() & bind\_theoretical() \\
-get\_start() & bind\_random() \\
-get\_interp() & bind\_random\_matrix() \\
-get\_search\_count() & \\
-get\_basis\_matrix() & \\
-& \\
-relevel\_geo() & botanical\_palettes:  fern, acacia\\
-relevel\_better() & \hspace{3mm} daisy, banksia, and cherry\\
-& botanical\_pal() \\
-& scale\_color\_botanical()\\
-\hline
-\end{tabular}
-\caption{A glossary of functions available in ferrn package. The main functions are four automatic plotting functions and auxiliary functions provides easier manipulation on the data object.}
-\label{table:ferrn-glossary}
-\end{table}
-
-
 # Conclusion
+
+This paper has illustrated setting up a data object that can be used for diagnosing a complex optimisation procedure. The ideas were illustrated using the optimisers available for projection pursuit guided tour. Here the constraint is the orthornormality condition of the projection bases. The approach used here could be broadly applied to understand other constrained optimisers.
+
+something about the diagnostic plots 
+
+summarise what we have done and what might be done in the future.
 
 \clearpage
 
