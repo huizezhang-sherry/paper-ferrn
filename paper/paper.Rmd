@@ -20,7 +20,10 @@ bibliography: biblio.bib
 preamble: >
   \usepackage{amssymb, amsmath, mathtools, dsfont, bbm, array}
   \usepackage[ruled,vlined, linesnumbered]{algorithm2e}
-output: rticles::asa_article
+output:
+  bookdown::pdf_book:
+    base_format: rticles::asa_article
+    fig_height: 4
 editor_options: 
   chunk_output_type: console
 ---
@@ -67,7 +70,6 @@ Section \ref{vis-diag} presents the new visual diagnostics design, from forming 
 Section \ref{application} shows the application of how the diagnostic plots designed in section \ref{vis-diag} can be used to understand and compare different algorithms and how they contribute to modifications that improve the algorithms.
 Finally, Section \ref{implementation} describes the R package: ferrn, that implements all the visual diagnostics above.
 
-\newpage
 
 # Optimisation Methods {#optim}
 
@@ -87,9 +89,6 @@ where $d^{(j)}$ is the searching direction in iteration $j$, and $\alpha_j$ is t
 [Are we using  projection pursuit/guided tour to better understand the convergence of optimization algorithms visually in combination with the algorithms discussed below? Or we are focusing on the optimisation problem only within the projection pursuit context? Some of the problems listed below are also applicable to optimization problem in general too. ppp] 
 
 
-
-\newpage
-
 # Projection pursuit guided tour {#tour}
 
 Modern development of the line search methods focuses on proposing different computation on the searching direction: $d^{(j)}$ and various approximations on the step size: $\alpha_j$ catered for practical optimisation problems. The specific problem context we are interested in is called projection pursuit guided tour. 
@@ -103,8 +102,8 @@ Before introducing the guided tour, we shall be familiar with the general tour m
 
 Guided tour chooses the planes produced by optimising the projection pursuit index function. Figure \ref{tour-path} shows a sketch of the tour path consisting of the blue frames produced by the projection pursuit optimisation algorithm iteratively and the white frames, which are the interpolations between two blue frames. The tour method has been implemented in the *tourr* package in R, available on the Comprehensive R Archive Network at [https://cran.r-project.org/web/packages/tourr/](https://cran.r-project.org/web/packages/tourr/) [@wickham2011tourrpackage]. 
 
-```{r tour-path, out.width="100%", out.height="60%", fig.cap="\\label{tour-path}An illustration of the tour path"}
-knitr::include_graphics(path = here::here("figures/tour_path_keynote/tour_path_keynote.001.png"))
+```{r tour-path, out.width="60%", out.height="40%", fig.align='center', fig.cap="\\label{tour-path}An illustration of the tour path"}
+knitr::include_graphics(path = here::here("figures/tour_path_keynote/tour_path_keynote.001.png"),)
 ```
 
 <!-- The pseudo-code below illustrates the implementation of guided tour in the tourr package. Given an projection pursuit index function and a randomly generated projection basis (current basis), the optimisation procedure produces a target basis inside `generator()`  Both the current basis and the target basis will be supplied to `tour_path()` to prepare information needed for constructing a geodesic path. This information is then used to compute a series of interpolating bases inside the `tour()` function. All the basis will be sent to create animation for visualising the tour in the `animate()` function.   -->
@@ -144,8 +143,6 @@ knitr::include_graphics(path = here::here("figures/tour_path_keynote/tour_path_k
 <!-- ``` -->
 
 
-\newpage
-
 ## Optimisation in the tour {#tour-optim}
 
 
@@ -183,8 +180,6 @@ There are several features of this optimisation that are worth noticing. First o
 <!--  - vis the progression of multi-parameter decision variable  -->
 <!--  - understanding learning rate - neighbourhood parameter -->
 <!--  - understand where the local & global maximum is found - trace plot - see if noisy function -->
-
-\newpage
 
 ## Existing algorithms
 
@@ -259,8 +254,6 @@ Simulated annealing [@kirkpatrick1983optimization, @bertsimas1993simulated] uses
   \label{search-geodesic}
 \end{algorithm}
 
-
-\newpage 
 
 # Visual diagnostics {#vis-diag}
 
@@ -438,7 +431,6 @@ p1 / p2
 
 ```
 
-\newpage
 
 ## Examining the optimisation progress
 
@@ -454,7 +446,7 @@ Sometimes, we may be interested in exploring the points on the interpolation pat
 
 Figure \ref{toy-interp} presents the interpolation of three different tour paths. The upper plot shows a desirable interpolation in each iteration with the index value being progressively and monotonically increasing.  While in the middle plot, the increases towards the target basis is not monotonical in the last two iterations and interpolated basis with higher index value can be found on the tour path. The lower plot is constructed using `search_better_random`, where a basis with smaller index value  has a probabilistic chance of being accepted and we can observe a much more involved pattern. In iteration three, the probabilistic acceptance produces a monotonically decreasing interpolation whilst in iteration five, six and seven, with also a probabilistic acceptance, the interpolation is now non-monotonical. When the target basis has a higher index value, iteration eight reaches this basis by first decreasing the index value. While the interpolation plot shows different possibilities of the change in index value on the tour path, the diagnosis of the validity of each pattern and the related optimisation algorithms will be postponed to Section \ref{application}.
 
-```{r toy-interp, fig.height = 8, fig.cap = "\\label{toy-interp} This is a toy example of plotting interpolated points"}
+```{r toy-interp, fig.cap = "\\label{toy-interp} This is a toy example of plotting interpolated points"}
 p1 <- holes_2d_better_max_tries %>% explore_trace_interp() + theme(legend.position = "none") + 
   scale_color_botanical(palette = "fern")
 
@@ -467,7 +459,7 @@ p3 <- holes_2d_better_random %>% explore_trace_interp() + theme(legend.position 
 p1 / p2 / p3
 ```
 
-\newpage 
+\ 
 
 ## Understanding the optimiser's coverage of the search space
 
@@ -492,7 +484,7 @@ The visualisation can thus be defined as
 Figure \ref{toy-pca} shows the first two principal components of two search paths. Starting from the same position, two searching methods take different paths to get its final bases. There are two theoretical bases because they correspond to the same data projection $Y$ with a 180 degree rotation. What differentiate the two optimisers is that `search_better()` also involve random evaluation of points in the sphere during its sampling process while `search_geodesic()` doesn't and this stochastic rather than deterministic approach can be useful in complex scenario.
 
 
-```{r toy-pca, fig.height = 6, fig.cap = "\\label{toy-pca}PCA plot of search geodesic colouring by info allows for better understanding of each stage in the geodesic search"}
+```{r toy-pca, fig.height = 4, fig.cap = "\\label{toy-pca}PCA plot of search geodesic colouring by info allows for better understanding of each stage in the geodesic search"}
 # path1 <- holes_1d_geo$basis %>% 
 #   flatten_dbl() %>% 
 #   matrix(ncol = 5, byrow = TRUE)
@@ -639,15 +631,14 @@ wrap_plots(gl)
 ```
 
 
-\newpage
 
 # Diagnosing an optimiser {#application}
 
-For a particular index function, the best algorithm to optimise is related to the character of the index and the data. If the index function is smooth and has single maximum, all of the three algorithms introduced above can find maximum.  When multiple optima are presented, `search_better` may stuck in the local maximum. When the index function is non-smooth, `search_geodesic` may even fail to find the maximum. In this section, examples will be presented  to outline how the diagnostic plots can be used to compare the performance of the algorithms in different scenarios.
+For a particular index function, the best algorithm to optimise relates to the character of the index and the data. If the index function is smooth and has single maximum, all of the three algorithms introduced above can find the maximum.  When multiple optima are presented, `search_better` may stuck in the local maximum and in the case where the index function is non-smooth, `search_geodesic` may even fail to find the maximum. In this section, examples will be presented  to outline how the diagnostic plots can be used to compare the performance of the algorithms in different scenarios.
 
 ## Simulation setup
 
-Random variables with different structures has been simulated and the distribution of each is presented in Equation \ref{eq:sim-norm} to \ref{eq:sim-x7}. Variable `x1`, `x8`, `x9` and `x10` are normal distributed with zero mean and unit variance and `x2` to `x7` are mixture of normal distributions with different weights and locations. Figure \ref{origin-data} plots the histogram of each variable except `x3`. The mixture variables are scaled to have unit variance before running the projection pursuit.
+Random variables with different structures has been simulated and the distribution of each is presented in Equation \ref{eq:sim-norm} to \ref{eq:sim-x7}. Variable `x1`, `x8`, `x9` and `x10` are normal distributed with zero mean and unit variance and `x2` to `x7` are mixtures of normal distributions with varied weights and locations. The mixture variables have been scaled to have an overall unit variance before running the projection pursuit.
 
 \begin{align}
 x_1 \overset{d}{=} x_8 \overset{d}{=} x_9 \overset{d}{=} x_{10}& \sim \mathcal{N}(0, 1) \label{eq:sim-norm} \\
@@ -664,35 +655,7 @@ x_7 &\sim 0.5 \mathcal{N}(-5, 1) + 0.5 \mathcal{N}(5, 1)
 \label{eq:sim-x7}
 \end{align}
 
-```{r origin-data, fig.cap="\\label{origin-data} The histogram of simulated selected variables."}
-origin_dt_bi <- data_mult %>% 
-  dplyr::select(-c(x3, x8, x9, x10)) %>% 
-  gather(names, values) %>%
-  mutate(names = as_factor(names))
-  
-origin_dt_bi %>%
-  ggplot(aes(x = values)) +
-  geom_histogram(binwidth = 0.3) +
-  geom_density(aes(y = 0.3 * ..count..)) +
-  facet_wrap(vars(names), ncol = 3)
-```
-
 ## A problem of not monotonic
-
-```{r interpolation}
-#points is always included in the newest version
-# p1 <- holes_2d_better %>%
-#   filter(info == "interpolation") %>%
-#   ggplot(aes(x = tries, y = index_val, col = as.factor(tries))) +
-#   geom_point() +
-#   geom_line(aes(group = 1))
-# 
-# p2 <- holes_2d_better %>% explore_trace_interp() + geom_point(aes(col = as.factor(tries)))
-# 
-# (p1 | p2)  &
-#   theme(legend.position = "bottom")
-# 
-```
 
 We use the same dataset as the toy example above to explore the search function `search_better` and we want to learn how the index value changes on the interpolation path for the `holes` index. From the left panel of Figure \ref{interruption}, we observe that when interpolating from the current basis to the target basis, the index value may not be monotone: we could reach a basis with a higher index value than the target basis on the interpolation path. In this sense, we would be better off using the basis with the highest index value on the interpolation path as the current basis for the next iteration (rather than using the target basis). Hence, an interruption is constructed to accept the interpolating bases only up to the one with the largest index value. After implementing this interruption, the search finds higher final index value with fewer steps as shown in the right panel of Figure \ref{interruption}.
 
@@ -709,7 +672,7 @@ p2 <- interrupt_yes %>% explore_trace_interp() + ggtitle("with interruption") + 
   theme(legend.position = "none")
 
 p1 | p2
-#xxx up and down plot allows for displaying time series features while left and right display makes it easier for comparison? The same problem for plot of comparing between different searching methods
+
 ```
 
 
@@ -731,51 +694,75 @@ In principle, all the optimisation routines should result in the same output for
 The usage of search_polish is as follows. After the first search, the final basis from the interpolation is extracted and supplied to the second search as the `start` argument.  `search_polish` is used as the search function. All the other arguments should remain the same. 
 
 ```{r sample-code, eval = FALSE, echo = TRUE}
-set.seed(123456)
-holes_2d_geo <- animate_xy(data_mult[,c(1,2, 7:10)],tour_path = 
-                             guided_tour(holes(), d = 2, 
-                                         search_f = tourr:::search_geodesic),
-                           rescale = FALSE, verbose = TRUE)
-
-last_basis <- holes_2d_geo %>% filter(info == "interpolation") %>% 
-  tail(1) %>% pull(basis) %>% .[[1]]
+library(tourr)
+library(ferrn)
 
 set.seed(123456)
-holes_2d_geo_polish <- animate_xy(data_mult[,c(1,2, 7:10)], tour_path = 
-                                    guided_tour(holes(), d = 2, 
-                                                search_f = tourr:::search_polish),
-                                  rescale = FALSE, verbose = TRUE, 
-                                  start = last_basis)
+holes_2d_geo <- 
+  animate_xy(boa6,
+             tour_path = guided_tour(holes(), d = 2, 
+                                     search_f = search_geodesic),
+             rescale = FALSE, verbose = TRUE)
+
+last_basis <- get_best(holes_2d_geo) %>% pull(basis) %>% .[[1]]
+
+set.seed(123456)
+holes_2d_geo_polish <- 
+  animate_xy(boa6, 
+             tour_path = guided_tour(holes(), d = 2, 
+                                     search_f = search_polish),
+             rescale = FALSE, verbose = TRUE, start = last_basis)
 ```
 
-A slight variation of the plot definition due to the addition of polishing points is as follows:
 
-- Layer 1: point geom
-  - data: filter the observations with  $S = \text{interpolation}$; bind the data object from optimisation and interpolation and form polishing; mutate $t$ to be the row number of the binded tibble.
-  - x: $t$ is mapped to the x-axis
-  - y: $I$ is mapped to the y-axis 
-  - colour: $V$ is mapped to the colour aesthetic
+Checking the final projection before and after applying the polish as in Figure \ref{geo-polish}, we can see that ...
 
-- Layer 2: line geom
+```{r geo-polish, fig.height= 2.5, fig.cap = "\\label{geo-polish}On the left is the final projection from search geodesic while on the right is the polished result. Polishing helps to sharpen the edges of the clusters"}
+# set.seed(123456)
+# render(
+#   boa6,
+#   tour_path = guided_tour(holes(), d = 2, search_f = search_geodesic),
+#   dev = "png",
+#   display = display_xy(axes = "bottomleft", verbose = TRUE),
+#   rescale = FALSE,
+#   frames = 100,
+#   file = here::here("figures","geo_polish", "before%03d.png")
+# )
+# 
+# last_basis <- get_best(holes_2d_geo)$basis %>% .[[1]]
+# 
+# set.seed(123456)
+# render(
+#   boa6,
+#   tour_path =  guided_tour(holes(), d = 2, search_f = search_polish, alpha = 0.1),
+#   dev = "png",
+#   display = display_xy(axes = "bottomleft", verbose = TRUE),
+#   start = last_basis,
+#   rescale = FALSE,
+#   frames = 100,
+#   file = here::here("figures","geo_polish", "after%03d.png")
+# )
 
-<!-- Polishing points form on itself a global structure with candidate bases and output bases. If we're allowed to abuse the notation a bit, we denote $$A_{J, \ast, \sum_{i = 1}^J k_i + 1}$$ as the first polishing basis and $$A_{J, \ast, \sum_{i = 1}^J k_i + M}$$ as the last polishing basis, where $$M = \sum_i S_{i, \text{method}} \mathds{1}(\text{method} = \text{polish})$$ -->
-
-<!-- Then the index plot incorporating both the interpolating points and polishing points can be defined as  -->
-
-<!-- $$x = \{1, 2, \cdots, \sum_{i = 1}^J k_i,(\sum_{i = 1}^J k_i + 1), \cdots,  \sum_{i = 1}^J k_i + M\}$$ -->
-<!-- $$y = \{I_{jlk}: k = x\}$$ -->
-
----
-
-Again using the same data, we are interested to compare the effect of different `max.tries` in the 2D projection setting. `max.tries` is a hyperparameter that controls the maximum number of try before the search ends. The default value of 25 is suitable for 1D projection while we suspect it may not be a good option for the 2D case and hence want to compare it with an alternative, 500. As shown in Figure \ref{trace-compare}, both trials attain the same index value after polishing while the small `max.tries` of 25 is not sufficient for `search_better` to find its global maximum and we will need to adjust the `max.tries` argument for the search to sufficiently explore the parameter space.
-
-```{r polish, fig.asp=0.5,fig.cap="\\label{trace-compare}Breakdown of index value when using different max.tries in search better in conjunction with search polish. Both attain the same final index value after the polishing while using a `max.tries` of 25 is not sufficient to find the true maximum."}
-
-holes_2d_better %>% mutate(max_tries = 25) %>% 
-  dplyr::bind_rows(holes_2d_better_max_tries %>% mutate(max_tries = 500)) %>% 
-  explore_trace_interp(col = max_tries) + 
-  theme(legend.position = "none")
+before <- png::readPNG(here::here("figures","geo_polish", "before100.png"))
+after <- png::readPNG(here::here("figures","geo_polish", "after004.png"))
+gl <-  lapply(list(before, after), grid::rasterGrob)
+wrap_plots(gl) 
 ```
+
+
+
+
+<!-- --- -->
+
+<!-- Again using the same data, we are interested to compare the effect of different `max.tries` in the 2D projection setting. `max.tries` is a hyperparameter that controls the maximum number of try before the search ends. The default value of 25 is suitable for 1D projection while we suspect it may not be a good option for the 2D case and hence want to compare it with an alternative, 500. As shown in Figure \ref{trace-compare}, both trials attain the same index value after polishing while the small `max.tries` of 25 is not sufficient for `search_better` to find its global maximum and we will need to adjust the `max.tries` argument for the search to sufficiently explore the parameter space. -->
+
+<!-- ```{r polish, fig.asp=0.5,fig.cap="\\label{trace-compare}Breakdown of index value when using different max.tries in search better in conjunction with search polish. Both attain the same final index value after the polishing while using a `max.tries` of 25 is not sufficient to find the true maximum."} -->
+
+<!-- holes_2d_better %>% mutate(max_tries = 25) %>%  -->
+<!--   dplyr::bind_rows(holes_2d_better_max_tries %>% mutate(max_tries = 500)) %>%  -->
+<!--   explore_trace_interp(col = max_tries) +  -->
+<!--   theme(legend.position = "none") -->
+<!-- ``` -->
 
 
 <!-- *Example: The neighbourhood parameter alpha* Add an example on comparing the neighbourhood parameter in search_better & search_posse. -->
@@ -833,8 +820,6 @@ holes_2d_better %>% mutate(max_tries = 25) %>%
 
 While explore the reduced space is an initial attempt to understand the searching space, there are existing technology for rotating a higher dimensional space for visualisation. Geozoo is an option. It generates random points on the high dimensional space and we can overlay it with the points on the optimisation path to visualise the spread of it on the high-D sphere.
 
-[add example from geozoo]
-
 <!-- # Animated diagnostic plots -->
 
 <!-- ```{r pca-animated, echo = TRUE, eval = FALSE} -->
@@ -862,62 +847,112 @@ Figure \ref{kol-cdf} compares the tracing plot of the interpolating points when 
 Polishing step has done much more work to find the final index value in `search_geodesic` than `search_better` and this indicates `kol_cdf` function favours of a random search method than ascent method. 
 
 ```{r kol-cdf,fig.asp=0.5, fig.cap = "\\label{kol-cdf}Comparison of two different searching methods: search_geodesic and search_better on 1D projection problem for a noisier index: kol_cdf. The geodesic search rely heavily on the polishing step to find the final index value while search better works well."}
-# p1 <- bind_rows(kol_1d_geo, kol_1d_geodesic_polish) %>% explore_trace_interp(col = method)  + ggtitle("search_geodesic")
+# set.seed(123456)
+# kol_1d_geo <- 
+#   animate_dist(boa5, tour_path = guided_tour(norm_kol(), d = 1,
+#                                              search_f =  search_geodesic, max.tries = 100),
+#                rescale = FALSE, verbose = TRUE)
 # 
-# p2 <- bind_rows(kol_1d_better, kol_1d_better_polish) %>% explore_trace_interp(col = method) + ggtitle("search_better")
-# 
-# (p1 | p2 ) & theme(legend.position = "bottom") & ylim(0, 0.23)
+# set.seed(123456)
+# kol_1d_better <- 
+#   animate_dist(boa5, tour_path = guided_tour(norm_kol(), d = 1,
+#                                              search_f =  search_better, max.tries = 100),
+#                rescale = FALSE, verbose = TRUE)
+# save(kol_1d_geo, file = here::here("data", "kol_1d_geo.rda"))
+# save(kol_1d_better, file = here::here("data", "kol_1d_better.rda"))
 
 
-p1 <- kol_1d_geo %>% explore_trace_interp(col = method)  + ggtitle("search_geodesic")
+bind_rows(kol_1d_geo, kol_1d_better) %>% 
+  explore_trace_interp(col = method, group = method) +
+  facet_wrap(vars(method), ncol = 2) + 
+  scale_color_botanical() +
+  theme(legend.position = "none", aspect.ratio = 1)
 
-p2 <- kol_1d_better %>% explore_trace_interp(col = method) + ggtitle("search_better")
-
-(p1 | p2 ) & theme(legend.position = "bottom") & ylim(0, 0.23)
 ```
 
 Now we enlarge the dataset to include two informative variables: `x2` and `x3` and remain 1D projection. In this case, two local maxima appear with projection matrix being $[0, 1, 0, 0, 0, 0]$ and $[0, 0, 1 ,0, 0, 0]$. 
 
-Using different seeds in `search_better` allows us to find both local maxima d as in Figure \ref{1d-2var-different-seeds}. Comparing the maximum of both, we can see that the global maximum happens when `x2` is found. It is natural to ask then if there is an algorithm that can find the global maximum without trying on different seeds? `search_better_random` manages to do it via a Metropolis-hasting random search as shown in Figure \ref{1d-2var-better-random}, although at a higher cost of number of points to evaluate. 
+Using different seeds in `search_better` allows us to find both local maxima d as in Figure \ref{1d-2var-different-seeds}. Comparing the maximum of both, we can see that the global maximum happens when `x2` is found. It is natural to ask then if there is an algorithm that can find the global maximum without trying on different seeds? `search_better_random` manages to do it via a Metropolis-hasting random search as shown in Figure \ref{1d-2var-better-random}, although at a higher cost of number of points to evaluate. In Figure \ref{kol-pca}, 
+sing search better random for the problem above will result in finding the global maximum but much larger number of iteration is needed. We can also plot the searching points of all three algorithms in the searching space and explore their relative position against each other using principal components. As shown in Figure \ref{1d-2var-explore-proj-pca}, the bases from better1 and better2 only search a proportion of the searching space while better_random produces a more exhaustive search. The large overlapping of better1 and better_random is explained by the fact that both algorithms find x2 in the end. 
+The trace plot search better in a 1D projection problem with two informative variables using different seeds (without polishing). Since there are two informative variables, setting different value for seed will lead search better to find either of the local maximum.
 
-```{r 1d-2var-different-seeds,  fig.asp=0.5, fig.cap="\\label{1d-2var-different-seeds}The trace plot search better in a 1D projection problem with two informative variables using different seeds (without polishing). Since there are two informative variables, setting different value for seed will lead search better to find either of the local maximum."}
-colour <- ferrn::botanical_pal()(3)
-p5 <- kol_1d_2var_better %>% explore_trace_interp(col = 0) + 
-  scale_colour_manual(values = colour[2]) + ggtitle("search_better, seed 123456")
-p6 <- kol_1d_2var_better_2 %>% explore_trace_interp(col = 0) + 
-  scale_colour_manual(values = colour[1]) + ggtitle("search_better, seed 12345")
+```{r kol-pca, fig.cap = "\\label{kol-pca}THis is the caption"}
 
-(p5 | p6) & theme(legend.position = "none") & ylim(0, 0.25)
+# set.seed(123456)
+# kol_1d_2var_better <- 
+#   animate_dist(boa6, 
+#                tour_path = guided_tour(norm_kol(), d = 1,
+#                                        search_f = search_better, max.tries = 100),
+#                rescale = FALSE, verbose = TRUE)
+# 
+# 
+# set.seed(1234567)
+# kol_1d_2var_better_2 <- 
+#   animate_dist(boa6, 
+#                tour_path = guided_tour(norm_kol(), d = 1,
+#                                        search_f = search_better, max.tries = 100),
+#                rescale = FALSE, verbose = TRUE)
+# 
+# set.seed(12345678)
+# kol_1d_2var_better_2 <- 
+#   animate_dist(boa6, 
+#                tour_path = guided_tour(norm_kol(), d = 1,
+#                                        search_f = search_better, max.tries = 100),
+#                rescale = FALSE, verbose = TRUE)
+# 
+# 
+# 
+# 
+# set.seed(123456)
+# kol_1d_2var_better_random <- 
+#   animate_dist(boa6, 
+#                tour_path = guided_tour(norm_kol(), d = 1,
+#                                        search_f = search_better_random,
+#                                        max.tries = 2000, t0 = 1e-5),
+#                rescale = FALSE, verbose = TRUE)
+# 
+# save(kol_1d_2var_better, file = here::here("data", "kol_1d_2var_better.rda"))
+# save(kol_1d_2var_better_2, file = here::here("data", "kol_1d_2var_better_2.rda"))
+# save(kol_1d_2var_better_random, file = here::here("data", "kol_1d_2var_better_random.rda"))
+
+p1 <- bind_rows(kol_1d_2var_better %>% mutate(algo = "better 1"),
+          kol_1d_2var_better_2 %>% mutate(algo = "better 2"),
+          kol_1d_2var_better_random %>% mutate(algo = "better random")) %>% 
+  explore_trace_interp(group = algo, col = algo) + 
+  facet_wrap(vars(algo), ncol = 3)  + 
+  scale_color_botanical(palette = "banksia")  + 
+  theme(legend.position = "none", aspect.ratio = 1)
+
+pca <- bind_rows(kol_1d_2var_better %>% mutate(algo = "better 1"),
+          kol_1d_2var_better_2 %>% mutate(algo = "better 2"),
+          kol_1d_2var_better_random %>% mutate(algo = "better random")) %>% 
+  bind_theoretical(matrix = matrix(c(0, 1, 0, 0, 0, 0), nrow = 6),
+                                        index = tourr::norm_kol(),
+                                        raw_data = boa6) %>% 
+   bind_theoretical(matrix = matrix(c(0, 0, 1, 0, 0, 0), nrow = 6),
+                                        index = tourr::norm_kol(),
+                                        raw_data = boa6) %>% 
+  compute_pca()
+  
+random <- pca$aug %>% filter(method == "randomly_generated") %>% select(-algo)
+theoretical <- pca$aug %>% filter(info == "theoretical") %>% select(-algo)
+
+p2 <- pca$aug %>% filter(method != "randomly_generated" & info != "theoretical") %>% 
+  ggplot(aes(x = PC1, y = PC2, col = algo)) + 
+  geom_point(data = random, col = "grey") +
+  geom_point(aes(col = algo), alpha = 0.1) + 
+  geom_point(data = theoretical, size = 5, col = botanical_palettes$cherry[3]) + 
+  geom_path(data = pca$aug %>% filter(info == "interpolation"), size = 2) + 
+  geom_point(data = pca$aug %>% get_best(group = algo), size = 5) +
+  geom_point(data = pca$aug %>% get_start(),  size = 5) +
+  facet_wrap(vars(algo)) +
+  theme_void() + 
+  theme(legend.position = "none", aspect.ratio = 1) + 
+  scale_color_botanical(palette = "banksia")  
+
+wrap_plots(p1, p2, ncol = 1) 
+
 ```
-
-```{r 1d-2var-better-random, fig.asp=0.5, fig.cap = "\\label{1d-2var-better-random}Using search better random for the problem above will result in finding the global maximum but much larger number of iteration is needed."}
-kol_1d_2var_better_random %>% 
-  explore_trace_interp(col = 0) + 
-  ylim(0, 0.25) + 
-  scale_colour_manual(values = colour[3]) + 
-  theme(legend.position = "none") + 
-  ggtitle("search_better_random")
-```
-
-We can also plot the searching points of all three algorithms in the searching space and explore their relative position against each other using principal components. As shown in Figure \ref{1d-2var-explore-proj-pca}, the bases from better1 and better2 only search a proportion of the searching space while better_random produces a more exhaustive search. The large overlapping of better1 and better_random is explained by the fact that both algorithms find x2 in the end. 
-
-<!-- ```{r 1d-2var-explore-proj-pca, fig.cap = "\\label{1d-2var-explore-proj-pca} The projected projection basis using principal components. The bases from better1 and better2 only search a proportion of the searching space while better_random produces a more exhausive search. The large overlapping of better1 and better_random is explained by the fact that both algorithms finds x2 in the end."} -->
-<!-- interp1 <- kol_cdf_1d_2var_better  -->
-<!-- interp2 <- kol_cdf_1d_2var_better_2 -->
-<!-- interp3 <- kol_cdf_1d_2var_better_random  -->
-
-<!-- dt <- bind_rows(interp1, interp2, interp3) %>%  -->
-<!--   mutate(algorithm = c(rep("better 1", nrow(interp1)),  -->
-<!--                        rep("better 2", nrow(interp2)),  -->
-<!--                        rep("better random", nrow(interp3))), -->
-<!--          algorithm = fct_relevel(algorithm, c("better 1", "better 2", "better random")))  -->
-
-<!-- dt %>%  -->
-<!--   explore_proj_pca(col = algorithm, alpha = 0.5) +  -->
-<!--   scale_colour_manual(values = color(3))  -->
-<!-- ``` -->
-
-
 
 
 # Implementation {#implementation}
