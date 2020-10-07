@@ -563,24 +563,7 @@ We use the same dataset as the toy example above to explore the search function 
 \hypertarget{close-but-not-close-enough}{%
 \subsection{Close but not close enough}\label{close-but-not-close-enough}}
 
-In principle, all the optimisation routines should result in the same output for the same problem while this may not be the case in real application. This motivates the creation of a polishing search that polishes the final basis found and achieves unity across different methods.
-
-\texttt{search\_polish} takes the final basis of a given search as a start and uses a brutal-force approach to sample a large number of basis (\texttt{n\_sample}) in the neighbourhood. Among those sampled basis, the one with the largest index value is chosen to be compared with the current basis. If its index value is larger than that of the current basis, it becomes the current basis in the next iteration. If no basis is found to have larger index value, the searching neighbourhood will shrink and the search continues. The polishing search ends when one of the four stopping criteria is satisfied:
-
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi})}
-\tightlist
-\item
-  the chosen basis can't be too close to the current basis
-\item
-  the percentage improvement of the index value can't be too small
-\item
-  the searching neighbourhood can't be too small
-\item
-  the number of iteration can't exceed \texttt{max.tries}
-\end{enumerate}
-
-The usage of search\_polish is as follows. After the first search, the final basis from the interpolation is extracted and supplied to the second search as the \texttt{start} argument. \texttt{search\_polish} is used as the search function. All the other arguments should remain the same.
+Once the final basis has been found by an algorithm, one may want to push further to investigate whether there's an even better basis in the close neighbourhood. This motivates the polish search where the final basis is supplied to a new guided tour to search for any local breakthrough. The following code demonstrates the usage of \texttt{search\_polish}:
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -605,15 +588,26 @@ The usage of search\_polish is as follows. After the first search, the final bas
 \end{Highlighting}
 \end{Shaded}
 
-Checking the final projection before and after applying the polish as in Figure \ref{geo-polish}, we can see that \ldots{}
+Similar to \texttt{search\_better} as a stochastic random search, \texttt{search\_polish} has a different scheme of reducing the search neighbourhood. In each search-interpolation iteration, \texttt{search\_better} has a fixed neighbourhood parameter alpha and this alpha is reduced by another cooling parameter only after an iteration finishes. On the contrary, \texttt{search\_polish} allows alpha to be reduced during each iteration to exploit the search in the neighbourhood. Further, to avoid the case where alpha becomes too small and the further search is meaningless, three more stopping criteria have been added, on top of the original \texttt{max.tries}. These include:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi})}
+\tightlist
+\item
+  the distance between the candidate basis and the current basis needs to be larger than 1e-3;
+\item
+  the percentage change of the index value need to be larger than 1e-5; and
+\item
+  the alpha parameter on itself need to be larger than 0.01
+\end{enumerate}
+
+Figure \ref{geo-polish} presents the final projections found before and after applying \texttt{search\_polish} using the demo code. Polish search improves the index value from 0.9618 to 0.9627 with reduction of weights on the non-informative variables, namely \texttt{V1}, \texttt{V8}, \texttt{V9} and \texttt{V10}. When appears in the projected data in Figure \ref{geo-polish}, polish works to sharpen the edges of each cluster.
 
 \begin{figure}
 \centering
 \includegraphics{paper_files/figure-latex/geo-polish-1.pdf}
-\caption{\label{fig:geo-polish}\label{geo-polish}On the left is the final projection from search geodesic while on the right is the polished result. Polishing helps to sharpen the edges of the clusters}
+\caption{\label{fig:geo-polish}\label{geo-polish}Projected data before and after polishing. Weights on axis other than V2 and V7 have been further reduced and the edges of each cluster have become more obvious.}
 \end{figure}
-
-While explore the reduced space is an initial attempt to understand the searching space, there are existing technology for rotating a higher dimensional space for visualisation. Geozoo is an option. It generates random points on the high dimensional space and we can overlay it with the points on the optimisation path to visualise the spread of it on the high-D sphere.
 
 \hypertarget{seeing-the-signal-in-the-noise}{%
 \subsection{Seeing the signal in the noise}\label{seeing-the-signal-in-the-noise}}

@@ -682,16 +682,7 @@ p1 | p2
 
 <!-- Two examples are shown below to explore and compare different searching methods and neighbourhood parameter alpha.  -->
 
-In principle, all the optimisation routines should result in the same output for the same problem while this may not be the case in real application. This motivates the creation of a polishing search that polishes the final basis found and achieves unity across different methods. 
-
-`search_polish` takes the final basis of a given search as a start and uses a brutal-force approach to sample a large number of basis (`n_sample`) in the neighbourhood. Among those sampled basis, the one with the largest index value is chosen to be compared with the current basis. If its index value is larger than that of the current basis, it becomes the current basis in the next iteration. If no basis is found to have larger index value, the searching neighbourhood will shrink and the search continues. The polishing search ends when one of the four stopping criteria is satisfied:
-
-1) the chosen basis can't be too close to the current basis 
-2) the percentage improvement of the index value can't be too small 
-3) the searching neighbourhood can't be too small
-4) the number of iteration can't exceed `max.tries`
-
-The usage of search_polish is as follows. After the first search, the final basis from the interpolation is extracted and supplied to the second search as the `start` argument.  `search_polish` is used as the search function. All the other arguments should remain the same. 
+Once the final basis has been found by an algorithm, one may want to push further to investigate whether there's an even better basis in the close neighbourhood. This motivates the polish search where the final basis is supplied to a new guided tour to search for any local breakthrough. The following code demonstrates the usage of `search_polish`:
 
 ```{r sample-code, eval = FALSE, echo = TRUE}
 library(tourr)
@@ -714,10 +705,15 @@ holes_2d_geo_polish <-
              rescale = FALSE, verbose = TRUE, start = last_basis)
 ```
 
+Similar to `search_better` as a stochastic random search, `search_polish` has a different scheme of reducing the search neighbourhood. In each search-interpolation iteration, `search_better` has a fixed neighbourhood parameter alpha and this alpha is reduced by another cooling parameter only after an iteration finishes. On the contrary, `search_polish` allows alpha to be reduced during each iteration to exploit the search in the neighbourhood. Further, to avoid the case where alpha becomes too small and the further search is meaningless, three more stopping criteria have been added, on top of the original `max.tries`. These include:
 
-Checking the final projection before and after applying the polish as in Figure \ref{geo-polish}, we can see that ...
+1) the distance between the candidate basis and the current basis needs to be larger than 1e-3;
+2) the percentage change of the index value need to be larger than 1e-5; and
+3) the alpha parameter on itself need to be larger than 0.01
 
-```{r geo-polish, fig.height= 2.5, fig.cap = "\\label{geo-polish}On the left is the final projection from search geodesic while on the right is the polished result. Polishing helps to sharpen the edges of the clusters"}
+Figure \ref{geo-polish} presents the final projections found before and after applying `search_polish` using the demo code. Polish search improves the index value from `r get_best(holes_2d_geo)$index_val %>% format(digits = 4)`  to `r get_best(holes_2d_geo_polish)$index_val %>% format(digits = 4)` with reduction of weights on the non-informative variables, namely `V1`, `V8`, `V9` and `V10`. When appears in the projected data in Figure \ref{geo-polish}, polish works to sharpen the edges of each cluster.
+
+```{r geo-polish, fig.height= 2.5, fig.cap = "\\label{geo-polish}Projected data before and after polishing. Weights on axis other than V2 and V7 have been further reduced and the edges of each cluster have become more obvious."}
 # set.seed(123456)
 # render(
 #   boa6,
@@ -743,89 +739,30 @@ Checking the final projection before and after applying the polish as in Figure 
 #   file = here::here("figures","geo_polish", "after%03d.png")
 # )
 
+# set.seed(123456)
+# holes_2d_geo <- animate_xy(boa6,tour_path =
+#                              guided_tour(holes(), d = 2,
+#                                          search_f = search_geodesic),
+#                            rescale = FALSE, verbose = TRUE)
+# last_basis <- get_best(holes_2d_geo)$basis %>% .[[1]]
+# 
+# set.seed(123456)
+# holes_2d_geo_polish <- animate_xy(boa6, tour_path =
+#                                     guided_tour(holes(), d = 2,
+#                                                 search_f = search_polish, alpha = 0.1),
+#                                   rescale = FALSE, verbose = TRUE,
+#                                   start = last_basis)
+# 
+# save(holes_2d_geo, file = here::here("data", "holes_2d_geo.rda"))
+# save(holes_2d_geo_polish, file = here::here("data", "holes_2d_geo_polish.rda"))
+
+
 before <- png::readPNG(here::here("figures","geo_polish", "before100.png"))
 after <- png::readPNG(here::here("figures","geo_polish", "after004.png"))
 gl <-  lapply(list(before, after), grid::rasterGrob)
 wrap_plots(gl) 
 ```
 
-
-
-
-<!-- --- -->
-
-<!-- Again using the same data, we are interested to compare the effect of different `max.tries` in the 2D projection setting. `max.tries` is a hyperparameter that controls the maximum number of try before the search ends. The default value of 25 is suitable for 1D projection while we suspect it may not be a good option for the 2D case and hence want to compare it with an alternative, 500. As shown in Figure \ref{trace-compare}, both trials attain the same index value after polishing while the small `max.tries` of 25 is not sufficient for `search_better` to find its global maximum and we will need to adjust the `max.tries` argument for the search to sufficiently explore the parameter space. -->
-
-<!-- ```{r polish, fig.asp=0.5,fig.cap="\\label{trace-compare}Breakdown of index value when using different max.tries in search better in conjunction with search polish. Both attain the same final index value after the polishing while using a `max.tries` of 25 is not sufficient to find the true maximum."} -->
-
-<!-- holes_2d_better %>% mutate(max_tries = 25) %>%  -->
-<!--   dplyr::bind_rows(holes_2d_better_max_tries %>% mutate(max_tries = 500)) %>%  -->
-<!--   explore_trace_interp(col = max_tries) +  -->
-<!--   theme(legend.position = "none") -->
-<!-- ``` -->
-
-
-<!-- *Example: The neighbourhood parameter alpha* Add an example on comparing the neighbourhood parameter in search_better & search_posse. -->
-
-
-<!-- ```{r nrow, echo = TRUE} -->
-<!-- # nrow(holes_2d_better_max_tries) -->
-<!-- # nrow(holes_2d_pos) -->
-<!-- ``` -->
-
-
-<!-- ```{r alpha, fig.asp=0.5,eval = FALSE} -->
-<!-- p1 <- holes_2d_better_max_tries %>% -->
-<!--   filter(info != "interpolation") %>% -->
-<!--   mutate(id = row_number()) %>% -->
-<!--   explore_trace_parameter(var = alpha) + -->
-<!--   ylim(0.46, 0.505) + ggtitle("search_better") -->
-
-<!-- p3 <- holes_2d_better_max_tries %>% explore_trace_interp(col = alpha) + ylim(0.8, 0.96) -->
-
-<!-- p2 <- holes_2d_pos %>% -->
-<!--   filter(info != "interpolation") %>% -->
-<!--   mutate(id = row_number()) %>% -->
-<!--   explore_trace_parameter(var = alpha) + ylim(0.46, 0.505) + ggtitle("search_posse") -->
-
-<!-- p4 <- holes_2d_pos %>% explore_trace_interp(col = alpha) + ylim(0.8, 0.96) -->
-
-<!-- (p1 | p2) / (p3 | p4) + plot_layout(guides = "collect") -->
-<!-- ``` -->
-
-
-
-
-<!-- *Example: initial value for polishing alpha* `search_polish` is a brute-force algorithm that evaluate 1000 points in the neighbourhood at each loop. Setting an appropriate initial value for polish_alpha would avoid wasting search on large vector space that are not likely to produce higher index value. The default initial value for polishing step is 0.5 and we are interested in whether this is an appropriate initial value to use after `search_geodesic`. The problem is a 1D projection of the small dataset using `search_geodesic` and followed by `search_polish`. The top-left panel of Figure \ref{polish-alpha} displays all the projection bases on the first two principal components, coloured by the `polish_alpha`. We can observe that rather than concentrating on the ending basis from `search_geodesic` as what polishing step is designed, `search_polish` searches a much larger vector space, which is unnecessary. Thus a customised smaller initial value for `polish_alpha` would be ideal. One way to do this is to initialised `polish_alpha` as the projection distance between the last two target bases. The top-right panel of Figure \ref{polish-alpha} shows a more desirable concentrated searching space near the ending basis. Both specifications of initial value allow the searches to reach the same ending index values.  -->
-
-
-<!-- ```{r polish-alpha, fig.cap = "\\label{polish-alpha}PCA plot of two different polish alpha initialisations. A default polish alpha = 0.5 searches a larger space that is unncessary while a small customised initial value of polish alpha will search near the ending basis. Both intialisations reach the same ending index values. "} -->
-<!-- p1 <- bind_rows(holes_1d_geo, holes_1d_geo_polish_default_alpha) %>%  -->
-<!--   explore_proj_pca(col = as.factor(alpha)) -->
-
-<!-- p2 <- bind_rows(holes_1d_geo, holes_1d_geo_polish) %>%  -->
-<!--   explore_proj_pca(col = as.factor(alpha)) -->
-
-<!-- p3 <- bind_rows(holes_1d_geo, holes_1d_geo_polish_default_alpha) %>% -->
-<!--   explore_trace_interp(col = method) + ylim(0.75, 0.95) -->
-
-<!-- p4 <- bind_rows(holes_1d_geo, holes_1d_geo_polish) %>%  -->
-<!--   explore_trace_interp(col = method) +  ylim(0.75, 0.95) -->
-
-<!-- ((p1 | p2) /(p3 | p4)) +  plot_layout(heights = c(2, 1)) & theme(legend.position = "none")  -->
-
-<!-- ``` -->
-
-
-
-While explore the reduced space is an initial attempt to understand the searching space, there are existing technology for rotating a higher dimensional space for visualisation. Geozoo is an option. It generates random points on the high dimensional space and we can overlay it with the points on the optimisation path to visualise the spread of it on the high-D sphere.
-
-<!-- # Animated diagnostic plots -->
-
-<!-- ```{r pca-animated, echo = TRUE, eval = FALSE} -->
-<!-- holes_1d_geo %>% explore_proj_pca(animate = TRUE, col = info) +  -->
-<!--   theme(legend.position = "bottom") -->
-<!-- ``` -->
 
 
 ## Seeing the signal in the noise 
