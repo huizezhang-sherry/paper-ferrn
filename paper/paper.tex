@@ -22,7 +22,7 @@
 \addtolength{\topmargin}{-.8in}%
 
 %% load any required packages here
-\usepackage{amssymb, amsmath, mathtools, dsfont, bbm, array} \usepackage[ruled,vlined, linesnumbered]{algorithm2e}
+\usepackage{amssymb, amsmath, mathtools, dsfont, bbm, array, booktabs} \usepackage[ruled,vlined, linesnumbered]{algorithm2e}
 
 \usepackage{color}
 \usepackage{fancyvrb}
@@ -612,42 +612,28 @@ Figure \ref{geo-polish} presents the final projections found before and after ap
 \hypertarget{seeing-the-signal-in-the-noise}{%
 \subsection{Seeing the signal in the noise}\label{seeing-the-signal-in-the-noise}}
 
-The interpolation path of holes index, as seen in Figure \ref{interruption}, is smooth, while this may not be the case for more complicated index functions. \texttt{kol\_cdf} index, an 1D projection index function based on Kolmogorov test, compares the difference between the 1D projected data, \(\mathbf{P}_{n \times 1}\) and a randomly generated normal distribution, \(y_n\) based on the empirical cumulated distribution function (ECDF). Denotes the ECDF function as \(F(u)\) with subscript indicating the variable, the Kolmogorov statistics defined by
+Up until this point, the index functions are smooth, meaning the trace of interpolation points is smooth, while this is not the case for all the index functions. \texttt{norm\_kol}, a 1D projection function based on Kolmogorov test, compares the difference between the 1D projected data, \(\mathbf{P}_{n \times 1}\) and a randomly generated normal distribution, \(y_n\) based on the empirical cumulated distribution function (ECDF). Denotes the ECDF function as \(F_{.}(u)\) with the subscript indicating the projection or the random normal variable, the \texttt{norm\_kol} index is defined by
 
 \[\max \left[F_{\mathbf{P}}(u) - F_{y}(u)\right]\]
 
-can be seen as a function of the projection matrix \(\mathbf{A}_{p \times 1}\) and hence a valid index function.
-
-Figure \ref{kol-cdf} compares the tracing plot of the interpolating points when using different optimisation algorithms: \texttt{search\_geodesic} and \texttt{search\_better}. One can observe that
-
-\begin{itemize}
-\tightlist
-\item
-  The index value of \texttt{kol\_cdf} index is much smaller than that of holes index
-\item
-  The link of index values from interpolation bases are no longer smooth
-\item
-  Both algorithms reach a similar final index value after polishing
-\end{itemize}
-
-Polishing step has done much more work to find the final index value in \texttt{search\_geodesic} than \texttt{search\_better} and this indicates \texttt{kol\_cdf} function favours of a random search method than ascent method.
+Figure \ref{kol-cdf} compares the tracing plot of two algorithms: \texttt{search\_geodesic} and \texttt{search\_better}. This time, the interpolated path is no longer smooth when using either algorithm. It is also obvious that \texttt{search\_geodesic} fails to optimise this rough index since there is barely improvment of the index value. On the other hand, \texttt{search\_better} is doing a relatively good job on the optimisation for the 5-variable dataset \texttt{boa5}. The theoretical best basis {[}0, 1, 0, 0, 0{]} produces an index value of 0.182 and \texttt{search\_better} finds the final basis {[}-0.02939, -0.99715, 0.04509, -0.03248, 0.04176{]} with an index value of 0.174. A further polish step will give a marginal improvement of index value to 0.173 with a basis of {[}-0.077342, -0.996695, -0.014675, -0.004626, -0.019520{]}. At this stage, the difference between the theoretical best and what has been found is likely due to simulation error since the best possible basis for a simulated data will be slightly off the theoretical best basis, which is derived based on the distributional assumption in Equation \ref{eq:sim-norm} to \ref{eq:sim-x7}.
 
 \begin{figure}
 \centering
 \includegraphics{paper_files/figure-latex/kol-cdf-1.pdf}
-\caption{\label{fig:kol-cdf}\label{kol-cdf}Comparison of two different searching methods: search\_geodesic and search\_better on 1D projection problem for a noisier index: kol\_cdf. The geodesic search rely heavily on the polishing step to find the final index value while search better works well.}
+\caption{\label{fig:kol-cdf}\label{kol-cdf}Trace plot of search\_geodesic and search\_better on 1D projection problem for a noisy index: norm\_kol. Search\_geodesic has varely made progression while search\_better has successfully found the informative}
 \end{figure}
 
-Now we enlarge the dataset to include two informative variables: \texttt{x2} and \texttt{x3} and remain 1D projection. In this case, two local maxima appear with projection matrix being \([0, 1, 0, 0, 0, 0]\) and \([0, 0, 1 ,0, 0, 0]\).
+The second experiment with the noisy index is to understand how the optimisers perform when there are multiple informative variables in the case of 1D projection. The dataset used is \texttt{boa6} with \texttt{x2} and \texttt{x7} being informative. The two possible theoretical best bases are {[}0, 1, 0, 0, 0, 0{]} and {[}0, 0, 1, 0, 0, 0{]} with index value 0.182 and 0.235 repectively and hence, the global maximum happens when variable \texttt{x7} is found.
 
-Using different seeds in \texttt{search\_better} allows us to find both local maxima d as in Figure \ref{1d-2var-different-seeds}. Comparing the maximum of both, we can see that the global maximum happens when \texttt{x2} is found. It is natural to ask then if there is an algorithm that can find the global maximum without trying on different seeds? \texttt{search\_better\_random} manages to do it via a Metropolis-hasting random search as shown in Figure \ref{1d-2var-better-random}, although at a higher cost of number of points to evaluate. In Figure \ref{kol-pca},
-sing search better random for the problem above will result in finding the global maximum but much larger number of iteration is needed. We can also plot the searching points of all three algorithms in the searching space and explore their relative position against each other using principal components. As shown in Figure \ref{1d-2var-explore-proj-pca}, the bases from better1 and better2 only search a proportion of the searching space while better\_random produces a more exhaustive search. The large overlapping of better1 and better\_random is explained by the fact that both algorithms find x2 in the end.
-The trace plot search better in a 1D projection problem with two informative variables using different seeds (without polishing). Since there are two informative variables, setting different value for seed will lead search better to find either of the local maximum.
+A simulation with 20 different seeds shows that \texttt{search\_better} can find either one of the informative variable but there's no guarantee on which seed finds which variable. \texttt{search\_better\_random} manages to find the global maximum via a metropolis-hasting algorithm without being affected by the seed. To ensure the algorithm finish the search in a timely manner, it is necessary to set a reasonable initial temperature \(t_0\) so that the probability of accepting an inferior basis is not too high. Figure \ref{kol-pca-sim}, \ldots{}. Figure \ref{kol-pca} shows the comparison, in terms of the trace plot and PCA plot, between \texttt{search\_better\_random} and two \texttt{search\_better} algorithms where one finds \texttt{x2} and another finds \texttt{x7}. The trace plot shows that the global maximum has been found by \texttt{search\_better\_random} and one \texttt{search\_better}, but not the other. The PCA plot further illustrate how the two algorithms finds the global maximum: \texttt{search\_better\_random} travels along the top right corner on the projected 2D circle while the path of \texttt{search\_better} is much shorter and only goes pass in between the two theoretical bases.
+
+(there's more things going on about both algorithms experimenting with different seeds.)
 
 \begin{figure}
 \centering
 \includegraphics{paper_files/figure-latex/kol-pca-1.pdf}
-\caption{\label{fig:kol-pca}\label{kol-pca}THis is the caption}
+\caption{\label{fig:kol-pca}\label{kol-pca}Comparison between search\_better\_random and two different search\_better. In the trace plot, the two dashed horizontal lines are the index values of the two theoretical bases. serach\_better\_random and one of the serach\_better have found the global maximum but the other fails. The lower panel shows the PCA plot for each of the three algorithms. The two yellow dots, again, correspond to the theoretical bases with the one on the right being the global maximum. The paths of two search\_better are relatively short and simple while the search\_better\_random has a more sophisticated path. This is due to the fact that the interpolation at each iteration are longer, which shows its ability to find new bases at a distance.}
 \end{figure}
 
 \hypertarget{implementation}{%
@@ -742,9 +728,9 @@ Once the data object has been obtained, the package, \texttt{ferrn}, provides au
 
 This paper has illustrated setting up a data object that can be used for diagnosing a complex optimisation procedure. The ideas were illustrated using the optimisers available for projection pursuit guided tour. Here the constraint is the orthornormality condition of the projection bases. The approach used here could be broadly applied to understand other constrained optimisers.
 
-something about the diagnostic plots
+Four diagnostic plots have been introduced in the paper to investigate the progression and the projection space of an optimser, ranging from simple summary plot to advanced high dimensional animation. The implementation of these visualisations are designed to be easy-to-use with each plot can be produced with a simple supply of the data object and few additional arguments. More advanced users may decide to modify on top of the basic diagnostic pltos or even build their own.
 
-summarise what we have done and what might be done in the future.
+Most of the work in this project has been translated into code in two pacakges: the collection of the data object is implemented in the existing \texttt{tourr} package; manipulation and visualisation of the data object are implemented in the new \texttt{ferrn} package. Equipped with handy tools to diagnose the performance of optimisers, future work can extend the diagnostics to a wider range of index functions i.e.~scagnostics, association, and information index \citep{laa2020using} and understand how the optimisers behave for index functions with different structures.
 
 \clearpage
 
