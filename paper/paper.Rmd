@@ -523,9 +523,9 @@ Figure \ref{toy-pca} shows the first two principal components of two search path
 
 p <- bind_rows(holes_1d_geo, holes_1d_better) %>% 
   bind_theoretical(matrix(c(0, 1, 0, 0, 0), nrow = 5), 
-                   index = tourr::holes(), raw_data = data) %>% 
+                   index = tourr::holes(), raw_data = boa5) %>% 
   bind_theoretical(matrix(c(0, -1, 0, 0,0), nrow = 5), 
-                   index = tourr::holes(), raw_data  = data)%>%
+                   index = tourr::holes(), raw_data  = boa5)%>%
   explore_space_pca(col = method)  + 
   scale_color_botanical(palette = "cherry") + 
   theme(legend.position = "bottom")
@@ -810,7 +810,7 @@ A simulation with 20 different seeds shows that `search_better` can find either 
 (there's more things going on about both algorithms experimenting with different seeds.)
 
 
-```{r}
+```{r fig.height = 8}
 set.seed(123)
 seed <- sample.int(10000, 20)
 # kol_1d_2var_better_sim <- list()
@@ -843,28 +843,21 @@ polish_list <- purrr::map2(kol_1d_2var_better_sim_polish,seed,  ~.x %>% dplyr::m
 better_list <- purrr::map2(kol_1d_2var_better_sim,seed,  ~.x %>% dplyr::mutate(seed = .y)) 
 polish_tidy <- do.call(dplyr::bind_rows, polish_list)
 better_tidy <- do.call(dplyr::bind_rows, better_list)
-all_tidy <- bind_rows(better_tidy, polish_tidy)
-```
+all_tidy_better <- bind_rows(better_tidy, polish_tidy)
 
-```{r seed-table, eval = FALSE}
-best <- get_best(polish_tidy, group = seed)
+best <- get_best(all_tidy_better, group = seed) %>% arrange(index_val)
 
 all_summary <- best$basis %>% 
   purrr::flatten_dbl() %>% matrix(ncol = 6, byrow = TRUE) %>% 
   as_tibble() %>% 
   rename("V7" = "V3", "V8" = "V4", "V9" = "V5", "V10" = "V6") %>% 
-  mutate(IndexVal = best$index_val, seed = as.factor(seed)) %>% 
+  mutate(IndexVal = best$index_val, seed = as.factor(best$seed)) %>% 
   pivot_longer(-c(seed, IndexVal), names_to = "VarFound", values_to = "value") %>% 
   group_by(seed, IndexVal) %>% 
   filter(abs(value) == max(abs(value))) %>% 
   arrange(IndexVal) %>% ungroup()
 
-all_summary %>% knitr::kable(digits = 3, caption = "this is the caption", format='latex', booktabs=TRUE, escape=FALSE)
-
-```
-
-```{r eval = FALSE}
-pca <- all_tidy %>% 
+pca <- all_tidy_better%>% 
   mutate(seed = as.factor(seed)) %>% 
   left_join(all_summary %>% select(seed, VarFound, IndexVal), by = "seed") %>%
   bind_theoretical(matrix = matrix(c(0, 1, 0, 0, 0, 0), nrow = 6),
@@ -882,46 +875,50 @@ theoretical <- pca$aug %>% filter(info == "theoretical") %>% select(-seed)
 pca$aug %>% filter(method != "randomly_generated"& info != "theoretical") %>% 
   group_by(seed) %>% arrange(IndexVal) %>% 
   ggplot(aes(x = PC1, y = PC2, col = VarFound)) + 
-  geom_point(data = random, col = "grey") +
-  geom_point(aes(col = VarFound), alpha = 0.5) + 
+  geom_point(data = random, col = "grey", size = 0.3) +
+  geom_point(aes(col = VarFound), alpha = 0.1) + 
   geom_point(data = theoretical, size = 5, col = botanical_palettes$cherry[3]) + 
   geom_path(data = pca$aug %>% filter(info == "interpolation"), size = 2) + 
-  geom_point(data = pca$aug %>% get_best(group = seed), size = 7) +
+  geom_point(data = pca$aug %>% get_best(group = seed), size = 5) +
+  geom_point(data = pca$aug %>% get_start() %>% filter(method == "search_better_random"), size = 3) +
   facet_wrap(vars(fct_reorder(seed, IndexVal))) +
-  #theme_void() + 
-  theme(aspect.ratio = 1) + 
+  theme_void() + 
+  theme(aspect.ratio = 1, legend.position = "bottom") + 
   scale_color_botanical(palette = "fern")  
 ```
 
 
-```{r eval = FALSE}
+```{r fig.height= 8}
 set.seed(123)
 seed <- sample.int(10000, 20)
-# kol_1d_2var_better_sim <- list()
-# kol_1d_2var_better_sim_polish <- list()
+# kol_1d_2var_better_random_sim <- list()
+# kol_1d_2var_better_random_sim_polish <- list()
 # for (i in 1: length(seed)){
+#   cat("i = ", i, "seed = ", seed[i], "\n")
 #   set.seed(seed[i])
-#   kol_1d_2var_better_sim[[i]] <-
+#   kol_1d_2var_better_random_sim[[i]] <-
 #     animate_dist(boa6,
 #                  tour_path = guided_tour(norm_kol(), d = 1,
-#                                          search_f = search_better, max.tries = 100),
+#                                          search_f = search_better, max.tries = 500, t0 = 1e-6, alpha = 0.7),
 #                  rescale = FALSE, verbose = TRUE)
 # 
 # 
-#   last_basis <- get_best(kol_1d_2var_better_sim[[i]])$basis %>% .[[1]]
+#   last_basis <- get_best(kol_1d_2var_better_random_sim[[i]])$basis %>% .[[1]]
 # 
-#   set.seed(1842)
-#   kol_1d_2var_better_sim_polish[[i]] <-
+#   set.seed(seed[i])
+#   kol_1d_2var_better_random_sim_polish[[i]] <-
 #     animate_dist(boa6,
 #                  tour_path = guided_tour(norm_kol(), d = 1,
-#                                          search_f = search_polish, max.tries = 100),
+#                                          search_f = search_polish, max.tries = 200),
 #                  rescale = FALSE, verbose = TRUE,
 #                  start = last_basis)
+#   
 # }
 
 
-# save(kol_1d_2var_better_sim, file = here::here("data", "kol_1d_2var_better_sim.rda"))
-# save(kol_1d_2var_better_sim_polish, file = here::here("data", "kol_1d_2var_better_sim_polish.rda"))
+#save(kol_1d_2var_better_random_sim, file = here::here("data", "kol_1d_2var_better_random_sim.rda"))
+#save(kol_1d_2var_better_random_sim_polish, file = here::here("data", "kol_1d_2var_better_random_sim_polish.rda"))
+
 
 polish_list <- purrr::map2(kol_1d_2var_better_random_sim_polish,seed,  ~.x %>% dplyr::mutate(seed = .y)) 
 better_list <- purrr::map2(kol_1d_2var_better_random_sim,seed,  ~.x %>% dplyr::mutate(seed = .y)) 
@@ -937,20 +934,11 @@ all_summary <- best$basis %>%
   purrr::flatten_dbl() %>% matrix(ncol = 6, byrow = TRUE) %>% 
   as_tibble() %>% 
   rename("V7" = "V3", "V8" = "V4", "V9" = "V5", "V10" = "V6") %>% 
-  mutate(IndexVal = best$index_val, seed = as.factor(seed)) %>% 
+  mutate(IndexVal = best$index_val, seed = as.factor(best$seed)) %>% 
   pivot_longer(-c(seed, IndexVal), names_to = "VarFound", values_to = "value") %>% 
   group_by(seed, IndexVal) %>% 
   filter(abs(value) == max(abs(value))) %>% 
   arrange(IndexVal) %>% ungroup()
-
-all_tidy %>% mutate(seed = as.factor(seed)) %>% 
-  left_join(all_summary, by = "seed") %>% 
-  explore_trace_interp(group = seed, col = VarFound) + 
-  facet_wrap(vars(fct_reorder(seed, IndexVal)))  + 
-  #geom_hline(yintercept = theo1, alpha = 0.5, linetype = 2) + 
-  #geom_hline(yintercept = theo2, alpha = 0.5, linetype = 2) + 
-  scale_color_botanical(palette = "banksia")  + 
-  theme( aspect.ratio = 1)
 
 pca <- all_tidy %>% 
   mutate(seed = as.factor(seed)) %>% 
@@ -970,14 +958,14 @@ theoretical <- pca$aug %>% filter(info == "theoretical") %>% select(-seed)
 pca$aug %>% filter(method != "randomly_generated"& info != "theoretical") %>% 
   group_by(seed) %>% arrange(IndexVal) %>% 
   ggplot(aes(x = PC1, y = PC2, col = VarFound)) + 
-  geom_point(data = random, col = "grey") +
-  geom_point(aes(col = VarFound), alpha = 0.1) + 
+  geom_point(data = random, col = "grey", size = 0.3) +
+  geom_point(aes(col = VarFound), alpha = 0.05) + 
   geom_point(data = theoretical, size = 5, col = botanical_palettes$cherry[3]) + 
   geom_path(data = pca$aug %>% filter(info == "interpolation"), size = 2) + 
-  geom_point(data = pca$aug %>% get_best(group = seed), size = 7) +
+  geom_point(data = pca$aug %>% get_best(group = seed), size = 5) +
   facet_wrap(vars(fct_reorder(seed, IndexVal))) +
-  #theme_void() + 
-  theme(aspect.ratio = 1) + 
+  theme_void() + 
+  theme(aspect.ratio = 1, legend.position = "bottom") + 
   scale_color_botanical(palette = "fern") 
 ```
 
@@ -1041,9 +1029,9 @@ pca$aug %>% filter(method != "randomly_generated"& info != "theoretical") %>%
 #                                         raw_data = boa6) %>% 
 #   compute_pca()
   
-dt <- bind_rows(all_tidy %>% filter(seed == 1842) %>% mutate(algo = "better V2"),
-          all_tidy %>% filter(seed == 9982) %>% mutate(algo = "better V7"),
-          kol_1d_2var_better_random %>% mutate(algo = "better random"))
+dt <- bind_rows(all_tidy_better %>% filter(seed == 1842) %>% mutate(algo = "better V2"),
+          all_tidy_better %>% filter(seed == 9982) %>% mutate(algo = "better V7"),
+          all_tidy %>% filter(seed == 4761) %>% mutate(algo = "better random"))
 
 index <- tourr::norm_kol() 
 theo1 <- index(as.matrix(boa6) %*% matrix(c(0, 1, 0, 0, 0, 0), nrow = 6))
@@ -1070,11 +1058,11 @@ theoretical <- pca$aug %>% filter(info == "theoretical") %>% select(-algo)
 p2 <- pca$aug %>% filter(method != "randomly_generated" & info != "theoretical") %>% 
   ggplot(aes(x = PC1, y = PC2, col = algo)) + 
   geom_point(data = random, col = "grey") +
-  geom_point(aes(col = algo), alpha = 0.1) + 
+  geom_point(aes(col = algo), alpha = 0.05) + 
   geom_point(data = theoretical, size = 5, col = botanical_palettes$cherry[3]) + 
   geom_path(data = pca$aug %>% filter(info == "interpolation"), size = 2) + 
   geom_point(data = pca$aug %>% get_best(group = algo), size = 5) +
-  geom_point(data = pca$aug %>% get_start(),  size = 3) +
+  geom_point(data = pca$aug %>% get_start() %>% filter(method %in% c("search_better_random", "search_better")),  size = 3) +
   facet_wrap(vars(algo)) +
   theme_void() + 
   theme(legend.position = "none", aspect.ratio = 1) + 
