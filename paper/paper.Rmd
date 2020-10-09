@@ -39,14 +39,12 @@ library(tourr)
 library(gganimate)
 ```
 
-```{r load-data}
+```{r external, include = FALSE, cache = FALSE}
+library(knitr)
 files <- paste0("data/", list.files(here::here("data")))
 purrr::walk(.x = files, ~load(here::here(.x), env = globalenv()))
-
-source(here::here("source/indice.r"))
-source(here::here("source/sim_data.r"))
+read_chunk(here::here('scripts/vis-diag.R'))
 ```
-
 
 # Introduction
 
@@ -183,10 +181,6 @@ There are several features of this optimisation that are worth noticing. First o
 
 Below we introduce three possible algorithms: `search_better` and `search_better_random` are derivative free methods that sample candidate bases in the neighbourhood, whilst `search_geodesic` is an analogue of gradient ascent on the manifold of the projection basis.
 
-`search_better` is a random search device that samples a candidate basis $\mathbf{A}_{l}$ in the neighbourhood of the current basis $\mathbf{A}_{\text{cur}}$ by $\mathbf{A}_{l} = (1- \alpha)\mathbf{A}_{\text{cur}} + \alpha \mathbf{A}_{\text{rand}}$ where $\alpha$ controls the radius of the sampling neighbourhood and $\mathbf{A}_{\text{rand}}$ is a randomly generated matrix with the same dimension as $\mathbf{A}_{\text{cur}}$. $\mathbf{A}_{l}$ is then orthogonalised to ensure the orthonormal constraint is fulfilled. When a basis is found with index value higher than the current basis $\mathbf{A}_{\text{cur}}$, the search terminates and outputs the basis for guided tour to construct an interpolation path. The next iteration of search begins after adjusting $\alpha$ by a cooling parameter: $\alpha_{j+1} = \alpha_j * \text{cooling}$. Another termination condition is when the maximum number of iteration $l_{\max}$ is reached. A slightly different cooling scheme has been proposed by @posse1995projection to include a halving parameter $c$. Rather than reducing the radius of the searching neighbourhood, $\alpha$, at each iteration, Posse's design only adjust $\alpha$ if the last search takes more than $c$ times to find an accepted basis to avoid the searching space being reduced too fast. The algorithm of `search_better` is summarised in Algorithm \ref{random-search}.  [mention orthonormalise to ensure the constraint is fulfilled; don't use derivative information but a random search]
-
-
-
 \begin{algorithm}
 \SetAlgoLined
   \SetKwInOut{Input}{input}
@@ -207,7 +201,8 @@ Below we introduce three possible algorithms: `search_better` and `search_better
   \label{random-search}
 \end{algorithm}
 
-Simulated annealing [@kirkpatrick1983optimization, @bertsimas1993simulated] uses the same sampling process as `search_better` but allow a probabilistic acceptance of a basis with lower index value based on a cooling scheme $T(l)$. Given an initial $T_0$, the temperature at iteration $l$ is defined as $T(l) = \frac{T_0}{\log(l + 1)}$. When a candidate basis fails to have an index value larger than the current basis, simulated annealing gives it a second chance to be accepted with probability $$P= \min\left\{\exp\left[-\frac{I_{\text{cur}} - I_{l}}{T(l)}\right],1\right\}$$ where $I_{(\cdot)}$ denotes the index value of a given basis. This implementation allows the algorithm to jump out of a local maximum and enables a more holistic search of the whole parameter space. This feature is particularly useful when the dimension of the projected space is smaller than the number of informative variables in the dataset (i.e. a one dimensional projection of the dataset with two informative variables). The algorithm can be written as replacing line 5-8 of Algorithm \ref{random-search} with Algorithm \ref{simulated_annealing}.
+
+`search_better` is a random search device that samples a candidate basis $\mathbf{A}_{l}$ in the neighbourhood of the current basis $\mathbf{A}_{\text{cur}}$ by $\mathbf{A}_{l} = (1- \alpha)\mathbf{A}_{\text{cur}} + \alpha \mathbf{A}_{\text{rand}}$ where $\alpha$ controls the radius of the sampling neighbourhood and $\mathbf{A}_{\text{rand}}$ is a randomly generated matrix with the same dimension as $\mathbf{A}_{\text{cur}}$. $\mathbf{A}_{l}$ is then orthogonalised to ensure the orthonormal constraint is fulfilled. When a basis is found with index value higher than the current basis $\mathbf{A}_{\text{cur}}$, the search terminates and outputs the basis for guided tour to construct an interpolation path. The next iteration of search begins after adjusting $\alpha$ by a cooling parameter: $\alpha_{j+1} = \alpha_j * \text{cooling}$. Another termination condition is when the maximum number of iteration $l_{\max}$ is reached. A slightly different cooling scheme has been proposed by @posse1995projection to include a halving parameter $c$. Rather than reducing the radius of the searching neighbourhood, $\alpha$, at each iteration, Posse's design only adjust $\alpha$ if the last search takes more than $c$ times to find an accepted basis to avoid the searching space being reduced too fast. The algorithm of `search_better` is summarised in Algorithm \ref{random-search}.  [mention orthonormalise to ensure the constraint is fulfilled; don't use derivative information but a random search]
 
 \begin{algorithm}
 \SetAlgoLined
@@ -225,9 +220,9 @@ Simulated annealing [@kirkpatrick1983optimization, @bertsimas1993simulated] uses
   \label{simulated_annealing}
 \end{algorithm}
 
+Simulated annealing [@kirkpatrick1983optimization, @bertsimas1993simulated] uses the same sampling process as `search_better` but allow a probabilistic acceptance of a basis with lower index value based on a cooling scheme $T(l)$. Given an initial $T_0$, the temperature at iteration $l$ is defined as $T(l) = \frac{T_0}{\log(l + 1)}$. When a candidate basis fails to have an index value larger than the current basis, simulated annealing gives it a second chance to be accepted with probability $$P= \min\left\{\exp\left[-\frac{I_{\text{cur}} - I_{l}}{T(l)}\right],1\right\}$$ where $I_{(\cdot)}$ denotes the index value of a given basis. This implementation allows the algorithm to jump out of a local maximum and enables a more holistic search of the whole parameter space. This feature is particularly useful when the dimension of the projected space is smaller than the number of informative variables in the dataset (i.e. a one dimensional projection of the dataset with two informative variables). The algorithm can be written as replacing line 5-8 of Algorithm \ref{random-search} with Algorithm \ref{simulated_annealing}.
 
 
-@cook1995grand used a gradient ascent algorithm on the manifold of the projection bases. In gradient ascent, one first find the direction for improvment via computing the gradient information. In `search_geodesic`, $2n$ bases are first generated in a tiny neighbourhood of the current basis, controlled by the neighbourhood parameter $\delta$. A geodesic is then constructed using the current basis and one of the $2n$ bases that have the highest index value. If the neighbourhood parameter $\delta$ is tiny, the geodesic constructed is an analogue of the gradient information in the curved space and can work as the searching direction. In gradient ascent, the next step is to conduct a line search to find the best improvement along the gradient direction. In `search_geodesic`, this step is replaced by optimising the index value along the geodesic direction constructed before over an 90 degree angle from $-\pi/4$ to $\pi/4$. The optima $\mathbf{A}_{**}$ is outputted for the current iteration if the percentage change in the index value between $\mathbf{A}_{**}$ and $\mathbf{A}_{\text{cur}}$ is greater than a threshold value. As above, another termination condition is when $l_{\max}$ is reached.  Algorithm \ref{search-geodesic} summarises the steps in geodesic search.
 
 \begin{algorithm}
 \SetAlgoLined
@@ -251,6 +246,11 @@ Simulated annealing [@kirkpatrick1983optimization, @bertsimas1993simulated] uses
   \caption{search geodesic}
   \label{search-geodesic}
 \end{algorithm}
+
+
+
+@cook1995grand used a gradient ascent algorithm on the manifold of the projection bases. In gradient ascent, one first find the direction for improvment via computing the gradient information. In `search_geodesic`, $2n$ bases are first generated in a tiny neighbourhood of the current basis, controlled by the neighbourhood parameter $\delta$. A geodesic is then constructed using the current basis and one of the $2n$ bases that have the highest index value. If the neighbourhood parameter $\delta$ is tiny, the geodesic constructed is an analogue of the gradient information in the curved space and can work as the searching direction. In gradient ascent, the next step is to conduct a line search to find the best improvement along the gradient direction. In `search_geodesic`, this step is replaced by optimising the index value along the geodesic direction constructed before over an 90 degree angle from $-\pi/4$ to $\pi/4$. The optima $\mathbf{A}_{**}$ is outputted for the current iteration if the percentage change in the index value between $\mathbf{A}_{**}$ and $\mathbf{A}_{\text{cur}}$ is greater than a threshold value. As above, another termination condition is when $l_{\max}$ is reached.  Algorithm \ref{search-geodesic} summarises the steps in geodesic search.
+
 
 
 # Visual diagnostics {#vis-diag}
@@ -381,24 +381,15 @@ When plotting the searching observations as points in a plot, the space each ite
 
 Another option is to use summarisation for each iteration. Boxplot is a suitable candidate that provides five points summary of the data, however, there are two pieces of information missing from the boxplot: 1) It does not report the number of points, and 2) the position of the last basis. This could be remedied by adding more layers using the concept of grammar of graphics. A label geometry is added at the bottom of the plot to show the number of points in each iteration and a line geometry links the last basis in each iteration. Further, an option to switch between displaying points and boxplot geometry is helpful since point geometry can be more intuitive for the iteration with few observations. This is achieved via a `cutoff` parameter. 
 
-Figure \ref{toy-search} presents a comparison between the two plotting options discussed above. Using the natural order to plot searching points distorts the point from the first few iterations and over-emphasizes the searches in the last few iterations. The second plot design evenly presents the summarised information for each iteration while allowing for a switch to the full information for the iteration with small number of observations.  
+Figure \@ref(fig:toy-search) presents a comparison between the two plotting options discussed above. Using the natural order to plot searching points distorts the point from the first few iterations and over-emphasizes the searches in the last few iterations. The second plot design evenly presents the summarised information for each iteration while allowing for a switch to the full information for the iteration with small number of observations.  
 
-
-
-```{r toy-search, fig.asp=0.5,  fig.cap="\\label{toy-search}A comparison of \`search_better\` with different parameter value on \`max_tries\`. A switch of geometry from points to boxplot happens when the count in the iteration excess 15 to avoid overplotting. With \`max_tries = 500\` specification, the algorithm is working much harder towards to the end."}
-bind_rows(holes_2d_better_max_tries %>% mutate(max_tries = 500), 
-          holes_2d_better %>% mutate(max_tries = 25)) %>% 
-  explore_trace_search(group = max_tries) + 
-  scale_color_botanical(palette = "daisy") +
-  facet_wrap(vars(max_tries),labeller = "label_both", ncol = 2) +
-  xlab("iteration")
+```{r toy-search, fig.cap = "(ref:toy-search)"}
 ```
+
+(ref:toy-search) A comparison of `search_better` with different parameter value on `max_tries`. A switch of geometry from points to boxplot happens when the count in the iteration excess 15 to avoid overplotting. With `max_tries = 500` specification, the algorithm is working much harder towards to the end.
 
 
 ## Examining the optimisation progress
-
-Sometimes, we may be interested in exploring the points on the interpolation path since these are the points that will be played by the tour animation. Figure \ref{toy-interp} presents the interpolation of three different tour paths. The upper plot shows a desirable interpolation in each iteration with the index value being progressively and monotonically increasing.  While in the middle plot, the increases towards the target basis is not monotonical in the last two iterations and interpolated basis with higher index value can be found on the tour path. The lower plot is constructed using `search_better_random`, where a basis with smaller index value  has a probabilistic chance of being accepted and we can observe a much more involved pattern. In iteration three, the probabilistic acceptance produces a monotonically decreasing interpolation whilst in iteration five, six and seven, with also a probabilistic acceptance, the interpolation is now non-monotonical. When the target basis has a higher index value, iteration eight reaches this basis by first decreasing the index value. While the interpolation plot shows different possibilities of the change in index value on the tour path, the diagnosis of the validity of each pattern and the related optimisation algorithms will be postponed to Section \ref{application}.
-
 
 
 ```{r toy-interp, fig.height = 3, fig.cap = "\\label{toy-interp} The resulting trace plot on the interpolated points has been ploted when using three different algorithms to optimise the index. The color represents the number of iteration. It can be observed that each algorithm differs in length in the optimisation and the curvature of the improvement for each algorithm also varies."}
@@ -414,19 +405,9 @@ bind_rows(holes_2d_better_max_tries %>% mutate(group = "Algorithm 1"),
 ```
 
 
+Sometimes, we may be interested in exploring the points on the interpolation path since these are the points that will be played by the tour animation. Figure \ref{toy-interp} presents the interpolation of three different tour paths. The upper plot shows a desirable interpolation in each iteration with the index value being progressively and monotonically increasing.  While in the middle plot, the increases towards the target basis is not monotonical in the last two iterations and interpolated basis with higher index value can be found on the tour path. The lower plot is constructed using `search_better_random`, where a basis with smaller index value  has a probabilistic chance of being accepted and we can observe a much more involved pattern. In iteration three, the probabilistic acceptance produces a monotonically decreasing interpolation whilst in iteration five, six and seven, with also a probabilistic acceptance, the interpolation is now non-monotonical. When the target basis has a higher index value, iteration eight reaches this basis by first decreasing the index value. While the interpolation plot shows different possibilities of the change in index value on the tour path, the diagnosis of the validity of each pattern and the related optimisation algorithms will be postponed to Section \ref{application}.
+
 ## Understanding the optimiser's coverage of the search space
-
-Apart from checking the progression of an optimiser, another interesting aspect is to visualise how the search looks like in its parameter space. Given the orthonormality constraint, the projection bases $\mathbf{A}_{p \times d}$ lives on the surface of a $p \times d$ dimension sphere, where the dimension can easily go above five (5). Visualising the search paths on the original high diemnsional sphere would require skills from the viewer to preceive rotation of geometry in higher dimensional space (d > 3) while an easier alternative is to view the reduced space via some dimension reduction methods i.e. Principal component analysis. To better visual the serach path as an embedding of a hollow sphere, random points on the high dimensional sphere is generated using package `geozoo` and PCA is conducted on both the bases and the points on the surface of the sphere.
-
-<!-- We first flat each projection bases $\mathbf{A}$ to a row vector and stack them by rows. This gives a matrix of dimension $n$ by $(p*d)$. Centering and scaling are usually done before performing PCA and we denotes the pre-processed matrix as $\tilde{\mathbf{A}}_{n \times (p \times d)}$. By definition, the principal components maximise the variance of the projection bases in the reduced space. Using lagrange multipler, this is equivalent to find the eigenvector of the variance-covariance matrix: $\Sigma = \tilde{\mathbf{A}}^T\tilde{\mathbf{A}}$. Decomposing $\tilde{\mathbf{A}}$ using singular value decomposition (SVD) gives $$\tilde{\mathbf{A}} = \mathbf{U} \mathbf{\lambda} \mathbf{V}$$ and hence the variance-covariance matrix -->
-
-<!-- $$\Sigma = \tilde{\mathbf{A}}^T\tilde{\mathbf{A}} = (\mathbf{V}^T \mathbf{\lambda}^T \mathbf{U}^T) (\mathbf{U} \mathbf{\lambda} \mathbf{V}) = \mathbf{V}^T \mathbf{\lambda}^2 \mathbf{V}$$ -->
-
-<!-- has eigenvector $\mathbf{V} = [\mathbf{v}_1, \mathbf{v}_2, \cdots, \mathbf{v}_{p\times d}]$. The projection mapping to the x- and y-axis uses the first two principal components and hence $$\tilde{\mathbf{A}} \mathbf{v}_1 \text{ and } \tilde{\mathbf{A}} \mathbf{v}_2$$ -->
-
-<!-- The resulting two vectors are of dimension $n \times 1$, which is compatible with the dimension of the global object. THis means all the iterators and interesting other variables defined in the global object can be bound with the these two projections and can be mapped to other aesthetics (i.e. colour). -->
-  
-Figure \ref{toy-pca} shows the first two principal components of two search paths. Starting from the same position, two searching methods take different paths to get its final bases. There are two theoretical bases because they correspond to the same data projection $Y$ with a 180 degree rotation. What differentiate the two optimisers is that `search_better()` also involve random evaluation of points in the sphere during its sampling process while `search_geodesic()` doesn't and this stochastic rather than deterministic approach can be useful in complex scenario.
 
 
 ```{r toy-pca, fig.height = 3, fig.cap = "\\label{toy-pca}PCA plot of search geodesic colouring by info allows for better understanding of each stage in the geodesic search"}
@@ -478,10 +459,21 @@ p <- bind_rows(holes_1d_geo, holes_1d_better) %>%
 p
 ```
 
+Apart from checking the progression of an optimiser, another interesting aspect is to visualise how the search looks like in its parameter space. Given the orthonormality constraint, the projection bases $\mathbf{A}_{p \times d}$ lives on the surface of a $p \times d$ dimension sphere, where the dimension can easily go above five (5). Visualising the search paths on the original high diemnsional sphere would require skills from the viewer to preceive rotation of geometry in higher dimensional space (d > 3) while an easier alternative is to view the reduced space via some dimension reduction methods i.e. Principal component analysis. To better visual the serach path as an embedding of a hollow sphere, random points on the high dimensional sphere is generated using package `geozoo` and PCA is conducted on both the bases and the points on the surface of the sphere.
+
+<!-- We first flat each projection bases $\mathbf{A}$ to a row vector and stack them by rows. This gives a matrix of dimension $n$ by $(p*d)$. Centering and scaling are usually done before performing PCA and we denotes the pre-processed matrix as $\tilde{\mathbf{A}}_{n \times (p \times d)}$. By definition, the principal components maximise the variance of the projection bases in the reduced space. Using lagrange multipler, this is equivalent to find the eigenvector of the variance-covariance matrix: $\Sigma = \tilde{\mathbf{A}}^T\tilde{\mathbf{A}}$. Decomposing $\tilde{\mathbf{A}}$ using singular value decomposition (SVD) gives $$\tilde{\mathbf{A}} = \mathbf{U} \mathbf{\lambda} \mathbf{V}$$ and hence the variance-covariance matrix -->
+
+<!-- $$\Sigma = \tilde{\mathbf{A}}^T\tilde{\mathbf{A}} = (\mathbf{V}^T \mathbf{\lambda}^T \mathbf{U}^T) (\mathbf{U} \mathbf{\lambda} \mathbf{V}) = \mathbf{V}^T \mathbf{\lambda}^2 \mathbf{V}$$ -->
+
+<!-- has eigenvector $\mathbf{V} = [\mathbf{v}_1, \mathbf{v}_2, \cdots, \mathbf{v}_{p\times d}]$. The projection mapping to the x- and y-axis uses the first two principal components and hence $$\tilde{\mathbf{A}} \mathbf{v}_1 \text{ and } \tilde{\mathbf{A}} \mathbf{v}_2$$ -->
+
+<!-- The resulting two vectors are of dimension $n \times 1$, which is compatible with the dimension of the global object. THis means all the iterators and interesting other variables defined in the global object can be bound with the these two projections and can be mapped to other aesthetics (i.e. colour). -->
+  
+Figure \ref{toy-pca} shows the first two principal components of two search paths. Starting from the same position, two searching methods take different paths to get its final bases. There are two theoretical bases because they correspond to the same data projection $Y$ with a 180 degree rotation. What differentiate the two optimisers is that `search_better()` also involve random evaluation of points in the sphere during its sampling process while `search_geodesic()` doesn't and this stochastic rather than deterministic approach can be useful in complex scenario.
+
+
 
 ## Animating the diagnostic plots
-
-Animating the plots introduced above is useful, especially in the case of PCA polot since it shows the bases found by the optimiser in its natural order. In Figure \ref{toy-pca-animated}, ...
 
 ```{r fig.height = 3, fig.cap = "\\label{toy-pca-aniamted}A selected number of frames from the animated PCA plot. With animation, it is easier to track the progrssion from the start to finish in each algorithm."}
 # ani <- p + theme(legend.position = "none") +
@@ -508,11 +500,9 @@ wrap_plots(gl)
 ```
 
 
+Animating the plots introduced above is useful, especially in the case of PCA polot since it shows the bases found by the optimiser in its natural order. In Figure \ref{toy-pca-animated}, There should actually be more writing here to and also the this examples may need to be changed. 
+
 ## The tour looking at itself
-
-Viewing the bases on the reduced space via PCA shed some lights on the space the optimisers have explored, the visualisation on the original $p \times d$ dimension enables a stereoscopic view of the search. To view a high dimensional ($d \ge 3$) object on a screen, an approach is to play the rotation of the object in animation. This can be done via a regular grand tour or a slice tour [@laa2020slice], which emphasizes the points that are close to a section of the sphere.
-
-Compare to the PCA plot, the animated rotation (tour) display, in Figure \ref{toy-tour}, gives a more holistic view of the search of the optimiser and these additional information gained from the animation is cruicial. This is because in essense, PCA presents one reduced space that maximises the variance and it inherently amplifies the spread of the randomly evaluated bases in the search since they have larger variance than the bases on the interpolation path. Hence when the interest is to view the interpolation path in the space, an animated rotation display provides the view of high dimension from different angles.
 
 ```{r toy-tour, fig.cap="\\label{toy-tour}A selected number of frames from the tour animation for viewing the 5D space of all the projection bases. The second frame on the top row view the space from a direction that is close to the one in PCA plot. The tour animation allows for a more holistic view of the full space in high dimensions from different angles."}
 set.seed(1)
@@ -568,6 +558,9 @@ wrap_plots(gl)
 ```
 
 
+Viewing the bases on the reduced space via PCA shed some lights on the space the optimisers have explored, the visualisation on the original $p \times d$ dimension enables a stereoscopic view of the search. To view a high dimensional ($d \ge 3$) object on a screen, an approach is to play the rotation of the object in animation. This can be done via a regular grand tour or a slice tour [@laa2020slice], which emphasizes the points that are close to a section of the sphere.
+
+Compare to the PCA plot, the animated rotation (tour) display, in Figure \ref{toy-tour}, gives a more holistic view of the search of the optimiser and these additional information gained from the animation is cruicial. This is because in essense, PCA presents one reduced space that maximises the variance and it inherently amplifies the spread of the randomly evaluated bases in the search since they have larger variance than the bases on the interpolation path. Hence when the interest is to view the interpolation path in the space, an animated rotation display provides the view of high dimension from different angles.
 
 # Diagnosing an optimiser {#application}
 
@@ -596,8 +589,6 @@ x_7 &\sim 0.5 \mathcal{N}(-5, 1) + 0.5 \mathcal{N}(5, 1)
 
 We use the same dataset as the toy example above to explore the search function `search_better` and we want to learn how the index value changes on the interpolation path for the `holes` index. From the left panel of Figure \ref{interruption}, we observe that when interpolating from the current basis to the target basis, the index value may not be monotone: we could reach a basis with a higher index value than the target basis on the interpolation path. In this sense, we would be better off using the basis with the highest index value on the interpolation path as the current basis for the next iteration (rather than using the target basis). Hence, an interruption is constructed to accept the interpolating bases only up to the one with the largest index value. After implementing this interruption, the search finds higher final index value with fewer steps as shown in the right panel of Figure \ref{interruption}.
 
-
-
 ```{r interruption,fig.asp=0.5, fig.cap = "\\label{interruption}A comparison of the trace plot with and without the interruption. When the interruption does not take place, the index value of the target basis can be smaller than the interpolated basis. The interruption forces the interpolation to finish at the interpolated basis with the highest index value in an iteration."}
 p1_anno <- interrupt_no %>% filter(info == "interpolation") %>% mutate(id = row_number()) %>% filter(id %in% c(44, 60, 62)) %>% 
   mutate(anno = c("current basis", "interpolated basis", "target basis"))
@@ -616,16 +607,6 @@ p2 <- interrupt_yes %>% explore_trace_interp() + ggtitle("with interruption") + 
 
 
 ## Close but not close enough
-
-Once the final basis has been found by an algorithm, one may want to push further to investigate whether there's an even better basis in the close neighbourhood. This motivates the polish search where the final basis is supplied to a new guided tour to search for any local breakthrough. 
-
-Similar to `search_better` as a stochastic random search, `search_polish` has a different scheme of reducing the search neighbourhood. In each search-interpolation iteration, `search_better` has a fixed neighbourhood parameter alpha and this alpha is reduced by another cooling parameter only after an iteration finishes. On the contrary, `search_polish` allows alpha to be reduced during each iteration to exploit the search in the neighbourhood. Further, to avoid the case where alpha becomes too small and the further search is meaningless, three more stopping criteria have been added, on top of the original `max.tries`. These include:
-
-1) the distance between the candidate basis and the current basis needs to be larger than 1e-3;
-2) the percentage change of the index value need to be larger than 1e-5; and
-3) the alpha parameter on itself need to be larger than 0.01
-
-Figure \ref{geo-polish} presents the final projections found before and after applying `search_polish` using the demo code. Polish search improves the index value from `r get_best(holes_2d_geo)$index_val %>% format(digits = 4)`  to `r get_best(holes_2d_geo_polish)$index_val %>% format(digits = 4)` with reduction of weights on the non-informative variables, namely `V1`, `V8`, `V9` and `V10`. When appears in the projected data in Figure \ref{geo-polish}, polish works to sharpen the edges of each cluster.
 
 
 ```{r geo-polish, fig.height= 2.5, fig.cap = "\\label{geo-polish}Two-D projection on \`boa6\` data with holes index optimised by \`search_geodesic\`. The left panel shows the final projected data before polish and the right panel shows the one after. The separation of the clusters on the y axis becomes sharper after the polish."}
@@ -680,14 +661,18 @@ wrap_plots(gl)
 
 
 
+
+Once the final basis has been found by an algorithm, one may want to push further to investigate whether there's an even better basis in the close neighbourhood. This motivates the polish search where the final basis is supplied to a new guided tour to search for any local breakthrough. 
+
+Similar to `search_better` as a stochastic random search, `search_polish` has a different scheme of reducing the search neighbourhood. In each search-interpolation iteration, `search_better` has a fixed neighbourhood parameter alpha and this alpha is reduced by another cooling parameter only after an iteration finishes. On the contrary, `search_polish` allows alpha to be reduced during each iteration to exploit the search in the neighbourhood. Further, to avoid the case where alpha becomes too small and the further search is meaningless, three more stopping criteria have been added, on top of the original `max.tries`. These include:
+
+1) the distance between the candidate basis and the current basis needs to be larger than 1e-3;
+2) the percentage change of the index value need to be larger than 1e-5; and
+3) the alpha parameter on itself need to be larger than 0.01
+
+Figure \ref{geo-polish} presents the final projections found before and after applying `search_polish` using the demo code. Polish search improves the index value from `r get_best(holes_2d_geo)$index_val %>% format(digits = 4)`  to `r get_best(holes_2d_geo_polish)$index_val %>% format(digits = 4)` with reduction of weights on the non-informative variables, namely `V1`, `V8`, `V9` and `V10`. When appears in the projected data in Figure \ref{geo-polish}, polish works to sharpen the edges of each cluster.
+
 ## Seeing the signal in the noise 
-
-Up until this point, the index functions are smooth, meaning the trace of interpolation points is smooth, while this is not the case for all the index functions. `norm_kol`, a 1D projection function based on Kolmogorov test, compares the difference between the 1D projected data, $\mathbf{P}_{n \times 1}$ and a randomly generated normal distribution, $y_n$ based on the empirical cumulated distribution function (ECDF). Denotes the ECDF function as $F_{.}(u)$ with the subscript indicating the projection or the random normal variable,  the `norm_kol` index is defined by
-
-$$\max \left[F_{\mathbf{P}}(u) - F_{y}(u)\right]$$
-
-Figure \ref{kol-cdf} compares the tracing plot of two algorithms: `search_geodesic` and `search_better`. This time, the interpolated path is no longer smooth when using either algorithm. It is also obvious that `search_geodesic` fails to optimise this rough index since there is barely improvment of the index value. On the other hand, `search_better` is doing a relatively good job on the optimisation for the 5-variable dataset `boa5`. The theoretical best basis [`r matrix(c(0, 1, 0, 0, 0))`] produces an index value of `r kol_1d_better %>% bind_theoretical(matrix = matrix(c(0, 1, 0, 0, 0), nrow = 5, ncol = 1), index = tourr::norm_kol(), raw_data = boa5) %>% tail(1) %>% pull(index_val)` and `search_better` finds the final basis [`r get_best(kol_1d_better)$basis %>% .[[1]] %>% format(digits = 4)`] with an index value of `r get_best(kol_1d_better)$index_val %>% format(digits = 4)`. A further polish step will give a marginal improvement of index value to `r get_best(kol_1d_better_polish)$index_val` with a basis of [`r get_best(kol_1d_better_polish)$basis %>% .[[1]] %>% format(digits = 4)`]. At this stage, the difference between the theoretical best and what has been found is likely due to simulation error since the best possible basis for a simulated data will be slightly off the theoretical best basis, which is derived based on the distributional assumption in Equation \ref{eq:sim-norm} to \ref{eq:sim-x7}. 
-
 
 
 ```{r kol-cdf,fig.asp=0.5,fig.cap = "\\label{kol-cdf}One-D projection on \`boa5\` data with noisy index \`norm_kol\` optimised by \`search_geodesic\` and \`search_better\`. The grey dashed line represents the index value of the theoreical best basis. \`search_geodesic\` fails to optimse the noisy index while \`search_better\` has made reasonable improvments to reach the index value close to the one of theoretical best basis."}
@@ -717,12 +702,11 @@ bind_rows(kol_1d_geo, kol_1d_better) %>%
 
 ```
 
-The second experiment with the noisy index is to understand how the optimisers perform when there are multiple informative variables in the case of 1D projection. The dataset used is `boa6` with `x2` and `x7` being informative. The two possible theoretical best bases are [`r matrix(c(0, 1, 0, 0, 0, 0), nrow = 6)`] and [`r matrix(c(0, 0, 1, 0, 0, 0), nrow = 6)`] with index value `r index <- tourr::norm_kol(); proj <- as.matrix(boa6) %*% matrix(c(0, 1, 0, 0, 0, 0), nrow = 6); index(proj)` and `r index <- tourr::norm_kol(); proj <- as.matrix(boa6) %*% matrix(c(0, 0, 1, 0, 0, 0), nrow = 6); index(proj)` repectively and hence, the global maximum happens when variable `x7` is found.
+Up until this point, the index functions are smooth, meaning the trace of interpolation points is smooth, while this is not the case for all the index functions. `norm_kol`, a 1D projection function based on Kolmogorov test, compares the difference between the 1D projected data, $\mathbf{P}_{n \times 1}$ and a randomly generated normal distribution, $y_n$ based on the empirical cumulated distribution function (ECDF). Denotes the ECDF function as $F_{.}(u)$ with the subscript indicating the projection or the random normal variable,  the `norm_kol` index is defined by
 
-A simulation with 20 different seeds shows that `search_better` can find either one of the informative variable but there's no guarantee on which seed finds which variable. `search_better_random` manages to find the global maximum via a metropolis-hasting algorithm without being affected by the seed. To ensure the algorithm finish the search in a timely manner, it is necessary to set a reasonable initial temperature $t_0$ so that the probability of accepting an inferior basis is not too high.  Figure \ref{pca-better-default}, .... Figure \ref{pca-better-random-default} shows the comparison, in terms of the trace plot and PCA plot, between `search_better_random` and two `search_better` algorithms where one finds `x2` and another finds `x7`.  The trace plot shows that the global maximum has been found by `search_better_random` and one `search_better`, but not the other. The PCA plot further illustrate how the two algorithms finds the global maximum: `search_better_random` travels along the top right corner on the projected 2D circle while the path of `search_better` is much shorter and only goes pass in between the two theoretical bases.
+$$\max \left[F_{\mathbf{P}}(u) - F_{y}(u)\right]$$
 
-(there's more things going on about both algorithms experimenting with different seeds.)
-
+Figure \ref{kol-cdf} compares the tracing plot of two algorithms: `search_geodesic` and `search_better`. This time, the interpolated path is no longer smooth when using either algorithm. It is also obvious that `search_geodesic` fails to optimise this rough index since there is barely improvment of the index value. On the other hand, `search_better` is doing a relatively good job on the optimisation for the 5-variable dataset `boa5`. The theoretical best basis [`r matrix(c(0, 1, 0, 0, 0))`] produces an index value of `r kol_1d_better %>% bind_theoretical(matrix = matrix(c(0, 1, 0, 0, 0), nrow = 5, ncol = 1), index = tourr::norm_kol(), raw_data = boa5) %>% tail(1) %>% pull(index_val)` and `search_better` finds the final basis [`r get_best(kol_1d_better)$basis %>% .[[1]] %>% format(digits = 4)`] with an index value of `r get_best(kol_1d_better)$index_val %>% format(digits = 4)`. A further polish step will give a marginal improvement of index value to `r get_best(kol_1d_better_polish)$index_val` with a basis of [`r get_best(kol_1d_better_polish)$basis %>% .[[1]] %>% format(digits = 4)`]. At this stage, the difference between the theoretical best and what has been found is likely due to simulation error since the best possible basis for a simulated data will be slightly off the theoretical best basis, which is derived based on the distributional assumption in Equation \ref{eq:sim-norm} to \ref{eq:sim-x7}. 
 
 ```{r pca-better-default, fig.height = 6, fig.cap="\\label{pca-better-default}One-D projection of \`norm_kol\` index on \`boa6\` data optimised by \`search_better\` with 20 randomly generated seeds. Each point represents a basis in the original 6D space, reduced into 2D by PCA. The grey points are random bases generated from 6-D hollow sphere and the two yellow points repsents the local maximum corresponds to basis when \`V2\` is found and the global maximum where \`V7\` is found. The points produced by the seraching algorithm is colored by whether the global or local maximum is found with the interpolated bases highlighted as a path and the final basis as an amplified point."}
 set.seed(123)
@@ -880,7 +864,6 @@ pca$aug %>% filter(method != "randomly_generated"& info != "theoretical") %>%
   scale_color_botanical(palette = "fern") 
 ```
 
-there's more text here Figure \ref{pca-better-random-tuned}, Comparison between search_better_random and two different search_better. In the trace plot, the two dashed horizontal lines are the index values of the two theoretical bases. serach_better_random and one of the serach_better have found the global maximum but the other fails. The lower panel shows the PCA plot for each of the three algorithms. The two yellow dots, again, correspond to the theoretical bases with the one on the right being the global maximum. The paths of two search_better are relatively short and simple while the search_better_random has a more sophisticated path. This is due to the fact that the interpolation at each iteration are longer, which shows its ability to find new bases at a distance
 
 ```{r pca-better-random-tuned, fig.height= 6, fig.cap = "\\label{pca-better-random-tuned}One-D projection of \`norm_kol\` index on \`boa6\` data optimised by \`search_better_random\` with the same seeds. Further tuning of the parameter has been taken place to adjust the neighbourhood parameter \`alpha\` from 0.5 to 0.7. This time, all the 20 incidents have found the global maximum."}
 set.seed(123)
@@ -963,6 +946,15 @@ pca$aug %>% filter(method != "randomly_generated" & info != "theoretical") %>%
   scale_color_botanical(palette = "fern") 
 ```
 
+
+
+
+The second experiment with the noisy index is to understand how the optimisers perform when the local maximum is  presented. The dataset used is `boa6` with `x2` and `x7` being informative. The two possible theoretical best bases are [`r matrix(c(0, 1, 0, 0, 0, 0), nrow = 6)`] and [`r matrix(c(0, 0, 1, 0, 0, 0), nrow = 6)`] with index value `r index <- tourr::norm_kol(); proj <- as.matrix(boa6) %*% matrix(c(0, 1, 0, 0, 0, 0), nrow = 6); index(proj)` and `r index <- tourr::norm_kol(); proj <- as.matrix(boa6) %*% matrix(c(0, 0, 1, 0, 0, 0), nrow = 6); index(proj)` repectively and hence, the global maximum happens when variable `x7` is found. Simulation is done with 20 randomly generated seeds on different parameter specifications on two optimsers: `search_better` and `search_better_random`. The data obbject is collected for each simulation and principal component analysis is applied to project the bases as points into 2D space with the orthonormality constraint imposed on the 6D space preserved by randomly generated basis on the surface of the 6D sphere.
+
+Figure \ref{pca-better-default} shows that half of the seeds end up getting trapped in the local maximum on optimiser `search_better`. This happens because `search_better` will always accept a basis with higher index value. Figure \ref{pca-better-random-default} shows the results when the optimiser `search_better_random` is used. With a probability acceptance on inferior basis, more simulation ends up finds the global maximum. An evidence of the superior of this probabilistic implementation is simulation 5107 (row 1 column 2 in Figure \ref{pca-better-default} and row 3 column 5 in Figure \ref{pca-better-random-default}). When using `search_better` to optimise, it goes straight down the track to find `V2` whilst with `search_better_random`, it first has a tendency to hand towards `V2` but then makes a sharp turn back to the track that finds `V7`. 
+
+
+In the next simulation, as in Figure \ref{pca-better-random-tuned}, the neighbourhood parameter `alpha` is increased from a 0.5 default to 0.7. Remember that a candidate basis is generated via a linear combination of the current basis and a randomly generated basis on the surface of the sphere, an increase of `alpha` gives more weights on the randomly generated basis and hence represents a wider search. By this specification, all the 20 seends find the global maximum and a few simulations i.e. seed 4761 (row 4,  column 5), 9209 (row 3, column 2), 2986 (row 2, column 3) from this double guarantee of wider search and probabilistic acceptance. 
 
 
 
