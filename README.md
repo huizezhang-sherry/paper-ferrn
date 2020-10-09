@@ -1,23 +1,12 @@
-# Visualising projection pursuit optimisation 
+# paper-tour-vis
 
-Paper sections:
+Visual diagnostics for constrained optimisation with application to guided tours
 
-- Introduction
-    - tour
-    - guided tour
-    - optimisation methods existing in tourr
-    - problems experienced with existing versions
-- Recording the guided tour
-    - tour components
-    - data structure
-- Visual methods
-    - index vs time  plots
-    - target basis vs interpolation steps, index vs time
-    - low-d representation, PCA
-- Animating plots
-- Finding errors and developing improvements
-    - interrupt
-    - polish
-- Vis package
+## Repo structure 
 
-https://distill.pub ???
+* `paper/`: the main folder that produces the paper
+* `scripts/`: R code used in the paper
+* `img/`: image(s) generated outside R
+* `anim/`: frames saved from tour animation
+* `data/`: data saved from simulation
+

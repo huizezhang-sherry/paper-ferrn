@@ -120,12 +120,14 @@ Guided tour chooses the planes produced by optimising the projection pursuit ind
 
 \begin{figure}
 
-{\centering \includegraphics[width=0.6\linewidth,height=0.3\textheight]{/Users/hzha400/Documents/3.PhD/research/paper-tour-vis/figures/tour_path_keynote/tour_path_keynote.001} 
+{\centering \includegraphics[width=0.6\linewidth,height=0.3\textheight]{/Users/hzha400/Documents/3.PhD/research/paper-tour-vis/img/tour_path} 
 
 }
 
-\caption{\label{tour-path}Each square (frame) represents the projected data with a corresponding basis. Blue frames have bases found by an optimisation algorithm iteratively whilst the white frames are constructed by geodesic interpolation between two blue frames.}\label{fig:tour-path}
+\caption{Each square (frame) represents the projected data with a corresponding basis. Blue frames have bases found by an optimisation algorithm iteratively whilst the white frames are constructed by geodesic interpolation between two blue frames.}\label{fig:tour-path}
 \end{figure}
+
+
 
 \hypertarget{tour-optim}{%
 \subsection{Optimisation in the tour}\label{tour-optim}}
@@ -318,9 +320,12 @@ Another option is to use summarisation for each iteration. Boxplot is a suitable
 Figure \ref{fig:toy-search} presents a comparison between the two plotting options discussed above. Using the natural order to plot searching points distorts the point from the first few iterations and over-emphasizes the searches in the last few iterations. The second plot design evenly presents the summarised information for each iteration while allowing for a switch to the full information for the iteration with small number of observations.
 
 \begin{figure}
-\centering
-\includegraphics{paper_files/figure-latex/toy-search-1.pdf}
-\caption{\label{fig:toy-search}A comparison of \texttt{search\_better} with different parameter value on \texttt{max\_tries}. A switch of geometry from points to boxplot happens when the count in the iteration excess 15 to avoid overplotting. With \texttt{max\_tries\ =\ 500} specification, the algorithm is working much harder towards to the end.}
+
+{\centering \includegraphics{/Users/hzha400/Documents/3.PhD/research/paper-tour-vis/figs/toy-search-1} 
+
+}
+
+\caption{A comparison of \texttt{search\_better} with different parameter value on \texttt{max\_tries}. A switch of geometry from points to boxplot happens when the count in the iteration excess 15 to avoid overplotting. With \texttt{max\_tries\ =\ 500} specification, the algorithm is working much harder towards to the end.}\label{fig:toy-search}
 \end{figure}
 
 
@@ -329,45 +334,56 @@ Figure \ref{fig:toy-search} presents a comparison between the two plotting optio
 \subsection{Examining the optimisation progress}\label{examining-the-optimisation-progress}}
 
 \begin{figure}
-\centering
-\includegraphics{paper_files/figure-latex/toy-interp-1.pdf}
-\caption{\label{fig:toy-interp}\label{toy-interp} The resulting trace plot on the interpolated points has been ploted when using three different algorithms to optimise the index. The color represents the number of iteration. It can be observed that each algorithm differs in length in the optimisation and the curvature of the improvement for each algorithm also varies.}
+
+{\centering \includegraphics{/Users/hzha400/Documents/3.PhD/research/paper-tour-vis/figs/toy-interp-1} 
+
+}
+
+\caption{The resulting trace plot on the interpolated points has been ploted when using three different algorithms to optimise the index. The color represents the number of iteration. It can be observed that each algorithm differs in length in the optimisation and the curvature of the improvement for each algorithm also varies.}\label{fig:toy-interp}
 \end{figure}
 
-Sometimes, we may be interested in exploring the points on the interpolation path since these are the points that will be played by the tour animation. Figure \ref{toy-interp} presents the interpolation of three different tour paths. The upper plot shows a desirable interpolation in each iteration with the index value being progressively and monotonically increasing. While in the middle plot, the increases towards the target basis is not monotonical in the last two iterations and interpolated basis with higher index value can be found on the tour path. The lower plot is constructed using \texttt{search\_better\_random}, where a basis with smaller index value has a probabilistic chance of being accepted and we can observe a much more involved pattern. In iteration three, the probabilistic acceptance produces a monotonically decreasing interpolation whilst in iteration five, six and seven, with also a probabilistic acceptance, the interpolation is now non-monotonical. When the target basis has a higher index value, iteration eight reaches this basis by first decreasing the index value. While the interpolation plot shows different possibilities of the change in index value on the tour path, the diagnosis of the validity of each pattern and the related optimisation algorithms will be postponed to Section \ref{application}.
+
+
+Sometimes, we may be interested in exploring the points on the interpolation path since these are the points that will be played by the tour animation. Figure \ref{fig:toy-interp} presents the interpolation of three different tour paths. The upper plot shows a desirable interpolation in each iteration with the index value being progressively and monotonically increasing. While in the middle plot, the increases towards the target basis is not monotonical in the last two iterations and interpolated basis with higher index value can be found on the tour path. The lower plot is constructed using \texttt{search\_better\_random}, where a basis with smaller index value has a probabilistic chance of being accepted and we can observe a much more involved pattern. In iteration three, the probabilistic acceptance produces a monotonically decreasing interpolation whilst in iteration five, six and seven, with also a probabilistic acceptance, the interpolation is now non-monotonical. When the target basis has a higher index value, iteration eight reaches this basis by first decreasing the index value. While the interpolation plot shows different possibilities of the change in index value on the tour path, the diagnosis of the validity of each pattern and the related optimisation algorithms will be postponed to Section \ref{application}.
 
 \hypertarget{understanding-the-optimisers-coverage-of-the-search-space}{%
 \subsection{Understanding the optimiser's coverage of the search space}\label{understanding-the-optimisers-coverage-of-the-search-space}}
 
 \begin{figure}
-\centering
-\includegraphics{paper_files/figure-latex/toy-pca-1.pdf}
-\caption{\label{fig:toy-pca}\label{toy-pca}PCA plot of search geodesic colouring by info allows for better understanding of each stage in the geodesic search}
+
+{\centering \includegraphics{/Users/hzha400/Documents/3.PhD/research/paper-tour-vis/figs/toy-pca-1} 
+
+}
+
+\caption{PCA plot of search geodesic colouring by info allows for better understanding of each stage in the geodesic search}\label{fig:toy-pca}
 \end{figure}
+
+
 
 Apart from checking the progression of an optimiser, another interesting aspect is to visualise how the search looks like in its parameter space. Given the orthonormality constraint, the projection bases \(\mathbf{A}_{p \times d}\) lives on the surface of a \(p \times d\) dimension sphere, where the dimension can easily go above five (5). Visualising the search paths on the original high diemnsional sphere would require skills from the viewer to preceive rotation of geometry in higher dimensional space (d \textgreater{} 3) while an easier alternative is to view the reduced space via some dimension reduction methods i.e.~Principal component analysis. To better visual the serach path as an embedding of a hollow sphere, random points on the high dimensional sphere is generated using package \texttt{geozoo} and PCA is conducted on both the bases and the points on the surface of the sphere.
 
-Figure \ref{toy-pca} shows the first two principal components of two search paths. Starting from the same position, two searching methods take different paths to get its final bases. There are two theoretical bases because they correspond to the same data projection \(Y\) with a 180 degree rotation. What differentiate the two optimisers is that \texttt{search\_better()} also involve random evaluation of points in the sphere during its sampling process while \texttt{search\_geodesic()} doesn't and this stochastic rather than deterministic approach can be useful in complex scenario.
+Figure \ref{fig:toy-pca} shows the first two principal components of two search paths. Starting from the same position, two searching methods take different paths to get its final bases. There are two theoretical bases because they correspond to the same data projection \(Y\) with a 180 degree rotation. What differentiate the two optimisers is that \texttt{search\_better()} also involve random evaluation of points in the sphere during its sampling process while \texttt{search\_geodesic()} doesn't and this stochastic rather than deterministic approach can be useful in complex scenario.
 
 \hypertarget{animating-the-diagnostic-plots}{%
 \subsection{Animating the diagnostic plots}\label{animating-the-diagnostic-plots}}
 
-\begin{figure}
-\centering
-\includegraphics{paper_files/figure-latex/unnamed-chunk-1-1.pdf}
-\caption{\label{fig:unnamed-chunk-1}\label{toy-pca-aniamted}A selected number of frames from the animated PCA plot. With animation, it is easier to track the progrssion from the start to finish in each algorithm.}
-\end{figure}
 
-Animating the plots introduced above is useful, especially in the case of PCA polot since it shows the bases found by the optimiser in its natural order. In Figure \ref{toy-pca-animated}, There should actually be more writing here to and also the this examples may need to be changed.
+
+Animating the plots introduced above is useful, especially in the case of PCA polot since it shows the bases found by the optimiser in its natural order. In Figure \ref{fig:toy-pca-animated}, There should actually be more writing here to and also the this examples may need to be changed.
 
 \hypertarget{the-tour-looking-at-itself}{%
 \subsection{The tour looking at itself}\label{the-tour-looking-at-itself}}
 
 \begin{figure}
-\centering
-\includegraphics{paper_files/figure-latex/toy-tour-1.pdf}
-\caption{\label{fig:toy-tour}\label{toy-tour}A selected number of frames from the tour animation for viewing the 5D space of all the projection bases. The second frame on the top row view the space from a direction that is close to the one in PCA plot. The tour animation allows for a more holistic view of the full space in high dimensions from different angles.}
+
+{\centering \includegraphics{/Users/hzha400/Documents/3.PhD/research/paper-tour-vis/figs/toy-tour-1} 
+
+}
+
+\caption{A selected number of frames from the tour animation for viewing the 5D space of all the projection bases. The second frame on the top row view the space from a direction that is close to the one in PCA plot. The tour animation allows for a more holistic view of the full space in high dimensions from different angles.}\label{fig:toy-tour}
 \end{figure}
+
+
 
 Viewing the bases on the reduced space via PCA shed some lights on the space the optimisers have explored, the visualisation on the original \(p \times d\) dimension enables a stereoscopic view of the search. To view a high dimensional (\(d \ge 3\)) object on a screen, an approach is to play the rotation of the object in animation. This can be done via a regular grand tour or a slice tour \citep{laa2020slice}, which emphasizes the points that are close to a section of the sphere.
 
@@ -401,22 +417,32 @@ x_7 &\sim 0.5 \mathcal{N}(-5, 1) + 0.5 \mathcal{N}(5, 1)
 \hypertarget{a-problem-of-not-monotonic}{%
 \subsection{A problem of not monotonic}\label{a-problem-of-not-monotonic}}
 
-We use the same dataset as the toy example above to explore the search function \texttt{search\_better} and we want to learn how the index value changes on the interpolation path for the \texttt{holes} index. From the left panel of Figure \ref{interruption}, we observe that when interpolating from the current basis to the target basis, the index value may not be monotone: we could reach a basis with a higher index value than the target basis on the interpolation path. In this sense, we would be better off using the basis with the highest index value on the interpolation path as the current basis for the next iteration (rather than using the target basis). Hence, an interruption is constructed to accept the interpolating bases only up to the one with the largest index value. After implementing this interruption, the search finds higher final index value with fewer steps as shown in the right panel of Figure \ref{interruption}.
+We use the same dataset as the toy example above to explore the search function \texttt{search\_better} and we want to learn how the index value changes on the interpolation path for the \texttt{holes} index. From the left panel of Figure \ref{fig:interruption}, we observe that when interpolating from the current basis to the target basis, the index value may not be monotone: we could reach a basis with a higher index value than the target basis on the interpolation path. In this sense, we would be better off using the basis with the highest index value on the interpolation path as the current basis for the next iteration (rather than using the target basis). Hence, an interruption is constructed to accept the interpolating bases only up to the one with the largest index value. After implementing this interruption, the search finds higher final index value with fewer steps as shown in the right panel of Figure \ref{fig:interruption}.
 
 \begin{figure}
-\centering
-\includegraphics{paper_files/figure-latex/interruption-1.pdf}
-\caption{\label{fig:interruption}\label{interruption}A comparison of the trace plot with and without the interruption. When the interruption does not take place, the index value of the target basis can be smaller than the interpolated basis. The interruption forces the interpolation to finish at the interpolated basis with the highest index value in an iteration.}
+
+{\centering \includegraphics{/Users/hzha400/Documents/3.PhD/research/paper-tour-vis/figs/interruption-1} 
+
+}
+
+\caption{A comparison of the trace plot with and without the interruption. When the interruption does not take place, the index value of the target basis can be smaller than the interpolated basis. The interruption forces the interpolation to finish at the interpolated basis with the highest index value in an iteration.}\label{fig:interruption}
 \end{figure}
+
+
 
 \hypertarget{close-but-not-close-enough}{%
 \subsection{Close but not close enough}\label{close-but-not-close-enough}}
 
 \begin{figure}
-\centering
-\includegraphics{paper_files/figure-latex/geo-polish-1.pdf}
-\caption{\label{fig:geo-polish}\label{geo-polish}Two-D projection on \texttt{boa6} data with holes index optimised by \texttt{search\_geodesic}. The left panel shows the final projected data before polish and the right panel shows the one after. The separation of the clusters on the y axis becomes sharper after the polish.}
+
+{\centering \includegraphics{/Users/hzha400/Documents/3.PhD/research/paper-tour-vis/figs/polish-1} 
+
+}
+
+\caption{Two-D projection on \texttt{boa6} data with holes index optimised by \texttt{search\_geodesic}. The left panel shows the final projected data before polish and the right panel shows the one after. The separation of the clusters on the y axis becomes sharper after the polish.}\label{fig:polish}
 \end{figure}
+
+
 
 Once the final basis has been found by an algorithm, one may want to push further to investigate whether there's an even better basis in the close neighbourhood. This motivates the polish search where the final basis is supplied to a new guided tour to search for any local breakthrough.
 
@@ -433,40 +459,60 @@ Similar to \texttt{search\_better} as a stochastic random search, \texttt{search
   the alpha parameter on itself need to be larger than 0.01
 \end{enumerate}
 
-Figure \ref{geo-polish} presents the final projections found before and after applying \texttt{search\_polish} using the demo code. Polish search improves the index value from 0.9618 to 0.9627 with reduction of weights on the non-informative variables, namely \texttt{V1}, \texttt{V8}, \texttt{V9} and \texttt{V10}. When appears in the projected data in Figure \ref{geo-polish}, polish works to sharpen the edges of each cluster.
+Figure \ref{fig:polish} presents the final projections found before and after applying \texttt{search\_polish} using the demo code. Polish search improves the index value from 0.9618 to 0.9627 with reduction of weights on the non-informative variables, namely \texttt{V1}, \texttt{V8}, \texttt{V9} and \texttt{V10}. When appears in the projected data in Figure \ref{fig:polish}, polish works to sharpen the edges of each cluster.
 
 \hypertarget{seeing-the-signal-in-the-noise}{%
 \subsection{Seeing the signal in the noise}\label{seeing-the-signal-in-the-noise}}
 
 \begin{figure}
-\centering
-\includegraphics{paper_files/figure-latex/kol-cdf-1.pdf}
-\caption{\label{fig:kol-cdf}\label{kol-cdf}One-D projection on \texttt{boa5} data with noisy index \texttt{norm\_kol} optimised by \texttt{search\_geodesic} and \texttt{search\_better}. The grey dashed line represents the index value of the theoreical best basis. \texttt{search\_geodesic} fails to optimse the noisy index while \texttt{search\_better} has made reasonable improvments to reach the index value close to the one of theoretical best basis.}
+
+{\centering \includegraphics{/Users/hzha400/Documents/3.PhD/research/paper-tour-vis/figs/noisy-better-geo-1} 
+
+}
+
+\caption{One-D projection on \texttt{boa5} data with noisy index \texttt{norm\_kol} optimised by \texttt{search\_geodesic} and \texttt{search\_better}. The grey dashed line represents the index value of the theoreical best basis. \texttt{search\_geodesic} fails to optimse the noisy index while \texttt{search\_better} has made reasonable improvments to reach the index value close to the one of theoretical best basis.}\label{fig:noisy-better-geo}
 \end{figure}
+
+
 
 Up until this point, the index functions are smooth, meaning the trace of interpolation points is smooth, while this is not the case for all the index functions. \texttt{norm\_kol}, a 1D projection function based on Kolmogorov test, compares the difference between the 1D projected data, \(\mathbf{P}_{n \times 1}\) and a randomly generated normal distribution, \(y_n\) based on the empirical cumulated distribution function (ECDF). Denotes the ECDF function as \(F_{.}(u)\) with the subscript indicating the projection or the random normal variable, the \texttt{norm\_kol} index is defined by
 
 \[\max \left[F_{\mathbf{P}}(u) - F_{y}(u)\right]\]
 
-Figure \ref{kol-cdf} compares the tracing plot of two algorithms: \texttt{search\_geodesic} and \texttt{search\_better}. This time, the interpolated path is no longer smooth when using either algorithm. It is also obvious that \texttt{search\_geodesic} fails to optimise this rough index since there is barely improvment of the index value. On the other hand, \texttt{search\_better} is doing a relatively good job on the optimisation for the 5-variable dataset \texttt{boa5}. The theoretical best basis {[}0, 1, 0, 0, 0{]} produces an index value of 0.182 and \texttt{search\_better} finds the final basis {[}-0.02939, -0.99715, 0.04509, -0.03248, 0.04176{]} with an index value of 0.174. A further polish step will give a marginal improvement of index value to 0.173 with a basis of {[}-0.077342, -0.996695, -0.014675, -0.004626, -0.019520{]}. At this stage, the difference between the theoretical best and what has been found is likely due to simulation error since the best possible basis for a simulated data will be slightly off the theoretical best basis, which is derived based on the distributional assumption in Equation \ref{eq:sim-norm} to \ref{eq:sim-x7}.
+Figure \ref{fig:noisy-better-geo} compares the tracing plot of two algorithms: \texttt{search\_geodesic} and \texttt{search\_better}. This time, the interpolated path is no longer smooth when using either algorithm. It is also obvious that \texttt{search\_geodesic} fails to optimise this rough index since there is barely improvment of the index value. On the other hand, \texttt{search\_better} is doing a relatively good job on the optimisation for the 5-variable dataset \texttt{boa5}. The theoretical best basis {[}0, 1, 0, 0, 0{]} produces an index value of 0.182 and \texttt{search\_better} finds the final basis {[}-0.02939, -0.99715, 0.04509, -0.03248, 0.04176{]} with an index value of 0.174. A further polish step will give a marginal improvement of index value to 0.173 with a basis of {[}-0.077342, -0.996695, -0.014675, -0.004626, -0.019520{]}. At this stage, the difference between the theoretical best and what has been found is likely due to simulation error since the best possible basis for a simulated data will be slightly off the theoretical best basis, which is derived based on the distributional assumption in Equation \ref{eq:sim-norm} to \ref{eq:sim-x7}.
 
 \begin{figure}
-\centering
-\includegraphics{paper_files/figure-latex/pca-better-default-1.pdf}
-\caption{\label{fig:pca-better-default}\label{pca-better-default}One-D projection of \texttt{norm\_kol} index on \texttt{boa6} data optimised by \texttt{search\_better} with 20 randomly generated seeds. Each point represents a basis in the original 6D space, reduced into 2D by PCA. The grey points are random bases generated from 6-D hollow sphere and the two yellow points repsents the local maximum corresponds to basis when \texttt{V2} is found and the global maximum where \texttt{V7} is found. The points produced by the seraching algorithm is colored by whether the global or local maximum is found with the interpolated bases highlighted as a path and the final basis as an amplified point.}
+
+{\centering \includegraphics{/Users/hzha400/Documents/3.PhD/research/paper-tour-vis/figs/kol-better-default-1} 
+
+}
+
+\caption{One-D projection of \texttt{norm\_kol} index on \texttt{boa6} data optimised by \texttt{search\_better} with 20 randomly generated seeds. Each point represents a basis in the original 6D space, reduced into 2D by PCA. The grey points are random bases generated from 6-D hollow sphere and the two yellow points repsents the local maximum corresponds to basis when \texttt{V2} is found and the global maximum where \texttt{V7} is found. The points produced by the seraching algorithm is colored by whether the global or local maximum is found with the interpolated bases highlighted as a path and the final basis as an amplified point.}\label{fig:kol-better-default}
 \end{figure}
 
-\begin{figure}
-\centering
-\includegraphics{paper_files/figure-latex/pca-better-random-default-1.pdf}
-\caption{\label{fig:pca-better-random-default}\label{pca-better-random-default}One-D projection of \texttt{norm\_kol} index on \texttt{boa6} data optimised by \texttt{search\_better\_random} with the same seeds. \texttt{search\_better\_random} has a probablistic acceptance implementation that would also a basis with lower index value. This design allows the optimiser to jump out of the local maximum and hence more incidents find the true global maximum.}
-\end{figure}
+
 
 \begin{figure}
-\centering
-\includegraphics{paper_files/figure-latex/pca-better-random-tuned-1.pdf}
-\caption{\label{fig:pca-better-random-tuned}\label{pca-better-random-tuned}One-D projection of \texttt{norm\_kol} index on \texttt{boa6} data optimised by \texttt{search\_better\_random} with the same seeds. Further tuning of the parameter has been taken place to adjust the neighbourhood parameter \texttt{alpha} from 0.5 to 0.7. This time, all the 20 incidents have found the global maximum.}
+
+{\centering \includegraphics{/Users/hzha400/Documents/3.PhD/research/paper-tour-vis/figs/kol-better-random-default-1} 
+
+}
+
+\caption{(ref: kol-better-random-default)}\label{fig:kol-better-random-default}
 \end{figure}
+
+(ref: kol-better-random-default) One-D projection of \texttt{norm\_kol} index on \texttt{boa6} data optimised by \texttt{search\_better\_random} with the same seeds. \texttt{search\_better\_random} has a probablistic acceptance implementation that would also a basis with lower index value. This design allows the optimiser to jump out of the local maximum and hence more incidents find the true global maximum.
+
+\begin{figure}
+
+{\centering \includegraphics{/Users/hzha400/Documents/3.PhD/research/paper-tour-vis/figs/kol-better-random-tuned-1} 
+
+}
+
+\caption{One-D projection of \texttt{norm\_kol} index on \texttt{boa6} data optimised by \texttt{search\_better\_random} with the same seeds. Further tuning of the parameter has been taken place to adjust the neighbourhood parameter \texttt{alpha} from 0.5 to 0.7. This time, all the 20 incidents have found the global maximum.}\label{fig:kol-better-random-tuned}
+\end{figure}
+
+
 
 The second experiment with the noisy index is to understand how the optimisers perform when the local maximum is presented. The dataset used is \texttt{boa6} with \texttt{x2} and \texttt{x7} being informative. The two possible theoretical best bases are {[}0, 1, 0, 0, 0, 0{]} and {[}0, 0, 1, 0, 0, 0{]} with index value 0.182 and 0.235 repectively and hence, the global maximum happens when variable \texttt{x7} is found. Simulation is done with 20 randomly generated seeds on different parameter specifications on two optimsers: \texttt{search\_better} and \texttt{search\_better\_random}. The data obbject is collected for each simulation and principal component analysis is applied to project the bases as points into 2D space with the orthonormality constraint imposed on the 6D space preserved by randomly generated basis on the surface of the 6D sphere.
 
@@ -499,11 +545,11 @@ Once the data object has been obtained, the package, \texttt{ferrn}, provides au
 \begin{itemize}
 \tightlist
 \item
-  \texttt{explore\_trace\_search()}: produce summary plots, as shown in Figure \ref{toy-search}
+  \texttt{explore\_trace\_search()}: produce summary plots, as shown in Figure \ref{fig:toy-search}
 \item
-  \texttt{explore\_trace\_interp()}: produce trace plots for the interpolation points, as shown in Figure \ref{toy-interp}
+  \texttt{explore\_trace\_interp()}: produce trace plots for the interpolation points, as shown in Figure \ref{fig:toy-interp}
 \item
-  \texttt{explore\_space\_pca()}: produce plots of projection basis on the reduced space by PCA, as shown in Figure \ref{toy-pca}. Animated version in Figure \ref{toy-pca-aniamted} can be acquired via the argument \texttt{animate\ =\ TRUE}
+  \texttt{explore\_space\_pca()}: produce plots of projection basis on the reduced space by PCA, as shown in Figure \ref{fig:toy-pca}. Animated version in Figure \ref{fig:toy-pca-aniamted} can be acquired via the argument \texttt{animate\ =\ TRUE}
 \item
   \texttt{explore\_space\_tour()}: produce animated tour view on the full space of the projection bases, as shown in Figure \ref{toy-tour}
 \end{itemize}
