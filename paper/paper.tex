@@ -24,46 +24,6 @@
 %% load any required packages here
 \usepackage{amssymb, amsmath, mathtools, dsfont, bbm, array, booktabs} \usepackage[ruled,vlined, linesnumbered]{algorithm2e}
 
-\usepackage{color}
-\usepackage{fancyvrb}
-\newcommand{\VerbBar}{|}
-\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
-\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
-% Add ',fontsize=\small' for more characters per line
-\usepackage{framed}
-\definecolor{shadecolor}{RGB}{248,248,248}
-\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
-\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
-\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
-\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
-\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
-\newcommand{\BuiltInTok}[1]{#1}
-\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
-\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
-\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
-\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
-\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
-\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
-\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
-\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
-\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
-\newcommand{\ExtensionTok}[1]{#1}
-\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
-\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
-\newcommand{\ImportTok}[1]{#1}
-\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
-\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
-\newcommand{\NormalTok}[1]{#1}
-\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
-\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
-\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
-\newcommand{\RegionMarkerTok}[1]{#1}
-\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
-\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
-\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
-\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
-\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
-\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
 
 
 
@@ -144,8 +104,6 @@ x^{(j + 1)} = x^{(j)} + \alpha_k* d^{(j)}
 
 where \(d^{(j)}\) is the searching direction in iteration \(j\), and \(\alpha_j\) is the step-size. Strictly speaking, \(\alpha_k\) is chosen by another minimisation of \(f(x^{(j)} + \alpha* d^{(j)})\) with respect to \(\alpha\) and theoretical results have demonstrated the global convergence of the algorithm when the exact minimisation of \(\alpha_j\) is attained \citep{curry1944method}. In practice, this second minimisation is rarely implemented due to its computational demanding or even the existence of such a minimisation. A more realistic approach is to impose a mandatory decrease in the objective function for each iteration: \(f^{(j+1)}> f^{(j)}\) and despite we lose the guarantee on global convergence, this approach turns out to be efficient in practical problems.
 
-{[}Are we using projection pursuit/guided tour to better understand the convergence of optimization algorithms visually in combination with the algorithms discussed below? Or we are focusing on the optimisation problem only within the projection pursuit context? Some of the problems listed below are also applicable to optimization problem in general too. ppp{]}
-
 \hypertarget{tour}{%
 \section{Projection pursuit guided tour}\label{tour}}
 
@@ -162,7 +120,7 @@ Guided tour chooses the planes produced by optimising the projection pursuit ind
 
 \begin{figure}
 
-{\centering \includegraphics[width=0.6\linewidth,height=0.4\textheight]{/Users/hzha400/Documents/3.PhD/research/paper-tour-vis/figures/tour_path_keynote/tour_path_keynote.001} 
+{\centering \includegraphics[width=0.6\linewidth,height=0.3\textheight]{/Users/hzha400/Documents/3.PhD/research/paper-tour-vis/figures/tour_path_keynote/tour_path_keynote.001} 
 
 }
 
@@ -332,8 +290,6 @@ T^\prime & \mathbf{A}_{T^\prime} & I_{T^\prime} &S_{T^\prime}  & J+1 &  l_{J+1} 
 
 where \(T^{\prime} = T + k_{J}+ l_{J+1}\). Note that we deliberately denote the last round of search as \(j = J+1\) and in that round there is no output/interpolation basis and the algorithm terminates. This notation allows us to denote the last complete search-and-interpolate round as round \(J\) and hence the final basis is \(A_T\) and highest index value found is \(I_T\).
 
-{[}outside the paper: I find the notation of current/target basis is confusing because the target basis in round \(j\) becomes the current basis in round \(j+1\). Also, when we start to have polish, the target basis may not be the current basis in the next round\ldots{} The place where current/target is most appropriate is probably when describing the interpolation where the first one is always the current basis and the last is always the target basis. I think it is better to leave this language in the code{]}
-
 \begin{figure}
 \includegraphics[width=1\linewidth,height=0.2\textheight]{/Users/hzha400/Documents/3.PhD/research/paper-tour-vis/figures/global_obj} \caption{\label{glb-obj}The data structure in projection pursuit guided tour.}\label{fig:glb-obj}
 \end{figure}
@@ -361,61 +317,7 @@ With a constructed data object, the construction of diagnostic plots is inspired
 A primary interest of diagnosing an optimisation algorithm is to study how it progressively finds its optimum. One way of doing it is to plot the index value across its natural ordering \(t\), however, it usually takes the algorithm much longer to find a better basis than the current one towards the end of the search.
 When plotting the searching observations as points in a plot, the space each iteration takes will be proportional to the number of points in that iteration.
 
-Another option is to use summarisation for each iteration. Boxplot is a suitable candidate that provides five points summary of the data, however, there are two pieces of information missing from the boxplot: 1) It does not report the number of points, and 2) the position of the last basis. This could be remedied by adding more layers using the concept of grammar of graphics. A label geometry is added at the bottom of the plot to show the number of points in each iteration and a line geometry links the last basis in each iteration. Further, an option to switch between displaying points and boxplot geometry is helpful since point geometry can be more intuitive for the iteration with few observations. This is achieved via a \texttt{cutoff} parameter. Below we define the searching point plot based on four different component layers
-
-\begin{itemize}
-\tightlist
-\item
-  Layer 1: boxplot geom
-
-  \begin{itemize}
-  \tightlist
-  \item
-    data: group by \(j\) and filter the observations in the groups that have count greater than \texttt{cutoff\ =\ 15}.
-  \item
-    x: \(j\) is mapped to the x-axis
-  \item
-    y: the statistical transformed index value: \(Q_{I^{\prime}_t}(q)\) is mapped to the y-axis where \(Q_X(q)\), \(q = 0, 25, 50, 75, 100\) finds the qth-quantile of \(X\) and \(I^{\prime}_t\) denotes the index value of all the searching bases defined in Matrix \ref{eq:data-structure}.
-  \end{itemize}
-\item
-  Layer 2: point geom
-
-  \begin{itemize}
-  \tightlist
-  \item
-    data: group by \(j\) and filter the observations in the group that have count less than \texttt{cutoff\ =\ 15}.
-  \item
-    x: \(j\) is mapped to the x-axis
-  \item
-    y: \(I\) is mapped to the y-axis
-  \end{itemize}
-\item
-  Layer 3: line geom
-
-  \begin{itemize}
-  \tightlist
-  \item
-    data: filter the points with the highest index value in group \(j\)
-  \item
-    x: \(j\) is mapped to the x-axis
-  \item
-    y: \(I\) is mapped to the y-axis
-  \end{itemize}
-\item
-  Layer 4: label geom
-
-  \begin{itemize}
-  \tightlist
-  \item
-    data: A count table of the number of observation in each iteration
-  \item
-    x: \(j\) is mapped to the x-axis
-  \item
-    y: the y-axis for each label is \(0.99 * \text{MIN}\), where \(\text{MIN}\) is the smallest index value in the whole data object
-  \item
-    label: the number of observation is mapped to the label
-  \end{itemize}
-\end{itemize}
+Another option is to use summarisation for each iteration. Boxplot is a suitable candidate that provides five points summary of the data, however, there are two pieces of information missing from the boxplot: 1) It does not report the number of points, and 2) the position of the last basis. This could be remedied by adding more layers using the concept of grammar of graphics. A label geometry is added at the bottom of the plot to show the number of points in each iteration and a line geometry links the last basis in each iteration. Further, an option to switch between displaying points and boxplot geometry is helpful since point geometry can be more intuitive for the iteration with few observations. This is achieved via a \texttt{cutoff} parameter.
 
 Figure \ref{toy-search} presents a comparison between the two plotting options discussed above. Using the natural order to plot searching points distorts the point from the first few iterations and over-emphasizes the searches in the last few iterations. The second plot design evenly presents the summarised information for each iteration while allowing for a switch to the full information for the iteration with small number of observations.
 
@@ -428,33 +330,7 @@ Figure \ref{toy-search} presents a comparison between the two plotting options d
 \hypertarget{examining-the-optimisation-progress}{%
 \subsection{Examining the optimisation progress}\label{examining-the-optimisation-progress}}
 
-Sometimes, we may be interested in exploring the points on the interpolation path since these are the points that will be played by the tour animation. The plot definition is as follows:
-
-\begin{itemize}
-\tightlist
-\item
-  Layer 1: point geom
-
-  \begin{itemize}
-  \tightlist
-  \item
-    data: filter the observations with \(S = \text{interpolation}\) and mutate \(t\) to be the row number of the subsetted tibble
-  \item
-    x: \(t\) is mapped to the x-axis
-  \item
-    y: \(I\) is mapped to the y-axis
-  \end{itemize}
-\item
-  Layer 2: line geom
-
-  \begin{itemize}
-  \tightlist
-  \item
-    using line geometry for the same data and aesthetics
-  \end{itemize}
-\end{itemize}
-
-Figure \ref{toy-interp} presents the interpolation of three different tour paths. The upper plot shows a desirable interpolation in each iteration with the index value being progressively and monotonically increasing. While in the middle plot, the increases towards the target basis is not monotonical in the last two iterations and interpolated basis with higher index value can be found on the tour path. The lower plot is constructed using \texttt{search\_better\_random}, where a basis with smaller index value has a probabilistic chance of being accepted and we can observe a much more involved pattern. In iteration three, the probabilistic acceptance produces a monotonically decreasing interpolation whilst in iteration five, six and seven, with also a probabilistic acceptance, the interpolation is now non-monotonical. When the target basis has a higher index value, iteration eight reaches this basis by first decreasing the index value. While the interpolation plot shows different possibilities of the change in index value on the tour path, the diagnosis of the validity of each pattern and the related optimisation algorithms will be postponed to Section \ref{application}.
+Sometimes, we may be interested in exploring the points on the interpolation path since these are the points that will be played by the tour animation. Figure \ref{toy-interp} presents the interpolation of three different tour paths. The upper plot shows a desirable interpolation in each iteration with the index value being progressively and monotonically increasing. While in the middle plot, the increases towards the target basis is not monotonical in the last two iterations and interpolated basis with higher index value can be found on the tour path. The lower plot is constructed using \texttt{search\_better\_random}, where a basis with smaller index value has a probabilistic chance of being accepted and we can observe a much more involved pattern. In iteration three, the probabilistic acceptance produces a monotonically decreasing interpolation whilst in iteration five, six and seven, with also a probabilistic acceptance, the interpolation is now non-monotonical. When the target basis has a higher index value, iteration eight reaches this basis by first decreasing the index value. While the interpolation plot shows different possibilities of the change in index value on the tour path, the diagnosis of the validity of each pattern and the related optimisation algorithms will be postponed to Section \ref{application}.
 
 \begin{figure}
 \centering
@@ -462,32 +338,10 @@ Figure \ref{toy-interp} presents the interpolation of three different tour paths
 \caption{\label{fig:toy-interp}\label{toy-interp} This is a toy example of plotting interpolated points}
 \end{figure}
 
-~
-
 \hypertarget{understanding-the-optimisers-coverage-of-the-search-space}{%
 \subsection{Understanding the optimiser's coverage of the search space}\label{understanding-the-optimisers-coverage-of-the-search-space}}
 
 Apart from checking the progression of an optimiser, another interesting aspect is to visualise how the search looks like in its parameter space. Given the orthonormality constraint, the projection bases \(\mathbf{A}_{p \times d}\) lives on the surface of a \(p \times d\) dimension sphere, where the dimension can easily go above five (5). Visualising the search paths on the original high diemnsional sphere would require skills from the viewer to preceive rotation of geometry in higher dimensional space (d \textgreater{} 3) while an easier alternative is to view the reduced space via some dimension reduction methods i.e.~Principal component analysis. To better visual the serach path as an embedding of a hollow sphere, random points on the high dimensional sphere is generated using package \texttt{geozoo} and PCA is conducted on both the bases and the points on the surface of the sphere.
-
-The visualisation can thus be defined as
-
-\begin{itemize}
-\tightlist
-\item
-  Layer 1: point geom
-
-  \begin{itemize}
-  \tightlist
-  \item
-    data: subset the basis of interest and arrange into a matrix format; perform PCA on the basis matrix and compute the projected basis on the first two principal components; bind the variables from the original global object and form a tibble
-  \item
-    x: the projected basis on the first principal component
-  \item
-    y: the projected basis on the second principal component
-  \item
-    colour: \(V\) is mapped to the colour aesthetic
-  \end{itemize}
-\end{itemize}
 
 Figure \ref{toy-pca} shows the first two principal components of two search paths. Starting from the same position, two searching methods take different paths to get its final bases. There are two theoretical bases because they correspond to the same data projection \(Y\) with a 180 degree rotation. What differentiate the two optimisers is that \texttt{search\_better()} also involve random evaluation of points in the sphere during its sampling process while \texttt{search\_geodesic()} doesn't and this stochastic rather than deterministic approach can be useful in complex scenario.
 
@@ -500,15 +354,12 @@ Figure \ref{toy-pca} shows the first two principal components of two search path
 \hypertarget{animating-the-diagnostic-plots}{%
 \subsection{Animating the diagnostic plots}\label{animating-the-diagnostic-plots}}
 
-Animating the plots introduced above is useful, especially in the case of PCA polot since it shows the bases found by the optimiser in its natural order.
+Animating the plots introduced above is useful, especially in the case of PCA polot since it shows the bases found by the optimiser in its natural order. In Figure \ref{toy-pca-animated}, \ldots{}
 
 \begin{figure}
-
-{\centering \includegraphics{paper_files/figure-latex/unnamed-chunk-1-1} 
-
-}
-
-\caption{\label{toy-pca-aniamted}A selected number of frames from the animated PCA plot. With animation, it is easier to track the progrssion from the start to finish in each algorithm.}\label{fig:unnamed-chunk-1}
+\centering
+\includegraphics{paper_files/figure-latex/unnamed-chunk-1-1.pdf}
+\caption{\label{fig:unnamed-chunk-1}\label{toy-pca-aniamted}A selected number of frames from the animated PCA plot. With animation, it is easier to track the progrssion from the start to finish in each algorithm.}
 \end{figure}
 
 \hypertarget{the-tour-looking-at-itself}{%
@@ -563,30 +414,7 @@ We use the same dataset as the toy example above to explore the search function 
 \hypertarget{close-but-not-close-enough}{%
 \subsection{Close but not close enough}\label{close-but-not-close-enough}}
 
-Once the final basis has been found by an algorithm, one may want to push further to investigate whether there's an even better basis in the close neighbourhood. This motivates the polish search where the final basis is supplied to a new guided tour to search for any local breakthrough. The following code demonstrates the usage of \texttt{search\_polish}:
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\KeywordTok{library}\NormalTok{(tourr)}
-\KeywordTok{library}\NormalTok{(ferrn)}
-
-\KeywordTok{set.seed}\NormalTok{(}\DecValTok{123456}\NormalTok{)}
-\NormalTok{holes_2d_geo <-}\StringTok{ }
-\StringTok{  }\KeywordTok{animate_xy}\NormalTok{(boa6,}
-             \DataTypeTok{tour_path =} \KeywordTok{guided_tour}\NormalTok{(}\KeywordTok{holes}\NormalTok{(), }\DataTypeTok{d =} \DecValTok{2}\NormalTok{, }
-                                     \DataTypeTok{search_f =}\NormalTok{ search_geodesic),}
-             \DataTypeTok{rescale =} \OtherTok{FALSE}\NormalTok{, }\DataTypeTok{verbose =} \OtherTok{TRUE}\NormalTok{)}
-
-\NormalTok{last_basis <-}\StringTok{ }\KeywordTok{get_best}\NormalTok{(holes_2d_geo) }\OperatorTok{%>%}\StringTok{ }\KeywordTok{pull}\NormalTok{(basis) }\OperatorTok{%>%}\StringTok{ }\NormalTok{.[[}\DecValTok{1}\NormalTok{]]}
-
-\KeywordTok{set.seed}\NormalTok{(}\DecValTok{123456}\NormalTok{)}
-\NormalTok{holes_2d_geo_polish <-}\StringTok{ }
-\StringTok{  }\KeywordTok{animate_xy}\NormalTok{(boa6, }
-             \DataTypeTok{tour_path =} \KeywordTok{guided_tour}\NormalTok{(}\KeywordTok{holes}\NormalTok{(), }\DataTypeTok{d =} \DecValTok{2}\NormalTok{, }
-                                     \DataTypeTok{search_f =}\NormalTok{ search_polish),}
-             \DataTypeTok{rescale =} \OtherTok{FALSE}\NormalTok{, }\DataTypeTok{verbose =} \OtherTok{TRUE}\NormalTok{, }\DataTypeTok{start =}\NormalTok{ last_basis)}
-\end{Highlighting}
-\end{Shaded}
+Once the final basis has been found by an algorithm, one may want to push further to investigate whether there's an even better basis in the close neighbourhood. This motivates the polish search where the final basis is supplied to a new guided tour to search for any local breakthrough.
 
 Similar to \texttt{search\_better} as a stochastic random search, \texttt{search\_polish} has a different scheme of reducing the search neighbourhood. In each search-interpolation iteration, \texttt{search\_better} has a fixed neighbourhood parameter alpha and this alpha is reduced by another cooling parameter only after an iteration finishes. On the contrary, \texttt{search\_polish} allows alpha to be reduced during each iteration to exploit the search in the neighbourhood. Further, to avoid the case where alpha becomes too small and the further search is meaningless, three more stopping criteria have been added, on top of the original \texttt{max.tries}. These include:
 
@@ -634,34 +462,26 @@ A simulation with 20 different seeds shows that \texttt{search\_better} can find
 
 \includegraphics{paper_files/figure-latex/unnamed-chunk-3-1.pdf}
 
-\begin{figure}
-\centering
-\includegraphics{paper_files/figure-latex/kol-pca-1.pdf}
-\caption{\label{fig:kol-pca}\label{kol-pca}Comparison between search\_better\_random and two different search\_better. In the trace plot, the two dashed horizontal lines are the index values of the two theoretical bases. serach\_better\_random and one of the serach\_better have found the global maximum but the other fails. The lower panel shows the PCA plot for each of the three algorithms. The two yellow dots, again, correspond to the theoretical bases with the one on the right being the global maximum. The paths of two search\_better are relatively short and simple while the search\_better\_random has a more sophisticated path. This is due to the fact that the interpolation at each iteration are longer, which shows its ability to find new bases at a distance.}
-\end{figure}
+\includegraphics{paper_files/figure-latex/unnamed-chunk-4-1.pdf}
+
+Comparison between search\_better\_random and two different search\_better. In the trace plot, the two dashed horizontal lines are the index values of the two theoretical bases. serach\_better\_random and one of the serach\_better have found the global maximum but the other fails. The lower panel shows the PCA plot for each of the three algorithms. The two yellow dots, again, correspond to the theoretical bases with the one on the right being the global maximum. The paths of two search\_better are relatively short and simple while the search\_better\_random has a more sophisticated path. This is due to the fact that the interpolation at each iteration are longer, which shows its ability to find new bases at a distance
 
 \hypertarget{implementation}{%
 \section{Implementation}\label{implementation}}
 
-(further notice on the implementation in the tour package will be discussed in the tour developer meeting.)
 The implementation of this projection has been divided into two pacakges, where the data collection happens when a tour is running and hence implemented in the existing \texttt{tourr} package. The diagnostics of the algorithm via plots and other auxiliary functions have been implemented in a new pacakge, \texttt{ferrn}.
 
 When the optimisation ends, the data object will be stored and printed (it can be turned off by supplying argument \texttt{print\ =\ FALSE}). Additional messages during the optimisation can be displayed by argument \texttt{verbose\ =\ TRUE}. Notice that the tibble object allows the list-column \texttt{basis} to be printed out nicely with the dimension of the projection basis readily available. Below presents a sample of the data object.
 
 \begin{verbatim}
-## # A tibble: 10 x 8
-##       id basis             index_val info         tries  loop method       alpha
-##    <int> <list>                <dbl> <chr>        <dbl> <dbl> <chr>        <dbl>
-##  1     1 <dbl[,1] [5 x 1]>     0.749 new_basis        1     1 search_bett~   0.5
-##  2     2 <dbl[,1] [5 x 1]>     0.730 random_sear~     2     1 search_bett~   0.5
-##  3     3 <dbl[,1] [5 x 1]>     0.743 random_sear~     2     2 search_bett~   0.5
-##  4     4 <dbl[,1] [5 x 1]>     0.736 random_sear~     2     3 search_bett~   0.5
-##  5     5 <dbl[,1] [5 x 1]>     0.747 random_sear~     2     4 search_bett~   0.5
-##  6     6 <dbl[,1] [5 x 1]>     0.725 random_sear~     2     5 search_bett~   0.5
-##  7     7 <dbl[,1] [5 x 1]>     0.752 new_basis        2     6 search_bett~   0.5
-##  8     8 <dbl[,1] [5 x 1]>     0.749 interpolati~     2     1 search_bett~  NA  
-##  9     9 <dbl[,1] [5 x 1]>     0.750 interpolati~     2     2 search_bett~  NA  
-## 10    10 <dbl[,1] [5 x 1]>     0.750 interpolati~     2     3 search_bett~  NA
+## # A tibble: 5 x 8
+##      id basis             index_val info          tries  loop method       alpha
+##   <int> <list>                <dbl> <chr>         <dbl> <dbl> <chr>        <dbl>
+## 1     1 <dbl[,1] [5 x 1]>     0.749 new_basis         1     1 search_bett~   0.5
+## 2     2 <dbl[,1] [5 x 1]>     0.730 random_search     2     1 search_bett~   0.5
+## 3     3 <dbl[,1] [5 x 1]>     0.743 random_search     2     2 search_bett~   0.5
+## 4     4 <dbl[,1] [5 x 1]>     0.736 random_search     2     3 search_bett~   0.5
+## 5     5 <dbl[,1] [5 x 1]>     0.747 random_search     2     4 search_bett~   0.5
 \end{verbatim}
 
 Once the data object has been obtained, the package, \texttt{ferrn}, provides automatic diagnostic plots as described in Section \ref{vis-diag}. The structure of package functionality has been listed below.
