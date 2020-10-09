@@ -100,7 +100,7 @@ Before introducing the guided tour, we shall be familiar with the general tour m
 
 Guided tour chooses the planes produced by optimising the projection pursuit index function. Figure \ref{tour-path} shows a sketch of the tour path consisting of the blue frames produced by the projection pursuit optimisation algorithm iteratively and the white frames, which are the interpolations between two blue frames. The tour method has been implemented in the *tourr* package in R, available on the Comprehensive R Archive Network at [https://cran.r-project.org/web/packages/tourr/](https://cran.r-project.org/web/packages/tourr/) [@wickham2011tourrpackage]. 
 
-```{r tour-path, out.height="30%", out.width="60%", fig.align='center', fig.cap="\\label{tour-path}An illustration of the tour path"}
+```{r tour-path, out.height="30%", out.width="60%", fig.align='center', fig.cap="\\label{tour-path}Each square (frame) represents the projected data with a corresponding basis. Blue frames have bases found by an optimisation algorithm iteratively whilst the white frames are constructed by geodesic interpolation between two blue frames."}
 knitr::include_graphics(path = here::here("figures/tour_path_keynote/tour_path_keynote.001.png"))
 ```
 
@@ -341,9 +341,9 @@ T^\prime & \mathbf{A}_{T^\prime} & I_{T^\prime} &S_{T^\prime}  & J+1 &  l_{J+1} 
 where $T^{\prime} = T + k_{J}+ l_{J+1}$. Note that we deliberately denote the last round of search as $j = J+1$ and in that round there is no output/interpolation basis and the algorithm terminates. This notation allows us to denote the last complete search-and-interpolate round as round $J$ and hence the final basis is $A_T$ and highest index value found is $I_T$.
 
 
-```{r glb-obj, out.width= "100%", out.height="20%", fig.cap="\\label{glb-obj}The data structure in projection pursuit guided tour."}
-knitr::include_graphics(path = here::here("figures/global_obj.png"))
-```
+<!-- ```{r glb-obj, out.width= "100%", out.height="20%", fig.cap="\\label{glb-obj}The data structure in projection pursuit guided tour."} -->
+<!-- knitr::include_graphics(path = here::here("figures/global_obj.png")) -->
+<!-- ``` -->
 
 It is worth noticing that the data structure constructed above meets the tidy data principle [@wickham2014tidy] that states
 
@@ -383,12 +383,15 @@ Another option is to use summarisation for each iteration. Boxplot is a suitable
 
 Figure \ref{toy-search} presents a comparison between the two plotting options discussed above. Using the natural order to plot searching points distorts the point from the first few iterations and over-emphasizes the searches in the last few iterations. The second plot design evenly presents the summarised information for each iteration while allowing for a switch to the full information for the iteration with small number of observations.  
 
-```{r toy-search, fig.height=3, fig.cap="\\label{toy-search}A comparison of plotting the same search points with different plot designs. In the upper plot, points from the last three iterations span the vast majority of the plotting space leaving the first few iterations being squeezed together whilst the lower plot spaces each iteration evenly and presents summary information easy to read."}
+
+
+```{r toy-search, fig.asp=0.5,  fig.cap="\\label{toy-search}A comparison of \`search_better\` with different parameter value on \`max_tries\`. A switch of geometry from points to boxplot happens when the count in the iteration excess 15 to avoid overplotting. With \`max_tries = 500\` specification, the algorithm is working much harder towards to the end."}
 bind_rows(holes_2d_better_max_tries %>% mutate(max_tries = 500), 
           holes_2d_better %>% mutate(max_tries = 25)) %>% 
   explore_trace_search(group = max_tries) + 
   scale_color_botanical(palette = "daisy") +
-  facet_wrap(vars(max_tries), ncol = 2)
+  facet_wrap(vars(max_tries),labeller = "label_both", ncol = 2) +
+  xlab("iteration")
 ```
 
 
@@ -396,17 +399,18 @@ bind_rows(holes_2d_better_max_tries %>% mutate(max_tries = 500),
 
 Sometimes, we may be interested in exploring the points on the interpolation path since these are the points that will be played by the tour animation. Figure \ref{toy-interp} presents the interpolation of three different tour paths. The upper plot shows a desirable interpolation in each iteration with the index value being progressively and monotonically increasing.  While in the middle plot, the increases towards the target basis is not monotonical in the last two iterations and interpolated basis with higher index value can be found on the tour path. The lower plot is constructed using `search_better_random`, where a basis with smaller index value  has a probabilistic chance of being accepted and we can observe a much more involved pattern. In iteration three, the probabilistic acceptance produces a monotonically decreasing interpolation whilst in iteration five, six and seven, with also a probabilistic acceptance, the interpolation is now non-monotonical. When the target basis has a higher index value, iteration eight reaches this basis by first decreasing the index value. While the interpolation plot shows different possibilities of the change in index value on the tour path, the diagnosis of the validity of each pattern and the related optimisation algorithms will be postponed to Section \ref{application}.
 
-```{r toy-interp, fig.height = 3, fig.cap = "\\label{toy-interp} This is a toy example of plotting interpolated points"}
-bind_rows(holes_2d_better_max_tries %>% mutate(group = "max_tries: 500"), 
-          interrupt_no %>% mutate(group = "no interruption"), 
-          holes_2d_better_random %>% mutate(group = "better_random")) %>% 
-  mutate(group = fct_relevel(group, c("max_tries: 500", 
-                                      "no interruption", 
-                                      "better_random"))) %>% 
+
+
+```{r toy-interp, fig.height = 3, fig.cap = "\\label{toy-interp} The resulting trace plot on the interpolated points has been ploted when using three different algorithms to optimise the index. The color represents the number of iteration. It can be observed that each algorithm differs in length in the optimisation and the curvature of the improvement for each algorithm also varies."}
+bind_rows(holes_2d_better_max_tries %>% mutate(group = "Algorithm 1"), 
+          interrupt_no %>% mutate(group = "Algorithm 2"), 
+          holes_2d_better_random %>% mutate(group = "Algorithm 3")) %>% 
+  mutate(group = fct_relevel(group, c("Algorithm 1", 
+                                      "Algorithm 2", 
+                                      "Algorithm 3"))) %>% 
   explore_trace_interp(group = group) + 
   theme(legend.position = "none") + 
-  scale_color_botanical(palette = "fern") + 
-  facet_wrap(vars(group), ncol = 3)
+  scale_color_botanical(palette = "fern")
 ```
 
 
@@ -592,7 +596,9 @@ x_7 &\sim 0.5 \mathcal{N}(-5, 1) + 0.5 \mathcal{N}(5, 1)
 
 We use the same dataset as the toy example above to explore the search function `search_better` and we want to learn how the index value changes on the interpolation path for the `holes` index. From the left panel of Figure \ref{interruption}, we observe that when interpolating from the current basis to the target basis, the index value may not be monotone: we could reach a basis with a higher index value than the target basis on the interpolation path. In this sense, we would be better off using the basis with the highest index value on the interpolation path as the current basis for the next iteration (rather than using the target basis). Hence, an interruption is constructed to accept the interpolating bases only up to the one with the largest index value. After implementing this interruption, the search finds higher final index value with fewer steps as shown in the right panel of Figure \ref{interruption}.
 
-```{r interruption,fig.asp=0.5, fig.cap = "\\label{interruption}Trace plots of the interpolated basis with and without interruption. The interruption stops the interpolation when the index value starts to decrease at id = 60. The implementation of the interuption finds an ending basis with higher index value using fewer steps. "}
+
+
+```{r interruption,fig.asp=0.5, fig.cap = "\\label{interruption}A comparison of the trace plot with and without the interruption. When the interruption does not take place, the index value of the target basis can be smaller than the interpolated basis. The interruption forces the interpolation to finish at the interpolated basis with the highest index value in an iteration."}
 p1_anno <- interrupt_no %>% filter(info == "interpolation") %>% mutate(id = row_number()) %>% filter(id %in% c(44, 60, 62)) %>% 
   mutate(anno = c("current basis", "interpolated basis", "target basis"))
 
@@ -604,7 +610,7 @@ p1 <- interrupt_no %>% mutate(id = row_number() - 1) %>% explore_trace_interp() 
 p2 <- interrupt_yes %>% explore_trace_interp() + ggtitle("with interruption") + ylim(0.8, 0.9) + xlim(0, 80) + 
   theme(legend.position = "none")
 
-p1 | p2
+(p1 | p2) & scale_color_botanical(palette = "fern")
 
 ```
 
@@ -621,7 +627,8 @@ Similar to `search_better` as a stochastic random search, `search_polish` has a 
 
 Figure \ref{geo-polish} presents the final projections found before and after applying `search_polish` using the demo code. Polish search improves the index value from `r get_best(holes_2d_geo)$index_val %>% format(digits = 4)`  to `r get_best(holes_2d_geo_polish)$index_val %>% format(digits = 4)` with reduction of weights on the non-informative variables, namely `V1`, `V8`, `V9` and `V10`. When appears in the projected data in Figure \ref{geo-polish}, polish works to sharpen the edges of each cluster.
 
-```{r geo-polish, fig.height= 2.5, fig.cap = "\\label{geo-polish}Projected data before and after polishing. Weights on axis other than V2 and V7 have been further reduced and the edges of each cluster have become more obvious."}
+
+```{r geo-polish, fig.height= 2.5, fig.cap = "\\label{geo-polish}Two-D projection on \`boa6\` data with holes index optimised by \`search_geodesic\`. The left panel shows the final projected data before polish and the right panel shows the one after. The separation of the clusters on the y axis becomes sharper after the polish."}
 # set.seed(123456)
 # render(
 #   boa6,
@@ -681,7 +688,9 @@ $$\max \left[F_{\mathbf{P}}(u) - F_{y}(u)\right]$$
 
 Figure \ref{kol-cdf} compares the tracing plot of two algorithms: `search_geodesic` and `search_better`. This time, the interpolated path is no longer smooth when using either algorithm. It is also obvious that `search_geodesic` fails to optimise this rough index since there is barely improvment of the index value. On the other hand, `search_better` is doing a relatively good job on the optimisation for the 5-variable dataset `boa5`. The theoretical best basis [`r matrix(c(0, 1, 0, 0, 0))`] produces an index value of `r kol_1d_better %>% bind_theoretical(matrix = matrix(c(0, 1, 0, 0, 0), nrow = 5, ncol = 1), index = tourr::norm_kol(), raw_data = boa5) %>% tail(1) %>% pull(index_val)` and `search_better` finds the final basis [`r get_best(kol_1d_better)$basis %>% .[[1]] %>% format(digits = 4)`] with an index value of `r get_best(kol_1d_better)$index_val %>% format(digits = 4)`. A further polish step will give a marginal improvement of index value to `r get_best(kol_1d_better_polish)$index_val` with a basis of [`r get_best(kol_1d_better_polish)$basis %>% .[[1]] %>% format(digits = 4)`]. At this stage, the difference between the theoretical best and what has been found is likely due to simulation error since the best possible basis for a simulated data will be slightly off the theoretical best basis, which is derived based on the distributional assumption in Equation \ref{eq:sim-norm} to \ref{eq:sim-x7}. 
 
-```{r kol-cdf,fig.asp=0.5, fig.height = 3,  fig.cap = "\\label{kol-cdf}Trace plot of search_geodesic and search_better on 1D projection problem for a noisy index: norm_kol. Search_geodesic has varely made progression while search_better has successfully found the informative "}
+
+
+```{r kol-cdf,fig.asp=0.5,fig.cap = "\\label{kol-cdf}One-D projection on \`boa5\` data with noisy index \`norm_kol\` optimised by \`search_geodesic\` and \`search_better\`. The grey dashed line represents the index value of the theoreical best basis. \`search_geodesic\` fails to optimse the noisy index while \`search_better\` has made reasonable improvments to reach the index value close to the one of theoretical best basis."}
 # set.seed(123456)
 # kol_1d_geo <- 
 #   animate_dist(boa5, tour_path = guided_tour(norm_kol(), d = 1,
@@ -710,12 +719,12 @@ bind_rows(kol_1d_geo, kol_1d_better) %>%
 
 The second experiment with the noisy index is to understand how the optimisers perform when there are multiple informative variables in the case of 1D projection. The dataset used is `boa6` with `x2` and `x7` being informative. The two possible theoretical best bases are [`r matrix(c(0, 1, 0, 0, 0, 0), nrow = 6)`] and [`r matrix(c(0, 0, 1, 0, 0, 0), nrow = 6)`] with index value `r index <- tourr::norm_kol(); proj <- as.matrix(boa6) %*% matrix(c(0, 1, 0, 0, 0, 0), nrow = 6); index(proj)` and `r index <- tourr::norm_kol(); proj <- as.matrix(boa6) %*% matrix(c(0, 0, 1, 0, 0, 0), nrow = 6); index(proj)` repectively and hence, the global maximum happens when variable `x7` is found.
 
-A simulation with 20 different seeds shows that `search_better` can find either one of the informative variable but there's no guarantee on which seed finds which variable. `search_better_random` manages to find the global maximum via a metropolis-hasting algorithm without being affected by the seed. To ensure the algorithm finish the search in a timely manner, it is necessary to set a reasonable initial temperature $t_0$ so that the probability of accepting an inferior basis is not too high.  Figure \ref{kol-pca-sim}, .... Figure \ref{kol-pca} shows the comparison, in terms of the trace plot and PCA plot, between `search_better_random` and two `search_better` algorithms where one finds `x2` and another finds `x7`.  The trace plot shows that the global maximum has been found by `search_better_random` and one `search_better`, but not the other. The PCA plot further illustrate how the two algorithms finds the global maximum: `search_better_random` travels along the top right corner on the projected 2D circle while the path of `search_better` is much shorter and only goes pass in between the two theoretical bases.
+A simulation with 20 different seeds shows that `search_better` can find either one of the informative variable but there's no guarantee on which seed finds which variable. `search_better_random` manages to find the global maximum via a metropolis-hasting algorithm without being affected by the seed. To ensure the algorithm finish the search in a timely manner, it is necessary to set a reasonable initial temperature $t_0$ so that the probability of accepting an inferior basis is not too high.  Figure \ref{pca-better-default}, .... Figure \ref{pca-better-random-default} shows the comparison, in terms of the trace plot and PCA plot, between `search_better_random` and two `search_better` algorithms where one finds `x2` and another finds `x7`.  The trace plot shows that the global maximum has been found by `search_better_random` and one `search_better`, but not the other. The PCA plot further illustrate how the two algorithms finds the global maximum: `search_better_random` travels along the top right corner on the projected 2D circle while the path of `search_better` is much shorter and only goes pass in between the two theoretical bases.
 
 (there's more things going on about both algorithms experimenting with different seeds.)
 
 
-```{r fig.height = 8}
+```{r pca-better-default, fig.height = 6, fig.cap="\\label{pca-better-default}One-D projection of \`norm_kol\` index on \`boa6\` data optimised by \`search_better\` with 20 randomly generated seeds. Each point represents a basis in the original 6D space, reduced into 2D by PCA. The grey points are random bases generated from 6-D hollow sphere and the two yellow points repsents the local maximum corresponds to basis when \`V2\` is found and the global maximum where \`V7\` is found. The points produced by the seraching algorithm is colored by whether the global or local maximum is found with the interpolated bases highlighted as a path and the final basis as an amplified point."}
 set.seed(123)
 seed <- sample.int(10000, 20)
 # kol_1d_2var_better_sim <- list()
@@ -762,9 +771,10 @@ all_summary <- best$basis %>%
   filter(abs(value) == max(abs(value))) %>% 
   arrange(IndexVal) %>% ungroup()
 
-pca <- all_tidy_better%>% 
+pca <- all_tidy_better %>% 
   mutate(seed = as.factor(seed)) %>% 
   left_join(all_summary %>% select(seed, VarFound, IndexVal), by = "seed") %>%
+  mutate(VarFound = fct_relevel(VarFound, c("V7", "V2"))) %>% 
   bind_theoretical(matrix = matrix(c(0, 1, 0, 0, 0, 0), nrow = 6),
                                         index = tourr::norm_kol(),
                                         raw_data = boa6) %>% 
@@ -793,7 +803,7 @@ pca$aug %>% filter(method != "randomly_generated"& info != "theoretical") %>%
 ```
 
 
-```{r fig.height = 8}
+```{r pca-better-random-default, fig.height = 6, fig.cap = "\\label{pca-better-random-default}One-D projection of \`norm_kol\` index on \`boa6\` data optimised by \`search_better_random\` with the same seeds. \`search_better_random\` has a probablistic acceptance implementation that would also a basis with lower index value. This design allows the optimiser to jump out of the local maximum and hence more incidents find the true global maximum. "}
 set.seed(123)
 seed <- sample.int(10000, 20)
 # kol_1d_2var_better_random_sim2 <- list()
@@ -843,6 +853,7 @@ all_summary <- best$basis %>%
 pca <- all_tidy %>% 
   mutate(seed = as.factor(seed)) %>% 
   left_join(all_summary %>% select(seed, VarFound, IndexVal), by = "seed") %>%
+  mutate(VarFound = fct_relevel(VarFound, c("V7", "V2"))) %>% 
   bind_theoretical(matrix = matrix(c(0, 1, 0, 0, 0, 0), nrow = 6),
                    index = tourr::norm_kol(),
                    raw_data = boa6) %>% 
@@ -869,9 +880,9 @@ pca$aug %>% filter(method != "randomly_generated"& info != "theoretical") %>%
   scale_color_botanical(palette = "fern") 
 ```
 
+there's more text here Figure \ref{pca-better-random-tuned}, Comparison between search_better_random and two different search_better. In the trace plot, the two dashed horizontal lines are the index values of the two theoretical bases. serach_better_random and one of the serach_better have found the global maximum but the other fails. The lower panel shows the PCA plot for each of the three algorithms. The two yellow dots, again, correspond to the theoretical bases with the one on the right being the global maximum. The paths of two search_better are relatively short and simple while the search_better_random has a more sophisticated path. This is due to the fact that the interpolation at each iteration are longer, which shows its ability to find new bases at a distance
 
-
-```{r fig.height= 8}
+```{r pca-better-random-tuned, fig.height= 6, fig.cap = "\\label{pca-better-random-tuned}One-D projection of \`norm_kol\` index on \`boa6\` data optimised by \`search_better_random\` with the same seeds. Further tuning of the parameter has been taken place to adjust the neighbourhood parameter \`alpha\` from 0.5 to 0.7. This time, all the 20 incidents have found the global maximum."}
 set.seed(123)
 seed <- sample.int(10000, 20)
 # kol_1d_2var_better_random_sim <- list()
@@ -938,7 +949,7 @@ pca <- all_tidy %>%
 random <- pca$aug %>% filter(method == "randomly_generated") %>% select(-seed)
 theoretical <- pca$aug %>% filter(info == "theoretical") %>% select(-seed)
 
-pca$aug %>% filter(method != "randomly_generated"& info != "theoretical") %>% 
+pca$aug %>% filter(method != "randomly_generated" & info != "theoretical") %>% 
   group_by(seed) %>% arrange(IndexVal) %>% 
   ggplot(aes(x = PC1, y = PC2, col = VarFound)) + 
   geom_point(data = random, col = "grey", size = 0.3) +
@@ -952,7 +963,7 @@ pca$aug %>% filter(method != "randomly_generated"& info != "theoretical") %>%
   scale_color_botanical(palette = "fern") 
 ```
 
-Comparison between search_better_random and two different search_better. In the trace plot, the two dashed horizontal lines are the index values of the two theoretical bases. serach_better_random and one of the serach_better have found the global maximum but the other fails. The lower panel shows the PCA plot for each of the three algorithms. The two yellow dots, again, correspond to the theoretical bases with the one on the right being the global maximum. The paths of two search_better are relatively short and simple while the search_better_random has a more sophisticated path. This is due to the fact that the interpolation at each iteration are longer, which shows its ability to find new bases at a distance
+
 
 
 # Implementation {#implementation}

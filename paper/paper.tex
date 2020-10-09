@@ -124,7 +124,7 @@ Guided tour chooses the planes produced by optimising the projection pursuit ind
 
 }
 
-\caption{\label{tour-path}An illustration of the tour path}\label{fig:tour-path}
+\caption{\label{tour-path}Each square (frame) represents the projected data with a corresponding basis. Blue frames have bases found by an optimisation algorithm iteratively whilst the white frames are constructed by geodesic interpolation between two blue frames.}\label{fig:tour-path}
 \end{figure}
 
 \hypertarget{tour-optim}{%
@@ -290,10 +290,6 @@ T^\prime & \mathbf{A}_{T^\prime} & I_{T^\prime} &S_{T^\prime}  & J+1 &  l_{J+1} 
 
 where \(T^{\prime} = T + k_{J}+ l_{J+1}\). Note that we deliberately denote the last round of search as \(j = J+1\) and in that round there is no output/interpolation basis and the algorithm terminates. This notation allows us to denote the last complete search-and-interpolate round as round \(J\) and hence the final basis is \(A_T\) and highest index value found is \(I_T\).
 
-\begin{figure}
-\includegraphics[width=1\linewidth,height=0.2\textheight]{/Users/hzha400/Documents/3.PhD/research/paper-tour-vis/figures/global_obj} \caption{\label{glb-obj}The data structure in projection pursuit guided tour.}\label{fig:glb-obj}
-\end{figure}
-
 It is worth noticing that the data structure constructed above meets the tidy data principle \citep{wickham2014tidy} that states
 
 \begin{enumerate}
@@ -324,7 +320,7 @@ Figure \ref{toy-search} presents a comparison between the two plotting options d
 \begin{figure}
 \centering
 \includegraphics{paper_files/figure-latex/toy-search-1.pdf}
-\caption{\label{fig:toy-search}\label{toy-search}A comparison of plotting the same search points with different plot designs. In the upper plot, points from the last three iterations span the vast majority of the plotting space leaving the first few iterations being squeezed together whilst the lower plot spaces each iteration evenly and presents summary information easy to read.}
+\caption{\label{fig:toy-search}\label{toy-search}A comparison of \texttt{search\_better} with different parameter value on \texttt{max\_tries}. A switch of geometry from points to boxplot happens when the count in the iteration excess 15 to avoid overplotting. With \texttt{max\_tries\ =\ 500} specification, the algorithm is working much harder towards to the end.}
 \end{figure}
 
 \hypertarget{examining-the-optimisation-progress}{%
@@ -335,7 +331,7 @@ Sometimes, we may be interested in exploring the points on the interpolation pat
 \begin{figure}
 \centering
 \includegraphics{paper_files/figure-latex/toy-interp-1.pdf}
-\caption{\label{fig:toy-interp}\label{toy-interp} This is a toy example of plotting interpolated points}
+\caption{\label{fig:toy-interp}\label{toy-interp} The resulting trace plot on the interpolated points has been ploted when using three different algorithms to optimise the index. The color represents the number of iteration. It can be observed that each algorithm differs in length in the optimisation and the curvature of the improvement for each algorithm also varies.}
 \end{figure}
 
 \hypertarget{understanding-the-optimisers-coverage-of-the-search-space}{%
@@ -408,7 +404,7 @@ We use the same dataset as the toy example above to explore the search function 
 \begin{figure}
 \centering
 \includegraphics{paper_files/figure-latex/interruption-1.pdf}
-\caption{\label{fig:interruption}\label{interruption}Trace plots of the interpolated basis with and without interruption. The interruption stops the interpolation when the index value starts to decrease at id = 60. The implementation of the interuption finds an ending basis with higher index value using fewer steps.}
+\caption{\label{fig:interruption}\label{interruption}A comparison of the trace plot with and without the interruption. When the interruption does not take place, the index value of the target basis can be smaller than the interpolated basis. The interruption forces the interpolation to finish at the interpolated basis with the highest index value in an iteration.}
 \end{figure}
 
 \hypertarget{close-but-not-close-enough}{%
@@ -434,7 +430,7 @@ Figure \ref{geo-polish} presents the final projections found before and after ap
 \begin{figure}
 \centering
 \includegraphics{paper_files/figure-latex/geo-polish-1.pdf}
-\caption{\label{fig:geo-polish}\label{geo-polish}Projected data before and after polishing. Weights on axis other than V2 and V7 have been further reduced and the edges of each cluster have become more obvious.}
+\caption{\label{fig:geo-polish}\label{geo-polish}Two-D projection on \texttt{boa6} data with holes index optimised by \texttt{search\_geodesic}. The left panel shows the final projected data before polish and the right panel shows the one after. The separation of the clusters on the y axis becomes sharper after the polish.}
 \end{figure}
 
 \hypertarget{seeing-the-signal-in-the-noise}{%
@@ -449,22 +445,34 @@ Figure \ref{kol-cdf} compares the tracing plot of two algorithms: \texttt{search
 \begin{figure}
 \centering
 \includegraphics{paper_files/figure-latex/kol-cdf-1.pdf}
-\caption{\label{fig:kol-cdf}\label{kol-cdf}Trace plot of search\_geodesic and search\_better on 1D projection problem for a noisy index: norm\_kol. Search\_geodesic has varely made progression while search\_better has successfully found the informative}
+\caption{\label{fig:kol-cdf}\label{kol-cdf}One-D projection on \texttt{boa5} data with noisy index \texttt{norm\_kol} optimised by \texttt{search\_geodesic} and \texttt{search\_better}. The grey dashed line represents the index value of the theoreical best basis. \texttt{search\_geodesic} fails to optimse the noisy index while \texttt{search\_better} has made reasonable improvments to reach the index value close to the one of theoretical best basis.}
 \end{figure}
 
 The second experiment with the noisy index is to understand how the optimisers perform when there are multiple informative variables in the case of 1D projection. The dataset used is \texttt{boa6} with \texttt{x2} and \texttt{x7} being informative. The two possible theoretical best bases are {[}0, 1, 0, 0, 0, 0{]} and {[}0, 0, 1, 0, 0, 0{]} with index value 0.182 and 0.235 repectively and hence, the global maximum happens when variable \texttt{x7} is found.
 
-A simulation with 20 different seeds shows that \texttt{search\_better} can find either one of the informative variable but there's no guarantee on which seed finds which variable. \texttt{search\_better\_random} manages to find the global maximum via a metropolis-hasting algorithm without being affected by the seed. To ensure the algorithm finish the search in a timely manner, it is necessary to set a reasonable initial temperature \(t_0\) so that the probability of accepting an inferior basis is not too high. Figure \ref{kol-pca-sim}, \ldots{}. Figure \ref{kol-pca} shows the comparison, in terms of the trace plot and PCA plot, between \texttt{search\_better\_random} and two \texttt{search\_better} algorithms where one finds \texttt{x2} and another finds \texttt{x7}. The trace plot shows that the global maximum has been found by \texttt{search\_better\_random} and one \texttt{search\_better}, but not the other. The PCA plot further illustrate how the two algorithms finds the global maximum: \texttt{search\_better\_random} travels along the top right corner on the projected 2D circle while the path of \texttt{search\_better} is much shorter and only goes pass in between the two theoretical bases.
+A simulation with 20 different seeds shows that \texttt{search\_better} can find either one of the informative variable but there's no guarantee on which seed finds which variable. \texttt{search\_better\_random} manages to find the global maximum via a metropolis-hasting algorithm without being affected by the seed. To ensure the algorithm finish the search in a timely manner, it is necessary to set a reasonable initial temperature \(t_0\) so that the probability of accepting an inferior basis is not too high. Figure \ref{pca-better-default}, \ldots{}. Figure \ref{pca-better-random-default} shows the comparison, in terms of the trace plot and PCA plot, between \texttt{search\_better\_random} and two \texttt{search\_better} algorithms where one finds \texttt{x2} and another finds \texttt{x7}. The trace plot shows that the global maximum has been found by \texttt{search\_better\_random} and one \texttt{search\_better}, but not the other. The PCA plot further illustrate how the two algorithms finds the global maximum: \texttt{search\_better\_random} travels along the top right corner on the projected 2D circle while the path of \texttt{search\_better} is much shorter and only goes pass in between the two theoretical bases.
 
 (there's more things going on about both algorithms experimenting with different seeds.)
 
-\includegraphics{paper_files/figure-latex/unnamed-chunk-2-1.pdf}
+\begin{figure}
+\centering
+\includegraphics{paper_files/figure-latex/pca-better-default-1.pdf}
+\caption{\label{fig:pca-better-default}\label{pca-better-default}One-D projection of \texttt{norm\_kol} index on \texttt{boa6} data optimised by \texttt{search\_better} with 20 randomly generated seeds. Each point represents a basis in the original 6D space, reduced into 2D by PCA. The grey points are random bases generated from 6-D hollow sphere and the two yellow points repsents the local maximum corresponds to basis when \texttt{V2} is found and the global maximum where \texttt{V7} is found. The points produced by the seraching algorithm is colored by whether the global or local maximum is found with the interpolated bases highlighted as a path and the final basis as an amplified point.}
+\end{figure}
 
-\includegraphics{paper_files/figure-latex/unnamed-chunk-3-1.pdf}
+\begin{figure}
+\centering
+\includegraphics{paper_files/figure-latex/pca-better-random-default-1.pdf}
+\caption{\label{fig:pca-better-random-default}\label{pca-better-random-default}One-D projection of \texttt{norm\_kol} index on \texttt{boa6} data optimised by \texttt{search\_better\_random} with the same seeds. \texttt{search\_better\_random} has a probablistic acceptance implementation that would also a basis with lower index value. This design allows the optimiser to jump out of the local maximum and hence more incidents find the true global maximum.}
+\end{figure}
 
-\includegraphics{paper_files/figure-latex/unnamed-chunk-4-1.pdf}
+there's more text here Figure \ref{pca-better-random-tuned}, Comparison between search\_better\_random and two different search\_better. In the trace plot, the two dashed horizontal lines are the index values of the two theoretical bases. serach\_better\_random and one of the serach\_better have found the global maximum but the other fails. The lower panel shows the PCA plot for each of the three algorithms. The two yellow dots, again, correspond to the theoretical bases with the one on the right being the global maximum. The paths of two search\_better are relatively short and simple while the search\_better\_random has a more sophisticated path. This is due to the fact that the interpolation at each iteration are longer, which shows its ability to find new bases at a distance
 
-Comparison between search\_better\_random and two different search\_better. In the trace plot, the two dashed horizontal lines are the index values of the two theoretical bases. serach\_better\_random and one of the serach\_better have found the global maximum but the other fails. The lower panel shows the PCA plot for each of the three algorithms. The two yellow dots, again, correspond to the theoretical bases with the one on the right being the global maximum. The paths of two search\_better are relatively short and simple while the search\_better\_random has a more sophisticated path. This is due to the fact that the interpolation at each iteration are longer, which shows its ability to find new bases at a distance
+\begin{figure}
+\centering
+\includegraphics{paper_files/figure-latex/pca-better-random-tuned-1.pdf}
+\caption{\label{fig:pca-better-random-tuned}\label{pca-better-random-tuned}One-D projection of \texttt{norm\_kol} index on \texttt{boa6} data optimised by \texttt{search\_better\_random} with the same seeds. Further tuning of the parameter has been taken place to adjust the neighbourhood parameter \texttt{alpha} from 0.5 to 0.7. This time, all the 20 incidents have found the global maximum.}
+\end{figure}
 
 \hypertarget{implementation}{%
 \section{Implementation}\label{implementation}}
