@@ -2,6 +2,7 @@
 library(ferrn)
 library(tidyverse)
 library(tourr)
+library(gganimate)
 library(patchwork)
 library(ggrepel)
 files <- paste0("data/", list.files(here::here("data")))
@@ -27,69 +28,77 @@ bind_rows(holes_2d_better_max_tries %>% mutate(group = "Algorithm 1"),
   scale_color_botanical(palette = "fern")
 
 ## ---- toy-pca
-bind_rows(holes_1d_geo, holes_1d_better) %>%
+pca <- bind_rows(holes_1d_geo, holes_1d_better) %>%
   bind_theoretical(matrix(c(0, 1, 0, 0, 0), nrow = 5),
                    index = tourr::holes(), raw_data = boa5) %>%
-  bind_theoretical(matrix(c(0, -1, 0, 0,0), nrow = 5),
-                   index = tourr::holes(), raw_data  = boa5)%>%
-  explore_space_pca(col = method)  +
+  compute_pca(group = method)
+pca$aug %>%
+  ggplot(aes(x = PC1, y = PC2)) +
+  geom_point(data = pca$aug %>% filter(info == "randomly_generated"), col = "grey", size = 0.1) +
+  #geom_path(data =  pca$aug %>% filter(info == "interpolation"), aes(col = method), size = 2) +
+  geom_point(data =  pca$aug %>% filter(info != "randomly_generated"), aes(col = method)) +
+  geom_point(data = pca$aug %>% filter(info == "theoretical"), aes(col = method), size = 10) +
+  geom_point(data = get_start(pca$aug), aes(col = method), size = 5) +
   scale_color_botanical(palette = "cherry") +
-  theme(legend.position = "bottom")
+  theme_void() +
+  theme(aspect.ratio = 1, legend.position =  "bottom")
 
 ## ----toy-pca-animated
-# ani <- bind_rows(holes_1d_geo, holes_1d_better) %>%
-#   bind_theoretical(matrix(c(0, 1, 0, 0, 0), nrow = 5),
-#                    index = tourr::holes(), raw_data = data) %>%
-#   bind_theoretical(matrix(c(0, -1, 0, 0,0), nrow = 5),
-#                    index = tourr::holes(), raw_data  = data)%>%
-#   explore_space_pca(col = method, animate = TRUE)  +
-#   scale_color_botanical(palette = "cherry")
+# ani <- pca$aug %>%
+#   ggplot(aes(x = PC1, y = PC2)) +
+#   geom_point(data = pca$aug %>% filter(info == "randomly_generated"), col = "grey", size = 0.5) +
+#   #geom_path(data =  pca$aug %>% filter(info == "interpolation"), aes(col = method), size = 2) +
+#   geom_point(data =  pca$aug %>% filter(info != "randomly_generated"), aes(col = method), size = 5) +
+#   geom_point(data = pca$aug %>% filter(info == "theoretical"), aes(col = method), size = 15) +
+#   geom_point(data = get_start(pca$aug), aes(col = method), size = 10) +
+#   scale_color_botanical(palette = "cherry") +
+#   theme_void() +
+#   theme(aspect.ratio = 1, legend.position =  "none",
+#         panel.border = element_rect(colour = "black", fill=NA, size=1)) +
+#   gganimate::transition_states(id) +
+#   gganimate::shadow_mark()
 #
 # animate(ani, nframes = 350, device = "png",
-#         renderer = file_renderer("figures/pca/",
+#         renderer = file_renderer("anim/pca/",
 #                                  prefix = "pca", overwrite = TRUE))
 
-frames <- c("0002", "0058", "0078", "0117", "0172", "0350")
+frames <- c("0002", "0058", "0078", "0133", "0172", "0350")
 ani <- paste0(here::here("anim/"), "pca/", "pca", frames, ".png")
 rl <- lapply(ani, png::readPNG)
 gl <-  lapply(rl, grid::rasterGrob)
 wrap_plots(gl)
 
 ## ----toy-tour
-set.seed(1)
-sphere <- geozoo::sphere.hollow(p = 5, n = 1000)$point
-path1 <- holes_1d_better$basis %>%
-  flatten_dbl() %>% matrix(ncol = 5, byrow = TRUE)
-path2 <- holes_1d_geo$basis %>%
-  flatten_dbl() %>% matrix(ncol = 5, byrow = TRUE)
-theoretical <- matrix(c(0, 1, 0, 0, 0,
-                        0, -1, 0, 0, 0), nrow = 2, byrow = TRUE)
-start <- get_start(holes_1d_better) %>% pull(basis) %>% .[[1]] %>% matrix(nrow = 1)
-dt <- rbind(sphere, path1, path2, theoretical, start)
-colnames(dt) <- c(map_chr(1:5, ~paste0("x", .x)))
-pal <- c("#D3D3D3",c("#524340",  #orchre
-                     "#B4B754",  # green
-                     "#F3B422" # yellow
-))
-color <- c(rep(pal[1], nrow(sphere)),
-           rep(pal[2], nrow(path1)),
-           rep(pal[3], nrow(path2)),
-           rep(pal[4], 2),
-           pal[2] # for start
-)
-cex <- c(rep(1, nrow(sphere)),
-         rep(1.5, nrow(path1)),
-         rep(1.5, nrow(path2)),
-         rep(5, 2),
-         5 # for start
-)
-
+# set.seed(1)
+# sphere <- geozoo::sphere.hollow(p = 5, n = 1000)$point
+# path1 <- holes_1d_better$basis %>%
+#   flatten_dbl() %>% matrix(ncol = 5, byrow = TRUE)
+# path2 <- holes_1d_geo$basis %>%
+#   flatten_dbl() %>% matrix(ncol = 5, byrow = TRUE) %>% -.
+# theoretical <- matrix(c(0, 1, 0, 0, 0), nrow = 1, byrow = TRUE)
+# start <- get_start(holes_1d_better) %>% pull(basis) %>% .[[1]] %>% matrix(nrow = 1)
+# dt <- rbind(sphere, path1, path2, theoretical, start, -start)
+# colnames(dt) <- c(map_chr(1:5, ~paste0("x", .x)))
+# pal <- c("#D3D3D3",c("#524340",  #orchre
+#                      "#B4B754",  # green
+#                      "#F3B422" # yellow
+# ))
+# color <- c(rep(pal[1], nrow(sphere)),
+#            rep(pal[2], nrow(path1)),
+#            rep(pal[3], nrow(path2)),
+#            rep(pal[4], 1), # theoretical
+#            pal[2], # for start
+#            pal[3] # for start
+# )
+# cex <- c(rep(1, nrow(sphere)),
+#          rep(3, nrow(path1)),
+#          rep(3, nrow(path2)),
+#          10, # theoretical
+#          rep(5, 2) # for start
+# )
 #
-# bind_rows(holes_1d_geo, holes_1d_better) %>%
-#   explore_space_tour(color = method)
-#animate_xy(dt, col = color, cex = cex, tour_path = grand_tour()) # trial
-
-
+# animate_xy(dt, col = color, cex = cex, tour_path = grand_tour()) # trial
+#
 # set.seed(123)
 # render(
 #   dt,
@@ -97,11 +106,11 @@ cex <- c(rep(1, nrow(sphere)),
 #   dev = "png",
 #   display = display_xy(col=color,cex = cex, axes = "bottomleft"),
 #   rescale = FALSE,
-#   frames = 500,
-#   here::here("figures","tour", "tour%03d.png")
+#   frames = 150,
+#   here::here("anim","tour", "tour%03d.png")
 # )
 
-frames <- c("001", "143", "078", "117", "172", "350")
+frames <- c("001", "020", "078", "117", "123", "143")
 ani <- paste0(here::here("anim/"), "tour/", "tour", frames, ".png")
 rl <- lapply(ani, png::readPNG)
 gl <-  lapply(rl, grid::rasterGrob)

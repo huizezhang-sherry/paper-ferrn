@@ -31,7 +31,7 @@ editor_options:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE,
                       root.dir = here::here(), fig.path = here::here("figs/"), 
-                      fig.align = 'center')
+                      fig.align = 'center', cache = TRUE, cache.path = 'cache/')
 ```
 
 ```{r external, include = FALSE, cache = FALSE}
@@ -424,10 +424,10 @@ Figure \@ref(fig:toy-pca) shows the first two principal components of two search
 
 ## Animating the diagnostic plots
 
-```{r toy-pca-aniamted, fig.cap = "(ref:toy-pca-aniamted)"}
+```{r toy-pca-animated, fig.cap = "(ref:toy-pca-animated)"}
 ```
 
-(ref:toy-pca-aniamted) A selected number of frames from the animated PCA plot. With animation, it is easier to track the progrssion from the start to finish in each algorithm.
+(ref:toy-pca-animated) A selected number of frames from the animated PCA plot. With animation, it is easier to track the progrssion from the start to finish in each algorithm.
 
 Animating the plots introduced above is useful, especially in the case of PCA polot since it shows the bases found by the optimiser in its natural order. In Figure \@ref(fig:toy-pca-animated), There should actually be more writing here to and also the this examples may need to be changed. 
 
@@ -441,7 +441,7 @@ Animating the plots introduced above is useful, especially in the case of PCA po
 
 Viewing the bases on the reduced space via PCA shed some lights on the space the optimisers have explored, the visualisation on the original $p \times d$ dimension enables a stereoscopic view of the search. To view a high dimensional ($d \ge 3$) object on a screen, an approach is to play the rotation of the object in animation. This can be done via a regular grand tour or a slice tour [@laa2020slice], which emphasizes the points that are close to a section of the sphere.
 
-Compare to the PCA plot, the animated rotation (tour) display, in Figure \ref{toy-tour}, gives a more holistic view of the search of the optimiser and these additional information gained from the animation is cruicial. This is because in essense, PCA presents one reduced space that maximises the variance and it inherently amplifies the spread of the randomly evaluated bases in the search since they have larger variance than the bases on the interpolation path. Hence when the interest is to view the interpolation path in the space, an animated rotation display provides the view of high dimension from different angles.
+Compare to the PCA plot, the animated rotation (tour) display, in Figure \@ref(fig:toy-tour), gives a more holistic view of the search of the optimiser and these additional information gained from the animation is cruicial. This is because in essense, PCA presents one reduced space that maximises the variance and it inherently amplifies the spread of the randomly evaluated bases in the search since they have larger variance than the bases on the interpolation path. Hence when the interest is to view the interpolation path in the space, an animated rotation display provides the view of high dimension from different angles.
 
 # Diagnosing an optimiser {#application}
 

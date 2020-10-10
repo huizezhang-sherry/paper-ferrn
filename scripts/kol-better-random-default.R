@@ -68,7 +68,7 @@ pca$aug %>% filter(method != "randomly_generated"& info != "theoretical") %>%
   geom_point(aes(col = VarFound), alpha = 0.05) +
   geom_point(data = theoretical, size = 5, col = botanical_palettes$cherry[3]) +
   geom_path(data = pca$aug %>% filter(info == "interpolation"), size = 2) +
-  geom_point(data = pca$aug %>% get_best(group = seed), size = 5) +
+  geom_point(data = pca$aug %>% get_best(group = seed) %>% filter(method != "theoretical"), size = 5) +
   facet_wrap(vars(fct_reorder(seed, IndexVal))) +
   theme_void() +
   theme(aspect.ratio = 1, legend.position = "bottom") +
