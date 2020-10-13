@@ -71,8 +71,19 @@ wrap_plots(gl)
 #   animate_dist(boa5, tour_path = guided_tour(norm_kol(), d = 1,
 #                                              search_f =  search_better, max.tries = 100),
 #                rescale = FALSE, verbose = TRUE)
+#
+# last <- get_best(kol_1d_better)$basis %>% .[[1]]
+#
+# set.seed(123456)
+# kol_1d_better_polish <-
+#   animate_dist(boa5, tour_path = guided_tour(norm_kol(), d = 1,
+#                                              search_f =  search_polish, max.tries = 100),
+#                rescale = FALSE, verbose = TRUE, start = last)
+#
+#
 # save(kol_1d_geo, file = here::here("data", "kol_1d_geo.rda"))
 # save(kol_1d_better, file = here::here("data", "kol_1d_better.rda"))
+# save(kol_1d_better_polish, file = here::here("data", "kol_1d_better_polish.rda"))
 
 index <- tourr::norm_kol()
 theo_best_index_val <- index(as.matrix(boa5) %*% matrix(c(0, 1, 0, 0, 0), nrow = 5, ncol = 1))

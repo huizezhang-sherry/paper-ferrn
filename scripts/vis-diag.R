@@ -25,7 +25,8 @@ bind_rows(holes_2d_better_max_tries %>% mutate(group = "Algorithm 1"),
                                       "Algorithm 3"))) %>%
   explore_trace_interp(group = group) +
   theme(legend.position = "none") +
-  scale_color_botanical(palette = "fern")
+  scale_color_botanical(palette = "fern") +
+  facet_wrap(vars(group), ncol = 3, scales = "free_x")
 
 ## ---- toy-pca
 pca <- bind_rows(holes_1d_geo, holes_1d_better) %>%
