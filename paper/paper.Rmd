@@ -65,17 +65,17 @@ Finally, Section \ref{implementation} describes the R package: ferrn, that imple
 
 # Optimisation Methods {#optim}
 
-Given an optimisation problem, two broad approaches find the optimum based on different thinking and hence have its own strength and deficits.
-An analytical approach aims to find the optimal solution in a finite number of steps, but the closed-form solution may not be available when the problem starts to become complex. 
-An iterative approach, on the other hand, finds the optimum based on the idea of making progressive improvement to the current solution and researchers can decide when to stop if a desirable accuracy has been achieved. However, a potential issue is that it may end up finding a local optimum. In this paper, the main focus is on a particular iterative method:  *line search method* [@fletcher2013practical]. In a simple one-dimensional problem of finding the $x$ that minimises $f(x)$, line search conducts its search via an iterative up as in Equation \ref{eq:line-search}.
+For a given problem we might rely on numeric methods to find the optimal solution, since an analytical approach, requiring a closed-form solution, is often not possible for complex problems.
+An iterative approach finds the optimum by progressively improving the current solution. Researchers can then decide when to stop if a desirable accuracy has been achieved. One potential issue with this technique is that it may end up finding a local optimum.
+
+In this paper, the main focus is on the  *line search method* [@fletcher2013practical]. In a simple one-dimensional problem, finding the value of $x$ that minimises the function $f(x)$, the line search takes iterative steps as in Equation \ref{eq:line-search},
 
 \begin{equation}
-x^{(j + 1)} = x^{(j)} + \alpha_k* d^{(j)}
+x^{(j + 1)} = x^{(j)} + \alpha_k* d^{(j)},
 \label{eq:line-search}
 \end{equation}
 
-where $d^{(j)}$ is the searching direction in iteration $j$, and $\alpha_j$ is the step-size. Theoretical results have demonstrated the global convergence of the algorithm when $\alpha_k$ is chosen by minimising  $f(x^{(j)} + \alpha* d^{(j)})$ [@curry1944method]. However, in practice, this is rarely implemented due to its computational demanding or sometimes the existence of such a minimisation[@fletcher2013practical]. A modified approach is to impose a mandatory decrease in the objective function for each iteration: $f^{(j+1)}> f^{(j)}$ and this approach turns out to be efficient in practical problems despite the lost of guarantee on global convergence. 
-
+where $d^{(j)}$ is the searching direction in iteration $j$, and $\alpha_j$ is the step-size. Theoretical results have demonstrated the global convergence of the algorithm when the step-size $\alpha_k$ is chosen by minimising  $f(x^{(j)} + \alpha* d^{(j)})$ [@curry1944method]. This is however rarely implemented in practice, either because of the high computational demand or because the solution does not exist [@fletcher2013practical]. A modified approach, in the case of maximisation, is to impose a mandatory increase in the objective function for each iteration: $f^{(j+1)}> f^{(j)}$. Similarly, for  minimisation we would require a decrease in function value at each step. This approach turns out to be efficient in practical problems, but global convergence cannot be guaranteed in this case. 
 
 # Projection pursuit guided tour {#tour}
 
