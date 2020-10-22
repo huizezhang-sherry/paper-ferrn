@@ -41,8 +41,8 @@
   \title{\bf Visual diagnostics for constrained optimisation with application to guided tours}
 
   \author{
-        Author 1 \thanks{The authors gratefully acknowledge \ldots{}} \\
-    Department of YYY, University of XXX\\
+        H.Sherry Zhang \thanks{The authors gratefully acknowledge \ldots{}} \\
+    Department of Econometrics and Business Statistics, Monash University\\
      and \\     Author 2 \\
     Department of ZZZ, University of WWW\\
       }
@@ -62,11 +62,11 @@
 
 \bigskip
 \begin{abstract}
-Friedman \& Tukey commented on their initial paper on projection pursuit in 1974 that ``the technique used for maximising the projection index strongly influences both the statistical and the computational aspects of the procedure.'' While many projection pursuit indices have been proposed in the literature, few concerns the optimisation procedures. In this paper, we illustrates the diagnostics of optimisers for projection pursuit guided tour via the construction of a data object and producing diagnostic plots. These diagnostics workflow can be applied generally on optimisers to assess its performance. An R package, ferrn, has been created to implement the diagnostics.
+Projection pursuit searches for interesting low-dimensional views of high-dimensional data via the optimisation of an index function. The initial paper by Friedman \& Tukey in 1974 stated that ``the technique used for maximising the projection index strongly influences both the statistical and the computational aspects of the procedure.'' However, while many projection pursuit indices have been proposed in the literature, less work has been done on the optimisation procedures. In this paper we introduce visual diagnostics for optimisation algorithms, in particular those available in the projection pursuit guided tour. These diagnostics and workflows can be applied to a broad class of optimisers, to assess their performance. An R package, ferrn, has been created to implement the diagnostics.
 \end{abstract}
 
 \noindent%
-{\it Keywords:} optimisation, projection pursuit, guided tourr, visual, diagnostics, R
+{\it Keywords:} optimisation, projection pursuit, guided tour, visualisation, diagnostics, R
 \vfill
 
 \newpage
@@ -75,46 +75,52 @@ Friedman \& Tukey commented on their initial paper on projection pursuit in 1974
 \hypertarget{introduction}{%
 \section{Introduction}\label{introduction}}
 
-Visualisation has been widely used in exploratory data analysis. Presenting information in a graphical format often allows people to see information they would otherwise not see. This motivates our work of creating plots to diagnose optimisation algorithms with the aim to understand and compare features of different algorithms.
+Visualisation is widely used in exploratory data analysis. Presenting information in a graphical format often allows people to uncover information they would otherwise not be aware of. This motivates our work of creating plots to diagnose optimisation algorithms: we aim to understand and compare the behaviour of different algorithms.
 
-In an optimization problem the goal is to find the best solution within the space of all feasible solutions, which typically is represented by a set of constraints. The problem consists in optimizing an objective function \(f: S \rightarrow \mathbb{R}\) with \(S \in \mathbb{R}^n\) in a reduced space given by the problem constraints to either minimize or maximize a function.
+The goal of optimisation is to find the best solution within the space of all feasible solutions, typically represented by a set of constraints. The problem can be formulated as the maximisation (or minimisation) of an objective function \(f: S \rightarrow \mathbb{R}\), with \(S \in \mathbb{R}^n\), in a reduced space given by the problem constraints on \(f\).
 
-The problem context of the optimisation that has been worked in this paper is projection pursuit guided tour, which are exploratory data analysis tools that detect interesting structure of high dimensional data through projection on low dimensional space. Optimisation is applied here to search for the low dimensional space that finds the most interesting projection.
+The focus of this paper is on optimisation in the projection pursuit guided tour, which is an exploratory data analysis tool that detects interesting structure in high-dimensional data visible in low-dimensional projections. The target of the optimisation is thus to identify the most interesting low-dimensional view, given by a corresponding projection matrix.
 
 The remainder of the paper is organised as follows.
-Section \ref{optim} provides a literature review of optimisation methods, specifically the line search methods.
-Section \ref{tour} reviews projection pursuit guided tour, forms the optimisation problem and its features, and introduces three main existing algorithms.
-Section \ref{vis-diag} presents new visual diagnostics designs. Data object is first defined to pinned down the data structure, several diagnostic plots are then defined with sample examples given.
-Section \ref{application} shows the application of how the diagnostic plots designed previously can be used to understand and compare different algorithms and how they contribute to modifications that improve the algorithms.
-Finally, Section \ref{implementation} describes the R package: ferrn, that implements all the visual diagnostics above.
+Section \ref{optim} provides an overview of optimisation methods, specifically line search methods.
+Section \ref{tour} reviews projection pursuit guided tour, defines the optimisation problem and introduces three existing algorithms.
+Section \ref{vis-diag} presents the new visual diagnostics. A data structure is defined to capture information during the optimisation, and used in different types of diagnostic plots.
+Section \ref{application} shows applications of how these plots can be used to understand and compare different algorithms. We also discuss how these insights contribute to modifications that improve the algorithms.
+Finally, Section \ref{implementation} describes the R package: ferrn, that implements the visual diagnostics.
 
 \hypertarget{optim}{%
 \section{Optimisation Methods}\label{optim}}
 
-Given an optimisation problem, two broad approaches find the optimum based on different thinking and hence have its own strength and deficits.
-An analytical approach aims to find the optimal solution in a finite number of steps, but the closed-form solution may not be available when the problem starts to become complex.
-An iterative approach, on the other hand, finds the optimum based on the idea of making progressive improvement to the current solution and researchers can decide when to stop if a desirable accuracy has been achieved. However, a potential issue is that it may end up finding a local optimum. In this paper, the main focus is on a particular iterative method: \emph{line search method} \citep{fletcher2013practical}. In a simple one-dimensional problem of finding the \(x\) that minimises \(f(x)\), line search conducts its search via an iterative up as in Equation \ref{eq:line-search}.
+For a given problem we might rely on numeric methods to find the optimal solution, since an analytical approach, requiring a closed-form solution, is often not possible for complex problems.
+An iterative approach finds the optimum by progressively improving the current solution. Researchers can then decide when to stop if a desirable accuracy has been achieved. One potential issue with this technique is that it may end up finding a local optimum.
+
+In this paper, the main focus is on the \emph{line search method} \citep{fletcher2013practical}. In a simple one-dimensional problem, finding the value of \(x\) that minimises the function \(f(x)\), the line search takes iterative steps as in Equation \ref{eq:line-search},
 
 \begin{equation}
-x^{(j + 1)} = x^{(j)} + \alpha_k* d^{(j)}
+x^{(j + 1)} = x^{(j)} + \alpha_k* d^{(j)},
 \label{eq:line-search}
 \end{equation}
 
-where \(d^{(j)}\) is the searching direction in iteration \(j\), and \(\alpha_j\) is the step-size. Theoretical results have demonstrated the global convergence of the algorithm when \(\alpha_k\) is chosen by minimising \(f(x^{(j)} + \alpha* d^{(j)})\) \citep{curry1944method}. However, in practice, this is rarely implemented due to its computational demanding or sometimes the existence of such a minimisation\citep{fletcher2013practical}. A modified approach is to impose a mandatory decrease in the objective function for each iteration: \(f^{(j+1)}> f^{(j)}\) and this approach turns out to be efficient in practical problems despite the lost of guarantee on global convergence.
+where \(d^{(j)}\) is the searching direction in iteration \(j\), and \(\alpha_j\) is the step-size. Theoretical results have demonstrated the global convergence of the algorithm when the step-size \(\alpha_k\) is chosen by minimising \(f(x^{(j)} + \alpha* d^{(j)})\) \citep{curry1944method}. This is however rarely implemented in practice, either because of the high computational demand or because the solution does not exist \citep{fletcher2013practical}. A modified approach, in the case of maximisation, is to impose a mandatory increase in the objective function for each iteration: \(f^{(j+1)}> f^{(j)}\). Similarly, for minimisation we would require a decrease in function value at each step. This approach turns out to be efficient in practical problems, but global convergence cannot be guaranteed in this case.
+
+Modern development of line search methods focuses on improving the computation of the searching direction \(d^{(j)}\), and on approximations of the step size \(\alpha_j\), catering for practical optimisation problems. Here we focus on optimisation methods used with the projection pursuit guided tour described in the next section.
 
 \hypertarget{tour}{%
 \section{Projection pursuit guided tour}\label{tour}}
 
-Modern development of the line search methods focuses on proposing different computation on the searching direction: \(d^{(j)}\) and various approximations on the step size: \(\alpha_j\) catered for practical optimisation problems. The specific problem context discussed in this paper is projection pursuit guided tour.
-Projection pursuit and guided tour are two separate methods in exploratory data analysis focusing on different aspects: Projection pursuit, coined by \citet{friedman1974projection}, detects interesting structures (i.e.~clustering, outliers and skewness) in multivariate data via low dimensions projection whilst guided tour is one particular variation in a broader class of data visualisation method, tour.
+The projection pursuit guided tour combines two different methods in exploratory data analysis, focusing on different aspects. Projection pursuit, coined by \citet{friedman1974projection}, detects interesting structures (e.g.~clustering, outliers and skewness) in multivariate data via low dimensions projection. The guided tour is using ideas from projection pursuit to define a particular variation in a broader class of data visualisation methods, building on the grand tour approach \citep{As85}.
 
-Let \(\mathbf{X}_{n \times p}\) be the data matrix, an n-d projection can be seen as a linear transformation \(T: \mathbb{R}^p \mapsto \mathbb{R}^d\) defined by \(\mathbf{Y} = \mathbf{X} \cdot \mathbf{A}\), where \(\mathbf{Y}_{n \times d}\) is the projected data and \(\mathbf{A}_{p\times d}\) is the projection basis. Define \(f: \mathbb{R}^{n \times d} \mapsto \mathbb{R}\) to be an index function that maps the projection basis \(\mathbf{A}\) onto an index value \(I\), this function is commonly known as the projection pursuit index (PPI) function, or the index function and is used to measure the ``interestingness'' of a projection. A number of index functions have been proposed in the literature to detect different data structures, including Legendre index \citep{friedman1974projection}, Hermite index \citep{hall1989polynomial}, natural Hermite index \citep{cook1993projection}, chi-square index \citep{posse1995projection}, LDA index \citep{lee2005projection} and PDA index \citep{lee2010projection}.
+To define projection pursuit, we first need to establish the notation used. Let \(\mathbf{X}_{n \times p}\) be the data matrix, with \(n\) observations in \(p\) dimensions. A d-dimensional projection can be seen as a linear transformation \(T: \mathbb{R}^p \mapsto \mathbb{R}^d\), and defined as \(\mathbf{Y} = \mathbf{X} \cdot \mathbf{A}\), where \(\mathbf{Y}_{n \times d}\) is the projected data and \(\mathbf{A}_{p\times d}\) is the projection matrix. Define \(f: \mathbb{R}^{n \times d} \mapsto \mathbb{R}\) to be an index function that maps the projected data \(\mathbf{Y}\) (corresponding to an associated projection matrix \(\mathbf{A}\)) onto an index value \(I\). This is commonly known as the projection pursuit index function, or just index function, and is used to measure the ``interestingness'' of a projection.
 
-As a general visualisation method, A tour produces animated visualisation of the high dimensional data via rotating low dimension planes. Different tours choose the low dimensional planes differently, for example, a grand tour\citep{cook2008grand} selects the planes randomly in the high dimensional space and manual tour\citep{cook1997manual} chooses a sequence of bases that gradually phase in and out one variable to view the contribution of that variable in the visualisation. Guided tour, the main interest of this paper, chooses its projection with the aid of projection pursuit. Given a random start, projection pursuit iteratively finds bases with higher index value and guided tour constructs geodesic interpolation between two consecutive to form a tour path. Mathematical details of the geodesic interpolation can be found in \citet{buja2005computational}. Figure \ref{fig:tour-path} shows a sketch of the tour path consisting of the blue frames produced by the projection pursuit optimisation algorithm iteratively and the white frames, the interpolations between two blue frames. The tour method has been implemented in the \texttt{tourr} package in R, available on the Comprehensive R Archive Network at \url{https://cran.r-project.org/web/packages/tourr/} \citep{wickham2011tourrpackage}.
+A number of index functions have been proposed in the literature to detect different data structures, including Legendre index \citep{friedman1974projection}, Hermite index \citep{hall1989polynomial}, natural Hermite index \citep{cook1993projection}, chi-square index \citep{posse1995projection}, LDA index \citep{lee2005projection} and PDA index \citep{lee2010projection}.
+
+As a general visualisation method, a tour produces animations of high dimensional data via rotations between low dimension planes. Different tour types choose these planes differently, for example, a grand tour\citep{cook2008grand} selects the planes randomly and a manual tour\citep{cook1997manual} gradually phases in and out one variable, to understand the contribution of that variable in the projection. Guided tour, the main interest of this paper, chooses planes with the aid of projection pursuit. Given a random start, projection pursuit iteratively finds bases with higher index values and the guided tour constructs the geodesic interpolation between these planes to form a tour path.
+
+Mathematical details of the geodesic interpolation can be found in \citet{buja2005computational}. Figure \ref{fig:tour-path} shows a sketch of the tour path. The blue frames are produced by the projection pursuit optimisation algorithm, and the white frames interpolate between them. The tour method has been implemented in the \texttt{tourr} package in R, available on the Comprehensive R Archive Network at \url{https://cran.r-project.org/web/packages/tourr/} \citep{wickham2011tourrpackage}.
 
 \begin{figure}
 
-{\centering \includegraphics[width=0.6\linewidth,height=0.3\textheight]{/Users/hzha400/Documents/3.PhD/research/paper-tour-vis/img/tour_path} 
+{\centering \includegraphics[width=0.6\linewidth,height=0.3\textheight]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/img/tour_path} 
 
 }
 
@@ -301,7 +307,7 @@ Figure \ref{fig:toy-search} shows a sample of the plot constructed using \texttt
 
 \begin{figure}
 
-{\centering \includegraphics{/Users/hzha400/Documents/3.PhD/research/paper-tour-vis/figs/toy-search-1} 
+{\centering \includegraphics{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/toy-search-1} 
 
 }
 
@@ -315,7 +321,7 @@ Figure \ref{fig:toy-search} shows a sample of the plot constructed using \texttt
 
 \begin{figure}
 
-{\centering \includegraphics{/Users/hzha400/Documents/3.PhD/research/paper-tour-vis/figs/toy-interp-1} 
+{\centering \includegraphics{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/toy-interp-1} 
 
 }
 
@@ -331,7 +337,7 @@ Points on the interpolation path are another interest in tour since the projecti
 
 \begin{figure}
 
-{\centering \includegraphics{/Users/hzha400/Documents/3.PhD/research/paper-tour-vis/figs/toy-pca-1} 
+{\centering \includegraphics{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/toy-pca-1} 
 
 }
 
@@ -349,7 +355,7 @@ Figure \ref{fig:toy-pca} plots the first two principal components of two search 
 
 \begin{figure}
 
-{\centering \includegraphics{/Users/hzha400/Documents/3.PhD/research/paper-tour-vis/figs/toy-pca-animated-1} 
+{\centering \includegraphics{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/toy-pca-animated-1} 
 
 }
 
@@ -365,7 +371,7 @@ Animated plots can be informative in diagnostics, especially in the case of PCA 
 
 \begin{figure}
 
-{\centering \includegraphics{/Users/hzha400/Documents/3.PhD/research/paper-tour-vis/figs/toy-tour-1} 
+{\centering \includegraphics{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/toy-tour-1} 
 
 }
 
@@ -408,7 +414,7 @@ In section \ref{toy-interp}, an interpolation with increase-then-decrease patter
 
 \begin{figure}
 
-{\centering \includegraphics{/Users/hzha400/Documents/3.PhD/research/paper-tour-vis/figs/interruption-1} 
+{\centering \includegraphics{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/interruption-1} 
 
 }
 
@@ -422,7 +428,7 @@ In section \ref{toy-interp}, an interpolation with increase-then-decrease patter
 
 \begin{figure}
 
-{\centering \includegraphics{/Users/hzha400/Documents/3.PhD/research/paper-tour-vis/figs/polish-1} 
+{\centering \includegraphics{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/polish-1} 
 
 }
 
@@ -453,7 +459,7 @@ Figure \ref{fig:polish} presents the final projections found before and after ap
 
 \begin{figure}
 
-{\centering \includegraphics{/Users/hzha400/Documents/3.PhD/research/paper-tour-vis/figs/noisy-better-geo-1} 
+{\centering \includegraphics{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/noisy-better-geo-1} 
 
 }
 
@@ -470,7 +476,7 @@ Figure \ref{fig:noisy-better-geo} compares the tracing plot of two optimisers: \
 
 \begin{figure}
 
-{\centering \includegraphics{/Users/hzha400/Documents/3.PhD/research/paper-tour-vis/figs/kol-better-1} 
+{\centering \includegraphics{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/kol-better-1} 
 
 }
 
@@ -481,7 +487,7 @@ Figure \ref{fig:noisy-better-geo} compares the tracing plot of two optimisers: \
 
 \begin{figure}
 
-{\centering \includegraphics{/Users/hzha400/Documents/3.PhD/research/paper-tour-vis/figs/kol-random-1} 
+{\centering \includegraphics{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/kol-random-1} 
 
 }
 
@@ -492,7 +498,7 @@ Figure \ref{fig:noisy-better-geo} compares the tracing plot of two optimisers: \
 
 \begin{figure}
 
-{\centering \includegraphics{/Users/hzha400/Documents/3.PhD/research/paper-tour-vis/figs/kol-random-tuned-1} 
+{\centering \includegraphics{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/kol-random-tuned-1} 
 
 }
 

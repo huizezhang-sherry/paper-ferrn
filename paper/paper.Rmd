@@ -3,16 +3,16 @@ title: "Visual diagnostics for constrained optimisation with application to guid
 blinded: 0
 authors: 
   
-- name: Author 1
+- name: H.Sherry Zhang
   thanks: The authors gratefully acknowledge ...
-  affiliation: Department of YYY, University of XXX
+  affiliation: Department of Econometrics and Business Statistics, Monash University 
 - name: Author 2
   affiliation: Department of ZZZ, University of WWW
 keywords:
 - optimisation
 - projection pursuit 
-- guided tourr
-- visual 
+- guided tour
+- visualisation
 - diagnostics 
 - R
 abstract: Projection pursuit searches for interesting low-dimensional views of high-dimensional data via the optimisation of an index function. The initial paper by Friedman & Tukey in 1974 stated that  "the  technique  used  for  maximising  the  projection index strongly influences both the statistical and the computational aspects of the procedure." However, while many projection pursuit indices have been proposed in the literature, less work has been done on the optimisation procedures. In this paper we introduce visual diagnostics for optimisation algorithms, in particular those available in the projection pursuit guided tour. These diagnostics and workflows can be applied to a broad class of optimisers, to assess their performance. An R package, ferrn, has been created to implement the diagnostics.
