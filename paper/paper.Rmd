@@ -20,6 +20,7 @@ bibliography: biblio.bib
 preamble: >
   \usepackage{amssymb, amsmath, mathtools, dsfont, bbm, array, booktabs}
   \usepackage[ruled,vlined, linesnumbered]{algorithm2e}
+  \usepackage{todonotes}
 output:
   bookdown::pdf_book:
     base_format: rticles::asa_article
@@ -49,11 +50,15 @@ read_chunk(here::here('scripts/implementation.R'))
 
 # Introduction
 
-Visualisation is widely used in exploratory data analysis. Presenting information in a graphical format often allows people to uncover information they would otherwise not be aware of. This motivates our work of creating plots to diagnose optimisation algorithms: we aim to understand and compare the behaviour of different algorithms. 
+Visualisation is widely used in exploratory data analysis. Presenting information in a graphical format often allows people to uncover information they would otherwise not be aware of and provides a more comprehensive understanding of the problem at hand. The work presented in this paper is at the intersection of data visualization and optimization methods and aims to bring visualization tools into optimization problems to assist practitioners to better understand the performance of their optimization methods in practice. This motivates our work of creating plots to diagnose optimisation algorithms which in turn can be also used not only to understand optimization performance but also to understand and compare the behaviour of different algorithms \todo[inline]{(THERE ARE TWO THINGS HERE --> VISUAL METHODS + THE IMPLEMENTATION OF FINE TUNNING METHODS RIGHT ?}.
+\todo[inline, color = green]{Add intro to fine tunning methods here too to set the scene}
+The goal of continuous optimisation is to find the best solution within the space of all feasible solutions where typically the best solution is decided by an objective function. Broadly speaking optimization can be unconstrained or constrained. The unconstrained problem can be formulated as a minimization (or maximization)  problem such as 
+$min_{x} f(x)$ where $f:\mathbb{R}^n \rightarrow \mathbb{R}$ is an objective function with  certain properties defined in $f\in L^p$ . In this case typically solutions rely on gradient descent or ascent methods.  While in the constrained problem additional restrictions  are introduced via a set of functions that can be convex or non-convex $g_i:\mathbb{R}^n \rightarrow \mathbb{R}$ for $i = 1, \ldots k$ and hence the optimization problem in this case can be written as
+$min_{x} f(x)$ *subject to* $g_i(x) \leq 0$. Here methods such as Langrange multipliers and convex optimization methods includig linear and quadratic programming can be used.
+<!-- $f: S \rightarrow \mathbb{R}$, with $S \in \mathbb{R}^n$, in a reduced space given by the problem constraints on $f$.  -->
 
-The goal of optimisation is to find the best solution within the space of all feasible solutions, typically represented by a set of constraints. The problem can be formulated as the maximisation (or minimisation) of an objective function $f: S \rightarrow \mathbb{R}$, with $S \in \mathbb{R}^n$, in a reduced space given by the problem constraints on $f$. 
-
-The focus of this paper is on optimisation in the projection pursuit guided tour, which is an exploratory data analysis tool that detects interesting structure in high-dimensional data visible in low-dimensional projections. The target of the optimisation is thus to identify the most interesting low-dimensional view, given by a corresponding projection matrix.
+The motivation of this paper is the optimisation problem arising in the projection pursuit guided tour (REF) which is an exploratory data analysis tool that is defined to detect *interesting structures* or features  in high-dimensional data through a set of lower-dimensional projections that cover the entire high dimensional space using interpolation methods called tours (REF). The target of the optimisation is thus to identify the most interesting low-dimensional views of the data given by a corresponding projection matrix. The most interesting structures are formally defined by a function of projections, called index function which is optimized to uncover the most reveling structures in a high dimensional space. \todo[inline]{CHALLENGES here that can also be set as general optimization challenges. However this depends on the sucess of index optimization, right?}
+However, the optimization challenges encounter inthe projection pursuit guided tour problem are not unique to this context and therefore the visualization tools and optimization methods presented in this paper can be easily apply to any other optimization problems.
 
 The remainder of the paper is organised as follows. 
 Section \ref{optim} provides an overview of optimisation methods, specifically line search methods. 
@@ -65,19 +70,38 @@ Finally, Section \ref{implementation} describes the R package: ferrn, that imple
 
 # Optimisation Methods {#optim}
 
+
 For a given problem we might rely on numerical methods to find the optimal solution, since an analytical approach, requiring a closed-form solution, is often not possible for complex problems.
 An iterative approach finds the optimum by progressively improving the current solution. Researchers can then decide when to stop if a desirable accuracy has been achieved. One potential issue with this technique is that it may end up finding a local optimum.
 
-In this paper, the main focus is on the  *line search method* [@fletcher2013practical]. In a simple one-dimensional problem, finding the value of $x$ that minimises the function $f(x)$, the line search takes iterative steps as in Equation \ref{eq:line-search},
+Optimization problems are present in many areas of study and even though in some cases, analytical solutions can be found, the majority of optimization problems rely on numerical methods to find the optimal solution to a problem. In optimization, numerical methods follow interative approaches that aims at finding the optimum by progressively improving the current solution until a desirable accurary is achieved. 
 
-\begin{equation}
-x^{(j + 1)} = x^{(j)} + \alpha_k* d^{(j)},
-\label{eq:line-search}
-\end{equation}
 
-where $d^{(j)}$ is the searching direction in iteration $j$, and $\alpha_j$ is the step-size. Theoretical results have demonstrated the global convergence of the algorithm when the step-size $\alpha_k$ is chosen by minimising  $f(x^{(j)} + \alpha* d^{(j)})$ [@curry1944method]. This is however rarely implemented in practice, either because of the high computational demand or because the solution does not exist [@fletcher2013practical]. A modified approach, in the case of maximisation, is to impose a mandatory increase in the objective function for each iteration: $f^{(j+1)}> f^{(j)}$. Similarly, for  minimisation we would require a decrease in function value at each step. This approach turns out to be efficient in practical problems, but global convergence cannot be guaranteed in this case. 
+In this paper we focus on unconstrained optimization as defined in section XX and assume that it is not possible an analytical solution in closed form. That is, our problem consists of finding the mininum of function $f \in L^p$ in the unconstrained $\mathbb{R}$ space.  In this scenario, gradient descent methods have taken the stage for many decades. In gradient descent methods the goal is to find the mininum, and the way to do so, is by taken steps  proportional to the negative gradient of the function at the evaluation point $x_{k+1} = x_k -\alpha_kS_k$ where $\alpha_k$ is the step size or the learning rate. The step size is the key in the sucess of the optimization problem here as inadequate step 
+sizes might lead to a failure in convergence. In order to solve this problem line minimization or line search methods are proposed (REF) where the step size is chosen in such a way that convergence is ensured. In line search methods users are required to provide an initial estimate $x_{1}$ and then for each iteration a search direction is stablished $S_k$ then the objective is to find 
+the value of $\alpha_k \in \mathbb{R}$ that minimizes $f(x_k + \alpha_kS_k)$ with respect to $\alpha_k$ (this step is called the line sear). Then move on to the next pont following $x_{k+1} = x_k + \nu_kS_k$
+\todo[inline]{lconnection with derivative free methods}
+ **From Fletcher's book next paragraph --> clean up** Theoretical results have demonstrated the global convergence of the algorithm when the step-size $\alpha_k$ is chosen by minimising  $f(x^{(j)} + \alpha* d^{(j)})$ [@curry1944method]. This is however rarely implemented in practice, either because of the high computational demand or because the solution does not exist [@fletcher2013practical]. A modified approach, in the case of maximisation, is to impose a mandatory increase in the objective function for each iteration: $f^{(j+1)}> f^{(j)}$. Similarly, for  minimisation we would require a decrease in function value at each step. This approach turns out to be efficient in practical problems, but global convergence cannot be guaranteed in this case. 
 
-Modern development of line search methods focuses on improving the computation of the searching direction $d^{(j)}$, and on approximations of the step size $\alpha_j$, catering for practical optimisation problems. Here we focus on optimisation methods used with the projection pursuit guided tour described in the next section.
+Modern development of line search methods focuses on improving the computation of the searching direction $S_{(j)}$, and on approximations of the step size $\alpha_j$, catering for practical optimisation problems. Here we focus on optimisation methods used with the projection pursuit guided tour described in the next section.
+
+\todo[inline, color = pink]{Question for Sherry --> which implementaion is your search better? search better random? and search geodesic?}
+
+\todo[inline]{line search--> search better,  search geodesic}
+
+<!-- For a given problem we might rely on numeric methods to find the optimal solution, since an analytical approach, requiring a closed-form solution, is often not possible for complex problems. -->
+<!-- An iterative approach finds the optimum by progressively improving the current solution. Researchers can then decide when to stop if a desirable accuracy has been achieved. One potential issue with this technique is that it may end up finding a local optimum. -->
+
+<!-- In this paper, the main focus is on the  *line search method* [@fletcher2013practical]. In a simple one-dimensional problem, finding the value of $x$ that minimises the function $f(x)$, the line search takes iterative steps as in Equation \ref{eq:line-search}, -->
+
+<!-- \begin{equation} -->
+<!-- x^{(j + 1)} = x^{(j)} + \alpha_k* d^{(j)}, -->
+<!-- \label{eq:line-search} -->
+<!-- \end{equation} -->
+
+<!-- where $d^{(j)}$ is the searching direction in iteration $j$, and $\alpha_j$ is the step-size. Theoretical results have demonstrated the global convergence of the algorithm when the step-size $\alpha_k$ is chosen by minimising  $f(x^{(j)} + \alpha* d^{(j)})$ [@curry1944method]. This is however rarely implemented in practice, either because of the high computational demand or because the solution does not exist [@fletcher2013practical]. A modified approach, in the case of maximisation, is to impose a mandatory increase in the objective function for each iteration: $f^{(j+1)}> f^{(j)}$. Similarly, for  minimisation we would require a decrease in function value at each step. This approach turns out to be efficient in practical problems, but global convergence cannot be guaranteed in this case.  -->
+
+<!-- Modern development of line search methods focuses on improving the computation of the searching direction $d^{(j)}$, and on approximations of the step size $\alpha_j$, catering for practical optimisation problems. Here we focus on optimisation methods used with the projection pursuit guided tour described in the next section. -->
 
 # Projection pursuit guided tour {#tour}
 
