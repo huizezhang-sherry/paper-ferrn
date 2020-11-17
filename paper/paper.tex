@@ -107,7 +107,7 @@ clean up** Theoretical results have --\textgreater{}
 
 The projection pursuit guided tour combines two different methods in exploratory data analysis, focusing on different aspects. Projection pursuit, coined by \citet{friedman1974projection}, detects interesting structures (e.g.~clustering, outliers and skewness) in multivariate data via low dimensions projection. The guided tour is using ideas from projection pursuit to define a particular variation in a broader class of data visualisation methods, building on the grand tour approach \citep{As85}.
 
-To define projection pursuit, we first need to establish the notation used. Let \(\mathbf{X}_{n \times p}\) be the data matrix, with \(n\) observations in \(p\) dimensions. A d-dimensional projection can be seen as a linear transformation from \(\mathbb{R}^p\) into \(\mathbb{R}^d\), and defined as \(\mathbf{Y} = \mathbf{X} \cdot \mathbf{A}\), where \(\mathbf{Y}_{n \times d}\) is the projected data and \(\mathbf{A}_{p\times d}\) is the projection matrix. Define \(f: \mathbb{R}^{n \times d} \mapsto \mathbb{R}\) to be an index function that maps the projected data \(\mathbf{Y}\) (corresponding to an associated projection matrix \(\mathbf{A}\)) onto an index value \(I\). This is commonly known as the projection pursuit index function, or just index function, and is used to measure the ``interestingness'' of a projection.
+To define projection pursuit, we first need to establish the notation used. Let \(\mathbf{X}_{n \times p}\) be the data matrix, with \(n\) observations in \(p\) dimensions. A d-dimensional projection can be seen as a linear transformation from \(\mathbb{R}^p\) into \(\mathbb{R}^d\), and defined as \(\mathbf{Y} = \mathbf{X} \cdot \mathbf{A}\), where \(\mathbf{Y}_{n \times d}\) is the projected data and \(\mathbf{A}_{p\times d}\) is the projection matrix. Define \(f: \mathbb{R}^{n \times d} \mapsto \mathbb{R}\) to be an index function that maps the projected data \(\mathbf{Y}\) (corresponding to an associated projection matrix \(\mathbf{A}\)) onto an index value \(I\) (QUESTION: Isn't f the index function?). This is commonly known as the projection pursuit index function, or just index function, and is used to measure the ``interestingness'' of a given projection.
 
 A number of index functions have been proposed in the literature to detect different data structures, including Legendre index \citep{friedman1974projection}, Hermite index \citep{hall1989polynomial}, natural Hermite index \citep{cook1993projection}, chi-square index \citep{posse1995projection}, LDA index \citep{lee2005projection} and PDA index \citep{lee2010projection}.
 
@@ -129,7 +129,9 @@ Mathematical details of the geodesic interpolation can be found in \citet{buja20
 \hypertarget{tour-optim}{%
 \subsection{Optimisation in the tour}\label{tour-optim}}
 
-The optimisation problem is stated as follows. Given a randomly generated starting basis \(\mathbf{A}_1\), projection pursuit finds the final projection basis \(\mathbf{A}_T\) that satisfies the following optimisation problem:
+The optimisation problem in the tour context is stated as follows:
+\ldots.
+.Given a randomly generated starting basis \(\mathbf{A}_1\), projection pursuit finds the final projection basis \(\mathbf{A}_T\) that satisfies the following optimisation problem:
 
 \begin{align}
 &\arg \max_{\mathbf{A} \in \mathcal{A}} f(\mathbf{X} \cdot \mathbf{A}) \\
