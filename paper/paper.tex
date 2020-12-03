@@ -83,7 +83,7 @@ The goal of continuous optimisation is to find the best solution within the spac
 
 The motivation of this paper is the optimisation problem arising in the projection pursuit guided tour (\citet{buja2005computational}) which is an exploratory data analysis tool that is defined to detect \emph{interesting structures} or features in high-dimensional data through a set of lower-dimensional projections that cover the entire high dimensional space using interpolation methods called tours (cook2008grand). The target of the optimisation is to identify the most \emph{interesting} low-dimensional views of the data given by a corresponding projection matrix. The most \emph{interesting} structures are formally defined by a function of projections, called index function which is optimized to uncover the most reveling structures in a high dimensional space (\citet{cook1993projection}).
 
-The optimization challenges encounter in the projection pursuit guided tour problem are common to those of optimization in general. Examples of those include the existence of multiple maxima (local and global), the trade off between computational burden and proximity to the maxima, dealing with noisy objective functions that might be non smooth and non diferentiable (\citet{jones1998efficient}). Those are not unique to this context and therefore the visualization tools and optimization methods presented in this paper can be easily apply to any other optimization problems.
+The optimization challenges encountered in the projection pursuit guided tour problem are common to those of optimization in general. Examples of those include the existence of multiple maxima (local and global), the trade off between computational burden and proximity to the maxima, dealing with noisy objective functions that might be non smooth and non diferentiable (\citet{jones1998efficient}). Those are not unique to this context and therefore the visualization tools and optimization methods presented in this paper can be easily apply to any other optimization problems.
 
 The remainder of the paper is organised as follows.
 Section \ref{optim} provides an overview of optimisation methods, specifically line search methods.
@@ -95,12 +95,46 @@ Finally, Section \ref{implementation} describes the R package: ferrn, that imple
 \hypertarget{optim}{%
 \section{Optimisation Methods}\label{optim}}
 
-Optimization problems are ubiquitous in many areas of study. While in some cases, analytical solutions can be found, the majority of problems rely on numerical methods to find the optimal solution to a problem. These numerical methods follow interactive approaches that aim at finding the optimum by progressively improving the current solution until a desirable accuracy is achieved. Although that principle seems uncomplicated, optimization methods need to deal with many challenges such as the existence of multiple maxima (local and global), the trade off between desirable accuracy and computational burden, as well as dealing with noisy objective functions. In addition, optimization results might depend on the algorithm starting values affecting the consistency of results.
+Optimization problems are ubiquitous in many areas of study. While in some cases, analytical solutions can be found, the majority of problems rely on numerical methods to find the optimal solution. These numerical methods follow interactive approaches that aim at finding the optimum by progressively improving the current solution until a desirable accuracy is achieved. Although that principle seems uncomplicated, optimization methods need to deal with many challenges such as the existence of multiple maxima (local and global), the trade off between desirable accuracy and computational burden, as well as dealing with noisy objective functions. In addition, optimization results might depend on the algorithm starting values affecting the consistency of results.
 
-In this paper we focus on unconstrained optimization as defined in the introduction section and assume that it is not possible to find a solution in closed form. That is, our problem consists of finding the minimum of a function \(f \in L^p\) in the unconstrained \(\mathbb{R}\) space. In this scenario, gradient descent methods have taken the stage for many decades now. In gradient descent methods the goal is to find the minimum of an objective function, and the way to do so, is by taken steps proportional to the negative gradient of the function at the evaluation point, that is \(x_{k+1} = x_k -\alpha_kS_k\) where \(\alpha_k\) is the step size or the learning rate (\citet{fletcher2013practical}). The step size is the key in the success of the optimization problem as inadequate step sizes might lead to a failure in convergence. These methods are known to be relative slow and can have convergence issues when problems are poorly conditioned (\citet{trefethen1997numerical}). In order to solve some of those problems, line minimization or line search methods were proposed (\citet{shi2004convergence}) where the step size is chosen in such a way that convergence is ensured. In line search methods users are required to provide an initial estimate \(x_{1}\), a search direction \(S_k\) for each iteration where the objective is to find the value of \(\alpha_k \in \mathbb{R}\) that minimizes \(f(x_k + \alpha_kS_k)\) with respect to \(\alpha_k\) (this step is called the line search). Then move on to the next point following \(x_{k+1} = x_k + \alpha_kS_k\) and repeat the process until the desire convergence is reached.
-Modern development of line search methods focuses on improving the computation of the searching direction \(S_{(k)}\), and on approximations of the step size \(\alpha_k\), catering for practical optimisation problems. Here we focus on line search methods for the optimisation used in the projection pursuit guided tour described in the next section.
+Furthermore, optimization methods can be divided in various classes (REF). In this paper, we focused on methods that rely on the objective function derivatives known as gradient methods, and those which are known as derivative free methods where optimization does not rely on the gradient or derivatives information.
 
-clean up** Theoretical results have --\textgreater{}
+Our interest is on constrained optimization as defined in the introduction section and assume that it is not possible to find a solution to the problem in the way of a closed form solution. That is, the problem consists of finding the minimum or maximum of a function \(f \in L^p\) in the constrained \(\mathbb{A}\) space. In this scenario, gradient descent or gradient ascent methods) have taken the stage for many decades and rely in the usage of the objective function derivatives.
+
+In gradient descent methods the goal is to find the minimum of an objective function while in gradient ascent methods the interest is in the maximum. The minimum is searched for by taken steps proportional to the negative gradient or of the function at the evaluation point (analogously positive gradient for gradient ascent methods), that is \(x_{k+1} = x_k -\alpha_kS_k\) where \(\alpha_k\) is the step size or the learning rate (\citet{fletcher2013practical}). The step size is the key in the success of the optimization problem as inadequate step sizes might lead to a failure in convergence. These methods are known to be relative slow and can have convergence issues when problems are poorly conditioned (\citet{trefethen1997numerical}). In order to solve some of those problems, line minimization or line search methods were proposed (\citet{shi2004convergence}) where the step size is chosen in such a way that convergence is ensured. In line search methods users are required to provide an initial estimate \(x_{1}\), a search direction \(S_k\) for each iteration where the objective is to find the value of \(\alpha_k \in \mathbb{R}\) that minimizes \(f(x_k + \alpha_kS_k)\) with respect to \(\alpha_k\) (this step is called the line search). Then move on to the next point following \(x_{k+1} = x_k + \alpha_kS_k\) and repeat the process until the desire convergence is reached.
+Modern development of line search methods focuses on improving the computation of the searching direction \(S_{(k)}\), and on approximations of the step size \(\alpha_k\), catering for practical optimisation problems. In the next section two line search methods for the optimisation used in the projection pursuit guided tour will be presented.
+
+\textbf{Gradient descent/ascent}
+
+\begin{itemize}
+\tightlist
+\item
+  Objective function
+\item
+  Gradient of the objective function
+\item
+  A search direction
+\item
+  Step length --\textgreater{} line search methods ()
+\item
+  R available packages
+\end{itemize}
+
+Although gradient optimization methods are very popular, they rely on the existence of the objective function derivatives and the properties of the searching space. However, the assumption of having a sufficiently smooth objective function where derivatives exist, it is not adequate for all optimization problems. In addition, even in the case where derivatives exists sometimes the searching space is such that their computation is not feasible or it is computationally too expensive. Because of that, the second big class of optimization problems look at derivative free methods where the emphasis is in finding, in most cases, a near optimal solution.
+
+\textbf{Derivative free methods}
+
+\begin{itemize}
+\tightlist
+\item
+  Do not rely on derivatives of the objective function
+\item
+  Near optimal solutions
+\item
+  R packages?
+\item
+  polish?
+\end{itemize}
 
 \hypertarget{tour}{%
 \section{Projection pursuit guided tour}\label{tour}}
@@ -117,7 +151,7 @@ Mathematical details of the geodesic interpolation can be found in \citet{buja20
 
 \begin{figure}
 
-{\centering \includegraphics[width=0.6\linewidth,height=0.3\textheight]{/Users/dicook/students_PhD/Sherry/paper-tour-vis/img/tour_path} 
+{\centering \includegraphics[width=0.6\linewidth,height=0.3\textheight]{/Users/pmen0008/Desktop/paper-tour-vis/img/tour_path} 
 
 }
 
@@ -306,7 +340,7 @@ Figure \ref{fig:toy-search} shows a sample of the plot constructed using \texttt
 
 \begin{figure}
 
-{\centering \includegraphics{/Users/dicook/students_PhD/Sherry/paper-tour-vis/figs/toy-search-1} 
+{\centering \includegraphics{/Users/pmen0008/Desktop/paper-tour-vis/figs/toy-search-1} 
 
 }
 
@@ -320,7 +354,7 @@ Figure \ref{fig:toy-search} shows a sample of the plot constructed using \texttt
 
 \begin{figure}
 
-{\centering \includegraphics{/Users/dicook/students_PhD/Sherry/paper-tour-vis/figs/toy-interp-1} 
+{\centering \includegraphics{/Users/pmen0008/Desktop/paper-tour-vis/figs/toy-interp-1} 
 
 }
 
@@ -336,7 +370,7 @@ Points on the interpolation path are another interest in tour since the projecti
 
 \begin{figure}
 
-{\centering \includegraphics{/Users/dicook/students_PhD/Sherry/paper-tour-vis/figs/toy-pca-1} 
+{\centering \includegraphics{/Users/pmen0008/Desktop/paper-tour-vis/figs/toy-pca-1} 
 
 }
 
@@ -354,7 +388,7 @@ Figure \ref{fig:toy-pca} plots the first two principal components of two search 
 
 \begin{figure}
 
-{\centering \includegraphics{/Users/dicook/students_PhD/Sherry/paper-tour-vis/figs/toy-pca-animated-1} 
+{\centering \includegraphics{/Users/pmen0008/Desktop/paper-tour-vis/figs/toy-pca-animated-1} 
 
 }
 
@@ -370,7 +404,7 @@ Animated plots can be informative in diagnostics, especially in the case of PCA 
 
 \begin{figure}
 
-{\centering \includegraphics{/Users/dicook/students_PhD/Sherry/paper-tour-vis/figs/toy-tour-1} 
+{\centering \includegraphics{/Users/pmen0008/Desktop/paper-tour-vis/figs/toy-tour-1} 
 
 }
 
@@ -413,7 +447,7 @@ In section \ref{toy-interp}, an interpolation with increase-then-decrease patter
 
 \begin{figure}
 
-{\centering \includegraphics{/Users/dicook/students_PhD/Sherry/paper-tour-vis/figs/interruption-1} 
+{\centering \includegraphics{/Users/pmen0008/Desktop/paper-tour-vis/figs/interruption-1} 
 
 }
 
@@ -427,7 +461,7 @@ In section \ref{toy-interp}, an interpolation with increase-then-decrease patter
 
 \begin{figure}
 
-{\centering \includegraphics{/Users/dicook/students_PhD/Sherry/paper-tour-vis/figs/polish-1} 
+{\centering \includegraphics{/Users/pmen0008/Desktop/paper-tour-vis/figs/polish-1} 
 
 }
 
@@ -458,7 +492,7 @@ Figure \ref{fig:polish} presents the final projections found before and after ap
 
 \begin{figure}
 
-{\centering \includegraphics{/Users/dicook/students_PhD/Sherry/paper-tour-vis/figs/noisy-better-geo-1} 
+{\centering \includegraphics{/Users/pmen0008/Desktop/paper-tour-vis/figs/noisy-better-geo-1} 
 
 }
 
@@ -475,7 +509,7 @@ Figure \ref{fig:noisy-better-geo} compares the tracing plot of two optimisers: \
 
 \begin{figure}
 
-{\centering \includegraphics{/Users/dicook/students_PhD/Sherry/paper-tour-vis/figs/kol-better-1} 
+{\centering \includegraphics{/Users/pmen0008/Desktop/paper-tour-vis/figs/kol-better-1} 
 
 }
 
@@ -486,7 +520,7 @@ Figure \ref{fig:noisy-better-geo} compares the tracing plot of two optimisers: \
 
 \begin{figure}
 
-{\centering \includegraphics{/Users/dicook/students_PhD/Sherry/paper-tour-vis/figs/kol-random-1} 
+{\centering \includegraphics{/Users/pmen0008/Desktop/paper-tour-vis/figs/kol-random-1} 
 
 }
 
@@ -497,7 +531,7 @@ Figure \ref{fig:noisy-better-geo} compares the tracing plot of two optimisers: \
 
 \begin{figure}
 
-{\centering \includegraphics{/Users/dicook/students_PhD/Sherry/paper-tour-vis/figs/kol-random-tuned-1} 
+{\centering \includegraphics{/Users/pmen0008/Desktop/paper-tour-vis/figs/kol-random-tuned-1} 
 
 }
 
