@@ -9,24 +9,36 @@ files <- paste0("data/", list.files(here::here("data")))
 purrr::walk(.x = files, ~load(here::here(.x), env = globalenv()))
 
 ## ---- toy-search
-bind_rows(holes_2d_better_max_tries %>% mutate(max_tries = 500),
-          holes_2d_better %>% mutate(max_tries = 25)) %>%
-  explore_trace_search(group = max_tries) +
-  scale_color_botanical(palette = "daisy") +
-  facet_wrap(vars(max_tries),labeller = "label_both", ncol = 2) +
-  xlab("iteration")
+p1 <- holes_2d_better_max_tries %>%
+  mutate(max_tries = 500) %>%
+  explore_trace_search() +
+  scale_color_botanical(palette = "daisy")
+
+p2 <- holes_2d_better %>%
+  mutate(max_tries = 25) %>%
+  explore_trace_search() +
+  scale_color_botanical(palette = "daisy")
+
+p1 | p2
 
 ## ---- toy-interp
-bind_rows(holes_2d_better_max_tries %>% mutate(group = "Algorithm 1"),
-          interrupt_no %>% mutate(group = "Algorithm 2"),
-          holes_2d_better_random %>% mutate(group = "Algorithm 3")) %>%
-  mutate(group = fct_relevel(group, c("Algorithm 1",
-                                      "Algorithm 2",
-                                      "Algorithm 3"))) %>%
-  explore_trace_interp(group = group) +
-  theme(legend.position = "none") +
-  scale_color_botanical(palette = "fern") +
-  facet_wrap(vars(group), ncol = 3, scales = "free_x")
+p1 <- holes_2d_better_max_tries %>%
+  mutate(group = "Algorithm 1") %>%
+  explore_trace_interp() +
+  scale_color_botanical(palette = "fern", discrete = FALSE)
+
+# p2 <- interrupt_no %>%
+#   mutate(group = "Algorithm 2") %>%
+#   explore_trace_interp() +
+#   scale_color_botanical(palette = "fern", discrete = FALSE)
+
+p3 <- holes_2d_better_random %>%
+  mutate(group = "Algorithm 3") %>%
+  explore_trace_interp() +
+  scale_color_botanical(palette = "fern", discrete = FALSE)
+
+# p1 | p2 | p3
+p1 | p3
 
 ## ---- toy-pca
 pca <- bind_rows(holes_1d_geo, holes_1d_better) %>%

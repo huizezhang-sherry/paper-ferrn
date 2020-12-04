@@ -35,10 +35,10 @@ sim_pca <- function(clean_up){
 
   pca <- clean_up %>%
     bind_theoretical(matrix = matrix(c(0, 1, 0, 0, 0, 0), nrow = 6),
-                     index = tourr::norm_kol(),
+                     index = tourr::norm_kol(nrow(boa6)),
                      raw_data = boa6) %>%
     bind_theoretical(matrix = matrix(c(0, 0, 1, 0, 0, 0), nrow = 6),
-                     index = tourr::norm_kol(),
+                     index = tourr::norm_kol(nrow(boa6)),
                      raw_data = boa6) %>%
     mutate(group_id = paste0(sim, seed)) %>%
     compute_pca(group = group_id) %>%

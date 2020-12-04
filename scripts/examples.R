@@ -10,7 +10,7 @@ p1 <- interrupt_no %>% mutate(id = row_number() - 1) %>% explore_trace_interp() 
 p2 <- interrupt_yes %>% explore_trace_interp() + ggtitle("with interruption") + ylim(0.8, 0.9) + xlim(0, 80) +
   theme(legend.position = "none")
 
-(p1 | p2) & scale_color_botanical(palette = "fern")
+#(p1 | p2) & scale_color_botanical(palette = "fern")
 
 ## ----polish
 # set.seed(123456)
@@ -85,12 +85,18 @@ wrap_plots(gl)
 # save(kol_1d_better, file = here::here("data", "kol_1d_better.rda"))
 # save(kol_1d_better_polish, file = here::here("data", "kol_1d_better_polish.rda"))
 
-index <- tourr::norm_kol()
+index <- tourr::norm_kol(nrow(boa5))
 theo_best_index_val <- index(as.matrix(boa5) %*% matrix(c(0, 1, 0, 0, 0), nrow = 5, ncol = 1))
 
-bind_rows(kol_1d_geo, kol_1d_better) %>%
-  explore_trace_interp(col = method, group = method) +
-  facet_wrap(vars(method), ncol = 2) +
+
+p1 <- kol_1d_geo %>%
+  explore_trace_interp() +
   geom_hline(yintercept = theo_best_index_val, alpha = 0.5, linetype = 2) +
-  scale_color_botanical() +
-  theme(legend.position = "none", aspect.ratio = 1)
+  scale_color_botanical(discrete = FALSE)
+
+p2 <- kol_1d_better %>%
+  explore_trace_interp() +
+  geom_hline(yintercept = theo_best_index_val, alpha = 0.5, linetype = 2) +
+  scale_color_botanical(discrete = FALSE)
+
+p1 | p2

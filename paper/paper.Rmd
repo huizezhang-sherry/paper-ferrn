@@ -1,13 +1,12 @@
 ---
 title: "Visual diagnostics for constrained optimisation with application to guided tours"
 blinded: 0
-authors: 
-  
-- name: H.Sherry Zhang
-  thanks: The authors gratefully acknowledge ...
-  affiliation: Department of Econometrics and Business Statistics, Monash University 
-- name: Author 2
-  affiliation: Department of ZZZ, University of WWW
+author:
+  - name: H.Sherry Zhang
+    affiliation: Department of Econometrics and Business Statistics, Monash University 
+    email:  Huize.Zhang@monash.edu
+abstract: >
+  Projection pursuit searches for interesting low-dimensional views of high-dimensional data via the optimisation of an index function. The initial paper by Friedman & Tukey in 1974 stated that  "the  technique  used  for  maximising  the  projection index strongly influences both the statistical and the computational aspects of the procedure." However, while many projection pursuit indices have been proposed in the literature, less work has been done on the optimisation procedures. In this paper we introduce visual diagnostics for optimisation algorithms, in particular those available in the projection pursuit guided tour. These diagnostics and workflows can be applied to a broad class of optimisers, to assess their performance. An R package, ferrn, has been created to implement the diagnostics.
 keywords:
 - optimisation
 - projection pursuit 
@@ -15,24 +14,24 @@ keywords:
 - visualisation
 - diagnostics 
 - R
-abstract: Projection pursuit searches for interesting low-dimensional views of high-dimensional data via the optimisation of an index function. The initial paper by Friedman & Tukey in 1974 stated that  "the  technique  used  for  maximising  the  projection index strongly influences both the statistical and the computational aspects of the procedure." However, while many projection pursuit indices have been proposed in the literature, less work has been done on the optimisation procedures. In this paper we introduce visual diagnostics for optimisation algorithms, in particular those available in the projection pursuit guided tour. These diagnostics and workflows can be applied to a broad class of optimisers, to assess their performance. An R package, ferrn, has been created to implement the diagnostics.
-bibliography: biblio.bib
 preamble: >
   \usepackage{amssymb, amsmath, mathtools, dsfont, bbm, array, booktabs}
   \usepackage[ruled,vlined, linesnumbered]{algorithm2e}
   \usepackage{todonotes}
 output:
   bookdown::pdf_book:
-    base_format: rticles::asa_article
+    base_format: rticles::rjournal_article
     fig_height: 3
 editor_options: 
   chunk_output_type: console
+
+
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE,
                       root.dir = here::here(), fig.path = here::here("figs/"), 
-                      fig.align = 'center')
+                      fig.align = 'center', cache = TRUE)
 ```
 
 ```{r external, include = FALSE, cache = FALSE}
@@ -312,13 +311,10 @@ The construction of diagnostic plots uses the concept of grammar of graphics [@w
 
 A primary interest of diagnosing an optimiser is to study how it progressively finds its optimum. Directly plotting the index value across its natural order will cause the graph to be disproportional to the iteration since it usually takes longer for an optimiser to find a better basis towards the end. Another option is to use summarisation for each iteration. Boxplot is a suitable candidate that can provide five points summary of each iteration. Other additional information not presented in the  boxplot can then be added with new layers, for example text information on the number of points can be added at the bottom of each iteration and the position of basis returned by projection pursuit can be highlighted in point. Further, an option to switch between displaying points and boxplot geometry is helpful when the number of observation is small in one iteration and this is achieved via a `cutoff` parameter. 
 
-Figure \@ref(fig:toy-search) shows a sample of the plot constructed using `search_better` with different values of the parameter `max_tries`. Comparing the returned index value of each iteration shows that the termination at `max_tries = 25` is not sufficient for `search_better` to explore the parameter space and a value of 500 is preferred over 25 in this context.
+Figure \ref{fig:toy-search} shows a sample of the plot constructed using `search_better` with different values of the parameter `max_tries`. Comparing the returned index value of each iteration shows that the termination at `max_tries = 25` is not sufficient for `search_better` to explore the parameter space and a value of 500 is preferred over 25 in this context.
 
-```{r toy-search, fig.cap = "(ref:toy-search)"}
+```{r toy-search, fig.cap="\\label{fig:toy-search} A comparison of search\\_better with different values of the parameter max\\_tries. A six-variable dataset boa6 is used with holes index on a 2D problem. max\\_tries = 500 allows the optimiser to find better basis with higher index value at iteration six."}
 ```
-
-(ref:toy-search) A comparison of `search_better` with different values of the parameter `max_tries`. A six-variable dataset `boa6` is used with `holes` index on a 2D problem. `max_tries = 500` allows the optimiser to find better basis with higher index value at iteration six.
-
 
 ## Examining the optimisation progress {#toy-interp}
 
@@ -327,7 +323,7 @@ Figure \@ref(fig:toy-search) shows a sample of the plot constructed using `searc
 
 (ref:toy-interp) The resulting trace plot on the interpolated points has been plotted when using three different algorithms to optimise the index. The color represents the number of iteration. It can be observed that each algorithm differs in length in the optimisation and the curvature of the improvement for each algorithm also varies.
 
-Points on the interpolation path are another interest in tour since the projection on these bases will be played by the tour animation. Figure \@ref(fig:toy-interp) presents the interpolation of three different tour paths each with different curvature. The leftmost plot shows an interpolation where the index value increases progressively and monotonically. The middle path has an increase-then-decrease pattern in the last two iterations and the rightmost path shows even a decrease in the index value at iteration three. The middle situation can be avoid via a construction of the interruption, which will be detailed in section \ref{monotonic} and the rightmost case is a deliberate construction of `search_better_random` where an inferior basis can be accepted with some probability so as to avoid being trapped in a local maximum.
+Points on the interpolation path are another interest in tour since the projection on these bases will be played by the tour animation. Figure \ref{fig:toy-interp} presents the interpolation of three different tour paths each with different curvature. The leftmost plot shows an interpolation where the index value increases progressively and monotonically. The middle path has an increase-then-decrease pattern in the last two iterations and the rightmost path shows even a decrease in the index value at iteration three. The middle situation can be avoid via a construction of the interruption, which will be detailed in section \ref{monotonic} and the rightmost case is a deliberate construction of `search_better_random` where an inferior basis can be accepted with some probability so as to avoid being trapped in a local maximum.
 
 ## Understanding the optimiser's coverage of the search space
 
@@ -414,8 +410,8 @@ Figure \@ref(fig:polish) presents the final projections found before and after a
 ## Seeing the signal in the noise 
 
 
-```{r noisy-better-geo,fig.asp=0.5,fig.cap = "(ref:noisy-better-geo)"}
-```
+<!-- ```{r noisy-better-geo,fig.asp=0.5,fig.cap = "(ref:noisy-better-geo)"} -->
+<!-- ``` -->
 
 (ref:noisy-better-geo) One-D projection on `boa5` data with noisy index `norm_kol` optimised by `search_geodesic` and `search_better`. The grey dashed line represents the index value of the theoretical best basis. `search_geodesic` fails to optimise the noisy index while `search_better` has made reasonable improvements to reach the index value close to the one of the theoretical best basis.
 
@@ -423,7 +419,7 @@ The index function, up until this point, are all smooth, while this is not the c
 
 $$\max \left[F_{\mathbf{P}}(u) - F_{y}(u)\right]$$
 
-Figure \@ref(fig:noisy-better-geo) compares the tracing plot of two optimisers: `search_geodesic` and `search_better`. This time, the interpolated path is no longer smooth when using either algorithm and  `search_geodesic` fails to optimise this index with barely any improvement of the index value. On the other hand, `search_better` is doing relatively well. With the theoretical best basis [`r matrix(c(0, 1, 0, 0, 0))`] producing an index value of `r kol_1d_better %>% bind_theoretical(matrix = matrix(c(0, 1, 0, 0, 0), nrow = 5, ncol = 1), index = tourr::norm_kol(), raw_data = boa5) %>% tail(1) %>% pull(index_val)`, `search_better` finds the final basis [`r get_best(kol_1d_better)$basis %>% .[[1]] %>% format(digits = 3)`] with an index value of `r get_best(kol_1d_better)$index_val %>% format(digits = 4)`. A further polish step will give a marginal improvement of index value to `r get_best(kol_1d_better_polish)$index_val` with a basis of [`r get_best(kol_1d_better_polish)$basis %>% .[[1]] %>% format(digits = 3)`]. At this stage, the difference between the theoretical best and what has been found is likely due to simulation error since the best possible basis for a simulated data will be slightly off the theoretical best basis, which is derived based on the distributional assumptions in Equations \ref{eq:sim-norm} to \ref{eq:sim-x7}. 
+Figure \@ref(fig:noisy-better-geo) compares the tracing plot of two optimisers: `search_geodesic` and `search_better`. This time, the interpolated path is no longer smooth when using either algorithm and  `search_geodesic` fails to optimise this index with barely any improvement of the index value. On the other hand, `search_better` is doing relatively well. With the theoretical best basis [`r matrix(c(0, 1, 0, 0, 0))`] producing an index value of `r kol_1d_better %>% bind_theoretical(matrix = matrix(c(0, 1, 0, 0, 0), nrow = 5, ncol = 1), index = tourr::norm_kol(nrow(boa5)), raw_data = boa5) %>% tail(1) %>% pull(index_val)`, `search_better` finds the final basis [`r get_best(kol_1d_better)$basis %>% .[[1]] %>% format(digits = 3)`] with an index value of `r get_best(kol_1d_better)$index_val %>% format(digits = 4)`. A further polish step will give a marginal improvement of index value to `r get_best(kol_1d_better_polish)$index_val` with a basis of [`r get_best(kol_1d_better_polish)$basis %>% .[[1]] %>% format(digits = 3)`]. At this stage, the difference between the theoretical best and what has been found is likely due to simulation error since the best possible basis for a simulated data will be slightly off the theoretical best basis, which is derived based on the distributional assumptions in Equations \ref{eq:sim-norm} to \ref{eq:sim-x7}. 
 
 ```{r kol-better, fig.height = 6, fig.cap="(ref:kol-better)"}
 ```
@@ -440,7 +436,7 @@ Figure \@ref(fig:noisy-better-geo) compares the tracing plot of two optimisers: 
 
 (ref:kol-random-tuned) One-D projection of `norm_kol` index on `boa6` data optimised by `search_better_random` with an larger searching neighbourhood of 0.7. Further tuning of the parameter has been taken place to adjust the neighbourhood parameter `alpha` from 0.5 to 0.7. 
 
-The second experiment with the noisy index is to understand how the optimisers perform when a local maximum is present. The dataset used is `boa6` where `x2` and `x7` are informative. The two theoretical best bases are [`r matrix(c(0, 1, 0, 0, 0, 0), nrow = 6)`] and [`r matrix(c(0, 0, 1, 0, 0, 0), nrow = 6)`] with index value `r index <- tourr::norm_kol(); proj <- as.matrix(boa6) %*% matrix(c(0, 1, 0, 0, 0, 0), nrow = 6); index(proj)` and `r index <- tourr::norm_kol(); proj <- as.matrix(boa6) %*% matrix(c(0, 0, 1, 0, 0, 0), nrow = 6); index(proj)`, respectively. Hence, the global maximum happens when variable `x7` is found. Simulation is done with 20 randomly generated seeds on two optimisers: `search_better` (Figure \@ref(fig:kol-better)) and `search_better_random` (Figure \@ref(fig:kol-random) and Figure \@ref(fig:kol-random-tuned)). Compared to Figure \@ref(fig:kol-better) and \@ref(fig:kol-random), Figure \@ref(fig:kol-random-tuned) further increases the neighbourhood parameter `alpha` from 0.5 to 0.7 to enlarge the search space.  The data object is collected for each simulation and computation is done to reduce the bases from its original 6D to a 2D points by principal component analysis so as to view the search paths.
+The second experiment with the noisy index is to understand how the optimisers perform when a local maximum is present. The dataset used is `boa6` where `x2` and `x7` are informative. The two theoretical best bases are [`r matrix(c(0, 1, 0, 0, 0, 0), nrow = 6)`] and [`r matrix(c(0, 0, 1, 0, 0, 0), nrow = 6)`] with index value `r index <- tourr::norm_kol(nrow(boa6)); proj <- as.matrix(boa6) %*% matrix(c(0, 1, 0, 0, 0, 0), nrow = 6); index(proj)` and `r index <- tourr::norm_kol(nrow(boa6)); proj <- as.matrix(boa6) %*% matrix(c(0, 0, 1, 0, 0, 0), nrow = 6); index(proj)`, respectively. Hence, the global maximum happens when variable `x7` is found. Simulation is done with 20 randomly generated seeds on two optimisers: `search_better` (Figure \@ref(fig:kol-better)) and `search_better_random` (Figure \@ref(fig:kol-random) and Figure \@ref(fig:kol-random-tuned)). Compared to Figure \@ref(fig:kol-better) and \@ref(fig:kol-random), Figure \@ref(fig:kol-random-tuned) further increases the neighbourhood parameter `alpha` from 0.5 to 0.7 to enlarge the search space.  The data object is collected for each simulation and computation is done to reduce the bases from its original 6D to a 2D points by principal component analysis so as to view the search paths.
 
 In Figure \@ref(fig:kol-better), the starting point largely affects whether `search_better` will find the global maximum. The three seeds on row three: seed 9145, seed 2511, and seed 9209, and three on row four: seed 2888, seed 9334, and seed 9819 easily find `V7` because they are born in Rome. On the other end, the ones on the first two rows can only find `V2`, largely due to the fact that they do not even have chances to search near `V7`.
 
@@ -489,4 +485,4 @@ Most of the work in this project has been translated into code in two packages: 
 
 \clearpage
 
-
+\bibliography{RJreferences}
