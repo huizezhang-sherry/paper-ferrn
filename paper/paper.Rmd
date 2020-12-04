@@ -77,59 +77,29 @@ Finally, Section \ref{implementation} describes the R package: ferrn, that imple
 <!-- For a given problem we might rely on numerical methods to find the optimal solution, since an analytical approach, requiring a closed-form solution, is often not possible for complex problems. -->
 <!-- An iterative approach finds the optimum by progressively improving the current solution. Researchers can then decide when to stop if a desirable accuracy has been achieved. One potential issue with this technique is that it may end up finding a local optimum. -->
 
-Optimization problems are ubiquitous in many areas of study. While in some cases, analytical solutions can be found, the majority of problems rely on numerical methods to find the optimal solution. These numerical methods follow interactive approaches that aim at finding the optimum by progressively improving the current solution until a desirable accuracy is achieved. Although that principle seems uncomplicated, optimization methods need to deal with many challenges such as the existence of multiple maxima (local and global), the trade off between desirable accuracy and computational burden, as well as dealing with noisy objective functions. In addition, optimization results might depend on the algorithm starting values affecting the consistency of results. 
+Optimization problems are ubiquitous in many areas of study. While in some cases, analytical solutions can be found, the majority of problems rely on numerical methods to find the optimal solution. These numerical methods follow interactive approaches that aim at finding the optimum by progressively improving the current solution until a desirable accuracy is achieved. Although that principle seems uncomplicated, optimization methods need to deal with many challenges such as the existence of multiple maxima (local and global), the trade off between desirable accuracy and computational burden, as well as dealing with noisy objective functions and possible constraints. In addition, optimization results might depend on the algorithm starting values affecting the consistency of results. 
 
-Furthermore, optimization methods can be divided in various classes (REF). In this paper, we focused on methods that rely on the objective function derivatives known as gradient methods, and those which are known as derivative free methods where optimization does not rely on the gradient or derivatives information.
+Our interest is on constrained optimization (REF) as defined in the introduction section and assume that it is not possible to find a solution to the problem in the way of a closed form. That is, the problem consists of finding the minimum or maximum of a function $f \in L^p$ in the constrained $\mathbb{A}$ space.  
 
-Our interest is on constrained optimization as defined in the introduction section and assume that it is not possible to find a solution to the problem in the way of a closed form solution. That is, the problem consists of finding the minimum or maximum of a function $f \in L^p$ in the constrained $\mathbb{A}$ space.  In this scenario, gradient descent or gradient ascent methods) have taken the stage for many decades and rely in the usage of the objective function derivatives.
+
+<!-- In this scenario, gradient descent or gradient ascent methods) have taken the stage for many decades and rely in the usage of the objective function derivatives or their approximations. -->
+
+
+Optimization methods can be divided in various classes (REF). In this paper, we focused on methods that rely on the objective function derivatives known as gradient methods, and those which are known as derivative free methods where optimization does not rely on the gradient or derivatives information.
+
 
 In gradient descent methods the goal is to find the minimum of an objective function while in gradient ascent methods the interest is in the maximum. The minimum is searched for by taken steps  proportional to the negative gradient or of the function at the evaluation point (analogously positive gradient for gradient ascent methods), that is $x_{k+1} = x_k -\alpha_kS_k$ where $\alpha_k$ is the step size or the learning rate (@fletcher2013practical).  The step size is the key in the success of the optimization problem as inadequate step sizes might lead to a failure in convergence. These methods are known to be relative slow and can have convergence issues when problems are poorly conditioned (@trefethen1997numerical). In order to solve some of those problems, line minimization or line search methods were proposed (@shi2004convergence) where the step size is chosen in such a way that convergence is ensured. In line search methods users are required to provide an initial estimate $x_{1}$, a search direction $S_k$ for each iteration where the objective is to find the value of $\alpha_k \in \mathbb{R}$ that minimizes $f(x_k + \alpha_kS_k)$ with respect to $\alpha_k$ (this step is called the line search). Then move on to the next point following $x_{k+1} = x_k + \alpha_kS_k$ and repeat the process until the desire convergence is reached.
-Modern development of line search methods focuses on improving the computation of the searching direction $S_{(k)}$, and on approximations of the step size $\alpha_k$, catering for practical optimisation problems. In the next section two line search methods for the optimisation used in the projection pursuit guided tour will be presented.
-
-\textbf{Gradient descent/ascent}
-
-- Objective function
-- Gradient of the objective function
-- A search direction
-- Step length --> line search methods ()
-- R available packages
-
-Although gradient optimization methods are very popular, they rely on the existence of the objective function derivatives and the properties of the searching space. However,  the assumption of having a sufficiently smooth objective function where derivatives exist, it is not adequate for all optimization problems. In addition, even in the case where derivatives exists sometimes the searching space is such that their computation is not feasible or it is computationally too expensive.  Because of that, the second big class of optimization problems look at derivative free methods where the emphasis is in finding, in most cases, a near optimal solution. 
+Modern development of line search methods focuses on improving the computation of the searching direction $S_{k}$, and on approximations of the step size $\alpha_k$ together with reducing the computational storing
+burden of the intermediate computations while catering for practical optimisation problems. In the next section two line search methods for the optimisation used in the projection pursuit guided tour will be presented.
 
 
-\textbf{Derivative free methods}
+Although gradient optimization methods are very popular, they rely on the existence of the objective function derivatives and on the complexity of the constraints. Because of that, the second big class of optimization problems look at derivative free methods where the emphasis is on finding, in most cases, a near optimal solution. Examples of those  include response surface methodology (REF), stochastic approximation (REF),
+random search (REF) and  heuristic methods like tabu search and genetic algorithms (REF). Later, we will present an optimization algorithm within the random search class, namely simulated annealing for optimization with the guided tour. Moreover, we will introduce an algorithm to further improve optimization solutions both in gradient descent methods and in derive free optimization.
 
-- Do not rely on derivatives of the objective function
-- Near optimal solutions
-- R packages?
-- polish?
+Several R implementations address optimization problems with both general purpose as well as tasks specifics solvers. The most prominent one within the general solvers is *optim* in (REF-stats package) which have functions for gradient based and derivative free methods. Other packages having similar functionalities include *nloptr* (REF), XX. 
 
 
- <!-- **From Fletcher's book next paragraph -->
- <!-- demonstrated the global convergence of the algorithm when the step-size -->
- <!-- $\alpha_k$ is chosen by minimising  $f(x^{(j)} + \alpha* d^{(j)})$ -->
- <!-- [@curry1944method]. This is however rarely implemented in practice, either -->
- <!-- because of the high computational demand or because the solution does not exist -->
- <!-- [@fletcher2013practical]. A modified approach, in the case of maximisation, is -->
- <!-- to impose a mandatory increase in the objective function for each iteration: -->
- <!-- $f^{(j+1)}> f^{(j)}$. Similarly, for  minimisation we would require a decrease -->
- <!-- in function value at each step. This approach turns out to be efficient in -->
- <!-- practical problems, but global convergence cannot be guaranteed in this case. -->
 
-
-<!-- For a given problem we might rely on numeric methods to find the optimal solution, since an analytical approach, requiring a closed-form solution, is often not possible for complex problems. -->
-<!-- An iterative approach finds the optimum by progressively improving the current solution. Researchers can then decide when to stop if a desirable accuracy has been achieved. One potential issue with this technique is that it may end up finding a local optimum. -->
-
-<!-- In this paper, the main focus is on the  *line search method* [@fletcher2013practical]. In a simple one-dimensional problem, finding the value of $x$ that minimises the function $f(x)$, the line search takes iterative steps as in Equation \ref{eq:line-search}, -->
-
-<!-- \begin{equation} -->
-<!-- x^{(j + 1)} = x^{(j)} + \alpha_k* d^{(j)}, -->
-<!-- \label{eq:line-search} -->
-<!-- \end{equation} -->
-
-<!-- where $d^{(j)}$ is the searching direction in iteration $j$, and $\alpha_j$ is the step-size. Theoretical results have demonstrated the global convergence of the algorithm when the step-size $\alpha_k$ is chosen by minimising  $f(x^{(j)} + \alpha* d^{(j)})$ [@curry1944method]. This is however rarely implemented in practice, either because of the high computational demand or because the solution does not exist [@fletcher2013practical]. A modified approach, in the case of maximisation, is to impose a mandatory increase in the objective function for each iteration: $f^{(j+1)}> f^{(j)}$. Similarly, for  minimisation we would require a decrease in function value at each step. This approach turns out to be efficient in practical problems, but global convergence cannot be guaranteed in this case.  -->
-
-<!-- Modern development of line search methods focuses on improving the computation of the searching direction $d^{(j)}$, and on approximations of the step size $\alpha_j$, catering for practical optimisation problems. Here we focus on optimisation methods used with the projection pursuit guided tour described in the next section. -->
 
 # Projection pursuit guided tour {#tour}
 
