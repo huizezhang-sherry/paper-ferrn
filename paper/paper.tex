@@ -6,31 +6,31 @@ guided tours}
 \maketitle
 
 \abstract{%
-Projection pursuit searches for interesting low-dimensional views of
-high-dimensional data via the optimisation of an index function. The
-initial paper by Friedman \& Tukey in 1974 stated that ``the technique
-used for maximising the projection index strongly influences both the
-statistical and the computational aspects of the procedure.'' However,
-while many projection pursuit indices have been proposed in the
-literature, less work has been done on the optimisation procedures. In
-this paper we introduce visual diagnostics for optimisation algorithms,
-in particular those available in the projection pursuit guided tour.
-These diagnostics and workflows can be applied to a broad class of
-optimisers, to assess their performance. An R package, ferrn, has been
-created to implement the diagnostics.
+Guided tour searches for interesting low-dimensional views of
+high-dimensional data via optimising a projection pursuit index
+function. The first paper of projection pursuit by
+\citet{friedman1974projection} stated that ``the technique used for
+maximising the projection index strongly influences both the statistical
+and the computational aspects of the procedure.'' While many indices
+have been proposed in the literature, less work has been done on
+evaluating the performance of the optimisers. In this paper, we
+implement a data collection object for the optimisation in the guided
+tour and introduce visual diagnostics based on the data object
+collected. These diagnostics and workflows can be applied to a broad
+class of optimisers, to assess their performance. An R package,
+\pkg{ferrn}, has been created to implement the diagnostics.
 }
 
 \hypertarget{introduction}{%
 \section{Introduction}\label{introduction}}
 
 Visualisation is widely used in exploratory data analysis
-\citep{tukey1977exploratory}. Presenting information in a graphical
-format often allows people to uncover information they would otherwise
-not be aware of and provides a more comprehensive understanding of the
-problem at hand. The work presented in this paper combines data
-visualization with optimization methods. It aims at bring visualization
-tools into optimization problems to assist users to better understand
-the performance of their optimization methods in practice. This
+\citep{tukey1977exploratory, unwin2015graphical, healy2018data, wilke2019fundamentals}.
+Presenting information in graphics often unveils information that would
+otherwise not be aware of and provides a more comprehensive
+understanding of the problem at hand. The work presented in this paper
+brings visualization tools into optimisation problems with an aim to
+better understand the performance of the optimisers in practice. This
 motivates our work of creating plots to diagnose optimisation algorithms
 which in turn can be also used not only to understand optimization
 performance but also to understand and compare the behaviour of
@@ -86,8 +86,8 @@ optimisation, and used in different types of diagnostic plots. Section
 \ref{application} shows applications of how these plots can be used to
 understand and compare different algorithms. We also discuss how these
 insights contribute to modifications that improve the algorithms.
-Finally, Section \ref{implementation} describes the R package: ferrn,
-that implements the visual diagnostics.
+Finally, Section \ref{implementation} describes the R package:
+\pkg{ferrn}, that implements the visual diagnostics.
 
 \hypertarget{optim}{%
 \section{Optimisation Methods}\label{optim}}
@@ -105,14 +105,18 @@ objective functions and possible constraints. In addition, optimization
 results might depend on the algorithm starting values affecting the
 consistency of results.
 
-Our interest is on constrained optimization (REF) as defined in the
-introduction section and assume that it is not possible to find a
-solution to the problem in the way of a closed form. That is, the
-problem consists of finding the minimum or maximum of a function
-\(f \in L^p\) in the constrained \(\mathbb{A}\) space.
+Our interest is on constrained optimization
+\citep{bertsekas2014constrained} as defined in the introduction section
+and assume that it is not possible to find a solution to the problem in
+the way of a closed form. That is, the problem consists of finding the
+minimum or maximum of a function \(f \in L^p\) in the constrained
+\(\mathbb{A}\) space.
 
-Optimization methods can be divided in various classes (REF). In this
-paper, we focused on methods that rely on the objective function
+Optimization methods can be divided in various classes (NOTE: do we want
+one more sentence on various class: global optim, convex optim,
+stochastic optim etc?)
+\citep{kelley1999iterative, boyd2004convex, fletcher2013practical}. In
+this paper, we focused on methods that rely on the objective function
 derivatives known as gradient methods, and those which are known as
 derivative free methods where optimization does not rely on the gradient
 or derivatives information.
@@ -160,11 +164,15 @@ introduce an algorithm to further improve optimization solutions both in
 gradient descent methods and in derive free optimization.
 
 Several R implementations address optimization problems with both
-general purpose as well as tasks specifics solvers. The most prominent
-one within the general solvers is \texttt{optim()} in the package
-\CRANpkg{stats}\citep{stats} which have functions for gradient based and
-derivative free methods. Other packages having similar functionalities
-include \CRANpkg{nloptr}.
+general purpose as well as task specifics solvers. The most prominent
+one within the general solvers is \texttt{optim()} in the
+\CRANpkg{stats} \citep{stats} package, which have functions for both
+gradient based and derivative free methods. Another general solver
+specialised in non-linear optimisation is \CRANpkg{nloptr}
+\citep{nloptr}. For more specific optimisation solvers, readers are
+recommended to svisite the relevant sections in CRAN task review on
+\emph{optimisation and mathematical programming}
+\citep{crantaskreviewoptim}.
 
 \hypertarget{tour}{%
 \section{Projection pursuit guided tour}\label{tour}}
@@ -216,8 +224,7 @@ Mathematical details of the geodesic interpolation can be found in
 of the tour path. The blue frames are produced by the projection pursuit
 optimisation algorithm, and the white frames interpolate between them.
 The tour method has been implemented in the R package \CRANpkg{tourr}
-\citep{tourr}, available on the Comprehensive R Archive Network at
-\url{https://cran.r-project.org/web/packages/tourr/}
+\citep{tourr}.
 
 \begin{Schunk}
 \begin{figure}
@@ -327,8 +334,8 @@ avoid the searching space being reduced too fast.
 \end{algorithm}
 
 Simulated annealing (\texttt{search\_better\_random})
-\citep[\citet{bertsimas1993simulated}]{kirkpatrick1983optimization} uses
-the same sampling process as \texttt{search\_better} but allows a
+\citep{kirkpatrick1983optimization, bertsimas1993simulated} uses the
+same sampling process as \texttt{search\_better} but allows a
 probabilistic acceptance of a basis with lower index value based on the
 annealing \(T(l)\). Given an initial \(T_0\), the temperature at
 iteration \(l\) is defined as \(T(l) = \frac{T_0}{\log(l + 1)}\). When a
@@ -848,20 +855,19 @@ Equations \ref{eq:sim-norm} to \ref{eq:sim-x7}.
 
 The second experiment with the noisy index is to understand how the
 optimisers perform when a local maximum is present. The dataset used is
-\textbackslash code\{boa6\} where \texttt{x2} and \texttt{x7} are
-informative. The two theoretical best bases are {[}0, 1, 0, 0, 0, 0{]}
-and {[}0, 0, 1, 0, 0, 0{]} with index value 0.176 and 0.235,
-respectively. Hence, the global maximum happens when variable
-\texttt{x7} is found. Simulation is done with 20 randomly generated
-seeds on two optimisers: \texttt{search\_better} (Figure
-\ref{fig:kol-better}) and \texttt{search\_better\_random} (Figure
-\ref{fig:kol-random} and Figure \ref{fig:kol-random-tuned}). Compared to
-Figure \ref{fig:kol-better} and \ref{fig:kol-random}, Figure
-\ref{fig:kol-random-tuned}further increases the neighbourhood parameter
-\texttt{alpha} from 0.5 to 0.7 to enlarge the search space. The data
-object is collected for each simulation and computation is done to
-reduce the bases from its original 6D to a 2D points by principal
-component analysis so as to view the search paths.
+\code{boa6} where \texttt{x2} and \texttt{x7} are informative. The two
+theoretical best bases are {[}0, 1, 0, 0, 0, 0{]} and {[}0, 0, 1, 0, 0,
+0{]} with index value 0.176 and 0.235, respectively. Hence, the global
+maximum happens when variable \texttt{x7} is found. Simulation is done
+with 20 randomly generated seeds on two optimisers:
+\texttt{search\_better} (Figure \ref{fig:kol-better}) and
+\texttt{search\_better\_random} (Figure \ref{fig:kol-random} and Figure
+\ref{fig:kol-random-tuned}). Compared to Figure \ref{fig:kol-better} and
+\ref{fig:kol-random}, Figure \ref{fig:kol-random-tuned}further increases
+the neighbourhood parameter \texttt{alpha} from 0.5 to 0.7 to enlarge
+the search space. The data object is collected for each simulation and
+computation is done to reduce the bases from its original 6D to a 2D
+points by principal component analysis so as to view the search paths.
 
 In Figure \ref{fig:kol-better}, the starting point largely affects
 whether \texttt{search\_better} will find the global maximum. The three
@@ -893,7 +899,7 @@ Figure \ref{fig:kol-random}). This is largely due to the fact that the
 searching neighbourhood is not large enough to allow the space near
 \texttt{V7} to be adequately explored.
 
-In Figure @ref\{fig:kol-random-tuned\}, the neighbourhood parameter
+In Figure \ref{fig:kol-random-tuned}, the neighbourhood parameter
 \texttt{alpha} is increased from a 0.5 default to 0.7 to solve the
 insufficiency of search neighbourhood. Remember that a candidate basis
 is generated via a linear combination of the current basis and a
@@ -922,13 +928,13 @@ used.
 \section{Implementation}\label{implementation}}
 
 The implementation of this projection has been divided into two
-packages: the data collection object is implemented in the existing
-\texttt{tourr} package while the optimiser diagnostics have been
-implemented in a new package, \texttt{ferrn}. When a guided tour is run,
-the users can choose if the data from optimisation should be collected
-via the \texttt{verbose} argument. Once the data object has been
-obtained, the package, \texttt{ferrn}, can provide four diagnostic plots
-as shown in Section \ref{vis-diag}. The structure of package
+packages: the data collection object is implemented in the existing CRAN
+package \CRANpkg{tourr} \citep{tourr} while the optimiser diagnostics
+have been implemented in a new package, \pkg{ferrn}. When a guided tour
+is run, the users can choose if the data from optimisation should be
+collected via the \texttt{verbose} argument. Once the data object has
+been obtained, the package, \pkg{ferrn}, can provide four diagnostic
+plots as shown in Section \ref{vis-diag}. The structure of package
 functionality has been listed below.
 
 \begin{itemize}
