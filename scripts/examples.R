@@ -10,7 +10,7 @@ p1 <- interrupt_no %>% mutate(id = row_number() - 1) %>% explore_trace_interp() 
 p2 <- interrupt_yes %>% explore_trace_interp() + ggtitle("with interruption") + ylim(0.8, 0.9) + xlim(0, 80) +
   theme(legend.position = "none")
 
-#(p1 | p2) & scale_color_botanical(palette = "fern")
+#(p1 | p2) & scale_color_botanical(palette = "fern", discrete = TRUE)
 
 ## ----polish
 # set.seed(123456)
