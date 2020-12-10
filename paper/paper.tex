@@ -30,11 +30,7 @@ Presenting information in graphics often unveils information that would
 otherwise not be aware of and provides a more comprehensive
 understanding of the problem at hand. The work presented in this paper
 brings visualization tools into optimisation problems with an aim to
-better understand the performance of the optimisers in practice. This
-motivates our work of creating plots to diagnose optimisation algorithms
-which in turn can be also used not only to understand optimization
-performance but also to understand and compare the behaviour of
-different algorithms.
+better understand the performance of the optimisers in practice.
 
 The goal of continuous optimisation is to find the best solution within
 the space of all feasible solutions where typically the best solution is
@@ -53,7 +49,7 @@ hence the problem can be written as \(\min_{x} f(x)\) \emph{subject to}
 optimization methods including linear and quadratic programming can be
 used.
 
-The motivation of this paper is the optimisation problem arising in the
+The focus of this paper is on the optimisation problem arising in the
 projection pursuit guided tour \citep{buja2005computational} which is an
 exploratory data analysis tool that is defined to detect
 \emph{interesting structures} or features in high-dimensional data
@@ -112,21 +108,19 @@ the way of a closed form. That is, the problem consists of finding the
 minimum or maximum of a function \(f \in L^p\) in the constrained
 \(\mathbb{A}\) space.
 
-Optimization methods can be divided in various classes (NOTE: do we want
-one more sentence on various class: global optim, convex optim,
-stochastic optim etc?)
-\citep{kelley1999iterative, boyd2004convex, fletcher2013practical}. In
-this paper, we focused on methods that rely on the objective function
-derivatives known as gradient methods, and those which are known as
-derivative free methods where optimization does not rely on the gradient
-or derivatives information.
+Optimization methods can be divided in various classes, such as global
+optimisation \citep{kelley1999iterative, fletcher2013practical}, convex
+optimisation \citep{boyd2004convex}, stochastic optimisation
+\citep{nocedal2006numerical} . In this paper, we focused on methods that
+rely on the objective function derivatives known as gradient methods,
+and those which are known as derivative free methods where optimization
+does not rely on the gradient or derivatives information.
 
-In gradient descent methods the goal is to find the minimum of an
-objective function while in gradient ascent methods the interest is in
-the maximum. The minimum is searched for by taken steps proportional to
-the negative gradient or of the function at the evaluation point
-(analogously positive gradient for gradient ascent methods), that is
-\(x_{k+1} = x_k -\alpha_kS_k\) where \(\alpha_k\) is the step size or
+In gradient ascent methods the goal is to find the maximum of an
+objective function while in gradient descent methods the interest is in
+the minimum. The maximum is searched for by taken steps proportional to
+the gradient of the function at the evaluation point that is
+\(x_{k+1} = x_k +\alpha_kS_k\) where \(\alpha_k\) is the step size or
 the learning rate \citep{fletcher2013practical}. The step size is the
 key in the success of the optimization problem as inadequate step sizes
 might lead to a failure in convergence. These methods are known to be
@@ -137,7 +131,7 @@ those problems, line minimization or line search methods were proposed
 that convergence is ensured. In line search methods users are required
 to provide an initial estimate \(x_{1}\), a search direction \(S_k\) for
 each iteration where the objective is to find the value of
-\(\alpha_k \in \mathbb{R}\) that minimizes \(f(x_k + \alpha_kS_k)\) with
+\(\alpha_k \in \mathbb{R}\) that maximises \(f(x_k + \alpha_kS_k)\) with
 respect to \(\alpha_k\) (this step is called the line search). Then move
 on to the next point following \(x_{k+1} = x_k + \alpha_kS_k\) and
 repeat the process until the desire convergence is reached. Modern
