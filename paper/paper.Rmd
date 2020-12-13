@@ -2,8 +2,27 @@
 title: "Visual diagnostics for constrained optimisation with application to guided tours"
 author:
   - name: H.Sherry Zhang
-    affiliation: Department of Econometrics and Business Statistics, Monash University 
-    email:  Huize.Zhang@monash.edu
+    affiliation: Monash University 
+    address: Department of Econometrics and Business Statistics
+    email:  huize.zhang@monash.edu
+  - name: Dianne Cook
+    affiliation: Monash University 
+    address: Department of Econometrics and Business Statistics
+    email:  dicook@monash.edu
+  - name: Ursula Laa
+    affiliation: University of Natural Resources and Life Sciences
+    address: Institute of Statistics
+    email:  ursula.laa@boku.ac.at  
+  - name: Nicolas Langrené
+    affiliation: Data61 CSIRO 
+    address: Locked Bag 38004 Docklands VIC 8012 Australia
+    email: Nicolas.Langrene@data61.csiro.au
+  - name: Patricia Menéndez
+    affiliation: Monash University 
+    address: Department of Econometrics and Business Statistics
+    email:  patricia.menendez@monash.edu 
+
+      
 abstract: >
   Guided tour searches for interesting low-dimensional views of high-dimensional data via optimising a projection pursuit index function. The first paper of projection pursuit by @friedman1974projection stated that "the  technique used for maximising the projection index strongly influences both the statistical and the computational aspects of the procedure." While many indices have been proposed in the literature, less work has been done on evaluating the performance of the optimisers. In this paper, we implement a data collection object for the optimisation in the guided tour and introduce visual diagnostics based on the data object collected. These diagnostics and workflows can be applied to a broad class of optimisers, to assess their performance. An R package, \pkg{ferrn}, has been created to implement the diagnostics.
 preamble: >
@@ -73,19 +92,26 @@ Our interest is on constrained optimization [@bertsekas2014constrained] as defin
 <!-- In this scenario, gradient descent or gradient ascent methods) have taken the stage for many decades and rely in the usage of the objective function derivatives or their approximations. -->
 
 
-Optimization methods can be divided into various classes, such as global optimisation [@kelley1999iterative; @fletcher2013practical], convex optimisation [@boyd2004convex] or stochastic optimisation [@nocedal2006numerical]. In this paper, we consider methods that rely on the objective function derivatives known as gradient methods, as well as on methods known as derivative-free methods where optimization does not rely on the knowledge of the gradient or other derivatives.
+Optimization methods can be divided into various classes, such as global optimisation [@kelley1999iterative; @fletcher2013practical], convex optimisation [@boyd2004convex] or stochastic optimisation [@nocedal2006numerical]. A large class of methods utilises the gradient information in the objective function with the most notable one being the gradient ascent (descent) method. Although gradient optimization methods are popular, they rely on the availability of the objective function derivatives and on the complexity of the constraints. Because of that, we consider another class of method in this paper: derivative-free methods. Derivative-free methods have been developed over the years, where the emphasis is on finding, in most cases, a near optimal solution. Examples of those include response surface methodology [@box1951experimental], stochastic approximation [@robbins1951stochastic], random search [@fu2015handbook] and heuristic methods [@sorensen2013metaheuristics]. Later, we will present a simulated annealing optimisation algorithm, which belongs to the class of random search methods, for optimisation with the guided tour.
+
+<!-- In this paper, we consider derivative free method without the knowledge of the gradient. Somd df minic the graident method, biggest class is line search, then SA -->
+
+<!--  In the case of gradient ascent, the maximum is searched by taking steps proportional to the search direction at the evaluation point, that is $x_{k+1} = x_k +\alpha_kS_k$ where $\alpha_k$ is the step size or the learning rate [@fletcher2013practical].  One difficulty is the choice of step size, as inadequate step sizes might prevent the optimisation method to converge to an extremum. Moreover, these methods are known to be relative slow and can have convergence issues when problems are poorly conditioned [@trefethen1997numerical]. -->
+
+A common search scheme utilised by both derivative-free methods and gradient methods is line search. In line search methods, users are required to provide an initial estimate $x_{1}$ and at each iteration, a search direction $S_k$ and a step size $\alpha_k$ are generated. Then one moves on to the next point following $x_{k+1} = x_k + \alpha_kS_k$ and the process is repeated until the desire convergence is reached. While gradient-based methods choose the search direction by the gradient, derivative-free methods determine the search direction through local information of the objective function. The choice of step size also needs considerations, as inadequate step sizes might prevent the optimisation method to converge to an extremum. An ideal step size can be chosen via finding the value of $\alpha_k \in \mathbb{R}$ that maximises $f(x_k + \alpha_kS_k)$ with respect to $\alpha_k$ at each iteration. 
+
+<!-- Modern developments of line search methods focus on improving the computation of the searching direction $S_{k}$, and on approximations of the step size $\alpha_k$ together with reducing the computational burden of storing intermediate computations while catering for practical optimisation problems. -->
+ 
+<!-- methods that rely on the objective function derivatives known as gradient methods, as well as on methods known as derivative-free methods where optimization does not rely on the knowledge of the gradient or other derivatives. -->
 
 
-In gradient ascent methods the goal is to find the maximum of an objective function while in gradient descent methods the interest is in the minimum. The maximum is searched for by taking steps proportional to the gradient of the function at the evaluation point, that is $x_{k+1} = x_k +\alpha_kS_k$ where $\alpha_k$ is the step size or the learning rate [@fletcher2013practical]. One difficulty is the choice of step size, as inadequate step sizes might prevent the optimisation method to converge to an extremum. Moreover, these methods are known to be relative slow and can have convergence issues when problems are poorly conditioned [@trefethen1997numerical]. In order to solve some of those problems, line minimization or line search methods were proposed [@shi2004convergence] where the step size is chosen in such a way that convergence is ensured. In line search methods, users are required to provide an initial estimate $x_{1}$ and a search direction $S_k$ for each iteration. Then, the objective is to find the value of $\alpha_k \in \mathbb{R}$ that maximises $f(x_k + \alpha_kS_k)$ with respect to $\alpha_k$ (this step is called the line search). Then one moves on to the next point following $x_{k+1} = x_k + \alpha_kS_k$ and the process is repeated until the desire convergence is reached.
-Modern developments of line search methods focus on improving the computation of the searching direction $S_{k}$, and on approximations of the step size $\alpha_k$ together with reducing the computational burden of storing intermediate computations while catering for practical optimisation problems. In the next section, two line search methods for the optimisation used in the projection pursuit guided tour will be presented.
+<!-- In gradient ascent methods the goal is to find the maximum of an objective function while in gradient descent methods the interest is in the minimum.  -->
+ <!-- In order to solve some of those problems, line minimization or line search methods were proposed [@shi2004convergence] where the step size is chosen in such a way that convergence is ensured.  -->
+
+ <!--  In the next section, two line search methods for the optimisation used in the projection pursuit guided tour will be presented. -->
 
 
-Although gradient optimization methods are very popular, they rely on the availability of the objective function derivatives and on the complexity of the constraints. Because of that, a large class of derivative-free optimization methods have been developed over the years, where the emphasis is on finding, in most cases, a near optimal solution. Examples of those include response surface methodology [@box1951experimental], stochastic approximation [@robbins1951stochastic], random search [@fu2015handbook] and  heuristic methods [@sorensen2013metaheuristics]. Later, we will present a simulated annealing optimisation algorithm, which belongs to the class of random search methods, for optimisation with the guided tour. Moreover, we will introduce an algorithm to further improve optimization solutions with both gradient descent methods and derivative-free optimisation.
-
-Several R implementations address optimization problems with both general purpose as well as task specifics solvers. The most prominent one within the general solvers is `optim()` in the \CRANpkg{stats} [@stats] package, which provides both gradient-based and derivative-free optimisation functions. Another general solver specialised in non-linear optimisation is \CRANpkg{nloptr} [@nloptr]. For more specific optimisation solvers, readers are recommended to visit the relevant sections in CRAN task review on *optimisation and mathematical programming* [@crantaskreviewoptim].
-
-
-
+Several R implementations address optimization problems with both general purpose as well as task specifics solvers. The most prominent one within the general solvers is `optim()` in the \CRANpkg{stats} [@stats] package, which provides both gradient-based and derivative-free optimisation functions. Another general solver specialised in non-linear optimisation is \CRANpkg{nloptr} [@nloptr]. Specific solvers for simulated annealing includes `optim(..., method  "SANN")` and package \CRANpkg{GenSA} [@gensa] that deals with more complicated objective functions. For other task specific solvers, readers are recommended to visit the relevant sections in CRAN task review on *optimisation and mathematical programming* [@crantaskreviewoptim].
 
 # Projection pursuit guided tour {#tour}
 
