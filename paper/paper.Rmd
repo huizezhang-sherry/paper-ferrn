@@ -14,9 +14,9 @@ author:
     address: Institute of Statistics
     email:  ursula.laa@boku.ac.at  
   - name: Nicolas Langrené
-    affiliation: Data61 CSIRO 
-    address: Locked Bag 38004 Docklands VIC 8012 Australia
-    email: Nicolas.Langrene@data61.csiro.au
+    affiliation: CSIRO Data61 
+    address: 34 Village Street, Docklands VIC 3008 Australia
+    email: nicolas.langrene@csiro.au
   - name: Patricia Menéndez
     affiliation: Monash University 
     address: Department of Econometrics and Business Statistics
@@ -84,15 +84,15 @@ Finally, Section \ref{implementation} describes the R package: \pkg{ferrn}, that
 <!-- For a given problem we might rely on numerical methods to find the optimal solution, since an analytical approach, requiring a closed-form solution, is often not possible for complex problems. -->
 <!-- An iterative approach finds the optimum by progressively improving the current solution. Researchers can then decide when to stop if a desirable accuracy has been achieved. One potential issue with this technique is that it may end up finding a local optimum. -->
 
-Optimization problems are ubiquitous in many areas of study. While in some cases analytical solutions can be found, the majority of problems rely on numerical methods to find the optimal solution. These numerical methods follow iterative approaches that aim at finding the optimum by progressively improving the current solution until a desirable accuracy is achieved. Although that principle seems uncomplicated, optimization methods need to deal with many challenges such as the possible existence of multiple maxima (local and global), the trade-off between desirable accuracy and computational burden, as well as dealing with noisy objective functions and possible constraints. In addition, the optimization results might depend on the algorithm starting values, affecting the consistency of results. 
-
-Our interest is on constrained optimization [@bertsekas2014constrained] as defined in the introduction section, and assuming it is not possible to find a solution to the problem in the way of a closed-form. That is, the problem consists of finding the minimum or maximum of a function $f \in L^p$ in the constrained $\mathbb{A}$ space.  
+Optimization problems are ubiquitous in many areas of study. While in some cases analytical solutions can be found, the majority of problems rely on numerical methods to find the optimal solution. These numerical methods follow iterative approaches that aim at finding the optimum by progressively improving the current solution until a desirable accuracy is achieved. Although this principle seems uncomplicated, a number of challenges arise such as the possible existence of multiple maxima (local and global), constraints and noisy objective function, and the trade-off between desirable accuracy and computational burden. In addition, the optimization results might depend on the algorithm starting values, affecting the consistency of results. 
 
 
 <!-- In this scenario, gradient descent or gradient ascent methods) have taken the stage for many decades and rely in the usage of the objective function derivatives or their approximations. -->
 
 
-Optimization methods can be divided into various classes, such as global optimisation [@kelley1999iterative; @fletcher2013practical], convex optimisation [@boyd2004convex] or stochastic optimisation [@nocedal2006numerical]. A large class of methods utilises the gradient information in the objective function with the most notable one being the gradient ascent (descent) method. Although gradient optimization methods are popular, they rely on the availability of the objective function derivatives and on the complexity of the constraints. Because of that, we consider another class of method in this paper: derivative-free methods. Derivative-free methods have been developed over the years, where the emphasis is on finding, in most cases, a near optimal solution. Examples of those include response surface methodology [@box1951experimental], stochastic approximation [@robbins1951stochastic], random search [@fu2015handbook] and heuristic methods [@sorensen2013metaheuristics]. Later, we will present a simulated annealing optimisation algorithm, which belongs to the class of random search methods, for optimisation with the guided tour.
+Optimization methods can be divided into various classes, such as global optimisation [@kelley1999iterative; @fletcher2013practical], convex optimisation [@boyd2004convex] or stochastic optimisation [@nocedal2006numerical]. Our interest is on constrained optimization [@bertsekas2014constrained] as defined in the introduction section, and assuming it is not possible to find a solution to the problem in the way of a closed-form. That is, the problem consists of finding the minimum or maximum of a function $f \in L^p$ in the constrained $\mathbb{A}$ space. 
+
+A large class of methods utilises the gradient information of the objective function to perform the optimisation iterations, with the most notable one being the gradient ascent (descent) method. Although gradient optimization methods are popular, they rely on the availability of the objective function derivatives and on the complexity of the constraints. Derivative-free methods, which do not rely on the knowledge of the gradient, are more generally applicable. Derivative-free methods have been developed over the years, where the emphasis is on finding, in most cases, a near optimal solution. Examples of those include response surface methodology [@box1951experimental], stochastic approximation [@robbins1951stochastic], random search [@fu2015handbook] and heuristic methods [@sorensen2013metaheuristics]. Later, we will present a simulated annealing optimisation algorithm, which belongs to the class of random search methods, for optimisation with the guided tour.
 
 <!-- In this paper, we consider derivative free method without the knowledge of the gradient. Somd df minic the graident method, biggest class is line search, then SA -->
 
