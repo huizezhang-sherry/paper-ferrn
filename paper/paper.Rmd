@@ -60,15 +60,14 @@ read_chunk(here::here('scripts/implementation.R'))
 
 Visualisation is widely used in exploratory data analysis [@tukey1977exploratory; @unwin2015graphical;  @healy2018data; @wilke2019fundamentals]. Presenting information in graphics often unveils information that would otherwise not be aware of and provides a more comprehensive understanding of the problem at hand. The work presented in this paper brings visualization tools into optimisation problems with an aim to better understand the performance of the optimisers in practice.
 
-The goal of continuous optimisation is to find the best solution within the space of all feasible solutions where typically the best solution is decided by an objective function. Broadly speaking optimization can be unconstrained or constrained [@kelley1999iterative]. The unconstrained problem can be formulated as a minimization (or maximization)  problem such as 
+The goal of continuous optimisation is to find the best solution within the space of all feasible solutions where typically the best solution is decided by an objective function. Broadly speaking, optimization can be unconstrained or constrained [@kelley1999iterative]. The unconstrained problem can be formulated as a minimization (or maximization)  problem such as 
 $\min_{x} f(x)$ where $f:\mathbb{R}^n \rightarrow \mathbb{R}$ is an objective function with  certain properties defined in an $L^p$ space. In this case, solutions rely on gradient descent or ascent methods. In the constrained optimization problem additional restrictions  are introduced via a set of functions that can be convex or non-convex: $g_i:\mathbb{R}^n \rightarrow \mathbb{R}$ for $i = 1, \ldots k$ and hence the problem can be written as
 $\min_{x} f(x)$ *subject to* $g_i(x) \leq 0$. Here methods such as Langrange multipliers and convex optimization methods including linear and quadratic programming can be used.
-<!-- $f: S \rightarrow \mathbb{R}$, with $S \in \mathbb{R}^n$, in a reduced space given by the problem constraints on $f$.  -->
 
-The focus of this paper is on the optimisation problem arising in the projection pursuit guided tour [@buja2005computational] which is an exploratory data analysis tool that is defined to detect *interesting structures* or features in high-dimensional data through a set of lower-dimensional projections that cover the entire high dimensional space using interpolation methods called tours [@cook2008grand]. The target of the optimisation is to identify the most *interesting* low-dimensional views of the data given by a corresponding projection matrix. The most *interesting* structures are formally defined by a function of projections, called index function which is optimized to uncover the most reveling structures in a high dimensional space [@cook1993projection]. 
+The focus of this paper is on the optimisation problem arising in the projection pursuit guided tour [@buja2005computational] which is an exploratory data analysis tool that is defined to detect *interesting structures* or features in high-dimensional data through a set of lower-dimensional projections that cover the entire high dimensional space using interpolation methods called tours [@cook2008grand]. The target of the optimisation is to identify the most *interesting* low-dimensional views of the data given by a corresponding projection matrix. The most *interesting* structures are formally defined by a function of projections, called index function which is optimized to uncover the most revelling structures in a high dimensional space [@cook1993projection]. 
 
 
-The optimization challenges encountered in the projection pursuit guided tour problem are common to those of optimization in general. Examples of those include the existence of multiple maxima (local and global), the trade off between computational burden and proximity to the maxima,  dealing with noisy objective functions that might be non smooth and non diferentiable [@jones1998efficient]. Those  are not unique to this context and therefore the visualization tools and optimization methods presented in this paper can be easily apply to any other optimization problems.
+The optimization challenges encountered in the projection pursuit guided tour problem are common to those of optimization in general. Examples of those include the existence of multiple maxima (local and global), the trade off between computational burden and proximity to the maxima,  dealing with noisy objective functions that might be non smooth and non differentiable [@jones1998efficient]. Those  are not unique to this context and therefore the visualization tools and optimization methods presented in this paper can be easily applied to any other optimization problems.
 
 The remainder of the paper is organised as follows. 
 Section \ref{optim} provides an overview of optimisation methods, specifically line search methods. 
@@ -80,36 +79,13 @@ Finally, Section \ref{implementation} describes the R package: \pkg{ferrn}, that
 
 # Optimisation Methods {#optim}
 
-
-<!-- For a given problem we might rely on numerical methods to find the optimal solution, since an analytical approach, requiring a closed-form solution, is often not possible for complex problems. -->
-<!-- An iterative approach finds the optimum by progressively improving the current solution. Researchers can then decide when to stop if a desirable accuracy has been achieved. One potential issue with this technique is that it may end up finding a local optimum. -->
-
 Optimization problems are ubiquitous in many areas of study. While in some cases analytical solutions can be found, the majority of problems rely on numerical methods to find the optimal solution. These numerical methods follow iterative approaches that aim at finding the optimum by progressively improving the current solution until a desirable accuracy is achieved. Although this principle seems uncomplicated, a number of challenges arise such as the possible existence of multiple maxima (local and global), constraints and noisy objective function, and the trade-off between desirable accuracy and computational burden. In addition, the optimization results might depend on the algorithm starting values, affecting the consistency of results. 
-
-
-<!-- In this scenario, gradient descent or gradient ascent methods) have taken the stage for many decades and rely in the usage of the objective function derivatives or their approximations. -->
-
 
 Optimization methods can be divided into various classes, such as global optimisation [@kelley1999iterative; @fletcher2013practical], convex optimisation [@boyd2004convex] or stochastic optimisation [@nocedal2006numerical]. Our interest is on constrained optimization [@bertsekas2014constrained] as defined in the introduction section, and assuming it is not possible to find a solution to the problem in the way of a closed-form. That is, the problem consists of finding the minimum or maximum of a function $f \in L^p$ in the constrained $\mathbb{A}$ space. 
 
 A large class of methods utilises the gradient information of the objective function to perform the optimisation iterations, with the most notable one being the gradient ascent (descent) method. Although gradient optimization methods are popular, they rely on the availability of the objective function derivatives and on the complexity of the constraints. Derivative-free methods, which do not rely on the knowledge of the gradient, are more generally applicable. Derivative-free methods have been developed over the years, where the emphasis is on finding, in most cases, a near optimal solution. Examples of those include response surface methodology [@box1951experimental], stochastic approximation [@robbins1951stochastic], random search [@fu2015handbook] and heuristic methods [@sorensen2013metaheuristics]. Later, we will present a simulated annealing optimisation algorithm, which belongs to the class of random search methods, for optimisation with the guided tour.
 
-<!-- In this paper, we consider derivative free method without the knowledge of the gradient. Somd df minic the graident method, biggest class is line search, then SA -->
-
-<!--  In the case of gradient ascent, the maximum is searched by taking steps proportional to the search direction at the evaluation point, that is $x_{k+1} = x_k +\alpha_kS_k$ where $\alpha_k$ is the step size or the learning rate [@fletcher2013practical].  One difficulty is the choice of step size, as inadequate step sizes might prevent the optimisation method to converge to an extremum. Moreover, these methods are known to be relative slow and can have convergence issues when problems are poorly conditioned [@trefethen1997numerical]. -->
-
-A common search scheme utilised by both derivative-free methods and gradient methods is line search. In line search methods, users are required to provide an initial estimate $x_{1}$ and at each iteration, a search direction $S_k$ and a step size $\alpha_k$ are generated. Then one moves on to the next point following $x_{k+1} = x_k + \alpha_kS_k$ and the process is repeated until the desire convergence is reached. While gradient-based methods choose the search direction by the gradient, derivative-free methods determine the search direction through local information of the objective function. The choice of step size also needs considerations, as inadequate step sizes might prevent the optimisation method to converge to an extremum. An ideal step size can be chosen via finding the value of $\alpha_k \in \mathbb{R}$ that maximises $f(x_k + \alpha_kS_k)$ with respect to $\alpha_k$ at each iteration. 
-
-<!-- Modern developments of line search methods focus on improving the computation of the searching direction $S_{k}$, and on approximations of the step size $\alpha_k$ together with reducing the computational burden of storing intermediate computations while catering for practical optimisation problems. -->
- 
-<!-- methods that rely on the objective function derivatives known as gradient methods, as well as on methods known as derivative-free methods where optimization does not rely on the knowledge of the gradient or other derivatives. -->
-
-
-<!-- In gradient ascent methods the goal is to find the maximum of an objective function while in gradient descent methods the interest is in the minimum.  -->
- <!-- In order to solve some of those problems, line minimization or line search methods were proposed [@shi2004convergence] where the step size is chosen in such a way that convergence is ensured.  -->
-
- <!--  In the next section, two line search methods for the optimisation used in the projection pursuit guided tour will be presented. -->
-
+A common search scheme utilised by both derivative-free methods and gradient methods is line search. In line search methods, users are required to provide an initial estimate $x_{1}$ and, at each iteration, a search direction $S_k$ and a step size $\alpha_k$ are generated. Then one moves on to the next point following $x_{k+1} = x_k + \alpha_kS_k$ and the process is repeated until the desire convergence is reached. While gradient-based methods choose the search direction by the gradient, derivative-free methods uses local information of the objective function to determine the search direction. The choice of step size also needs considerations, as inadequate step sizes might prevent the optimisation method to converge to an optimum. An ideal step size can be chosen via finding the value of $\alpha_k \in \mathbb{R}$ that maximises $f(x_k + \alpha_kS_k)$ with respect to $\alpha_k$ at each iteration. 
 
 Several R implementations address optimization problems with both general purpose as well as task specifics solvers. The most prominent one within the general solvers is `optim()` in the \CRANpkg{stats} [@stats] package, which provides both gradient-based and derivative-free optimisation functions. Another general solver specialised in non-linear optimisation is \CRANpkg{nloptr} [@nloptr]. Specific solvers for simulated annealing includes `optim(..., method  "SANN")` and package \CRANpkg{GenSA} [@gensa] that deals with more complicated objective functions. For other task specific solvers, readers are recommended to visit the relevant sections in CRAN task review on *optimisation and mathematical programming* [@crantaskreviewoptim].
 
@@ -119,11 +95,9 @@ The projection pursuit guided tour combines two different methods in exploratory
 
 To define projection pursuit, we first need to establish the notation used. Let $\mathbf{X}_{n \times p}$ be the data matrix, with $n$ observations in $p$ dimensions. A d-dimensional projection can be seen as a linear transformation from $\mathbb{R}^p$ into $\mathbb{R}^d$, and defined as $\mathbf{Y} = \mathbf{X} \cdot \mathbf{A}$, where $\mathbf{Y}_{n \times d}$ is the projected data and $\mathbf{A}_{p\times d}$ is the projection matrix. Define $f: \mathbb{R}^{n \times d} \mapsto \mathbb{R}$ to be an index function that maps the projected data $\mathbf{Y}$ (corresponding to an associated projection matrix $\mathbf{A}$) onto an index value $I$ (QUESTION: Isn't f the index function?). This is commonly known as the projection pursuit index function, or just index function, and is used to measure the "interestingness" of a given projection.
 
-A number of index functions have been proposed in the literature to detect different data structures, including Legendre index [@friedman1974projection], Hermite index [@hall1989polynomial], natural Hermite index [@cook1993projection], chi-square index [@posse1995projection], LDA index [@lee2005projection] and PDA index [@lee2010projection]. 
+A number of index functions have been proposed in the literature to detect different data structures, including Legendre index [@friedman1974projection], Hermite index [@hall1989polynomial], natural Hermite index [@cook1993projection], chi-square index [@posse1995projection], LDA index [@lee2005projection] for supervised classification problems, and PDA index [@lee2010projection], which is an extension of the LDA index. 
 
-As a general visualisation method, a tour produces animations of high dimensional data via rotations between low dimension planes. Different tour types choose these planes differently, for example, a grand tour [@cook2008grand] selects the planes randomly and a manual tour [@cook1997manual] gradually phases in and out one variable, to understand the contribution of that variable in the projection. Guided tour, the main interest of this paper, chooses planes with the aid of projection pursuit. Given a random start, projection pursuit iteratively finds bases with higher index values and the guided tour constructs the geodesic interpolation between these planes to form a tour path.
-
-Mathematical details of the geodesic interpolation can be found in @buja2005computational. Figure \ref{fig:tour-path} shows a sketch of the tour path. The blue frames are produced by the projection pursuit optimisation algorithm, and the white frames interpolate between them. The tour method has been implemented in the R package \CRANpkg{tourr} [@tourr].
+As a general visualisation method, a tour produces animations of high dimensional data via rotations between low dimension planes. Different tour types choose these planes differently, for example, a grand tour [@cook2008grand] selects the planes randomly to provide a general overview and a manual tour [@cook1997manual] gradually phases in and out one variable, to understand the contribution of that variable in the projection. Guided tour, the main interest of this paper, chooses planes with the aid of projection pursuit to gradually reveal the most interesting projection in the low dimension space. Given a random start, projection pursuit iteratively finds bases with higher index values and the guided tour constructs the geodesic interpolation between these planes to form a tour path. Intuitively, Figure \ref{fig:tour-path} shows a sketch of the tour path where the blue frames are produced by the projection pursuit optimisation algorithm, and the white frames interpolate between them. Mathematical details of the geodesic interpolation can be found in @buja2005computational.  The tour method has been implemented in the R package \CRANpkg{tourr} [@tourr].
 
 ```{r tour-path, out.height="25%",out.width="50%",fig.cap="Each square (frame) represents the projected data with a corresponding basis. Blue frames are found by an optimisation algorithm iteratively whilst the white frames are constructed between two blue frames by geodesic interpolation."}
 include_graphics(here::here("img/tour_path.png"))
@@ -131,10 +105,7 @@ include_graphics(here::here("img/tour_path.png"))
 
 ## Optimisation in the tour {#tour-optim}
 
-pa
-The optimisation problem in the tour context is stated as follows:
-....
-.Given a randomly generated starting basis $\mathbf{A}_1$, projection pursuit finds the final projection basis $\mathbf{A}_T$ that satisfies the following optimisation problem: 
+The optimisation problem in the tour context is stated as follows: Given a randomly generated starting basis $\mathbf{A}_1$, projection pursuit finds the final projection basis $\mathbf{A}_T$ that satisfies the following optimisation problem: 
 
 
 \begin{align}
@@ -148,76 +119,66 @@ Several features of this optimisation are worth noticing. First of all, this is 
 
 ## Existing algorithms
 
-Below we introduce three possible algorithms: `search_better`, `search_better_random`, and `search_geodesic`. The first two are derivative free methods that sample candidate bases in the neighbourhood whilst `search_geodesic` is an analogue of gradient ascent on the projection basis space.
+Below we introduce three line search algorithms in tour: `search_better`, `search_better_random`, and `search_geodesic`. The first two are simulated annealing algorithms whilst `search_geodesic` evaluates neighbourhood basis to determine the search direction.
 
 \begin{algorithm}
 \SetAlgoLined
-  \SetKwInOut{Input}{input}
-  \SetKwInOut{Output}{output}
-    \Input{$\mathbf{A}_{\text{cur}}$, $f$, $\alpha$, $l_{\max}$} 
-    \Output{$\mathbf{A}_{l}$}
-  initialisation\;
-  Set $l = 1$\;
-  \While{$l < l_{\max}$}{
-    Generate $\mathbf{A}_{l} = (1- \alpha)\mathbf{A}_{\text{cur}} + \alpha \mathbf{A}_{\text{rand}}$ and orthogonalise $\mathbf{A}_{l}$\;
-    Compute $I_{l}  = f(\mathbf{A}_{l})$\;
-    \If{$I_{l} > I_{\text{cur}}$}{
-      \KwRet{$\mathbf{A}_{l}$} \;
-      }
-    $l = l + 1$\;
+  \SetKwInOut{input}{input}
+  \SetKwInOut{output}{output}
+    \input{$f(.)$, $\alpha_1$, $l_{\max}$, $\text{cooling}$} 
+    \output{$\mathbf{A}_{l}$}
+    generate random start $\mathbf{A}_1$ and set $\mathbf{A}_{\text{cur}} \coloneqq \mathbf{A}_1$, $I_{\text{cur}} = f(\mathbf{A}_{\text{cur}})$, $j = 1$\;
+  \Repeat{$\mathbf{A}_l$ is too close to $\mathbf{A}_{\text{cur}}$ in terms of geodesic distance}{
+   set $l = 1$\;
+  \Repeat{$l > l_{\max}$ or $I_{l} > I_{\text{cur}}$}{
+    generate $\mathbf{A}_{l} = (1- \alpha_j)\mathbf{A}_{\text{cur}} + \alpha_j \mathbf{A}_{\text{rand}}$ and orthogonalise $\mathbf{A}_{l}$\;
+    compute $I_{l}  = f(\mathbf{A}_{l})$\;
+    update $l = l + 1$\;
   }
+  update $\alpha_{j+1} = \alpha_j * \text{cooling}$\;
+  construct the geodesic interpolation between $\mathbf{A}_{\text{cur}}$ and $\mathbf{A}_l$\; 
+  update $\mathbf{A}_{\text{cur}} = \mathbf{A}_l$ and $j = j + 1$\;
+}
   \caption{random search}
   \label{random-search}
 \end{algorithm}
 
 
-`search_better` is a random search device that samples a candidate basis $\mathbf{A}_{l}$ in the neighbourhood of the current basis $\mathbf{A}_{\text{cur}}$ by $\mathbf{A}_{l} = (1- \alpha)\mathbf{A}_{\text{cur}} + \alpha \mathbf{A}_{\text{rand}}$ where $\alpha$ controls the radius of the sampling neighbourhood and $\mathbf{A}_{\text{rand}}$ is a randomly generated matrix with the same dimension as $\mathbf{A}_{\text{cur}}$. $\mathbf{A}_{l}$ is then orthogonalised to ensure the orthonormal constraint is fulfilled. When a basis is found with index value higher than the current basis $\mathbf{A}_{\text{cur}}$, the search terminates and outputs the basis for guided tour to construct an interpolation path. The next iteration of search begins after adjusting $\alpha$ by a cooling parameter: $\alpha_{j+1} = \alpha_j * \text{cooling}$. The termination condition is when the maximum number of iteration $l_{\max}$ is reached. The algorithm of `search_better` is summarised in Algorithm \ref{random-search}.  A slightly different cooling scheme has been proposed by @posse1995projection to include a halving parameter $c$. Rather than reducing the radius of the searching neighbourhood, $\alpha$, at each iteration, Posse's design only adjust $\alpha$ if the last search takes more than $c$ times to find an accepted basis to avoid the searching space being reduced too fast. 
+`search_better` is a random search device that samples a candidate basis $\mathbf{A}_{l}$ in the neighbourhood of the current basis $\mathbf{A}_{\text{cur}}$ by $\mathbf{A}_{l} = (1- \alpha)\mathbf{A}_{\text{cur}} + \alpha \mathbf{A}_{\text{rand}}$ where $\alpha$ controls the radius of the sampling neighbourhood and $\mathbf{A}_{\text{rand}}$ is a randomly generated matrix with the same dimension as $\mathbf{A}_{\text{cur}}$. $\mathbf{A}_{l}$ is then orthogonalised to ensure the orthonormal constraint is fulfilled. When a basis is found with index value higher than the current basis $\mathbf{A}_{\text{cur}}$, the search terminates and outputs the basis for guided tour to construct an interpolation path. The next iteration of search begins after adjusting $\alpha$ by a cooling parameter: $\alpha_{j+1} = \alpha_j * \text{cooling}$. The termination condition is when the maximum number of iteration $l_{\max}$ is reached. The algorithm of `search_better` is summarised in Algorithm \ref{random-search}.  A slightly different cooling scheme has been proposed by @posse1995projection to avoid the search space being reduced too fast. A halving parameter $c$ is introduced and $\alpha$ is only adjusted if the last search takes more than $c$ times to find an accepted basis.
 
 \begin{algorithm}
 \SetAlgoLined
-    Compute $I_{l} = f(\mathbf{A}_{l})$ and $T(l) = \frac{T_0}{\log(l + 1)}$\;
-      \eIf{$I_{l} > I_{\text{cur}}$}{
-        \KwRet{$\mathbf{A}_{l}$} \;
-      }{
-        Compute $P= \min\left\{\exp\left[-\frac{I_{\text{cur}} -I_{l}}{T(l)}\right],1\right\}$\;
-        Draw $U$ from a uniform distribution: $U \sim \text{Unif(0, 1)}$\;
-        \If{$P > U$}{
-           \KwRet{$\mathbf{A}_{l}$} \;
-        }
-      }
+\Repeat{$l > l_{\max}$ or $I_{l} > I_{\text{cur}}$ or $P > U$}{
+    generate $\mathbf{A}_{l} = (1- \alpha_j)\mathbf{A}_{\text{cur}} + \alpha_j \mathbf{A}_{\text{rand}}$ and orthogonalise $\mathbf{A}_{l}$\;
+    compute $I_{l}  = f(\mathbf{A}_{l})$, $T(l) = \frac{T_0}{\log(l + 1)}$ and $P= \min\left\{\exp\left[-\frac{I_{\text{cur}} -I_{l}}{T(l)}\right],1\right\}$\;
+    draw $U$ from a uniform distribution: $U \sim \text{Unif(0, 1)}$\;
+    update $l = l + 1$\;
+  }
   \caption{simulated annealing}
   \label{simulated_annealing}
 \end{algorithm}
 
-Simulated annealing (`search_better_random`) [@kirkpatrick1983optimization; @bertsimas1993simulated] uses the same sampling process as `search_better` but allows a probabilistic acceptance of a basis with lower index value based on the annealing $T(l)$. Given an initial $T_0$, the temperature at iteration $l$ is defined as $T(l) = \frac{T_0}{\log(l + 1)}$. When a candidate basis fails to have an index value larger than the current basis, simulated annealing gives it a second chance to be accepted with probability $$P= \min\left\{\exp\left[-\frac{\mid I_{\text{cur}} - I_{l} \mid}{T(l)}\right],1\right\}$$ where $I_{(\cdot)}$ denotes the index value of a given basis. This implementation allows the algorithm to jump out of a local maximum and enables a more holistic search of the whole parameter space. This feature is particularly useful when local maxima are present. The algorithm can be written as replacing line 5-8 of Algorithm \ref{random-search} with Algorithm \ref{simulated_annealing}.
+Simulated annealing (`search_better_random`) [@kirkpatrick1983optimization; @bertsimas1993simulated] uses the same sampling process as `search_better` but allows a probabilistic acceptance of a basis with lower index value based on the annealing $T(l)$. Given an initial $T_0$, the temperature at iteration $l$ is defined as $T(l) = \frac{T_0}{\log(l + 1)}$. When a candidate basis fails to have an index value larger than the current basis, simulated annealing gives it a second chance to be accepted with probability $$P= \min\left\{\exp\left[-\frac{\mid I_{\text{cur}} - I_{l} \mid}{T(l)}\right],1\right\}$$ where $I_{(\cdot)}$ denotes the index value of a given basis. This implementation allows the algorithm to jump out of a local maximum and enables a more holistic search of the whole parameter space. This feature is particularly useful when local maxima are present. The algorithm \ref{simulated_annealing} highlights how simulated annealing differs from random search in the inner loop.
 
 
 
 \begin{algorithm}
 \SetAlgoLined
-\SetKwInOut{Input}{input}
-  \SetKwInOut{Output}{output}
-    \Input{$\mathbf{A}_{\text{cur}}$, $f$, $l_{\max}$, $n = 5$, $\delta$}
-    \Output{$\mathbf{A}_{**}$}
-  initialisation\;
-  Set $l = 1$\;
-  \While{$l < l_{\max}$}{
-    Generate $2n$ bases in a small neighbourhood, $\delta$, of $\mathbf{A}_{\text{cur}}$ and ensure orthogonality \;
-    Find the one with the largest index value: $\mathbf{A}_{*}$\;
-    Construct the geodesic $\mathcal{G}$ from $\mathbf{A}_{\text{cur}}$ to $\mathbf{A}_{*}$\;
-    Optimise the index value on the geodesic $\mathcal{G}$ over a 90 degree window to produce the optima $\mathbf{A}_{**}$  \;
-    Compute $I_{**} = f(\mathbf{A}_{**})$, $p_{\text{diff}} = (I_{**} - I_{\text{cur}})/I_{**}$\;
-      \If{$p_{\text{diff}} > 0.001$}{
-         \KwRet{$\mathbf{A}_{**}$} \;
-      }
-    $l = l + 1$\;
-  }
-  \caption{search geodesic}
-  \label{search-geodesic}
+\Repeat{$l > l_{\max}$ or $p_{\text{diff}} > 0.001$}{
+  generate $n$ random directions $\mathbf{A}_{\text{rand}}$ \;
+  compute $2n$ candidate bases deviate from $\mathbf{A}_{\text{cur}}$ by an angle of $\delta$ while ensure orthogonality\;
+  compute the corresponding index value for each candidate bases\;
+  determine the search direction as from $\mathbf{A}_{\text{cur}}$ to the candidate bases with the largest index value\;
+  determine the step size via optimising the index value on the search direction over a 90 degree window\;
+  find the optima $\mathbf{A}_{**}$ and compute $I_{**} = f(\mathbf{A}_{**})$, $p_{\text{diff}} = (I_{**} - I_{\text{cur}})/I_{**}$\;
+  update $l = l + 1$\;
+}
+\caption{search geodesic}
+\label{search-geodesic}
 \end{algorithm}
 
 
-@cook1995grand used a gradient ascent algorithm on the space of the projection bases. In gradient ascent, one first finds the direction for improvement via computing the gradient information. In `search_geodesic`, $2n$ bases are first generated in a tiny neighbourhood of the current basis, controlled by the neighbourhood parameter $\delta$. A geodesic is then constructed using the current basis and the one in $2n$ bases with the highest index value. If the neighbourhood parameter $\delta$ is tiny, the geodesic constructed is an analogue of the gradient information in the curved space and works as the searching direction. The next step in gradient ascent is to conduct a line search to find the best improvement along the gradient direction and in `search_geodesic`, this is replaced by optimising the index value along the geodesic direction over an 90 degree angle from $-\pi/4$ to $\pi/4$. The optima $\mathbf{A}_{**}$ is returned for the current iteration if it meets the termination condition on percentage improvement.  The procedure will also terminate if $l_{\max}$ is reached.  Algorithm \ref{search-geodesic} summarises the steps in geodesic search.
+@cook1995grand used a line search algorithm on the space of the projection bases. In `search_geodesic`, the search direction is computed using the most prominent direction that deviating an tiny angle of $\delta$ from the current basis. The step size is chosen by optimising the index value along the geodesic direction over an 90 degree angle from $-\pi/4$ to $\pi/4$ along the search direction chosen. The optima $\mathbf{A}_{**}$ is returned for the current iteration if it meets the percentage improve condition or when $l_{\max}$ is reached.  Algorithm \ref{search-geodesic} summarises the inner loop in geodesic search.
 
 
 
