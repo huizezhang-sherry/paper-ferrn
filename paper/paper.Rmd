@@ -58,7 +58,7 @@ read_chunk(here::here('scripts/implementation.R'))
 
 # Introduction
 
-Visualisation is widely used in exploratory data analysis [@tukey1977exploratory; @unwin2015graphical;  @healy2018data; @wilke2019fundamentals]. Presenting information in graphics often unveils information that would otherwise not be aware of and provides a more comprehensive understanding of the problem at hand. The work presented in this paper brings visualization tools into optimisation problems with an aim to better understand the performance of the optimisers in practice.
+Visualisation is widely used in exploratory data analysis [@tukey1977exploratory; @unwin2015graphical;  @healy2018data; @wilke2019fundamentals]. Presenting information in graphics often unveils information that would otherwise not be aware of and provides a more comprehensive understanding of the problem at hand. Task specific tools presented by @li2020visualizing show how visualisation can be used to understand the behaviour of neural network on classification models, but no general visualisation tool available for diagnosing optimisation procedure. The work presented in this paper brings visualization tools into optimisation problems with an aim to better understand the performance of the optimisers in practice.
 
 The goal of continuous optimisation is to find the best solution within the space of all feasible solutions where typically the best solution is decided by an objective function. Broadly speaking, optimization can be unconstrained or constrained [@kelley1999iterative]. The unconstrained problem can be formulated as a minimization (or maximization)  problem such as 
 $\min_{x} f(x)$ where $f:\mathbb{R}^n \rightarrow \mathbb{R}$ is an objective function with  certain properties defined in an $L^p$ space. In this case, solutions rely on gradient descent or ascent methods. In the constrained optimization problem additional restrictions  are introduced via a set of functions that can be convex or non-convex: $g_i:\mathbb{R}^n \rightarrow \mathbb{R}$ for $i = 1, \ldots k$ and hence the problem can be written as
@@ -155,10 +155,10 @@ Below we introduce three line search algorithms in tour: `search_better`, `searc
     update $l = l + 1$\;
   }
   \caption{simulated annealing}
-  \label{simulated_annealing}
+  \label{simulated-annealing}
 \end{algorithm}
 
-Simulated annealing (`search_better_random`) [@kirkpatrick1983optimization; @bertsimas1993simulated] uses the same sampling process as `search_better` but allows a probabilistic acceptance of a basis with lower index value based on the annealing $T(l)$. Given an initial $T_0$, the temperature at iteration $l$ is defined as $T(l) = \frac{T_0}{\log(l + 1)}$. When a candidate basis fails to have an index value larger than the current basis, simulated annealing gives it a second chance to be accepted with probability $$P= \min\left\{\exp\left[-\frac{\mid I_{\text{cur}} - I_{l} \mid}{T(l)}\right],1\right\}$$ where $I_{(\cdot)}$ denotes the index value of a given basis. This implementation allows the algorithm to jump out of a local maximum and enables a more holistic search of the whole parameter space. This feature is particularly useful when local maxima are present. The algorithm \ref{simulated_annealing} highlights how simulated annealing differs from random search in the inner loop.
+Simulated annealing (`search_better_random`) [@kirkpatrick1983optimization; @bertsimas1993simulated] uses the same sampling process as `search_better` but allows a probabilistic acceptance of a basis with lower index value based on the annealing $T(l)$. Given an initial $T_0$, the temperature at iteration $l$ is defined as $T(l) = \frac{T_0}{\log(l + 1)}$. When a candidate basis fails to have an index value larger than the current basis, simulated annealing gives it a second chance to be accepted with probability $$P= \min\left\{\exp\left[-\frac{\mid I_{\text{cur}} - I_{l} \mid}{T(l)}\right],1\right\}$$ where $I_{(\cdot)}$ denotes the index value of a given basis. This implementation allows the algorithm to jump out of a local maximum and enables a more holistic search of the whole parameter space. This feature is particularly useful when local maxima are present. The algorithm \ref{simulated-annealing} highlights how simulated annealing differs from random search in the inner loop.
 
 
 
@@ -185,22 +185,16 @@ Simulated annealing (`search_better_random`) [@kirkpatrick1983optimization; @ber
 
 # Visual diagnostics {#vis-diag}
 
-To be able to make diagnostics on the optimisers, the algorithms need to populate a data structure with key elements of the algorithm. When the algorithms run, key information regarding the decision variable, objective function and hyper-parameters, needs to be recorded and stored as a data object so that it is ready to be supplied to the plotting functions for diagnostics. 
+To be able to make diagnostics on the optimisers, the algorithms need to populate a data structure with key elements of the algorithm. When the algorithms run, key information regarding the decision variable, objective function and hyper-parameters needs to be recorded and stored as a data object so that it is ready to be supplied to the plotting functions for diagnostics. 
 
 ## Data structure for diagnostics 
 
 In the optimisation algorithms for projection pursuit, the three main elements to record are 1) projection bases: $\mathbf{A}$, 2) index values: $I$, and 3) State: $S$, which labels the observation with detailed stage in the optimisation. Possible values for `search_better` and `search_better_random` include `random_search`,  `new_basis`, and `interpolation`. `search_geodesic` has a wider variety that includes `new_basis`, `direction_search`, `best_direction_search`, `best_line_search`, and `interpolation`.
 
-Multiple iterators are also  needed to index the data collected at different levels. $t$ is a unique identifier that prescribes the natural ordering of each observation; $j$ is the counter for each search-and-interpolate iteration, which remains the same within one round and has an increment of one once a new round starts. $l$ is the counter for each search/interpolation, which provides the information of how many bases the algorithm has searched before finding one to return. There are other parameters of interest, which depend on the particular problem content and they are denoted as *$V_{p}$*. Two most common examples include $V_1 = \text{method}$, which tags the name of the algorithm used, and $V_2 = \text{alpha}$, the neighbourhood parameter that controls the size in sampling candidate bases.  A matrix notation of the data structure is presented in Equation \ref{eq:data-structure}.
-
-
-<!-- # ```{r iterators, out.width = "100%", out.height = "25%", fig.cap = "\\label{iterators} A sketch of the design of iterators in iterative algorithms."} -->
-<!-- # knitr::include_graphics(here::here("figures", "iterators.png")) -->
-<!-- # ``` -->
-
-
+Multiple iterators are also  needed to index the data collected at different levels: $t$ being a unique identifier that prescribes the natural ordering of each observation while $j$ and $l$ being the counter of the outer and inner loop, respectively, in Algorithm \ref{random-search}, \ref{simulated-annealing} and \ref{search-geodesic} above. Other parameters of interest recorded include $V_1 = \text{method}$ that tags the name of the optimiser, and $V_2 = \text{alpha}$ that indicates the sampling neighbourhood size.  A matrix notation of the data structure is presented in Equation \ref{eq:data-structure}.
 
 \begin{equation}
+\renewcommand\arraystretch{2}  % default value: 1.0
 \left[
 \begin{array}{c|ccc|cc|cc}
 t & \mathbf{A} & I & S & j &  l  & V_{1} & V_{2}\\
@@ -267,21 +261,15 @@ T^\prime & \mathbf{A}_{T^\prime} & I_{T^\prime} &S_{T^\prime}  & J+1 &  l_{J+1} 
 \label{eq:data-structure}
 \end{equation}
 
-\noindent where $T^{\prime} = T + k_{J}+ l_{J+1}$. Note that there is no output in iteration $J + 1$ since the fact that it is the last iteration means that the optimiser cannot find a better basis and the algorithm terminates. In this notation, the final basis found is $A_T$ with the highest index value $I_T$.
+\noindent where $T^{\prime} = T + k_{J}+ l_{J+1}$. Note that there is no output in iteration $J + 1$ since the optimiser cannot find a better basis in the last iteration and the algorithm terminates. The final basis found is $A_T$ with the highest index value $I_T$.
 
+The data structure constructed above meets the tidy data principle [@wickham2014tidy] that requires each observation to form a row and each variable to form a column. With tidy data structure, data wrangling and visualisation can ben significantly simplified by well-developed packages such as \CRANpkg{dplyr} [@dplyr] and \CRANpkg{ggplot2} [@ggplot2].
 
-<!-- ```{r glb-obj, out.width= "100%", out.height="20%", fig.cap="\\label{glb-obj}The data structure in projection pursuit guided tour."} -->
-<!-- knitr::include_graphics(path = here::here("figures/global_obj.png")) -->
-<!-- ``` -->
-
-The data structure constructed above meets the tidy data principle [@wickham2014tidy] that requires each observation forms a row and each variable forms a column. With tidy data structure, data wrangling and visualisation have been significantly simplified by well-developed packages such as \CRANpkg{dplyr} [@dplyr] and \CRANpkg{ggplot2} [@ggplot2].
-
-
-The construction of diagnostic plots uses the concept of grammar of graphics [@wickham2010layered] in ggplot2. In grammar of graphics, plots are not defined by their appearance (i.e. boxplot, histogram, scatter plot etc) but by stacked layers. In the construction of diagnostic plots, there are multiple elements one may want to emphasize and there is no single plot name that would meet the need. The stacked layers concept, on the other hand, allows information to be overlaid on each other and one can build the plot from scratch as long as the variables have been stored in a dataset. 
+The construction of diagnostic plots adopts the core concept in ggplot2:  grammar of graphics [@wickham2010layered]. In grammar of graphics, plots are not produced via calling the commands, named by the appearance of the plot, i.e., boxplot and histogram, but via the concept of stacked layers. Seeing plots as stacked layers empowers us to composite diagnostic plots with an emphasis on any variable in the data object without the redundancy of creating different commands for the same type of plots that highlights on different variables.
 
 ## Checking how hard the optimiser is working
 
-A primary interest of diagnosing an optimiser is to study how it progressively finds its optimum. Directly plotting the index value across its natural order will cause the graph to be disproportional to the iteration since it usually takes longer for an optimiser to find a better basis towards the end. Another option is to use summarisation for each iteration. Boxplot is a suitable candidate that can provide five points summary of each iteration. Other additional information not presented in the  boxplot can then be added with new layers, for example text information on the number of points can be added at the bottom of each iteration and the position of basis returned by projection pursuit can be highlighted in point. Further, an option to switch between displaying points and boxplot geometry is helpful when the number of observation is small in one iteration and this is achieved via a `cutoff` parameter. 
+A primary interest of diagnosing an optimiser is to study how it progressively finds its optimum. A simple treatment of plotting the index value across its natural order will cause the graph to be disproportional to the iteration since it usually takes much longer for an optimiser to find a better basis towards the end. Another option is to use summarisation in each iteration. Boxplot is a suitable candidate that can provide five points summary of each iteration and additional information can be separately added with new layers, for example, text information on the number of points searched in each iteration is added at the bottom of each iteration, the bases returned for interpolation are highlighted in larger size and linked, and information regarding the last iteration where no basis is returned is turned to grey scale. Furthermore, an option to switch from boxplot back to point geometry is helpful when the number of observation is small in one iteration and can be achieved via the `cutoff` argument. 
 
 Figure \ref{fig:toy-search} shows a sample of the plot constructed using `search_better` with different values of the parameter `max_tries`. Comparing the returned index value of each iteration shows that the termination at `max_tries = 25` is not sufficient for `search_better` to explore the parameter space and a value of 500 is preferred over 25 in this context.
 

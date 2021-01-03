@@ -28,9 +28,13 @@ Visualisation is widely used in exploratory data analysis
 \citep{tukey1977exploratory, unwin2015graphical, healy2018data, wilke2019fundamentals}.
 Presenting information in graphics often unveils information that would
 otherwise not be aware of and provides a more comprehensive
-understanding of the problem at hand. The work presented in this paper
-brings visualization tools into optimisation problems with an aim to
-better understand the performance of the optimisers in practice.
+understanding of the problem at hand. Task specific tools presented by
+\citet{li2020visualizing} show how visualisation can be used to
+understand the behaviour of neural network on classification models, but
+no general visualisation tool available for diagnosing optimisation
+procedure. The work presented in this paper brings visualization tools
+into optimisation problems with an aim to better understand the
+performance of the optimisers in practice.
 
 The goal of continuous optimisation is to find the best solution within
 the space of all feasible solutions where typically the best solution is
@@ -309,7 +313,7 @@ an accepted basis.
     update $l = l + 1$\;
   }
   \caption{simulated annealing}
-  \label{simulated_annealing}
+  \label{simulated-annealing}
 \end{algorithm}
 
 Simulated annealing (\texttt{search\_better\_random})
@@ -326,7 +330,7 @@ where \(I_{(\cdot)}\) denotes the index value of a given basis. This
 implementation allows the algorithm to jump out of a local maximum and
 enables a more holistic search of the whole parameter space. This
 feature is particularly useful when local maxima are present. The
-algorithm \ref{simulated_annealing} highlights how simulated annealing
+algorithm \ref{simulated-annealing} highlights how simulated annealing
 differs from random search in the inner loop.
 
 \begin{algorithm}
@@ -361,7 +365,7 @@ inner loop in geodesic search.
 To be able to make diagnostics on the optimisers, the algorithms need to
 populate a data structure with key elements of the algorithm. When the
 algorithms run, key information regarding the decision variable,
-objective function and hyper-parameters, needs to be recorded and stored
+objective function and hyper-parameters needs to be recorded and stored
 as a data object so that it is ready to be supplied to the plotting
 functions for diagnostics.
 
@@ -381,21 +385,18 @@ that includes \texttt{new\_basis}, \texttt{direction\_search},
 \texttt{interpolation}.
 
 Multiple iterators are also needed to index the data collected at
-different levels. \(t\) is a unique identifier that prescribes the
-natural ordering of each observation; \(j\) is the counter for each
-search-and-interpolate iteration, which remains the same within one
-round and has an increment of one once a new round starts. \(l\) is the
-counter for each search/interpolation, which provides the information of
-how many bases the algorithm has searched before finding one to return.
-There are other parameters of interest, which depend on the particular
-problem content and they are denoted as \emph{\(V_{p}\)}. Two most
-common examples include \(V_1 = \text{method}\), which tags the name of
-the algorithm used, and \(V_2 = \text{alpha}\), the neighbourhood
-parameter that controls the size in sampling candidate bases. A matrix
-notation of the data structure is presented in Equation
+different levels: \(t\) being a unique identifier that prescribes the
+natural ordering of each observation while \(j\) and \(l\) being the
+counter of the outer and inner loop, respectively, in Algorithm
+\ref{random-search}, \ref{simulated-annealing} and \ref{search-geodesic}
+above. Other parameters of interest recorded include
+\(V_1 = \text{method}\) that tags the name of the optimiser, and
+\(V_2 = \text{alpha}\) that indicates the sampling neighbourhood size. A
+matrix notation of the data structure is presented in Equation
 \ref{eq:data-structure}.
 
 \begin{equation}
+\renewcommand\arraystretch{2}  % default value: 1.0
 \left[
 \begin{array}{c|ccc|cc|cc}
 t & \mathbf{A} & I & S & j &  l  & V_{1} & V_{2}\\
@@ -463,46 +464,45 @@ T^\prime & \mathbf{A}_{T^\prime} & I_{T^\prime} &S_{T^\prime}  & J+1 &  l_{J+1} 
 \end{equation}
 
 \noindent where \(T^{\prime} = T + k_{J}+ l_{J+1}\). Note that there is
-no output in iteration \(J + 1\) since the fact that it is the last
-iteration means that the optimiser cannot find a better basis and the
-algorithm terminates. In this notation, the final basis found is \(A_T\)
-with the highest index value \(I_T\).
+no output in iteration \(J + 1\) since the optimiser cannot find a
+better basis in the last iteration and the algorithm terminates. The
+final basis found is \(A_T\) with the highest index value \(I_T\).
 
 The data structure constructed above meets the tidy data principle
-\citep{wickham2014tidy} that requires each observation forms a row and
-each variable forms a column. With tidy data structure, data wrangling
-and visualisation have been significantly simplified by well-developed
+\citep{wickham2014tidy} that requires each observation to form a row and
+each variable to form a column. With tidy data structure, data wrangling
+and visualisation can ben significantly simplified by well-developed
 packages such as \CRANpkg{dplyr} \citep{dplyr} and \CRANpkg{ggplot2}
 \citep{ggplot2}.
 
-The construction of diagnostic plots uses the concept of grammar of
-graphics \citep{wickham2010layered} in ggplot2. In grammar of graphics,
-plots are not defined by their appearance (i.e.~boxplot, histogram,
-scatter plot etc) but by stacked layers. In the construction of
-diagnostic plots, there are multiple elements one may want to emphasize
-and there is no single plot name that would meet the need. The stacked
-layers concept, on the other hand, allows information to be overlaid on
-each other and one can build the plot from scratch as long as the
-variables have been stored in a dataset.
+The construction of diagnostic plots adopts the core concept in ggplot2:
+grammar of graphics \citep{wickham2010layered}. In grammar of graphics,
+plots are not produced via calling the commands, named by the appearance
+of the plot, i.e., boxplot and histogram, but via the concept of stacked
+layers. Seeing plots as stacked layers empowers us to composite
+diagnostic plots with an emphasis on any variable in the data object
+without the redundancy of creating different commands for the same type
+of plots that highlights on different variables.
 
 \hypertarget{checking-how-hard-the-optimiser-is-working}{%
 \subsection{Checking how hard the optimiser is
 working}\label{checking-how-hard-the-optimiser-is-working}}
 
 A primary interest of diagnosing an optimiser is to study how it
-progressively finds its optimum. Directly plotting the index value
-across its natural order will cause the graph to be disproportional to
-the iteration since it usually takes longer for an optimiser to find a
-better basis towards the end. Another option is to use summarisation for
-each iteration. Boxplot is a suitable candidate that can provide five
-points summary of each iteration. Other additional information not
-presented in the boxplot can then be added with new layers, for example
-text information on the number of points can be added at the bottom of
-each iteration and the position of basis returned by projection pursuit
-can be highlighted in point. Further, an option to switch between
-displaying points and boxplot geometry is helpful when the number of
-observation is small in one iteration and this is achieved via a
-\texttt{cutoff} parameter.
+progressively finds its optimum. A simple treatment of plotting the
+index value across its natural order will cause the graph to be
+disproportional to the iteration since it usually takes much longer for
+an optimiser to find a better basis towards the end. Another option is
+to use summarisation in each iteration. Boxplot is a suitable candidate
+that can provide five points summary of each iteration and additional
+information can be separately added with new layers, for example, text
+information on the number of points searched in each iteration is added
+at the bottom of each iteration, the bases returned for interpolation
+are highlighted in larger size and linked, and information regarding the
+last iteration where no basis is returned is turned to grey scale.
+Furthermore, an option to switch from boxplot back to point geometry is
+helpful when the number of observation is small in one iteration and can
+be achieved via the \texttt{cutoff} argument.
 
 Figure \ref{fig:toy-search} shows a sample of the plot constructed using
 \texttt{search\_better} with different values of the parameter
