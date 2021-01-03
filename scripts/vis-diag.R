@@ -19,12 +19,12 @@ p2 <- holes_2d_better %>%
   explore_trace_search() +
   scale_color_botanical(palette = "daisy")
 
-p1 | p2
+(p1 | p2) & ylim(0.76, 0.95)
 
 ## ---- toy-interp
 p1 <- holes_2d_better_max_tries %>%
   mutate(group = "Algorithm 1") %>%
-  explore_trace_interp() +
+  explore_trace_interp(accuracy_x = 4) +
   scale_color_botanical(palette = "fern", discrete = FALSE)
 
 # p2 <- interrupt_no %>%
@@ -34,7 +34,7 @@ p1 <- holes_2d_better_max_tries %>%
 
 p3 <- holes_2d_better_random %>%
   mutate(group = "Algorithm 3") %>%
-  explore_trace_interp() +
+  explore_trace_interp(accuracy_x = 14) +
   scale_color_botanical(palette = "fern", discrete = FALSE)
 
 # p1 | p2 | p3

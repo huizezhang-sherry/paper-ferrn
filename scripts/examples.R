@@ -2,13 +2,13 @@
 p1_anno <- interrupt_no %>% filter(info == "interpolation") %>% mutate(id = row_number()) %>% filter(id %in% c(44, 60, 62)) %>%
   mutate(anno = c("current basis", "interpolated basis", "target basis"))
 
-p1 <- interrupt_no %>% mutate(id = row_number() - 1) %>% explore_trace_interp() + ggtitle("without interruption") +
-  geom_point(data = p1_anno) +
-  geom_label_repel(data = p1_anno, aes(label = anno), box.padding = 0.5) + ylim(0.8, 0.9) + xlim(0, 80) +
-  theme(legend.position = "none")
-
-p2 <- interrupt_yes %>% explore_trace_interp() + ggtitle("with interruption") + ylim(0.8, 0.9) + xlim(0, 80) +
-  theme(legend.position = "none")
+# p1 <- interrupt_no %>% mutate(id = row_number() - 1) %>% explore_trace_interp() + ggtitle("without interruption") +
+#   geom_point(data = p1_anno) +
+#   geom_label_repel(data = p1_anno, aes(label = anno), box.padding = 0.5) + ylim(0.8, 0.9) + xlim(0, 80) +
+#   theme(legend.position = "none")
+#
+# p2 <- interrupt_yes %>% explore_trace_interp() + ggtitle("with interruption") + ylim(0.8, 0.9) + xlim(0, 80) +
+#   theme(legend.position = "none")
 
 #(p1 | p2) & scale_color_botanical(palette = "fern", discrete = TRUE)
 

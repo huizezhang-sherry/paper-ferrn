@@ -37,7 +37,7 @@ knitr::opts_chunk$set(echo = FALSE,
                       warning = FALSE,
                       root.dir = here::here(), 
                       fig.path = here::here("figs/"), 
-                      cache = TRUE, 
+                      cache = TRUE,
                       fig.align = "center",
                       fig.height = 3,
                       out.width = "100%")
@@ -273,12 +273,12 @@ A primary interest of diagnosing an optimiser is to study how it progressively f
 
 Figure \ref{fig:toy-search} shows a sample of the plot constructed using `search_better` with different values of the parameter `max_tries`. Comparing the returned index value of each iteration shows that the termination at `max_tries = 25` is not sufficient for `search_better` to explore the parameter space and a value of 500 is preferred over 25 in this context.
 
-```{r toy-search, fig.width = 5.5, fig.cap="A comparison of \\code{search\\_better} with different values of the parameter \\code{max\\_tries}. A six-variable dataset \\code{boa6} is used with holes index on a 2D problem. \\code{max\\_tries = 500} allows the optimiser to find better basis with higher index value at iteration six."}
+```{r toy-search, fig.cap="A comparison of \\code{search\\_better} with different values of the parameter \\code{max\\_tries}. A six-variable dataset \\code{boa6} is used with holes index on a 2D problem. \\code{max\\_tries = 500} allows the optimiser to find better basis with higher index value at iteration six."}
 ```
 
 ## Examining the optimisation progress {#toy-interp}
 
-```{r toy-interp,fig.width = 5.5, fig.cap = "The resulting trace plot on the interpolated points has been plotted when using three different algorithms to optimise the index. The color represents the number of iteration. It can be observed that each algorithm differs in length in the optimisation and the curvature of the improvement for each algorithm also varies."}
+```{r toy-interp, fig.cap = "The resulting trace plot on the interpolated points has been plotted when using three different algorithms to optimise the index. The color represents the number of iteration. It can be observed that each algorithm differs in length in the optimisation and the curvature of the improvement for each algorithm also varies."}
 ```
 
 Points on the interpolation path are another interest in tour since the projection on these bases will be played by the tour animation. Figure \ref{fig:toy-interp} presents the interpolation of three different tour paths each with different curvature. The leftmost plot shows an interpolation where the index value increases progressively and monotonically. The middle path has an increase-then-decrease pattern in the last two iterations and the rightmost path shows even a decrease in the index value at iteration three. The middle situation can be avoid via a construction of the interruption, which will be detailed in section \ref{monotonic} and the rightmost case is a deliberate construction of `search_better_random` where an inferior basis can be accepted with some probability so as to avoid being trapped in a local maximum.
