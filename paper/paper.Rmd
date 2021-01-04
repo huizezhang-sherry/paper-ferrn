@@ -37,7 +37,7 @@ knitr::opts_chunk$set(echo = FALSE,
                       warning = FALSE,
                       root.dir = here::here(), 
                       fig.path = here::here("figs/"), 
-                      cache = TRUE,
+                      cache = TRUE, 
                       fig.align = "center",
                       fig.height = 3,
                       out.width = "100%")
@@ -286,7 +286,7 @@ Points on the interpolation path are another interest in tour since the projecti
 ## Understanding the optimiser's coverage of the search space
 
 
-```{r toy-pca, fig.cap = "1D projection on the 5-variable dataset \\code{boa5} with two optimisers: \\code{search\\_better} and \\code{search\\_geodesic}. The yellow point corresponds to the theoretical best basis [0, 1, 0, 0, 0] with `V2` being the only non-normal variable in the dataset.  The underlying grey points are randomly generated on the 5D space and reduced to 2D via PCA along with all the search points presented. The enlarged color points that colored as the interpolation are the starting points of each algorithm. They are initially simulated with the same starting points but all the bases in \\code{search\\_geodesic} has been flipped positive to ensure that bases with the same projected images but a sign difference are represented by the same point in the plot."}
+```{r toy-pca, fig.height=3, fig.cap = "1D projection on the 5-variable dataset \\code{boa5} with two optimisers: \\code{search\\_better} and \\code{search\\_geodesic}. The yellow point corresponds to the theoretical best basis [0, 1, 0, 0, 0] with `V2` being the only non-normal variable in the dataset.  The underlying grey points are randomly generated on the 5D space and reduced to 2D via PCA along with all the search points presented. The enlarged color points that colored as the interpolation are the starting points of each algorithm. They are initially simulated with the same starting points but all the bases in \\code{search\\_geodesic} has been flipped positive to ensure that bases with the same projected images but a sign difference are represented by the same point in the plot."}
 ```
 
 Apart from checking the progression of an optimiser, another interesting aspect is to visualise how the search looks like in its parameter space. Given the orthonormality constraint, the projection bases $\mathbf{A}_{p \times d}$ live on the surface of a $p \times d$ dimension sphere, where the dimension can easily go over two or three. While visualising the search paths on the original high dimensional sphere would require skills for the viewers to perceive rotation of geometry in higher dimensional space ($d > 3$), an easier alternative is to view the reduced space via some dimension reduction methods, i.e. principal component analysis. To better perceive the search path as an embedding of a hollow sphere, random points on the high dimensional sphere is generated using the package \CRANpkg{geozoo} [@geozoo] and PCA is conducted on both the bases and the points on the surface of the sphere.

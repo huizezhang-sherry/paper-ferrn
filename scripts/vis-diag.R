@@ -35,20 +35,11 @@ p2 <- holes_2d_better_random %>%
 p1 | p2
 
 ## ---- toy-pca
-pca <- bind_rows(holes_1d_geo, holes_1d_better) %>%
+bind_rows(holes_1d_geo, holes_1d_better) %>%
   bind_theoretical(matrix(c(0, 1, 0, 0, 0), nrow = 5),
-                   index = tourr::holes(), raw_data = boa5) %>%
-  compute_pca(group = method)
-pca$aug %>%
-  ggplot(aes(x = PC1, y = PC2)) +
-  geom_point(data = pca$aug %>% filter(info == "randomly_generated"), col = "grey", size = 0.1) +
-  #geom_path(data =  pca$aug %>% filter(info == "interpolation"), aes(col = method), size = 2) +
-  geom_point(data =  pca$aug %>% filter(info != "randomly_generated"), aes(col = method)) +
-  geom_point(data = pca$aug %>% filter(info == "theoretical"), aes(col = method), size = 10) +
-  geom_point(data = get_start(pca$aug), aes(col = method), size = 5) +
-  scale_color_botanical(palette = "cherry") +
-  theme_void() +
-  theme(aspect.ratio = 1, legend.position =  "bottom")
+                   index = tourr::holes(), raw_data = boa5)  %>%
+  explore_space_pca(group = method, rand_size = 10) +
+  scale_color_botanical(palette = "fern")
 
 ## ----toy-pca-animated
 # ani <- pca$aug %>%
