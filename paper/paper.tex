@@ -532,23 +532,20 @@ space and a value of 500 is preferred over 25 in this context.
 
 }
 
-\caption[The resulting trace plot on the interpolated points has been plotted when using three different algorithms to optimise the index]{The resulting trace plot on the interpolated points has been plotted when using three different algorithms to optimise the index. The color represents the number of iteration. It can be observed that each algorithm differs in length in the optimisation and the curvature of the improvement for each algorithm also varies.}\label{fig:toy-interp}
+\caption[Trace plots of two optimisation procedures with color representing each iteration]{Trace plots of two optimisation procedures with color representing each iteration. The first optimiser progresses monotonically towards the opitmum while the second has experienced some reduction in some iterations.}\label{fig:toy-interp}
 \end{figure}
 \end{Schunk}
 
 Points on the interpolation path are another interest in tour since the
 projection on these bases will be played by the tour animation. Figure
-\ref{fig:toy-interp} presents the interpolation of three different tour
-paths each with different curvature. The leftmost plot shows an
-interpolation where the index value increases progressively and
-monotonically. The middle path has an increase-then-decrease pattern in
-the last two iterations and the rightmost path shows even a decrease in
-the index value at iteration three. The middle situation can be avoid
-via a construction of the interruption, which will be detailed in
-section \ref{monotonic} and the rightmost case is a deliberate
-construction of \texttt{search\_better\_random} where an inferior basis
-can be accepted with some probability so as to avoid being trapped in a
-local maximum.
+\ref{fig:toy-interp} presents the interpolation of two different tour
+paths. The interpolation on the left has index value increase
+monotonically while the right one has the index value decreases in
+several iteration. Compare to the Figure \ref{fig:toy-search}, Figure
+\ref{fig:toy-interp} provides additional information on how the
+interpolation gradually reaches the target basis in each iteration:
+either monotonically or experiencing a turning point, as seen on the
+right of Figure \ref{fig:toy-interp}.
 
 \hypertarget{understanding-the-optimisers-coverage-of-the-search-space}{%
 \subsection{Understanding the optimiser's coverage of the search
