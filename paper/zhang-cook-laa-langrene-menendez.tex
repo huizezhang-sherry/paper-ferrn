@@ -539,20 +539,22 @@ likely to find the global optimum.
 
 }
 
-\caption[Trace plots of two optimisation procedures with color representing each iteration]{Trace plots of two optimisation procedures with color representing each iteration. The first optimiser progresses monotonically towards the opitmum while the second has experienced some reduction in some iterations.}\label{fig:toy-interp}
+\caption[Trace plots of the bases on the interpolation path for two optimisers with the same configuration as the previous figure]{Trace plots of the bases on the interpolation path for two optimisers with the same configuration as the previous figure. The right path shows that to reach a lower target basis, the interpolation actually first passes some higher basis and this could potentially be information to be incorporated into the optimisers.}\label{fig:toy-interp}
 \end{figure}
 \end{Schunk}
 
-Points on the interpolation path are another interest in tour since the
-projection on these bases will be played by the tour animation. Figure
-\ref{fig:toy-interp} presents the interpolation of two different tour
-paths. The interpolation on the left has index value increase
-monotonically while the right one has the index value decreases in
-several iteration. Compare to the Figure \ref{fig:toy-search}, Figure
-\ref{fig:toy-interp} provides additional information on how the
-interpolation gradually reaches the target basis in each iteration:
-either monotonically or experiencing a turning point, as seen on the
-right of Figure \ref{fig:toy-interp}.
+Viewing the index value of points on the interpolation path is another
+interest to the analysts since the projection on these bases will be
+played by the tour animation and it provides further information on how
+the index value changes when moving from one target basis to another.
+Figure \ref{fig:toy-interp} presents the index value against time on the
+interpolation path for the two optimisers with same configuration as
+\ref{fig:toy-search}. From Figure \ref{fig:toy-interp}, we further know
+that to reach a target basis with lower index value, the optimiser
+plotted on the right first passes some bases with higher index value
+during the interpolation. If the bases on the interpolation path can be
+incorporated into the optimisation, we may be able to find the optimal
+basis quicker.
 
 \hypertarget{understanding-the-optimisers-coverage-of-the-search-space}{%
 \subsection{Understanding the optimiser's coverage of the search
