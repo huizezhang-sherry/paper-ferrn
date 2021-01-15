@@ -394,26 +394,39 @@ The conclusion from this experiment is that the usage of `search_better_random` 
 
 The implementation of this projection has been divided into two packages: the data collection object is implemented in the existing CRAN package \CRANpkg{tourr} [@tourr] while the optimiser diagnostics have been implemented in a new package, \pkg{ferrn}. When a guided tour is run, the users can choose if the data from optimisation should be collected via the `verbose` argument. Once the data object has been obtained, the package, \pkg{ferrn}, can provide four diagnostic plots as shown in Section \ref{vis-diag}. The structure of package functionality has been listed below.
 
-- \code{explore\_trace\_search()}: produces summary plots, as shown in Figure \ref{fig:toy-search}
-- \code{explore\_trace\_interp()}: produces trace plots for the interpolation points, as shown in Figure \ref{fig:toy-interp}
-- \code{explore\_space\_pca()}: produces plots of projection basis on the reduced space by PCA, as shown in Figure \ref{fig:toy-pca}. Animated version in Figure \ref{fig:toy-pca-animated} can be turned on via the argument `animate = TRUE`
-- \code{explore\_space\_tour()}: produces animated tour view on the full space of the projection bases, as shown in Figure \ref{fig:toy-tour}.
+- Main plotting functions: 
+
+  - \code{explore\_trace\_search()} produces summary plots, as shown in Figure \ref{fig:toy-search}
+  - \code{explore\_trace\_interp()}produces trace plots for the interpolation points, as shown in Figure \ref{fig:toy-interp}
+  - \code{explore\_space\_pca()} produces plots of projection basis on the reduced space by PCA, as shown in Figure \ref{fig:toy-pca}. Animated version in Figure \ref{fig:toy-pca-animated} can be turned on via the argument `animate = TRUE`
+  - \code{explore\_space\_tour()} produces animated tour view on the full space of the projection bases, as shown in Figure \ref{fig:toy-tour}.
 
 - \code{get\_*()} extracts and manipulates certain components from the existing data object.
-  - \code{get\_best()}: extracts the best basis found in the data object
-  - \code{get\_start()}: extracts the starting basis
-  - \code{get\_interp()}: extracts the observations in the interpolation
-  - \code{get\_search\_count()}: produces the summary table of the number of observation in each iteration
+  - \code{get\_best()} extracts the best basis found in the data object
+  - \code{get\_start()} extracts the starting basis
+  - \code{get\_interp()} extracts the observations in the interpolation
+  - \code{get\_interp\_last()} extracts the end observations of the interpolation in each iteration
+  - \code{get\_anchor()} extracts the target observations found by the optimiser
+  - \code{get\_search()} extracts the search observations evaluated by the optimiser
+  - \code{get\_search\_count()} produces the summary table of the number of observation in each iteration
+  - \code{get\_center()} produces the center point of the basis space estimated by the starting points
+  - \code{get\_space\_param()} produces the coordinates of the center and radius of the basis space
+  - \code{get\_theo()} extracts the theoretical observations from the data object
+  - \code{get\_interrupt()} extract the end point of the interpolation and the target point when an interruption happens
   - \code{get\_basis\_matrix()}: flattens all the bases into a matrix
-  
-- \code{bind\_*()} incorporates additional information outside the tour optimisation into the data object.
-  - \code{bind\_theoretical()}: incorporates the best possible basis to the existing data object with the supply of the index function and original data for producing the index value. 
-  - \code{bind\_random()}: generates 1000 points on the high dimensional surface of a sphere and binds it to the existing data object and output as a tibble object. `bind_random_matrix()` binds the points to the basis matrix. 
 
-- Color
-  - \code{botanical\_palettes}: a collection of color palettes from Australian native plants. Quantitative palettes include daisy, banksia and cherry and sequential palettes contain fern and acacia.
-  - \code{botanical\_pal()}: a color interpolator 
-  - \code{scale\_color\_botanical()}: a ggplot construction for using botanical palettes. 
+- \code{bind\_*()} incorporates additional information outside the tour optimisation into the data object.
+  - \code{bind\_theoretical()} incorporates the best possible basis to the existing data object with the supply of the index function and original data for producing the index value. 
+  - \code{bind\_random()} generates 1000 points on the high dimensional surface of a sphere and binds it to the existing data object and output as a tibble object. 
+  - \code{bind\_random\_matrix()} binds the points to the basis matrix. 
+
+- Utilities
+  - \code{add\_*()} are internal wrapper functions that facilitate the composition of PCA plot
+  - \code{theme\_fern()} and \code{format\_label()} for better display of the grid lines and axis formatting
+  - \code{clean\_method()} for clean up the name of the optimisers
+  - \code{botanical\_palettes} is a collection of color palettes from Australian native plants. Quantitative palettes include daisy, banksia and cherry and sequential palettes contain fern and acacia.
+  - \code{botanical\_pal()} as the color interpolator 
+  - \code{scale\_color\_botanical()} is a ggplot2 scale for botanical palettes. 
 
 # Conclusion
 

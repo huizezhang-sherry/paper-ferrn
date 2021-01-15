@@ -937,19 +937,26 @@ functionality has been listed below.
 
 \begin{itemize}
 \item
-  \code{explore\_trace\_search()}: produces summary plots, as shown in
-  Figure \ref{fig:toy-search}
-\item
-  \code{explore\_trace\_interp()}: produces trace plots for the
-  interpolation points, as shown in Figure \ref{fig:toy-interp}
-\item
-  \code{explore\_space\_pca()}: produces plots of projection basis on
-  the reduced space by PCA, as shown in Figure \ref{fig:toy-pca}.
-  Animated version in Figure \ref{fig:toy-pca-animated} can be turned on
-  via the argument \texttt{animate\ =\ TRUE}
-\item
-  \code{explore\_space\_tour()}: produces animated tour view on the full
-  space of the projection bases, as shown in Figure \ref{fig:toy-tour}.
+  Main plotting functions:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \code{explore\_trace\_search()} produces summary plots, as shown in
+    Figure \ref{fig:toy-search}
+  \item
+    \code{explore\_trace\_interp()}produces trace plots for the
+    interpolation points, as shown in Figure \ref{fig:toy-interp}
+  \item
+    \code{explore\_space\_pca()} produces plots of projection basis on
+    the reduced space by PCA, as shown in Figure \ref{fig:toy-pca}.
+    Animated version in Figure \ref{fig:toy-pca-animated} can be turned
+    on via the argument \texttt{animate\ =\ TRUE}
+  \item
+    \code{explore\_space\_tour()} produces animated tour view on the
+    full space of the projection bases, as shown in Figure
+    \ref{fig:toy-tour}.
+  \end{itemize}
 \item
   \code{get\_*()} extracts and manipulates certain components from the
   existing data object.
@@ -957,14 +964,35 @@ functionality has been listed below.
   \begin{itemize}
   \tightlist
   \item
-    \code{get\_best()}: extracts the best basis found in the data object
+    \code{get\_best()} extracts the best basis found in the data object
   \item
-    \code{get\_start()}: extracts the starting basis
+    \code{get\_start()} extracts the starting basis
   \item
-    \code{get\_interp()}: extracts the observations in the interpolation
+    \code{get\_interp()} extracts the observations in the interpolation
   \item
-    \code{get\_search\_count()}: produces the summary table of the
-    number of observation in each iteration
+    \code{get\_interp\_last()} extracts the end observations of the
+    interpolation in each iteration
+  \item
+    \code{get\_anchor()} extracts the target observations found by the
+    optimiser
+  \item
+    \code{get\_search()} extracts the search observations evaluated by
+    the optimiser
+  \item
+    \code{get\_search\_count()} produces the summary table of the number
+    of observation in each iteration
+  \item
+    \code{get\_center()} produces the center point of the basis space
+    estimated by the starting points
+  \item
+    \code{get\_space\_param()} produces the coordinates of the center
+    and radius of the basis space
+  \item
+    \code{get\_theo()} extracts the theoretical observations from the
+    data object
+  \item
+    \code{get\_interrupt()} extract the end point of the interpolation
+    and the target point when an interruption happens
   \item
     \code{get\_basis\_matrix()}: flattens all the bases into a matrix
   \end{itemize}
@@ -975,29 +1003,38 @@ functionality has been listed below.
   \begin{itemize}
   \tightlist
   \item
-    \code{bind\_theoretical()}: incorporates the best possible basis to
+    \code{bind\_theoretical()} incorporates the best possible basis to
     the existing data object with the supply of the index function and
     original data for producing the index value.
   \item
-    \code{bind\_random()}: generates 1000 points on the high dimensional
+    \code{bind\_random()} generates 1000 points on the high dimensional
     surface of a sphere and binds it to the existing data object and
-    output as a tibble object. \texttt{bind\_random\_matrix()} binds the
-    points to the basis matrix.
+    output as a tibble object.
+  \item
+    \code{bind\_random\_matrix()} binds the points to the basis matrix.
   \end{itemize}
 \item
-  Color
+  Utilities
 
   \begin{itemize}
   \tightlist
   \item
-    \code{botanical\_palettes}: a collection of color palettes from
+    \code{add\_*()} are internal wrapper functions that facilitate the
+    composition of PCA plot
+  \item
+    \code{theme\_fern()} and \code{format\_label()} for better display
+    of the grid lines and axis formatting
+  \item
+    \code{clean\_method()} for clean up the name of the optimisers
+  \item
+    \code{botanical\_palettes} is a collection of color palettes from
     Australian native plants. Quantitative palettes include daisy,
     banksia and cherry and sequential palettes contain fern and acacia.
   \item
-    \code{botanical\_pal()}: a color interpolator
+    \code{botanical\_pal()} as the color interpolator
   \item
-    \code{scale\_color\_botanical()}: a ggplot construction for using
-    botanical palettes.
+    \code{scale\_color\_botanical()} is a ggplot2 scale for botanical
+    palettes.
   \end{itemize}
 \end{itemize}
 
