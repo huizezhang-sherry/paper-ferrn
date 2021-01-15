@@ -567,33 +567,62 @@ space}\label{understanding-the-optimisers-coverage-of-the-search-space}}
 
 }
 
-\caption{1D projection on the 5-variable dataset \code{boa5} with two optimisers: \code{search\_better} and \code{search\_geodesic}. The yellow point corresponds to the theoretical best basis [0, 1, 0, 0, 0] with `V2` being the only non-normal variable in the dataset.  The underlying grey points are randomly generated on the 5D space and reduced to 2D via PCA along with all the search points presented. The enlarged color points that colored as the interpolation are the starting points of each algorithm. They are initially simulated with the same starting points but all the bases in \code{search\_geodesic} has been flipped positive to ensure that bases with the same projected images but a sign difference are represented by the same point in the plot.}\label{fig:toy-pca}
+\caption[1D projection on the 5-variable dataset \code{boa5} with two optimisers]{1D projection on the 5-variable dataset \code{boa5} with two optimisers: pseudo derivative and simulated annealing. All the bases in pseudo derivative has been flipped positive so that the two paths finish close to each other and to the theoretical best.}\label{fig:toy-pca}
 \end{figure}
 \end{Schunk}
 
 Apart from checking the progression of an optimiser, another interesting
-aspect is to visualise how the search looks like in its parameter space.
-Given the orthonormality constraint, the projection bases
-\(\mathbf{A}_{p \times d}\) live on the surface of a \(p \times d\)
-dimension sphere, where the dimension can easily go over two or three.
-While visualising the search paths on the original high dimensional
-sphere would require skills for the viewers to perceive rotation of
-geometry in higher dimensional space (\(d > 3\)), an easier alternative
-is to view the reduced space via some dimension reduction methods,
-i.e.~principal component analysis. To better perceive the search path as
-an embedding of a hollow sphere, random points on the high dimensional
-sphere is generated using the package \CRANpkg{geozoo} \citep{geozoo}
-and PCA is conducted on both the bases and the points on the surface of
-the sphere.
+aspect of the diagnostics is to visualise how the visited bases looks
+like in its parameter space. Given the orthonormality constraint, the
+space of projection bases \(\mathbf{A}_{p \times d}\) is a
+\(p \times d\) dimension sphere and even with 1D projection, the basis
+space is high-dimensional. Dimension reduction methods, i.e.~principal
+component analysis can be used to present the bases on 2D space with
+appropriate annotation to highlight the different key components of the
+optimisation.
 
-Figure \ref{fig:toy-pca} plots the first two principal components of two
-search paths, one using \texttt{search\_better} and the other using
-\texttt{search\_geodesic}. The search in the space reduced by PCA
-matches with the optimiser description before where the random sampling
-in \texttt{search\_better} is broader, controlled by \texttt{alpha}
-parameter, which is default to 0.5 while the directional search in
-\texttt{search\_geodesic}, controlled by \texttt{delta} with a default
-of 0.01, is so tiny that it can barely be seen.
+In a projection pursuit guided tour optimisation, there are 7 different
+components that are worth-noticing in the exploration: 1) The spherical
+space of all the basses; 2) The starting basis of an optimisation
+routine; 3) The anchor points where a new target basis is found; 4) The
+search basis that an optimiser has evaluated; 5) The interpolation path
+that constructed by the guided tour; 6) The annotation of the
+interrupted path and 7) The theoretical best basis, if applicable.
+Despite all have to be displayed on the diagnostic plot, these
+components differ in their importance with the most interesting ones
+being the starting point, anchor points and the interpolation path.
+
+Various other components can be down-played via size, transparency,
+linetype and proper approximation. The basis space is generated via
+random bases on the original high dimensional space via the CRAN package
+\CRANpkg{geozoo} \citep{geozoo} and projected down to 2D. Displaying the
+search space with hundreds of randomly generated dots can be dizzy,
+especially when the more important start, anchor and search bases are
+also displayed with point geometry. Given the fact that the basis space
+is a circle when projected to 2D, we can estimate the center and radius
+with all the bases recorded in the data object. Comparing to the start
+and anchor points, search points are less important as they fail to
+improve on the index value during the optimisation and hence an adjusted
+size and transparency are applied to them. A potential scenario that
+could happen is that two optimisers can start at the same basis but
+finishes with bases in opposite signs. This sign difference would not
+make a difference in the projected data but the PCA projection of the
+bases will display the finish points symmetric to each other, which can
+be disturbing for comparing the path close to the finish. One solution
+is to flip the sign of one optimiser so that they start at symmetric
+position but finish close to each other. To remind the analyst of this
+symmetry in the PCA space, a light dashed line is drawn to connect the
+starting points of two paths. The theoretical best basis is available if
+the data is simulated and can serve as a guide on how the optimisers
+progress to the final basis. Also, the search paths also have an
+increasing alpha hue from start to finish to indicate the direction of
+the optimsation when the theoretical guide is not available. To allow
+flexible annotation in different scenarios, a range of arguments are
+made available to adjust in the main plotting function
+\code{explore\_space\_pca()}.
+
+Figure \ref{fig:toy-pca} shows an example of the PCA plot on the same
+optimisers on a 1D projection problem with 5 variables.
 
 \hypertarget{animating-the-diagnostic-plots}{%
 \subsection{Animating the diagnostic
