@@ -821,33 +821,11 @@ Equations \ref{eq:sim-norm} to \ref{eq:sim-x7}.
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/kol-better-1} 
+{\centering \includegraphics[width=1\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/kol-result-1} 
 
 }
 
-\caption[One-D projection of \code{norm\_kol} index on \code{boa6} data optimised by \code{search\_better} with 20 randomly generated seeds]{One-D projection of \code{norm\_kol} index on \code{boa6} data optimised by \code{search\_better} with 20 randomly generated seeds. Each point represents a basis in the original 6D space, reduced to 2D by PCA. The grey points are random bases generated from 6-D hollow sphere and the two yellow points represent the local maximum corresponds to basis when `V2` is found and the global maximum where `V7` is found. The points produced by the search algorithm is colored by whether the global or local maximum is found with the interpolated bases highlighted as a path and the final basis as an amplified point.}\label{fig:kol-better}
-\end{figure}
-\end{Schunk}
-
-\begin{Schunk}
-\begin{figure}
-
-{\centering \includegraphics[width=1\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/kol-random-1} 
-
-}
-
-\caption{One-D projection of \code{norm\_kol} index on \code{boa6} data optimised by \code{search\_better\_random} with the same seeds. \code{search\_better\_random} has a probabilistic acceptance implementation that would also accept a basis with lower index value. This design allows the optimiser to jump out of the local maximum and hence more instances find the global maximum.}\label{fig:kol-random}
-\end{figure}
-\end{Schunk}
-
-\begin{Schunk}
-\begin{figure}
-
-{\centering \includegraphics[width=1\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/kol-random-tuned-1} 
-
-}
-
-\caption[One-D projection of \code{norm\_kol} index on \code{boa6} data optimised by \code{search\_better\_random} with an larger searching neighbourhood of 0.7]{One-D projection of \code{norm\_kol} index on \code{boa6} data optimised by \code{search\_better\_random} with an larger searching neighbourhood of 0.7. Further tuning of the parameter has been taken place to adjust the neighbourhood parameter `alpha` from 0.5 to 0.7. }\label{fig:kol-random-tuned}
+\caption[One-D projection of \code{norm\_kol} index on \code{boa6} data optimised by \code{search\_better}, starting from 20 different seeds]{One-D projection of \code{norm\_kol} index on \code{boa6} data optimised by \code{search\_better}, starting from 20 different seeds. }\label{fig:kol-result}
 \end{figure}
 \end{Schunk}
 
@@ -856,65 +834,7 @@ optimisers perform when a local maximum is present. The dataset used is
 \code{boa6} where \texttt{x2} and \texttt{x7} are informative. The two
 theoretical best bases are {[}0, 1, 0, 0, 0, 0{]} and {[}0, 0, 1, 0, 0,
 0{]} with index value 0.176 and 0.235, respectively. Hence, the global
-maximum happens when variable \texttt{x7} is found. Simulation is done
-with 20 randomly generated seeds on two optimisers:
-\texttt{search\_better} (Figure \ref{fig:kol-better}) and
-\texttt{search\_better\_random} (Figure \ref{fig:kol-random} and Figure
-\ref{fig:kol-random-tuned}). Compared to Figure \ref{fig:kol-better} and
-\ref{fig:kol-random}, Figure \ref{fig:kol-random-tuned}further increases
-the neighbourhood parameter \texttt{alpha} from 0.5 to 0.7 to enlarge
-the search space. The data object is collected for each simulation and
-computation is done to reduce the bases from its original 6D to a 2D
-points by principal component analysis so as to view the search paths.
-
-In Figure \ref{fig:kol-better}, the starting point largely affects
-whether \texttt{search\_better} will find the global maximum. The three
-seeds on row three: seed 9145, seed 2511, and seed 9209, and three on
-row four: seed 2888, seed 9334, and seed 9819 easily find \texttt{V7}
-because they are born in Rome. On the other end, the ones on the first
-two rows can only find \texttt{V2}, largely due to the fact that they do
-not even have chances to search near \texttt{V7}.
-
-A comparison between \texttt{search\_better} and
-\texttt{search\_better\_random} shows all four combinations where both,
-neither, or one of the two algorithms find the global maximum. Two
-iconic cases that shows how \texttt{search\_better\_random} improves
-\texttt{search\_better} are seeds 4761 (position (1,4) in Figure
-\ref{fig:kol-better} and (2,2) in Figure \ref{fig:kol-random}) and seed
-1842 ((2,2) in Figure \ref{fig:kol-better} and (4,5) in Figure
-\ref{fig:kol-random}). In both cases, \texttt{search\_better\_random}
-accepts inferior points at the initial iteration and this acceptance has
-later been proved to change the direction of the search and hence allows
-the optimiser to explore near the global optimum and in the end, find
-the global optimum. However, this change of search direction may
-sometimes have an adverse effect on \texttt{search\_better\_random} and
-change the search to the neighbourhood of \texttt{V2}. This happens on
-seed 9209 and seed 9982 (position (1,1) and (1,2) in Figure
-\ref{fig:kol-random}). The two cases that neither algorithm finds the
-global optimum happens on seed 6170 and seed 2757 (position (1,1) and
-(1,2) in Figure \ref{fig:kol-better} and position (1,5) and (1,3) in
-Figure \ref{fig:kol-random}). This is largely due to the fact that the
-searching neighbourhood is not large enough to allow the space near
-\texttt{V7} to be adequately explored.
-
-In Figure \ref{fig:kol-random-tuned}, the neighbourhood parameter
-\texttt{alpha} is increased from a 0.5 default to 0.7 to solve the
-insufficiency of search neighbourhood. Remember that a candidate basis
-is generated via a linear combination of the current basis and a
-randomly generated basis on the surface of the sphere, an increase of
-\texttt{alpha} gives more weights on the randomly generated bases and
-hence allows a wider search. Seed 9982 ((2,4) in Figure
-\ref{fig:kol-random-tuned}) and seed 2463 ((3,2) in Figure
-\ref{fig:kol-random-tuned}) benefit from this and find the global
-maximum. A noticeable feature of this enlarged search space is that the
-interpolation paths start to jump around the space but its usefulness is
-arguable. In seed 2888 (position (3,1)), seed 2986 (position (2,3)),
-seed 9209 (position (4,4)), just to name a few, this allows a near
-\texttt{V2} bases to switch to a near \texttt{V7} bases and as a result
-these cases find the global maximum. While in the case of seed 6746
-(position (1,2)) and seed 2757 (position (1,5)), the jump happens from
-near \texttt{V7} basis to near \texttt{V2} basis, it does not come back
-and leaves those simulations in the local maximum.
+maximum happens when variable \texttt{x7} is found.
 
 The conclusion from this experiment is that the usage of
 \texttt{search\_better\_random} and increasing the search space are
