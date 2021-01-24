@@ -790,33 +790,40 @@ the edges of each cluster.
 noise}\label{seeing-the-signal-in-the-noise}}
 
 The index function, up until this point, are all smooth, while this is
-not the case for all the index functions. \texttt{norm\_kol}, a 1D
-projection function based on the Kolmogorov test, compares the
-difference between the 1D projected data, \(\mathbf{Y}_{n \times 1}\)
-and a randomly generated normal distribution, \(y_n\) based on the
-empirical cumulated distribution function (ECDF). Denote the ECDF
-function as \(F_{.}(u)\) with the subscript indicating either the
-projection or the random normal variable, the \texttt{norm\_kol} index
-is defined by
+not the case for all. A 1D projection function based on the Kolmogorov
+test, \texttt{norm\_kol}, compares the projected data,
+\(\mathbf{Y}_{n \times 1}\) to a randomly generated normal distribution,
+\(y_n\) based on the empirical cumulated distribution function (ECDF).
+Let \(F_{.}(u)\) be the ECDF function with the subscript \(P\) and \(u\)
+indicating the projected and randomly generated ECDF respectively, the
+index is defined as:
 
-\[\max \left[F_{\mathbf{P}}(u) - F_{y}(u)\right]\]
+\[\max \left[F_{\mathbf{P}}(u) - F_{y}(u)\right]\] With a more complex
+index function, it is interesting to understand 1) if all the three
+optimisers can reach the optimum, 2) when a local optimum is presented,
+whether the simulated annealing algorithm can escape that local optimum
+and find the global one.
 
-Figure \ref{fig:noisy-better-geo} compares the tracing plot of two
-optimisers: \texttt{search\_geodesic} and \texttt{search\_better}. This
-time, the interpolated path is no longer smooth when using either
-algorithm and \texttt{search\_geodesic} fails to optimise this index
-with barely any improvement of the index value. On the other hand,
-\texttt{search\_better} is doing relatively well. With the theoretical
-best basis {[}0, 1, 0, 0, 0{]} producing an index value of 0.17,
-\texttt{search\_better} finds the final basis {[} 0.0376, -0.9916,
--0.0581, -0.0831, 0.0716{]} with an index value of 0.165. A further
-polish step will give a marginal improvement of index value to 0.175
-with a basis of {[} 0.0223, -0.9965, -0.0352, -0.0591, 0.0418{]}. At
-this stage, the difference between the theoretical best and what has
-been found is likely due to simulation error since the best possible
-basis for a simulated data will be slightly off the theoretical best
-basis, which is derived based on the distributional assumptions in
-Equations \ref{eq:sim-norm} to \ref{eq:sim-x7}.
+\begin{Schunk}
+\begin{widefigure}
+
+{\centering \includegraphics[width=1\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/noisy-better-geo-1} 
+
+}
+
+\caption[1D projection on 5\-variable dataset \code{boa5} with \code{norm\_kol} index]{1D projection on 5\-variable dataset \code{boa5} with \code{norm\_kol} index. The trace plot shows the failure of pseudo derivative on non-smooth index. The PCA plot also shows that simulated annealing is searching the area close to the theoretical best while pseudo derivative can't couple with the non-continuity in the index.}\label{fig:noisy-better-geo}
+\end{widefigure}
+\end{Schunk}
+
+Figure \ref{fig:noisy-better-geo} presents the tracing plots of two
+optimisers: pseudo derivative and simulated annealing and as expected,
+the interpolated path is no longer smooth in either case. There is
+barely any improvement on the index value in the pseudo derivative
+algorithm while the simulated annealing algorithm has managed to get
+close to the index value of the theoretical best, indicated by the
+horizontal dashed line. In the PCA plot, simulated annealing is able to
+move gradually towards the theoretical best while the pseudo derivative
+method breaks after the initial few attempts.
 
 \begin{Schunk}
 \begin{figure}
