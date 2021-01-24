@@ -805,14 +805,14 @@ whether the simulated annealing algorithm can escape that local optimum
 and find the global one.
 
 \begin{Schunk}
-\begin{widefigure}
+\begin{figure}
 
 {\centering \includegraphics[width=1\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/noisy-better-geo-1} 
 
 }
 
 \caption[1D projection on 5\-variable dataset \code{boa5} with \code{norm\_kol} index]{1D projection on 5\-variable dataset \code{boa5} with \code{norm\_kol} index. The trace plot shows the failure of pseudo derivative on non-smooth index. The PCA plot also shows that simulated annealing is searching the area close to the theoretical best while pseudo derivative can't couple with the non-continuity in the index.}\label{fig:noisy-better-geo}
-\end{widefigure}
+\end{figure}
 \end{Schunk}
 
 Figure \ref{fig:noisy-better-geo} presents the tracing plots of two
@@ -832,22 +832,33 @@ method breaks after the initial few attempts.
 
 }
 
-\caption[One-D projection of \code{norm\_kol} index on \code{boa6} data optimised by \code{search\_better}, starting from 20 different seeds]{One-D projection of \code{norm\_kol} index on \code{boa6} data optimised by \code{search\_better}, starting from 20 different seeds. }\label{fig:kol-result}
+\caption[One-D projection of data \code{boa6} on \code{norm\_kol} index,  optimised by \code{search\_better} and \code{search\_better\_random}]{One-D projection of data \code{boa6} on \code{norm\_kol} index,  optimised by \code{search\_better} and \code{search\_better\_random}. Two different neighbourhood size of 0.5 and 0.7 is used. The finish point of each path is larger than the start point and optimums are separately labelled with * representing the global optimum and x the local optimum The color of the path is based on whether the optimiser finds the global or local optimum, after polishing.}\label{fig:kol-result}
 \end{figure}
 \end{Schunk}
 
-The second experiment with the noisy index is to understand how the
-optimisers perform when a local maximum is present. The dataset used is
-\code{boa6} where \texttt{x2} and \texttt{x7} are informative. The two
-theoretical best bases are {[}0, 1, 0, 0, 0, 0{]} and {[}0, 0, 1, 0, 0,
-0{]} with index value 0.176 and 0.235, respectively. Hence, the global
-maximum happens when variable \texttt{x7} is found.
-
-The conclusion from this experiment is that the usage of
-\texttt{search\_better\_random} and increasing the search space are
-methods that can avoid getting trapped in local maxima but the solution
-will still depend on the starting points of the simulation and the seed
-used.
+The next experiment compares two optimisers: \texttt{search\_better} and
+\texttt{search\_better\_random} for 20 simulation paths. Two search
+neighbourhood sizes, \texttt{alpha}, of 0.5 and 0.7 are also compared to
+understand the effect of neighbourhood size where a larger value
+indicating a wider search. Figure \ref{fig:kol-result} shows 80 (20 * 4)
+PCA projected interpolation paths faceted by optimiser and alpha.
+Several results can be drawn through the comparison: 1) With
+\texttt{search\_better} and \texttt{alpha\ =\ 0.5}, despite being the
+simplest and fastest, the optimiser fails to optimise for three
+instances where they finish neither near the local nor the global
+optimum. 2) With the same optimiser but a larger neighbourhood size
+\texttt{alpha\ =\ 0.7}, more seeds have found the global optimum. 3)
+Comparing different optimisers \texttt{search\_better} and
+\texttt{search\_better\_random} with the same search size of 0.5,
+\texttt{search\_better\_random} finishes closer to the theoretical for
+the ones that find the local optimum. This indicates the optimiser is
+working harder to examine if there is other optimum in the space but a
+small search neighbourhood size makes it hard to conduct a holistic
+search of the whole space. 4) With \texttt{search\_better\_random} and a
+larger neighbourhood size of 0.7, more seeds have found the global
+optimum. Also some points are getting closer to the position of the
+theoretical best, as comparing with \texttt{alpha\ =\ 0.5}, and this
+would indicate fewer work for the subsequent polish.
 
 \hypertarget{implementation}{%
 \section{Implementation}\label{implementation}}

@@ -12,24 +12,24 @@ purrr::walk(.x = files, ~load(here::here(.x), env = globalenv()))
 p1 <- holes_2d_better_max_tries %>%
   mutate(max_tries = 500) %>%
   explore_trace_search(label.size = 0.03,label.padding = 0.1, segment.size = 0,  extend_lower = 0.93) +
-  scale_color_botanical(palette = "daisy")
+  scale_color_botanical(palette = "fern")
 
 p2 <- holes_2d_better_random %>%
   mutate(max_tries = 25) %>%
   explore_trace_search(label.size = 0.01, label.padding = 0.1, segment.size = 0, extend_lower = 0.93) +
-  scale_color_botanical(palette = "daisy")
+  scale_color_botanical(palette = "fern")
 
 (p1 | p2)
 
 ## ---- toy-interp
 p1 <- holes_2d_better_max_tries %>%
   mutate(group = "Algorithm 1") %>%
-  explore_trace_interp(accuracy_x = 4) +
+  explore_trace_interp(iter = id, color = tries, accuracy_x = 4) +
   scale_color_botanical(palette = "fern", discrete = FALSE)
 
 p2 <- holes_2d_better_random %>%
   mutate(group = "Algorithm 3") %>%
-  explore_trace_interp(accuracy_x = 14) +
+  explore_trace_interp(iter = id, color = tries, accuracy_x = 14) +
   scale_color_botanical(palette = "fern", discrete = FALSE)
 
 p1 | p2
