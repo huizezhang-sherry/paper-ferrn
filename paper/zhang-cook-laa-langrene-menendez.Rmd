@@ -299,7 +299,7 @@ Figure \ref{fig:toy-pca} shows an example of the PCA plot on the same optimisers
 
 ## Animating the diagnostic plots
 
-```{r toy-pca-animated, fig.cap = "A selected number of frames from the animated PCA plot. With animation, it is easier to track the progression from the start to finish in each algorithm."}
+```{r toy-pca-animated, fig.cap = "A selected number of frames from the animated PCA plots. With animation, it is easier to track the progression of each optimiser from the start to finish. A full video of the aimation can be found at \\url{https://vimeo.com/user132007430/review/504242845/b73f37175a}"}
 ```
 
 Animated plots can be informative in diagnostics, especially in the case of PCA plot when the starting and ending of the search is not clear. Figure \ref{fig:toy-pca-animated} shows six frames of an animated version of Figure \ref{fig:toy-pca} and this time, it shows that `search_better` finds the optimum quicker than `search_geodesic`.

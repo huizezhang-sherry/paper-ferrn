@@ -42,25 +42,26 @@ bind_rows(holes_1d_geo, holes_1d_better) %>%
   scale_color_botanical(palette = "fern")
 
 ## ----toy-pca-animated
-# ani <- pca$aug %>%
-#   ggplot(aes(x = PC1, y = PC2)) +
-#   geom_point(data = pca$aug %>% filter(info == "randomly_generated"), col = "grey", size = 0.5) +
-#   #geom_path(data =  pca$aug %>% filter(info == "interpolation"), aes(col = method), size = 2) +
-#   geom_point(data =  pca$aug %>% filter(info != "randomly_generated"), aes(col = method), size = 5) +
-#   geom_point(data = pca$aug %>% filter(info == "theoretical"), aes(col = method), size = 15) +
-#   geom_point(data = get_start(pca$aug), aes(col = method), size = 10) +
-#   scale_color_botanical(palette = "cherry") +
-#   theme_void() +
-#   theme(aspect.ratio = 1, legend.position =  "none",
-#         panel.border = element_rect(colour = "black", fill=NA, size=1)) +
-#   gganimate::transition_states(id) +
-#   gganimate::shadow_mark()
-#
-# animate(ani, nframes = 350, device = "png",
+# dt <- dplyr::bind_rows(holes_1d_geo, holes_1d_better) %>%
+#   bind_theoretical(matrix(c(0, 1, 0, 0, 0), nrow = 5),
+#                    index = tourr::holes(), raw_data = boa5)
+# ani <- dt %>%
+#   explore_space_pca(group = method, animate = TRUE, interp_size = 3,
+#                     theo_size = 45, start_size = 10, end_size = 20) +
+#   theme(legend.position = "none") +
+#   scale_color_botanical(palette = "fern")
+# animate(ani, nframes = 100, device = "png",
 #         renderer = file_renderer("anim/pca/",
 #                                  prefix = "pca", overwrite = TRUE))
 
-frames <- c("0002", "0058", "0078", "0133", "0172", "0350")
+# vimeo version with legend
+# ani <- dt %>%
+#   explore_space_pca(group = method, animate = TRUE, interp_size = 3,
+#                     theo_size = 45, start_size = 10, end_size = 20) +
+#   scale_color_botanical(palette = "fern")
+# anim_save(ani, filename = here::here("anim/toy-pca-animated.mp4"))
+
+frames <- c("0001", "0038", "0046", "0079", "0096", "0100")
 ani <- paste0(here::here("anim/"), "pca/", "pca", frames, ".png")
 rl <- lapply(ani, png::readPNG)
 gl <-  lapply(rl, grid::rasterGrob)
