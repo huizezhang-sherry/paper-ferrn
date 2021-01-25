@@ -256,11 +256,9 @@ to compute since the tour animation is played in real-time.
 \hypertarget{existing-algorithms}{%
 \subsection{Existing algorithms}\label{existing-algorithms}}
 
-Below we introduce three line search algorithms in tour:
-\texttt{search\_better}, \texttt{search\_better\_random}, and
-\texttt{search\_geodesic}. The first two are simulated annealing
-algorithms whilst \texttt{search\_geodesic} evaluates neighbourhood
-basis to determine the search direction.
+Below we introduce three line search algorithms in tour: simulated
+annealing (SA), simulated annealing with jump out (SAJO), and pseudo
+derivative (PD).
 
 \begin{algorithm}
 \SetAlgoLined
@@ -284,7 +282,7 @@ basis to determine the search direction.
   \label{random-search}
 \end{algorithm}
 
-\texttt{search\_better} is a random search device that samples a
+Simulated annealing (SA) is a random search device that samples a
 candidate basis \(\mathbf{A}_{l}\) in the neighbourhood of the current
 basis \(\mathbf{A}_{\text{cur}}\) by
 \(\mathbf{A}_{l} = (1- \alpha)\mathbf{A}_{\text{cur}} + \alpha \mathbf{A}_{\text{rand}}\)
@@ -298,7 +296,7 @@ for guided tour to construct an interpolation path. The next iteration
 of search begins after adjusting \(\alpha\) by a cooling parameter:
 \(\alpha_{j+1} = \alpha_j * \text{cooling}\). The termination condition
 is when the maximum number of iteration \(l_{\max}\) is reached. The
-algorithm of \texttt{search\_better} is summarised in Algorithm
+algorithm of simulated annealing is summarised in Algorithm
 \ref{random-search}. A slightly different cooling scheme has been
 proposed by \citet{posse1995projection} to avoid the search space being
 reduced too fast. A halving parameter \(c\) is introduced and \(\alpha\)
@@ -317,22 +315,21 @@ an accepted basis.
   \label{simulated-annealing}
 \end{algorithm}
 
-Simulated annealing (\texttt{search\_better\_random})
+Simulated annealing with jump out (SAJO)
 \citep{kirkpatrick1983optimization, bertsimas1993simulated} uses the
-same sampling process as \texttt{search\_better} but allows a
-probabilistic acceptance of a basis with lower index value based on the
-annealing \(T(l)\). Given an initial \(T_0\), the temperature at
-iteration \(l\) is defined as \(T(l) = \frac{T_0}{\log(l + 1)}\). When a
-candidate basis fails to have an index value larger than the current
-basis, simulated annealing gives it a second chance to be accepted with
-probability
+same sampling process but allows a probabilistic acceptance of a
+inferior basis with lower index value based on the annealing \(T(l)\).
+Given an initial \(T_0\), the temperature at iteration \(l\) is defined
+as \(T(l) = \frac{T_0}{\log(l + 1)}\). When a candidate basis fails to
+have an index value larger than the current basis, simulated annealing
+gives it a second chance to be accepted with probability
 \[P= \min\left\{\exp\left[-\frac{\mid I_{\text{cur}} - I_{l} \mid}{T(l)}\right],1\right\}\]
 where \(I_{(\cdot)}\) denotes the index value of a given basis. This
 implementation allows the algorithm to jump out of a local maximum and
 enables a more holistic search of the whole parameter space. This
 feature is particularly useful when local maxima are present. The
-algorithm \ref{simulated-annealing} highlights how simulated annealing
-differs from random search in the inner loop.
+algorithm \ref{simulated-annealing} highlights how SAJO differs from SA
+in the inner loop.
 
 \begin{algorithm}
 \SetAlgoLined
@@ -349,16 +346,15 @@ differs from random search in the inner loop.
 \label{search-geodesic}
 \end{algorithm}
 
-\citet{cook1995grand} used a line search algorithm on the space of the
-projection bases. In \texttt{search\_geodesic}, the search direction is
-computed using the most prominent direction that deviating an tiny angle
-of \(\delta\) from the current basis. The step size is chosen by
+In pseudo derivative \citep{cook1995grand} method, the search direction
+is computed using the most prominent direction that deviating an tiny
+angle of \(\delta\) from the current basis. The step size is chosen by
 optimising the index value along the geodesic direction over an 90
 degree angle from \(-\pi/4\) to \(\pi/4\) along the search direction
 chosen. The optima \(\mathbf{A}_{**}\) is returned for the current
 iteration if it meets the percentage improve condition or when
 \(l_{\max}\) is reached. Algorithm \ref{search-geodesic} summarises the
-inner loop in geodesic search.
+inner loop of the pseudo derivative search.
 
 \hypertarget{vis-diag}{%
 \section{Visual diagnostics}\label{vis-diag}}
@@ -374,14 +370,13 @@ functions for diagnostics.
 \subsection{Data structure for
 diagnostics}\label{data-structure-for-diagnostics}}
 
-In the optimisation algorithms for projection pursuit, the three main
-elements to record are 1) projection bases: \(\mathbf{A}\), 2) index
-values: \(I\), and 3) State: \(S\), which labels the observation with
-detailed stage in the optimisation. Possible values for
-\texttt{search\_better} and \texttt{search\_better\_random} include
-\texttt{random\_search}, \texttt{new\_basis}, and
-\texttt{interpolation}. \texttt{search\_geodesic} has a wider variety
-that includes \texttt{new\_basis}, \texttt{direction\_search},
+Three main elements are recorded for the projection pursuit optimisers:
+1) projection bases: \(\mathbf{A}\), 2) index values: \(I\), and 3)
+State: \(S\), which labels the observation with detailed stage in the
+optimisation. For optimiser SA and SAJO, possible values of the state
+include \texttt{random\_search}, \texttt{new\_basis}, and
+\texttt{interpolation}. pseudo derivative search has a wider variety of
+state including \texttt{new\_basis}, \texttt{direction\_search},
 \texttt{best\_direction\_search}, \texttt{best\_line\_search}, and
 \texttt{interpolation}.
 
@@ -506,41 +501,40 @@ helpful when the number of observation is small in one iteration and can
 be achieved via the \texttt{cutoff} argument.
 
 Figure \ref{fig:toy-search} shows the searches of two different
-optimisers: \texttt{search\_better} and \texttt{search\_better\_random}.
-Both optimisers progress quickly at the first few iterations, take
-longer to find better basis in the later iterations, and finish off when
-hitting the maximum number of try, 499 and 999, respectively. Also, the
-target basis found in each iteration of \texttt{search\_better} always
-has an increased index value while this is not the case for
-\texttt{search\_better\_random}. This explains why in this example,
-\texttt{search\_better\_random} takes longer to find the final basis,
-but in more complicated scenarios, the feature of probabilistic
-acceptance allows a more holistic search of the basis space and is more
-likely to find the global optimum.
+optimisers: SA (left) and SAJO (right). Both optimisers progress quickly
+at the first few iterations, take longer to find better basis in the
+later iterations, and finish off when hitting the maximum number of try,
+499 and 999, respectively. Also, the target basis found on the left
+panel always has an increased index value in each iteration while this
+is not the case for the plot on the right. This explains why in this
+example, the optimiser SAJO takes longer to find the final basis, but in
+more complicated scenarios, the feature of probabilistic acceptance
+allows a more holistic search of the basis space and is more likely to
+find the global optimum.
 
 \begin{Schunk}
-\begin{figure}
+\begin{widefigure}
 
 {\centering \includegraphics[width=1\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/toy-search-1} 
 
 }
 
-\caption{A comparison of search by two otimisers: \code{search\_better} and \code{search\_better\_random} on a six-variable dataset \code{boa6} with holes index on a 2D problem. Both optimisers finish when the maximum number of try is reached and attain similar index value in the end. \code{search\_better\_random} takes longer to get to the final basis because it allows for probabilistic acceptance of inferior basis, which is a feature useful for more complex problem.}\label{fig:toy-search}
-\end{figure}
+\caption[A comparison of search by two otimisers]{A comparison of search by two otimisers: SA and SAJO on a six-variable dataset \code{boa6} with holes index on a 2D problem. Both optimisers finish when the maximum number of try is reached and attain similar index value in the end. Simulated annealing with jump out (SAJO) takes longer to get to the final basis because it allows for probabilistic acceptance of inferior basis, which is a feature useful for more complex problem.}\label{fig:toy-search}
+\end{widefigure}
 \end{Schunk}
 
 \hypertarget{toy-interp}{%
 \subsection{Examining the optimisation progress}\label{toy-interp}}
 
 \begin{Schunk}
-\begin{figure}
+\begin{widefigure}
 
 {\centering \includegraphics[width=1\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/toy-interp-1} 
 
 }
 
 \caption[Trace plots of the bases on the interpolation path for two optimisers with the same configuration as the previous figure]{Trace plots of the bases on the interpolation path for two optimisers with the same configuration as the previous figure. The right path shows that to reach a lower target basis, the interpolation actually first passes some higher basis and this could potentially be information to be incorporated into the optimisers.}\label{fig:toy-interp}
-\end{figure}
+\end{widefigure}
 \end{Schunk}
 
 Viewing the index value of points on the interpolation path is another
@@ -567,7 +561,7 @@ space}\label{understanding-the-optimisers-coverage-of-the-search-space}}
 
 }
 
-\caption[1D projection on the 5-variable dataset \code{boa5} with two optimisers]{1D projection on the 5-variable dataset \code{boa5} with two optimisers: pseudo derivative and simulated annealing. All the bases in pseudo derivative has been flipped positive so that the two paths finish close to each other and to the theoretical best.}\label{fig:toy-pca}
+\caption[1D projection on the 5-variable dataset \code{boa5} with two optimisers]{1D projection on the 5-variable dataset \code{boa5} with two optimisers: Simulated Annealing (SA) and Pseudo Derivative (PD). All the bases in pseudo derivative has been flipped positive so that the two paths finish close to each other and to the theoretical best.}\label{fig:toy-pca}
 \end{figure}
 \end{Schunk}
 
@@ -684,12 +678,12 @@ projection looks similar to the one in Figure \ref{fig:toy-pca}.
 For a particular index function, the best algorithm to optimise depends
 on the character of the index and the data. If the index function is
 smooth and has a single maximum, all of the three algorithms introduced
-above can find the maximum. When multiple optima are present,
-\texttt{search\_better} may get stuck at a local maximum. In the case
-where the index function is non-smooth, \texttt{search\_geodesic} may
-even fail to find the maximum. In this section, examples will be
-presented to outline how the diagnostic plots can be used to compare the
-performance of optimisers.
+above can find the maximum. When multiple optima are present, simulated
+annealing (SA) may get stuck at a local maximum. In the case where the
+index function is non-smooth, pseudo derivative search may even fail to
+find the maximum. In this section, examples will be presented to outline
+how the diagnostic plots can be used to compare the performance of
+optimisers.
 
 \hypertarget{simulation-setup}{%
 \subsection{Simulation setup}\label{simulation-setup}}
@@ -728,10 +722,10 @@ index value can be reached during the interpolation. If such a basis can
 be found, the optimiser will start the next iteration from that basis
 instead of the target one. Figure \ref{fig:interruption} contrasts the
 trace with and without the interruption for the simulated annealing
-optimiser: \texttt{search\_better}. The first two interpolation are
-identical while in the third interpolation, a better basis has been
-found than the target one. Rather than starting the next iteration from
-the ``target basis'' on Time 62, as shown in the left panel, the
+optimiser and it can be observed that while the first two interpolation
+are identical, a better basis has been found than the target one in the
+third interpolation. Rather than starting the next iteration from the
+``target basis'' on Time 62, as shown in the left panel, the
 interruption, on the right panel, starts the next iteration from the
 ``interpolation basis'' on Time 61. The interruption has also detected
 better basis on the fourth interpolation. With the interruption, the
@@ -745,7 +739,7 @@ optimiser is able to find the final basis with a higher index value
 
 }
 
-\caption[Trace plot of 2D projection on \code{boa6} data with holes index optimised by \code{search\_better}]{Trace plot of 2D projection on \code{boa6} data with holes index optimised by \code{search\_better}. The purpose of the plot is to compare the effect of implementing the interruption that avoid fully interpolating to the target basis if a better one can be found during the interpolation. With this implementation, the optimiser is able to find a better final basis.}\label{fig:interruption}
+\caption[Trace plot of 2D projection on \code{boa6} data with holes index optimised by optimiser SA]{Trace plot of 2D projection on \code{boa6} data with holes index optimised by optimiser SA. The purpose of the plot is to compare the effect of implementing the interruption that avoid fully interpolating to the target basis if a better one can be found during the interpolation. With this implementation, the optimiser is able to find a better final basis.}\label{fig:interruption}
 \end{widefigure}
 \end{Schunk}
 
@@ -760,34 +754,36 @@ enough}\label{close-but-not-close-enough}}
 
 }
 
-\caption[Two-D projection on \code{boa6} data with holes index optimised by \code{search\_geodesic}]{Two-D projection on \code{boa6} data with holes index optimised by \code{search\_geodesic}. The left panel shows the final projected data before polish and the right panel shows the one after. The separation of the clusters on the y axis becomes sharper after the polish. }\label{fig:polish}
+\caption[Two-D projection on \code{boa6} data with holes index optimised by pseudo derivative]{Two-D projection on \code{boa6} data with holes index optimised by pseudo derivative. The left panel shows the final projected data before polish and the right panel shows the one after. The separation of the clusters on the y axis becomes sharper after the polish. }\label{fig:polish}
 \end{figure}
 \end{Schunk}
 
-Once the final basis has been found by an algorithm, one may want to
-push further to investigate whether there is an even better basis in the
-close neighbourhood. This motivates the polish search where the final
-basis is supplied as the start of a new guided tour to search for any
-local breakthrough.
+Once the final basis has been found by an optimiser, one may want to
+push further in the close neighbourhood to find an even better basis. A
+polish search takes the final basis as the start of a new guided tour to
+search for local breakthrough.
 
-Similar to \texttt{search\_better} as a stochastic random search,
-\texttt{search\_polish} has a different scheme of reducing the search
-neighbourhood. In each search-interpolation iteration,
-\texttt{search\_better} has a fixed neighbourhood parameter alpha and
-this alpha is reduced by the cooling parameter only after an iteration
-finishes. On the contrary, \texttt{search\_polish} allows alpha to be
-reduced during each iteration to exploit the search in the
-neighbourhood. Further, to avoid the case where alpha becomes too small
-and the further search is meaningless, three more stopping criteria have
-been added, on top of the original \texttt{max.tries} limit. These
-include:
+The polish algorithm is similar to the simulated annealing one with
+three main distinctions on 1) the number of candidate basis generated
+each time in the inner loop; 2) the search neighbourhood,
+\texttt{alpha}, and 3) the termination conditions. In simulated
+annealing, only one candidate basis \(\mathbf{A}_l\) is generated every
+time while the polish algorithm allows for a specified number of basis
+to be evaluated for each repetition in the inner loop via an argument
+\texttt{n\_sample}. The search neighbourhood in simulated annealing is
+reduced in the outer loop, that is, the alpha for one iteration of
+search remains the same, while in polish search, \texttt{alpha} is
+reduced once a set of candidate bases fails to make an improvement. To
+avoid the case the neighbourhood size becoming too small to generate
+meaningful search, more termination criteria have been added, apart from
+the original \texttt{max.tries} condition and these include:
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi})}
 \tightlist
 \item
-  the distance between the candidate basis and the current basis needs
-  to be larger than 1e-3;
+  the distance between the basis found and the current basis needs to be
+  larger than 1e-3;
 \item
   the percentage change of the index value need to be larger than 1e-5;
   and
@@ -795,12 +791,12 @@ include:
   the alpha parameter on itself needs to be larger than 0.01
 \end{enumerate}
 
-Figure \ref{fig:polish} presents the final projections found before and
-after applying \texttt{search\_polish} on \texttt{search\_geodesic}.
-Polish search improves the index value from 0.9618 to 0.9627 with
-reduction of weights on the non-informative variables. In terms of the
-projected data as in Figure \ref{fig:polish}, polish works to sharpen
-the edges of each cluster.
+Figure \ref{fig:polish} presents the final projections found before
+(left) and after(right) applying the polish using the pseudo derivative
+optimiser. Before polishing, the four clusters are clearly shown while
+the edges of each cluster is relatively unshaved. The polish search
+start with this basis and on the right panel, the edges of the clusters
+are better trimmed.
 
 \hypertarget{seeing-the-signal-in-the-noise}{%
 \subsection{Seeing the signal in the
@@ -815,21 +811,21 @@ Let \(F_{.}(u)\) be the ECDF function with the subscript \(P\) and \(u\)
 indicating the projected and randomly generated ECDF respectively, the
 index is defined as:
 
-\[\max \left[F_{\mathbf{P}}(u) - F_{y}(u)\right]\] With a more complex
-index function, it is interesting to understand 1) if all the three
-optimisers can reach the optimum, 2) when a local optimum is presented,
-whether the simulated annealing algorithm can escape that local optimum
-and find the global one.
+\[\max \left[F_{P}(u) - F_{y}(u)\right]\] With a more complex index
+function, it is interesting to understand 1) if all the three optimisers
+can reach the optimum, 2) when a local optimum is presented, whether the
+simulated annealing algorithm can escape that local optimum and find the
+global one.
 
 \begin{Schunk}
-\begin{figure}
+\begin{widefigure}
 
 {\centering \includegraphics[width=1\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/noisy-better-geo-1} 
 
 }
 
 \caption[1D projection on 5\-variable dataset \code{boa5} with \code{norm\_kol} index]{1D projection on 5\-variable dataset \code{boa5} with \code{norm\_kol} index. The trace plot shows the failure of pseudo derivative on non-smooth index. The PCA plot also shows that simulated annealing is searching the area close to the theoretical best while pseudo derivative can't couple with the non-continuity in the index.}\label{fig:noisy-better-geo}
-\end{figure}
+\end{widefigure}
 \end{Schunk}
 
 Figure \ref{fig:noisy-better-geo} presents the tracing plots of two
@@ -849,33 +845,31 @@ method breaks after the initial few attempts.
 
 }
 
-\caption[One-D projection of data \code{boa6} on \code{norm\_kol} index,  optimised by \code{search\_better} and \code{search\_better\_random}]{One-D projection of data \code{boa6} on \code{norm\_kol} index,  optimised by \code{search\_better} and \code{search\_better\_random}. Two different neighbourhood size of 0.5 and 0.7 is used. The finish point of each path is larger than the start point and optimums are separately labelled with * representing the global optimum and x the local optimum The color of the path is based on whether the optimiser finds the global or local optimum, after polishing.}\label{fig:kol-result}
+\caption[1D projection of data \code{boa6} on \code{norm\_kol} index,  optimised by SA and SAJO]{1D projection of data \code{boa6} on \code{norm\_kol} index,  optimised by SA and SAJO. Two different neighbourhood size of 0.5 and 0.7 is used. The finish point of each path is larger than the start point and optimums are separately labelled with * representing the global optimum and x the local optimum The color of the path is based on whether the optimiser finds the global or local optimum, after polishing.}\label{fig:kol-result}
 \end{figure}
 \end{Schunk}
 
-The next experiment compares two optimisers: \texttt{search\_better} and
-\texttt{search\_better\_random} for 20 simulation paths. Two search
-neighbourhood sizes, \texttt{alpha}, of 0.5 and 0.7 are also compared to
-understand the effect of neighbourhood size where a larger value
-indicating a wider search. Figure \ref{fig:kol-result} shows 80 (20 * 4)
-PCA projected interpolation paths faceted by optimiser and alpha.
-Several results can be drawn through the comparison: 1) With
-\texttt{search\_better} and \texttt{alpha\ =\ 0.5}, despite being the
-simplest and fastest, the optimiser fails to optimise for three
-instances where they finish neither near the local nor the global
-optimum. 2) With the same optimiser but a larger neighbourhood size
-\texttt{alpha\ =\ 0.7}, more seeds have found the global optimum. 3)
-Comparing different optimisers \texttt{search\_better} and
-\texttt{search\_better\_random} with the same search size of 0.5,
-\texttt{search\_better\_random} finishes closer to the theoretical for
-the ones that find the local optimum. This indicates the optimiser is
-working harder to examine if there is other optimum in the space but a
-small search neighbourhood size makes it hard to conduct a holistic
-search of the whole space. 4) With \texttt{search\_better\_random} and a
-larger neighbourhood size of 0.7, more seeds have found the global
-optimum. Also some points are getting closer to the position of the
-theoretical best, as comparing with \texttt{alpha\ =\ 0.5}, and this
-would indicate fewer work for the subsequent polish.
+The next experiment compares the two simulated annealing optimisers, SA
+and SAJO, for 20 simulation paths. Two search neighbourhood sizes,
+\texttt{alpha}, of 0.5 and 0.7 are also compared to understand the
+effect of neighbourhood size where a larger value indicating a wider
+search. Figure \ref{fig:kol-result} shows 80 (20 * 4) PCA projected
+interpolation paths faceted by optimiser and alpha. Several results can
+be drawn through the comparison: 1) With optimiser SA and a 0.5
+neighbourhood search size, despite being the simplest and fastest, the
+optimiser fails to optimise for three instances where they finish
+neither near the local nor the global optimum. 2) With the same
+optimiser but a larger neighbourhood size of 0.7, more seeds have found
+the global optimum. 3) Comparing between the optimiser SA and SAJO with
+the same search size of 0.5, SAJO finishes closer to the theoretical for
+the ones that find the local optimum. This indicates that it is working
+harder to examine if there is other optimum in the space but a small
+search neighbourhood size makes it hard to conduct a holistic search of
+the whole space. 4) With optimiser SAJO and a larger neighbourhood size
+of 0.7, more seeds have found the global optimum. Also some finish
+points are getting closer to the position of the theoretical best, as
+comparing with the 0.5 neighbourhood size, and this would indicate fewer
+work for the subsequent polish.
 
 \hypertarget{implementation}{%
 \section{Implementation}\label{implementation}}

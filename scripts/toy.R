@@ -19,7 +19,7 @@ p2 <- holes_2d_better_random %>%
   explore_trace_search(label.size = 0.01, label.padding = 0.1, segment.size = 0, extend_lower = 0.93) +
   scale_color_botanical(palette = "fern")
 
-(p1 | p2)
+(p1 | p2) & theme_bw() + theme(legend.position = "none")
 
 ## ---- toy-interp
 p1 <- holes_2d_better_max_tries %>%

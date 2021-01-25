@@ -14,7 +14,7 @@ p1 <- before %>%
   scale_color_botanical(discrete = FALSE) +
   ggtitle("without interruption") +
   geom_point(data = p1_anno, size = 3) +
-  geom_point(data = get_best(after) %>% mutate(id = 78), size = 0, color = "white") +
+  geom_hline(data = get_best(after) %>% mutate(id = 78), aes(yintercept = index_val), color = "grey90") +
   geom_label_repel(data = p1_anno, aes(label = anno), box.padding = 0.5, alpha = 0.5)
 
 p2 <- after %>%
