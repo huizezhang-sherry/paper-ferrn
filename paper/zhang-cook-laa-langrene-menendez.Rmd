@@ -299,14 +299,14 @@ Figure \ref{fig:toy-pca} shows an example of the PCA plot on the same optimisers
 
 ## Animating the diagnostic plots
 
-```{r toy-pca-animated, fig.cap = "A selected number of frames from the animated PCA plots. With animation, it is easier to track the progression of each optimiser from the start to finish. A full video of the aimation can be found at \\url{https://vimeo.com/user132007430/review/504242845/b73f37175a}"}
+```{r toy-pca-animated, fig.cap = "A selected number of frames from the animated PCA plots. With animation, it is easier to track the progression of each optimiser from the start to finish. A full video of this aimation can be found at \\url{https://vimeo.com/user132007430/review/504242845/b73f37175a}"}
 ```
 
 Animated plots can be informative in diagnostics, especially in the case of PCA plot when the starting and ending of the search is not clear. Figure \ref{fig:toy-pca-animated} shows six frames of an animated version of Figure \ref{fig:toy-pca} and this time, it shows that `search_better` finds the optimum quicker than `search_geodesic`.
 
 ## The tour looking at itself
 
-```{r toy-tour, fig.cap="A selected number of frames from the tour animation for viewing the 5D space of all the projection bases. The second frame on the top row views the space from a direction that is close to the one in the PCA plot. The tour animation allows for a more holistic view of the full space in high dimensions from different angles."}
+```{r toy-tour, fig.cap="A selected number of frames from the tour animation for viewing the 5D space of all the projection bases. The tour animation allows for a more holistic view of the full space in high dimensions from different angles. A full video of this aimation can be found at \\url{https://vimeo.com/user132007430/review/504328122/9be84db563}"}
 ```
 
 While viewing the bases on the reduced space via PCA shed some lights on the space the optimisers have explored, the visualisation on the original $p \times d$ dimension enables a more holistic stereoscopic view of the search. To view a high dimensional ($d \ge 3$) object on a screen, an approach is to play the rotation of the object in animation and this can be done via a regular grand tour. Compared to the PCA plot, the animated rotation (tour) displayed in Figure \ref{fig:toy-tour} gives a more well-rounded view of the search and one can view the curved region of the tour path from different angles, which may not be presented in the PCA plot. Also the grand tour animation encompasses the PCA projection since the rotation from PCA is just one angle that maximises the variance of the bases and the grand tour produces a sequence of angles that view the search from different directions. As an evidence, the last frame in Figure \ref{fig:toy-tour} is a frame select from the tour animation that is close to the PCA angle and the projection looks similar to the one in Figure \ref{fig:toy-pca}. 

@@ -68,48 +68,39 @@ gl <-  lapply(rl, grid::rasterGrob)
 wrap_plots(gl)
 
 ## ----toy-tour
-# set.seed(1)
-# sphere <- geozoo::sphere.hollow(p = 5, n = 1000)$point
-# path1 <- holes_1d_better$basis %>%
-#   flatten_dbl() %>% matrix(ncol = 5, byrow = TRUE)
-# path2 <- holes_1d_geo$basis %>%
-#   flatten_dbl() %>% matrix(ncol = 5, byrow = TRUE) %>% -.
-# theoretical <- matrix(c(0, 1, 0, 0, 0), nrow = 1, byrow = TRUE)
-# start <- get_start(holes_1d_better) %>% pull(basis) %>% .[[1]] %>% matrix(nrow = 1)
-# dt <- rbind(sphere, path1, path2, theoretical, start, -start)
-# colnames(dt) <- c(map_chr(1:5, ~paste0("x", .x)))
-# pal <- c("#D3D3D3",c("#524340",  #orchre
-#                      "#B4B754",  # green
-#                      "#F3B422" # yellow
-# ))
-# color <- c(rep(pal[1], nrow(sphere)),
-#            rep(pal[2], nrow(path1)),
-#            rep(pal[3], nrow(path2)),
-#            rep(pal[4], 1), # theoretical
-#            pal[2], # for start
-#            pal[3] # for start
-# )
-# cex <- c(rep(1, nrow(sphere)),
-#          rep(3, nrow(path1)),
-#          rep(3, nrow(path2)),
-#          10, # theoretical
-#          rep(5, 2) # for start
-# )
-#
-# animate_xy(dt, col = color, cex = cex, tour_path = grand_tour()) # trial
+# prep <- prep_space_tour(dplyr::bind_rows(holes_1d_better, holes_1d_geo) %>%
+#                      bind_theoretical(matrix(c(0, 1, 0, 0, 0), nrow = 5),
+#                                       index = tourr::holes(), raw_data = boa5),
+#                    group = method, palette = botanical_palettes$fern[c(1,6)], axes = "bottomleft",
+#                    point_size = 3, end_size = 8, theo_size = 8)
 #
 # set.seed(123)
 # render(
-#   dt,
+#   prep$basis,
 #   tour_path = grand_tour(),
 #   dev = "png",
-#   display = display_xy(col=color,cex = cex, axes = "bottomleft"),
+#   display = display_xy(col = prep$col, cex = prep$cex, pch = prep$pch,
+#                        edges = prep$edges, edges.col = prep$edges_col,
+#                        axes = "bottomleft"),
 #   rescale = FALSE,
-#   frames = 150,
+#   frames = 100,
 #   here::here("anim","tour", "tour%03d.png")
 # )
+#
+# # render gif
+# set.seed(123)
+# render_gif(
+#   prep$basis,
+#   tour_path = grand_tour(),
+#   display = display_xy(col = prep$col, cex = prep$cex, pch = prep$pch,
+#                        edges = prep$edges, edges.col = prep$edges_col,
+#                        axes = "bottomleft"),
+#   rescale = FALSE,
+#   frames = 100,
+#   gif_file = here::here("anim","tour.gif")
+# )
 
-frames <- c("001", "020", "078", "117", "123", "143")
+frames <- c("001", "038", "046", "079", "096", "100")
 ani <- paste0(here::here("anim/"), "tour/", "tour", frames, ".png")
 rl <- lapply(ani, png::readPNG)
 gl <-  lapply(rl, grid::rasterGrob)
