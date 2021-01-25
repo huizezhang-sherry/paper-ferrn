@@ -1,16 +1,28 @@
 ## ----interruption
-p1_anno <- interrupt_no %>% filter(info == "interpolation") %>% mutate(id = row_number()) %>% filter(id %in% c(44, 60, 62)) %>%
-  mutate(anno = c("current basis", "interpolated basis", "target basis"))
+interp <- before %>% get_interp()
 
-# p1 <- interrupt_no %>% mutate(id = row_number() - 1) %>% explore_trace_interp() + ggtitle("without interruption") +
-#   geom_point(data = p1_anno) +
-#   geom_label_repel(data = p1_anno, aes(label = anno), box.padding = 0.5) + ylim(0.8, 0.9) + xlim(0, 80) +
-#   theme(legend.position = "none")
-#
-# p2 <- interrupt_yes %>% explore_trace_interp() + ggtitle("with interruption") + ylim(0.8, 0.9) + xlim(0, 80) +
-#   theme(legend.position = "none")
+p1_anno <- bind_rows(
+  interp %>% filter(tries == 4, info == "interpolation") %>%
+    filter(index_val == max(index_val)) %>%
+    mutate(anno = "interpolation basis"),
+  interp %>% get_interp_last %>% filter(tries %in% c(3, 4)) %>%
+    mutate(anno = c("current basis", "target basis"))
+) %>% arrange(id)
 
-#(p1 | p2) & scale_color_botanical(palette = "fern", discrete = TRUE)
+p1 <- before %>%
+  explore_trace_interp(iter = id, color = tries, accuracy_y = 0.001) +
+  scale_color_botanical(discrete = FALSE) +
+  ggtitle("without interruption") +
+  geom_point(data = p1_anno, size = 3) +
+  geom_point(data = get_best(after) %>% mutate(id = 78), size = 0, color = "white") +
+  geom_label_repel(data = p1_anno, aes(label = anno), box.padding = 0.5, alpha = 0.5)
+
+p2 <- after %>%
+  explore_trace_interp(iter = id, color = tries, accuracy_y = 0.001) +
+  ggtitle("with interruption") +
+  scale_color_botanical(discrete = FALSE)
+
+(p1 | p2)
 
 ## ----polish
 # set.seed(123456)

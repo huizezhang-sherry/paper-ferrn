@@ -47,8 +47,8 @@ knitr::opts_chunk$set(echo = FALSE,
 library(knitr)
 library(tidyverse)
 library(ferrn)
-read_chunk(here::here('scripts/vis-diag.R'))
-read_chunk(here::here('scripts/examples.R'))
+read_chunk(here::here('scripts/toy.R'))
+read_chunk(here::here('scripts/diagnose.R'))
 read_chunk(here::here('scripts/kol_result.R'))
 read_chunk(here::here('scripts/implementation.R'))
 ```
@@ -314,11 +314,11 @@ While viewing the bases on the reduced space via PCA shed some lights on the spa
 
 # Diagnosing an optimiser {#application}
 
-For a particular index function, the best algorithm to optimise relates to the character of the index and the data. If the index function is smooth and has a single maximum, all of the three algorithms introduced above can find the maximum.  When multiple optima are present, `search_better` may get stuck at a local maximum and in the case where the index function is non-smooth, `search_geodesic` may even fail to find the maximum. In this section, examples will be presented to outline how the diagnostic plots can be used to compare the performance of optimisers in different scenarios.
+For a particular index function, the best algorithm to optimise depends on the character of the index and the data. If the index function is smooth and has a single maximum, all of the three algorithms introduced above can find the maximum.  When multiple optima are present, `search_better` may get stuck at a local maximum.  In the case where the index function is non-smooth, `search_geodesic` may even fail to find the maximum. In this section, examples will be presented to outline how the diagnostic plots can be used to compare the performance of optimisers.
 
 ## Simulation setup
 
-Random variables with different structures have been simulated and the distribution of each is presented in Equations \ref{eq:sim-norm} to \ref{eq:sim-x7}. Variable `x1`, `x8`, `x9` and `x10` are normal distributed with zero mean and unit variance and `x2` to `x7` are mixtures of normal distributions with varied weights and locations. The mixture variables have been scaled to have an overall unit variance before running the projection pursuit.
+Random variables with different distributions have been simulated and the distributional form of each variable is presented in Equations \ref{eq:sim-norm} to \ref{eq:sim-x7}. Variable `x1`, `x8`, `x9` and `x10` are normal noise with zero mean and unit variance and `x2` to `x7` are normal mixtures with varied weights and locations. All the variables have been scaled to have an overall unit variance before running the projection pursuit.
 
 \begin{align}
 x_1 \overset{d}{=} x_8 \overset{d}{=} x_9 \overset{d}{=} x_{10}& \sim \mathcal{N}(0, 1) \label{eq:sim-norm} \\
@@ -337,9 +337,9 @@ x_7 &\sim 0.5 \mathcal{N}(-5, 1) + 0.5 \mathcal{N}(5, 1)
 
 ## A problem of non-monotonicity {#monotonic}
 
-In section \ref{toy-interp}, an interpolation with increase-then-decrease pattern has been presented. This pattern is undesirable since the optimiser could have started the next iteration from the highest basis on the tour path, as annotated as the interpolated basis in the plot, but instead, it is forced to start from the target basis. This motivates the design of an interruption to check the index value on the tour path so that the interpolating bases is accepted only up to the one with the largest index value. After implementing this interruption, the search finds a higher final index value with fewer steps as shown in the right panel of Figure \ref{fig:interruption}.
+A non-monotonic interpolation path has already been given in Figure \ref{fig:toy-interp}: to get to the target basis from the current one, the interpolator may have passed a basis with even higher index value. This motivates the design of an interruption to check whether higher index value can be reached during the interpolation. If such a basis can be found, the optimiser will start the next iteration from that basis instead of the target one. Figure \ref{fig:interruption} contrasts the trace with and without the interruption for the simulated annealing optimiser: `search_better`. The first two interpolation are identical while in the third interpolation, a better basis has been found than the target one. Rather than starting the next iteration from the "target basis" on Time 62, as shown in the left panel, the interruption, on the right panel, starts the next iteration from the "interpolation basis" on Time 61. The interruption has also detected better basis on the fourth interpolation. With the interruption, the optimiser is able to find the final basis with a higher index value (0.865 vs. 0.879).
 
-```{r interruption, fig.asp=0.5, fig.cap = "Two-D projection on \\code{boa6} data with holes index optimised by \\code{search\\_better}.  A comparison of the trace plot with and without interruption. When the interruption does not take place, the index value of the target basis can be smaller than the interpolated basis. The interruption forces the interpolation to finish at the highest interpolated basis on the tour path."}
+```{r interruption, fig.asp=0.5,fig.env = "widefigure", fig.cap = "Trace plot of 2D projection on \\code{boa6} data with holes index optimised by \\code{search\\_better}. The purpose of the plot is to compare the effect of implementing the interruption that avoid fully interpolating to the target basis if a better one can be found during the interpolation. With this implementation, the optimiser is able to find a better final basis."}
 ```
 
 ## Close but not close enough
