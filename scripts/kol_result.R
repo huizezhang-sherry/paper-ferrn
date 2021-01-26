@@ -26,14 +26,11 @@ local_max <- clean_pca %>%
   select(-alpha, -search_name)
 
 clean_pca %>% drop_na() %>%
-  explore_space_pca(details = FALSE, pca = FALSE, group = seed_sim, color = var_found,
+  explore_space_pca(pca = FALSE, group = seed_sim, color = var_found,
                     start_size = 1, end_size = 2,
                     interp_size = 0.5) +
   add_theo(dt = global_max, theo_size = 20) +
   add_theo(dt = local_max, theo_label = "x", theo_size = 10) +
   scale_color_botanical() +
   facet_grid(alpha ~ search_name, labeller = label_both)
-
-
-
 

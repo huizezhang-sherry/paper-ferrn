@@ -28,7 +28,7 @@ p2 <- after %>%
 # set.seed(123456)
 # render(
 #   boa6,
-#   tour_path = guided_tour(holes(), d = 2, search_f = search_geodesic),
+#   tour_path = guided_tour(holes(), d = 2, search_f = search_better, max.tries = 500),
 #   dev = "png",
 #   display = display_xy(axes = "bottomleft", verbose = TRUE),
 #   rescale = FALSE,
@@ -36,7 +36,7 @@ p2 <- after %>%
 #   file = here::here("anim","polish", "before%03d.png")
 # )
 #
-# last_basis <- get_best(holes_2d_geo)$basis %>% .[[1]]
+# last_basis <- get_best(holes_2d_better)$basis %>% .[[1]]
 #
 # set.seed(123456)
 # render(
@@ -49,25 +49,22 @@ p2 <- after %>%
 #   frames = 100,
 #   file = here::here("anim","polish", "after%03d.png")
 # )
-
 # set.seed(123456)
-# holes_2d_geo <-
+# holes_2d_better <-
 #   animate_xy(boa6, tour_path = guided_tour(holes(), d = 2,
-#                                            search_f =  search_geodesic),
-#                            rescale = FALSE, verbose = TRUE)
-#
-# last_basis <- get_best(holes_2d_geo)$basis %>% .[[1]]
-#
+#                                            search_f =  search_better, max.tries = 500),
+#                            rescale = FALSE)
+# last_basis <- get_best(holes_2d_better)$basis %>% .[[1]]
 # set.seed(123456)
 # holes_2d_geo_polish <-
 #   animate_xy(boa6, tour_path = guided_tour(holes(), d = 2,
 #                                            search_f =  search_polish),
-#                                   rescale = FALSE, verbose = TRUE, start = last_basis)
+#                                   rescale = FALSE, start = last_basis)
 # save(holes_2d_geo, file = here::here("data", "holes_2d_geo.rda"))
-#save(holes_2d_geo_polish, file = here::here("data", "holes_2d_geo_polish.rda"))
+# save(holes_2d_geo_polish, file = here::here("data", "holes_2d_geo_polish.rda"))
 
-before <- png::readPNG(here::here("anim","polish", "before100.png"))
-after <- png::readPNG(here::here("anim","polish", "after004.png"))
+before <- png::readPNG(here::here("anim","polish", "before089.png"))
+after <- png::readPNG(here::here("anim","polish", "after006.png"))
 gl <-  lapply(list(before, after), grid::rasterGrob)
 wrap_plots(gl)
 
