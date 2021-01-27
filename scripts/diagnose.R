@@ -26,13 +26,25 @@ p2 <- after %>%
 
 ## ----polish
 # set.seed(123456)
+# holes_2d_better <-
+#   animate_xy(boa6, tour_path = guided_tour(holes(), d = 2,
+#                                            search_f =  search_better, max.tries = 500),
+#              rescale = FALSE)
+# last_basis <- get_best(holes_2d_better)$basis %>% .[[1]]
+# set.seed(123456)
+# holes_2d_better_polish <-
+#   animate_xy(boa6, tour_path = guided_tour(holes(), d = 2,
+#                                            search_f =  search_polish),
+#              rescale = FALSE, start = last_basis)
+#
+# set.seed(123456)
 # render(
 #   boa6,
 #   tour_path = guided_tour(holes(), d = 2, search_f = search_better, max.tries = 500),
 #   dev = "png",
 #   display = display_xy(axes = "bottomleft", verbose = TRUE),
 #   rescale = FALSE,
-#   frames = 100,
+#   frames = 500,
 #   file = here::here("anim","polish", "before%03d.png")
 # )
 #
@@ -41,7 +53,7 @@ p2 <- after %>%
 # set.seed(123456)
 # render(
 #   boa6,
-#   tour_path =  guided_tour(holes(), d = 2, search_f = search_polish, alpha = 0.1),
+#   tour_path =  guided_tour(holes(), d = 2, search_f = search_polish),
 #   dev = "png",
 #   display = display_xy(axes = "bottomleft", verbose = TRUE),
 #   start = last_basis,
@@ -49,24 +61,10 @@ p2 <- after %>%
 #   frames = 100,
 #   file = here::here("anim","polish", "after%03d.png")
 # )
-# set.seed(123456)
-# holes_2d_better <-
-#   animate_xy(boa6, tour_path = guided_tour(holes(), d = 2,
-#                                            search_f =  search_better, max.tries = 500),
-#                            rescale = FALSE)
-# last_basis <- get_best(holes_2d_better)$basis %>% .[[1]]
-# set.seed(123456)
-# holes_2d_geo_polish <-
-#   animate_xy(boa6, tour_path = guided_tour(holes(), d = 2,
-#                                            search_f =  search_polish),
-#                                   rescale = FALSE, start = last_basis)
-# save(holes_2d_geo, file = here::here("data", "holes_2d_geo.rda"))
-# save(holes_2d_geo_polish, file = here::here("data", "holes_2d_geo_polish.rda"))
-
-before <- png::readPNG(here::here("anim","polish", "before089.png"))
-after <- png::readPNG(here::here("anim","polish", "after006.png"))
+before <- png::readPNG(here::here("anim","polish", "before079.png"))
+after <- png::readPNG(here::here("anim","polish", "after005.png"))
 gl <-  lapply(list(before, after), grid::rasterGrob)
-wrap_plots(gl)
+patchwork::wrap_plots(gl)
 
 ## ---- noisy-better-geo
 ## code for generating kol_1d_geo, kol_1d_better and kol_1d_better_polish
