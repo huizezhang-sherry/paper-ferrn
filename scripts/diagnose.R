@@ -10,17 +10,17 @@ p1_anno <- bind_rows(
 ) %>% arrange(id)
 
 p1 <- before %>%
-  explore_trace_interp(iter = id, color = tries, accuracy_y = 0.001) +
-  scale_color_botanical(discrete = FALSE) +
+  explore_trace_interp(accuracy_y = 0.001) +
+  scale_color_continuous_botanical() +
   ggtitle("without interruption") +
   geom_point(data = p1_anno, size = 3) +
   geom_hline(data = get_best(after) %>% mutate(id = 78), aes(yintercept = index_val), color = "grey90") +
   geom_label_repel(data = p1_anno, aes(label = anno), box.padding = 0.5, alpha = 0.5)
 
 p2 <- after %>%
-  explore_trace_interp(iter = id, color = tries, accuracy_y = 0.001) +
+  explore_trace_interp(accuracy_y = 0.001) +
   ggtitle("with interruption") +
-  scale_color_botanical(discrete = FALSE)
+  scale_color_continuous_botanical()
 
 (p1 | p2)
 
@@ -103,9 +103,9 @@ dt <- dplyr::bind_rows(kol_1d_geo, kol_1d_better) %>%
   bind_theoretical(matrix = matrix(c(0, -1, 0, 0, 0), ncol = 1), tourr::norm_kol(nrow(boa5)), raw_data = boa5)
 
 p1 <- dt %>%
-  explore_trace_interp(color = method, iter = id,group = method) +
+  explore_trace_interp(group = method) +
   geom_hline(yintercept = theo_best_index_val, alpha = 0.5, linetype = 2) +
-  scale_color_botanical() +
+  scale_color_continuous_botanical() +
   facet_wrap(vars(method), scales = "free_x")
 
 pca <- dt %>%
@@ -114,7 +114,7 @@ pca <- dt %>%
 
 p2 <- pca %>%
   explore_space_pca(group = method, pca = FALSE, details = FALSE, start_size = 1) +
-  scale_color_botanical() +
+  scale_color_discrete_botanical() +
   theme(legend.position = "none")
 
 (p1 | p2)

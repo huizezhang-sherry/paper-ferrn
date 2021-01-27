@@ -12,25 +12,25 @@ purrr::walk(.x = files, ~load(here::here(.x), env = globalenv()))
 p1 <- holes_2d_better_max_tries %>%
   mutate(max_tries = 500) %>%
   explore_trace_search(label.size = 0.03,label.padding = 0.1, segment.size = 0,  extend_lower = 0.93) +
-  scale_color_botanical(palette = "fern")
+  scale_color_continuous_botanical()
 
 p2 <- holes_2d_better_random %>%
   mutate(max_tries = 25) %>%
   explore_trace_search(label.size = 0.01, label.padding = 0.1, segment.size = 0, extend_lower = 0.93) +
-  scale_color_botanical(palette = "fern")
+  scale_color_continuous_botanical()
 
 (p1 | p2) & theme_bw() + theme(legend.position = "none")
 
 ## ---- toy-interp
 p1 <- holes_2d_better_max_tries %>%
   mutate(group = "Algorithm 1") %>%
-  explore_trace_interp(iter = id, color = tries, accuracy_x = 4) +
-  scale_color_botanical(palette = "fern", discrete = FALSE)
+  explore_trace_interp(accuracy_x = 4) +
+  scale_color_continuous_botanical()
 
 p2 <- holes_2d_better_random %>%
   mutate(group = "Algorithm 3") %>%
-  explore_trace_interp(iter = id, color = tries, accuracy_x = 14) +
-  scale_color_botanical(palette = "fern", discrete = FALSE)
+  explore_trace_interp( accuracy_x = 14) +
+  scale_color_continuous_botanical()
 
 p1 | p2
 
@@ -40,7 +40,7 @@ bind_rows(holes_1d_geo, holes_1d_better) %>%
                    index = tourr::holes(), raw_data = boa5)  %>%
   explore_space_pca(group = method, details = TRUE,
                     interp_size = 1, anchor_size = 2, finish_size = 2, ratio = 4.5) +
-  scale_color_botanical(palette = "fern")
+  scale_color_discrete_botanical()
 
 ## ----toy-pca-animated
 # dt <- dplyr::bind_rows(holes_1d_geo, holes_1d_better) %>%

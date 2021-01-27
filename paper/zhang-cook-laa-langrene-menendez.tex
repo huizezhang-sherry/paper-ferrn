@@ -818,39 +818,6 @@ simulated annealing algorithm can escape that local optimum and find the
 global one.
 
 \begin{Schunk}
-\begin{Soutput}
-#> Called from: explore_trace_interp(., color = method, iter = id, group = method)
-#> debug: iter <- dplyr::enexpr(iter)
-#> debug: color <- dplyr::enexpr(color)
-#> debug: group <- dplyr::enexpr(group)
-#> debug: if ("search_geodesic" %in% dt$method) {
-#>     dt <- dt %>% clean_method()
-#> }
-#> debug: dt <- dt %>% clean_method()
-#> debug: dt_interp <- get_interp(dt, group = !!group)
-#> debug: interp_last <- dplyr::bind_rows(get_start(dt), get_interp_last(dt, 
-#>     group = !!group))
-#> debug: tick_x <- format_label(interp_last %>% dplyr::pull(!!iter), accuracy = accuracy_x)
-#> debug: tick_y <- format_label(interp_last$index_val, accuracy = accuracy_y)
-#> debug: a <- dt_interp %>% group_by(group = !!group) %>% dplyr::summarise(row = dplyr::n(), 
-#>     diff = max(!!iter) - min(!!iter) + 1)
-#> debug: if (!all(a$row == a$diff, TRUE)) {
-#>     stop("there is gap(s) in the variable iter!")
-#> }
-#> debug: p <- dt_interp %>% ggplot2::ggplot(ggplot2::aes(x = !!iter, y = .data$index_val, 
-#>     group = !!group)) + ggplot2::geom_line() + ggplot2::geom_point(data = interp_last, 
-#>     ggplot2::aes(col = !!color), size = 3) + ggplot2::geom_vline(data = interp_last, 
-#>     ggplot2::aes(xintercept = !!iter), lty = "dashed", alpha = 0.3) + 
-#>     ggplot2::scale_x_continuous(breaks = tick_x) + ggplot2::scale_y_continuous(breaks = tick_y, 
-#>     labels = scales::label_number(accuracy = accuracy_y)) + theme_fern() + 
-#>     ggplot2::theme(legend.position = "none") + ggplot2::ylab("Index value") + 
-#>     ggplot2::xlab("Time")
-#> debug: if (nrow(dt_interp) < cutoff) {
-#>     p <- p + ggplot2::geom_point(ggplot2::aes(x = !!iter, y = .data$index_val, 
-#>         col = !!color))
-#> }
-#> debug: p
-\end{Soutput}
 \begin{widefigure}
 
 {\centering \includegraphics[width=1\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/noisy-better-geo-1} 

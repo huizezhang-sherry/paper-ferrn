@@ -31,6 +31,6 @@ clean_pca %>% drop_na() %>%
                     interp_size = 0.5) +
   add_theo(dt = global_max, theo_size = 20) +
   add_theo(dt = local_max, theo_label = "x", theo_size = 10) +
-  scale_color_botanical() +
+  scale_color_discrete_botanical() +
   facet_grid(alpha ~ search_name, labeller = label_both)
 
