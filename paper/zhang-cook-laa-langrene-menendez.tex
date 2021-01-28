@@ -518,7 +518,7 @@ in SAJO allows for a more holistic search in more complicated examples.
 
 }
 
-\caption[A comparison of search by two otimisers]{A comparison of search by two otimisers: SA (left) and SAJO (right) on a 2D projection of a six-variable dataset, \code{boa6}, using holes index. Both optimisers find the final basis with similar index value while it takes SAJO more iteration because the algorithm allows a probabilistic acceptance of bases with lower index value, as observed in iteration 4 and 6-8.}\label{fig:toy-search}
+\caption[A comparison of search by two otimisers]{A comparison of search by two otimisers: SA (left) and SAJO (right) on a 2D projection of a six-variable dataset, \code{boa6}, using the holes index. Both optimisers find the final basis with similar index value while it takes SAJO more iteration because the algorithm allows a probabilistic acceptance of bases with lower index value, as observed in iteration 4 and 6-8.}\label{fig:toy-search}
 \end{widefigure}
 \end{Schunk}
 
@@ -558,7 +558,7 @@ space}\label{understanding-the-optimisers-coverage-of-the-search-space}}
 
 }
 
-\caption[1D projection on the 5-variable dataset \code{boa5}5) with two optimisers]{1D projection on the 5-variable dataset \code{boa5}5) with two optimisers: Simulated Annealing (SA) and Pseudo Derivative (PD). All the bases in pseudo derivative has been flipped positive so that the two paths finish close to each other and to the theoretical best.}\label{fig:toy-pca}
+\caption[The PCA plot of 1D projection problem on the 5-variable dataset, \code{boa5}, using the holes indexwith two optimisers]{The PCA plot of 1D projection problem on the 5-variable dataset, \code{boa5}, using the holes indexwith two optimisers: SA and PD. All the bases in PD has been flipped and a grey dashed line has been annotated to indicate the symmetry of two starting bases.}\label{fig:toy-pca}
 \end{figure}
 \end{Schunk}
 
@@ -569,48 +569,47 @@ bases \(\mathbf{A}_{p \times d}\) is a \(p \times d\) dimension sphere
 and dimension reduction methods, i.e.~principal component analysis is
 applied first to project all the bases onto a 2D space. In a projection
 pursuit guided tour optimisation, there are various type of bases
-involved: 1) The starting basis; 2) The anchor bases that have the
-highest index value in each iteration; 3) The search bases that an
-optimiser evaluated to produce the anchor bases; 4) The interpolating
-bases on the interpolation path; and finally 5) the ending basis. The
-importance of these basis differs with the most important ones being the
-start, interpolating and ending bases. Anchor and search bases can be
-turned on with argument \texttt{details\ =\ TRUE}.
+involved: 1) The start basis; 2) The anchor bases that have the highest
+index value in each iteration; 3) The search bases that an optimiser
+evaluated to produce the anchor bases; 4) The interpolating bases on the
+interpolation path; and finally 5) the end basis. The importance of
+these basis differs with the most important ones being the start,
+interpolating and end bases. Anchor and search bases can be turned on
+with argument \texttt{details\ =\ TRUE}. Sometimes, two optimisers can
+start with the same basis but finish with bases of opposite sign. This
+happens because the projection is invariate to the sign difference of
+the bases and so does the index value, however, this creates
+difficulties for comparing end bases. A flip sign device is implemented
+to flip the sign of all the bases in one optimisation if the situation
+described above happens and to ensure different routines finish close to
+each other.
 
-Several annotations have been made to facilitate better reading of this
-plot.
+Several annotations have been made to help understanding this plot. The
+original space of the bases is a high dimensional sphere and random
+bases on the sphere can be generated via the CRAN package
+\CRANpkg{geozoo} \citep{geozoo}. Along with the bases recorded during
+the optimisation and a zero basis, PCA is performed to get the first two
+PC coordinates of all the bases. The search space in the 2D space is a
+circle with the origin being the PC coordinates of the zero matrix, and
+radius estimated as the largest distance between the origin and all the
+bases. The theoretical best basis is known with simulated data and can
+be labelled for comparing the how close the ending basis to the
+theoretical one for different optimisers. Various aesthetics, i.e.~size,
+alpha and color, are applicable to each component to adjust for the
+presentation.
 
-Various other components can be down-played via size, transparency,
-linetype and proper approximation. The basis space is generated via
-random bases on the original high dimensional space via the CRAN package
-\CRANpkg{geozoo} \citep{geozoo} and projected down to 2D. Displaying the
-search space with hundreds of randomly generated dots can be dizzy,
-especially when the more important start, anchor and search bases are
-also displayed with point geometry. Given the fact that the basis space
-is a circle when projected to 2D, we can estimate the center and radius
-with all the bases recorded in the data object. Comparing to the start
-and anchor points, search points are less important as they fail to
-improve on the index value during the optimisation and hence an adjusted
-size and transparency are applied to them. A potential scenario that
-could happen is that two optimisers can start at the same basis but
-finishes with bases in opposite signs. This sign difference would not
-make a difference in the projected data but the PCA projection of the
-bases will display the finish points symmetric to each other, which can
-be disturbing for comparing the path close to the finish. One solution
-is to flip the sign of one optimiser so that they start at symmetric
-position but finish close to each other. To remind the analyst of this
-symmetry in the PCA space, a light dashed line is drawn to connect the
-starting points of two paths. The theoretical best basis is available if
-the data is simulated and can serve as a guide on how the optimisers
-progress to the final basis. Also, the search paths also have an
-increasing alpha hue from start to finish to indicate the direction of
-the optimsation when the theoretical guide is not available. To allow
-flexible annotation in different scenarios, a range of arguments are
-made available to adjust in the main plotting function
-\code{explore\_space\_pca()}.
-
-Figure \ref{fig:toy-pca} shows an example of the PCA plot on the same
-optimisers on a 1D projection problem with 5 variables.
+Figure \ref{fig:toy-pca} presents the PCA plot of a 1D projection of a
+5-variable dataset, \code{boa5}, using the holes index with two
+optimisers, PD and SA, being compared. Both optimisers get close to the
+theoretical bases, annotated by "*" and in this particular example
+pseudo derivative search gets closer. One can also appreciate the nature
+of the two different searches: PD first evaluates points in a small
+neighbourhood for a promising direction, while SA evaluates points
+randomly in the search space to search for the next target. There are
+dashed lines annotated for SA and it describes the interruption of the
+interpolation, which has been briefly mentioned in Figure
+\ref{fig:toy-interp} and will be discussed in details in Section
+\ref{monotonic}.
 
 \hypertarget{animating-the-diagnostic-plots}{%
 \subsection{Animating the diagnostic
@@ -665,6 +664,9 @@ sequence of angles that view the search from different directions. As an
 evidence, the last frame in Figure \ref{fig:toy-tour} is a frame select
 from the tour animation that is close to the PCA angle and the
 projection looks similar to the one in Figure \ref{fig:toy-pca}.
+
+\hypertarget{forming-a-torus}{%
+\subsection{Forming a torus}\label{forming-a-torus}}
 
 \hypertarget{application}{%
 \section{Diagnosing an optimiser}\label{application}}
@@ -791,6 +793,10 @@ optimiser. Before polishing, the four clusters are clearly shown while
 the edges of each cluster is relatively unshaved. The polish search
 start with this basis and on the right panel, the edges of the clusters
 are better trimmed.
+
+\hypertarget{fliping-the-sign-in-the-bases}{%
+\subsection{fliping the sign in the
+bases}\label{fliping-the-sign-in-the-bases}}
 
 \hypertarget{seeing-the-signal-in-the-noise}{%
 \subsection{Seeing the signal in the
