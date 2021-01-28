@@ -278,7 +278,7 @@ derivative (PD).
   construct the geodesic interpolation between $\mathbf{A}_{\text{cur}}$ and $\mathbf{A}_l$\; 
   update $\mathbf{A}_{\text{cur}} = \mathbf{A}_l$ and $j = j + 1$\;
 }
-  \caption{random search}
+  \caption{Simulated annealing (SA)}
   \label{random-search}
 \end{algorithm}
 
@@ -311,7 +311,7 @@ an accepted basis.
     draw $U$ from a uniform distribution: $U \sim \text{Unif(0, 1)}$\;
     update $l = l + 1$\;
   }
-  \caption{simulated annealing}
+  \caption{Simulated annealing with jump out (SAJO)}
   \label{simulated-annealing}
 \end{algorithm}
 
@@ -342,11 +342,11 @@ in the inner loop.
   find the optima $\mathbf{A}_{**}$ and compute $I_{**} = f(\mathbf{A}_{**})$, $p_{\text{diff}} = (I_{**} - I_{\text{cur}})/I_{**}$\;
   update $l = l + 1$\;
 }
-\caption{search geodesic}
+\caption{Pseudo derivative (PD)}
 \label{search-geodesic}
 \end{algorithm}
 
-In pseudo derivative \citep{cook1995grand} method, the search direction
+In pseudo derivative search \citep{cook1995grand}, the search direction
 is computed using the most prominent direction that deviating an tiny
 angle of \(\delta\) from the current basis. The step size is chosen by
 optimising the index value along the geodesic direction over an 90
@@ -484,33 +484,32 @@ of plots that highlights on different variables.
 \subsection{Checking how hard the optimiser is
 working}\label{checking-how-hard-the-optimiser-is-working}}
 
-A primary interest of diagnosing an optimiser is to study how it
-progressively finds its optimum. A simple treatment of plotting the
-index value across its natural order will cause the graph to be
-disproportional to the iteration since it usually takes much longer for
-an optimiser to find a better basis towards the end. Another option is
-to use summarisation in each iteration. Boxplot is a suitable candidate
-that can provide five points summary of each iteration and additional
-information can be separately added with new layers, for example, text
-information on the number of points searched in each iteration is added
-at the bottom of each iteration, the bases returned for interpolation
-are highlighted in larger size and linked, and information regarding the
-last iteration where no basis is returned is turned to grey scale.
-Furthermore, an option to switch from boxplot back to point geometry is
-helpful when the number of observation is small in one iteration and can
-be achieved via the \texttt{cutoff} argument.
+A starting point of diagnosing an optimiser is to understand how many
+search the optimiser has conducted. One may want to simply plot the
+index value of the search points across its natural order. A point
+geometry may work well if each iteration has a similar number of points,
+however, the plot will be disproportionate if some iterations have
+considerably more points than other - it over-emphasizes the iterations
+that have more search points! An alternative is to summarise the search
+in each iteration using boxplot where each iteration will be spaced out
+equally. Occasionally, one may still want to switch back to point
+geometry if the number of points is small and this can be achieved via
+the \texttt{cutoff} argument. Additional annotation can be added with
+new layers, for example, the number of points searched in each iteration
+can be added as text label at the bottom of each iteration; the anchor
+bases to interpolate are connected and highlighted in a larger size; and
+the color of the last iteration is in a grey scale to indicate no better
+basis found in this iteration.
 
 Figure \ref{fig:toy-search} shows the searches of two different
-optimisers: SA (left) and SAJO (right). Both optimisers progress quickly
-at the first few iterations, take longer to find better basis in the
-later iterations, and finish off when hitting the maximum number of try,
-499 and 999, respectively. Also, the target basis found on the left
-panel always has an increased index value in each iteration while this
-is not the case for the plot on the right. This explains why in this
-example, the optimiser SAJO takes longer to find the final basis, but in
-more complicated scenarios, the feature of probabilistic acceptance
-allows a more holistic search of the basis space and is more likely to
-find the global optimum.
+optimisers: SA (left) and SAJO (right). Both optimisers quickly find
+better bases at the first few iterations, then take longer in the later
+iterations, and finally finish when the maximum number of evaluation is
+reached. The anchor bases, the ones with the highest index value in each
+iteration, always have an increased index value in the optimiser SA
+while this is not the case for SAJO. This feature gives SA an advantage
+in simple example, like the one presented while the jump out component
+in SAJO allows for a more holistic search in more complicated examples.
 
 \begin{Schunk}
 \begin{widefigure}
@@ -519,7 +518,7 @@ find the global optimum.
 
 }
 
-\caption[A comparison of search by two otimisers]{A comparison of search by two otimisers: SA and SAJO on a six-variable dataset \code{boa6} with holes index on a 2D problem. Both optimisers finish when the maximum number of try is reached and attain similar index value in the end. Simulated annealing with jump out (SAJO) takes longer to get to the final basis because it allows for probabilistic acceptance of inferior basis, which is a feature useful for more complex problem.}\label{fig:toy-search}
+\caption[A comparison of search by two otimisers]{A comparison of search by two otimisers: SA (left) and SAJO (right) on a 2D projection of a six-variable dataset, \code{boa6}, using holes index. Both optimisers find the final basis with similar index value while it takes SAJO more iteration because the algorithm allows a probabilistic acceptance of bases with lower index value, as observed in iteration 4 and 6-8.}\label{fig:toy-search}
 \end{widefigure}
 \end{Schunk}
 
@@ -533,22 +532,20 @@ find the global optimum.
 
 }
 
-\caption[Trace plots of the bases on the interpolation path for two optimisers with the same configuration as the previous figure]{Trace plots of the bases on the interpolation path for two optimisers with the same configuration as the previous figure. The right path shows that to reach a lower target basis, the interpolation actually first passes some higher basis and this could potentially be information to be incorporated into the optimisers.}\label{fig:toy-interp}
+\caption[Trace plots of the interpolating bases with the same optimisation routine as the previous figure]{Trace plots of the interpolating bases with the same optimisation routine as the previous figure. Both traces are smooth while the change of index value in each iteration may not be monotinic.}\label{fig:toy-interp}
 \end{widefigure}
 \end{Schunk}
 
-Viewing the index value of points on the interpolation path is another
-interest to the analysts since the projection on these bases will be
-played by the tour animation and it provides further information on how
-the index value changes when moving from one target basis to another.
-Figure \ref{fig:toy-interp} presents the index value against time on the
-interpolation path for the two optimisers with same configuration as
-\ref{fig:toy-search}. From Figure \ref{fig:toy-interp}, we further know
-that to reach a target basis with lower index value, the optimiser
-plotted on the right first passes some bases with higher index value
-during the interpolation. If the bases on the interpolation path can be
-incorporated into the optimisation, we may be able to find the optimal
-basis quicker.
+Another interest of diagnosing is to examine how the index value
+progresses for the points on the interpolation path since the projection
+on these bases are played by the tour animation. Trace plots are created
+with plotting the index value of the interpolation points against time.
+Figure \ref{fig:toy-interp} presents the trace plot of the two
+optimisation routines as \ref{fig:toy-search}. The trace plot is smooth
+in both plots and this is a character of the holes index function used.
+An interesting discovery is that with optimiser SAJO, the interpolator,
+in iteration 6-8, first passes through some bases with higher index
+value than the anchor bases.
 
 \hypertarget{understanding-the-optimisers-coverage-of-the-search-space}{%
 \subsection{Understanding the optimiser's coverage of the search
@@ -561,30 +558,27 @@ space}\label{understanding-the-optimisers-coverage-of-the-search-space}}
 
 }
 
-\caption[1D projection on the 5-variable dataset \code{boa5} with two optimisers]{1D projection on the 5-variable dataset \code{boa5} with two optimisers: Simulated Annealing (SA) and Pseudo Derivative (PD). All the bases in pseudo derivative has been flipped positive so that the two paths finish close to each other and to the theoretical best.}\label{fig:toy-pca}
+\caption[1D projection on the 5-variable dataset \code{boa5}5) with two optimisers]{1D projection on the 5-variable dataset \code{boa5}5) with two optimisers: Simulated Annealing (SA) and Pseudo Derivative (PD). All the bases in pseudo derivative has been flipped positive so that the two paths finish close to each other and to the theoretical best.}\label{fig:toy-pca}
 \end{figure}
 \end{Schunk}
 
-Apart from checking the progression of an optimiser, another interesting
-aspect of the diagnostics is to visualise how the visited bases looks
-like in its parameter space. Given the orthonormality constraint, the
-space of projection bases \(\mathbf{A}_{p \times d}\) is a
-\(p \times d\) dimension sphere and even with 1D projection, the basis
-space is high-dimensional. Dimension reduction methods, i.e.~principal
-component analysis can be used to present the bases on 2D space with
-appropriate annotation to highlight the different key components of the
-optimisation.
+Apart from checking the progression of an optimiser, looking at how the
+points evaluated by the optimisers look like in the space is another
+interest. Given the orthonormality constraint, the space of projection
+bases \(\mathbf{A}_{p \times d}\) is a \(p \times d\) dimension sphere
+and dimension reduction methods, i.e.~principal component analysis is
+applied first to project all the bases onto a 2D space. In a projection
+pursuit guided tour optimisation, there are various type of bases
+involved: 1) The starting basis; 2) The anchor bases that have the
+highest index value in each iteration; 3) The search bases that an
+optimiser evaluated to produce the anchor bases; 4) The interpolating
+bases on the interpolation path; and finally 5) the ending basis. The
+importance of these basis differs with the most important ones being the
+start, interpolating and ending bases. Anchor and search bases can be
+turned on with argument \texttt{details\ =\ TRUE}.
 
-In a projection pursuit guided tour optimisation, there are 7 different
-components that are worth-noticing in the exploration: 1) The spherical
-space of all the basses; 2) The starting basis of an optimisation
-routine; 3) The anchor points where a new target basis is found; 4) The
-search basis that an optimiser has evaluated; 5) The interpolation path
-that constructed by the guided tour; 6) The annotation of the
-interrupted path and 7) The theoretical best basis, if applicable.
-Despite all have to be displayed on the diagnostic plot, these
-components differ in their importance with the most interesting ones
-being the starting point, anchor points and the interpolation path.
+Several annotations have been made to facilitate better reading of this
+plot.
 
 Various other components can be down-played via size, transparency,
 linetype and proper approximation. The basis space is generated via
