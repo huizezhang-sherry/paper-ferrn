@@ -2,6 +2,7 @@
 library(ferrn)
 library(tidyverse)
 library(patchwork)
+library(tourr)
 files <- paste0("data/", list.files(here::here("data")))
 purrr::walk(.x = files, ~load(here::here(.x), env = globalenv()))
 
@@ -59,7 +60,7 @@ bind_rows(holes_1d_geo, holes_1d_better) %>%
 #   scale_color_botanical(palette = "fern")
 # anim_save(ani, filename = here::here("anim/toy-pca-animated.mp4"))
 
-frames <- c("0001", "0038", "0046", "0079", "0096", "0100")
+frames <- c("0001", "0038", "0046", "0079", "0086", "0100")
 ani <- paste0(here::here("anim/"), "pca/", "pca", frames, ".png")
 rl <- lapply(ani, png::readPNG)
 gl <-  lapply(rl, grid::rasterGrob)

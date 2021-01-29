@@ -547,9 +547,9 @@ An interesting discovery is that with optimiser SAJO, the interpolator,
 in iteration 6-8, first passes through some bases with higher index
 value than the anchor bases.
 
-\hypertarget{understanding-the-optimisers-coverage-of-the-search-space}{%
+\hypertarget{toy-pca}{%
 \subsection{Understanding the optimiser's coverage of the search
-space}\label{understanding-the-optimisers-coverage-of-the-search-space}}
+space}\label{toy-pca}}
 
 \begin{Schunk}
 \begin{figure}
@@ -595,8 +595,11 @@ radius estimated as the largest distance between the origin and all the
 bases. The theoretical best basis is known with simulated data and can
 be labelled for comparing the how close the ending basis to the
 theoretical one for different optimisers. Various aesthetics, i.e.~size,
-alpha and color, are applicable to each component to adjust for the
-presentation.
+alpha and color, are applicable to emphasize the crucial elements and
+adjust for the presentation. For example, anchor points and search
+points are less important and a smaller size and alpha is used; The
+interpolation paths are more informative if alpha increases from start
+to finish (that is, the path is more opaque towards the end).
 
 Figure \ref{fig:toy-pca} presents the PCA plot of a 1D projection of a
 5-variable dataset, \code{boa5}, using the holes index with two
@@ -622,16 +625,18 @@ plots}\label{animating-the-diagnostic-plots}}
 
 }
 
-\caption{A selected number of frames from the animated PCA plots. With animation, it is easier to track the progression of each optimiser from the start to finish. A full video of this aimation can be found at \url{https://vimeo.com/user132007430/review/504242845/b73f37175a}}\label{fig:toy-pca-animated}
+\caption{Six selected frames from the animated PCA plots in the previous figure. With animation, the start and end position of each optimisation is easier to identify.  A full video of this aimation can be found at \url{https://vimeo.com/user132007430/review/504242845/b73f37175a}}\label{fig:toy-pca-animated}
 \end{figure}
 \end{Schunk}
 
-Animated plots can be informative in diagnostics, especially in the case
-of PCA plot when the starting and ending of the search is not clear.
-Figure \ref{fig:toy-pca-animated} shows six frames of an animated
-version of Figure \ref{fig:toy-pca} and this time, it shows that
-\texttt{search\_better} finds the optimum quicker than
-\texttt{search\_geodesic}.
+Animation is another display to show how the search porgresses from
+start to finish in the space and an \texttt{animate\ =\ TRUE} argument
+is used to enable the animation. Figure \ref{fig:toy-pca-animated} shows
+six frames from the animation of the PCA plot in Figure
+\ref{fig:toy-pca}. An additional piece of information one can learn from
+this animation is that the SA search finds its end basis quicker than
+the PD search since SA has finished in the 5th frame while PD is still
+making more progression.
 
 \hypertarget{the-tour-looking-at-itself}{%
 \subsection{The tour looking at
@@ -644,26 +649,19 @@ itself}\label{the-tour-looking-at-itself}}
 
 }
 
-\caption{A selected number of frames from the tour animation for viewing the 5D space of all the projection bases. The tour animation allows for a more holistic view of the full space in high dimensions from different angles. A full video of this aimation can be found at \url{https://vimeo.com/user132007430/review/504328122/9be84db563}}\label{fig:toy-tour}
+\caption{Six selected frames from the tour animation for viewing the same two optmisations as previous two figures. The tour animation allows for an appreciation of the search bases in the original high dimensional space. A full video of this aimation can be found at \url{https://vimeo.com/user132007430/review/504328122/9be84db563}}\label{fig:toy-tour}
 \end{figure}
 \end{Schunk}
 
-While viewing the bases on the reduced space via PCA shed some lights on
-the space the optimisers have explored, the visualisation on the
-original \(p \times d\) dimension enables a more holistic stereoscopic
-view of the search. To view a high dimensional (\(d \ge 3\)) object on a
-screen, an approach is to play the rotation of the object in animation
-and this can be done via a regular grand tour. Compared to the PCA plot,
-the animated rotation (tour) displayed in Figure \ref{fig:toy-tour}
-gives a more well-rounded view of the search and one can view the curved
-region of the tour path from different angles, which may not be
-presented in the PCA plot. Also the grand tour animation encompasses the
-PCA projection since the rotation from PCA is just one angle that
-maximises the variance of the bases and the grand tour produces a
-sequence of angles that view the search from different directions. As an
-evidence, the last frame in Figure \ref{fig:toy-tour} is a frame select
-from the tour animation that is close to the PCA angle and the
-projection looks similar to the one in Figure \ref{fig:toy-pca}.
+As mentioned in Section \ref{toy-pca}, the original \(p \times d\)
+dimension space can be simulated via randomly generated bases via
+\CRANpkg{geozoo} \citep{geozoo} package. A tour plot rotates these
+random bases and the ones collected by the optimisation in the original
+space and hence provides a stereoscopic view of the search. While the
+PCA plot projects the bases from the direction that maximises the
+variance, the tour plot display of the original high dimensional space
+from various directions using animation. Figure \ref{fig:toy-tour} shows
+the tour plot of the same two optimisations in the 5D space.
 
 \hypertarget{forming-a-torus}{%
 \subsection{Forming a torus}\label{forming-a-torus}}
