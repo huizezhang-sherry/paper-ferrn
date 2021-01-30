@@ -49,7 +49,7 @@ optimization problem additional restrictions are introduced via a set of
 functions that can be convex or non-convex:
 \(g_i:\mathbb{R}^n \rightarrow \mathbb{R}\) for \(i = 1, \ldots k\) and
 hence the problem can be written as \(\min_{x} f(x)\) \emph{subject to}
-\(g_i(x) \leq 0\). Here methods such as Langrange multipliers and convex
+\(g_i(x) \leq 0\). Here methods such as multipliers and convex
 optimization methods including linear and quadratic programming can be
 used.
 
@@ -215,12 +215,7 @@ method has been implemented in the R package \CRANpkg{tourr}
 
 \begin{Schunk}
 \begin{figure}
-
-{\centering \includegraphics[width=0.5\linewidth,height=0.25\textheight]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/img/tour_path} 
-
-}
-
-\caption[Each square (frame) represents the projected data with a corresponding basis]{Each square (frame) represents the projected data with a corresponding basis. Blue frames are found by an optimisation algorithm iteratively whilst the white frames are constructed between two blue frames by geodesic interpolation.}\label{fig:tour-path}
+\includegraphics[width=0.5\linewidth,height=0.25\textheight]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/img/tour_path} \caption[Each square (frame) represents the projected data with a corresponding basis]{Each square (frame) represents the projected data with a corresponding basis. Blue frames are found by an optimisation algorithm iteratively whilst the white frames are constructed between two blue frames by geodesic interpolation.}\label{fig:tour-path}
 \end{figure}
 \end{Schunk}
 
@@ -498,8 +493,8 @@ the \texttt{cutoff} argument. Additional annotation can be added with
 new layers, for example, the number of points searched in each iteration
 can be added as text label at the bottom of each iteration; the anchor
 bases to interpolate are connected and highlighted in a larger size; and
-the color of the last iteration is in a grey scale to indicate no better
-basis found in this iteration.
+the colour of the last iteration is in a grey scale to indicate no
+better basis found in this iteration.
 
 Figure \ref{fig:toy-search} shows the searches of two different
 optimisers: SA (left) and SAJO (right). Both optimisers quickly find
@@ -512,28 +507,18 @@ in simple example, like the one presented while the jump out component
 in SAJO allows for a more holistic search in more complicated examples.
 
 \begin{Schunk}
-\begin{widefigure}
-
-{\centering \includegraphics[width=1\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/toy-search-1} 
-
-}
-
-\caption[A comparison of search by two otimisers]{A comparison of search by two otimisers: SA (left) and SAJO (right) on a 2D projection of a six-variable dataset, \code{boa6}, using the holes index. Both optimisers find the final basis with similar index value while it takes SAJO more iteration because the algorithm allows a probabilistic acceptance of bases with lower index value, as observed in iteration 4 and 6-8.}\label{fig:toy-search}
-\end{widefigure}
+\begin{figure}
+\includegraphics[width=1\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/toy-search-1} \caption[A comparison of search by two otimisers]{A comparison of search by two otimisers: SA (left) and SAJO (right) on a 2D projection of a six-variable dataset, \code{boa6}, using the holes index. Both optimisers find the final basis with similar index value while it takes SAJO more iteration because the algorithm allows a probabilistic acceptance of bases with lower index value, as observed in iteration 4 and 6-8.}\label{fig:toy-search}
+\end{figure}
 \end{Schunk}
 
 \hypertarget{toy-interp}{%
 \subsection{Examining the optimisation progress}\label{toy-interp}}
 
 \begin{Schunk}
-\begin{widefigure}
-
-{\centering \includegraphics[width=1\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/toy-interp-1} 
-
-}
-
-\caption[Trace plots of the interpolating bases with the same optimisation routine as the previous figure]{Trace plots of the interpolating bases with the same optimisation routine as the previous figure. Both traces are smooth while the change of index value in each iteration may not be monotinic.}\label{fig:toy-interp}
-\end{widefigure}
+\begin{figure}
+\includegraphics[width=1\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/toy-interp-1} \caption[Trace plots of the interpolating bases with the same optimisation routine as the previous figure]{Trace plots of the interpolating bases with the same optimisation routine as the previous figure. Both traces are smooth while the change of index value in each iteration may not be monotinic.}\label{fig:toy-interp}
+\end{figure}
 \end{Schunk}
 
 Another interest of diagnosing is to examine how the index value
@@ -553,12 +538,7 @@ space}\label{toy-pca}}
 
 \begin{Schunk}
 \begin{figure}
-
-{\centering \includegraphics[width=1\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/toy-pca-1} 
-
-}
-
-\caption[The PCA plot of 1D projection problem on the 5-variable dataset, \code{boa5}, using the holes indexwith two optimisers]{The PCA plot of 1D projection problem on the 5-variable dataset, \code{boa5}, using the holes indexwith two optimisers: SA and PD. All the bases in PD has been flipped and a grey dashed line has been annotated to indicate the symmetry of two starting bases.}\label{fig:toy-pca}
+\includegraphics[width=1\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/toy-pca-1} \caption[The PCA plot of 1D projection problem on the 5-variable dataset, \code{boa5}, using the holes indexwith two optimisers]{The PCA plot of 1D projection problem on the 5-variable dataset, \code{boa5}, using the holes indexwith two optimisers: SA and PD. All the bases in PD has been flipped and a grey dashed line has been annotated to indicate the symmetry of two starting bases.}\label{fig:toy-pca}
 \end{figure}
 \end{Schunk}
 
@@ -577,7 +557,7 @@ these basis differs with the most important ones being the start,
 interpolating and end bases. Anchor and search bases can be turned on
 with argument \texttt{details\ =\ TRUE}. Sometimes, two optimisers can
 start with the same basis but finish with bases of opposite sign. This
-happens because the projection is invariate to the sign difference of
+happens because the projection is invariant to the sign difference of
 the bases and so does the index value, however, this creates
 difficulties for comparing end bases. A flip sign device is implemented
 to flip the sign of all the bases in one optimisation if the situation
@@ -595,7 +575,7 @@ radius estimated as the largest distance between the origin and all the
 bases. The theoretical best basis is known with simulated data and can
 be labelled for comparing the how close the ending basis to the
 theoretical one for different optimisers. Various aesthetics, i.e.~size,
-alpha and color, are applicable to emphasize the crucial elements and
+alpha and colour, are applicable to emphasize the crucial elements and
 adjust for the presentation. For example, anchor points and search
 points are less important and a smaller size and alpha is used; The
 interpolation paths are more informative if alpha increases from start
@@ -620,16 +600,11 @@ plots}\label{animating-the-diagnostic-plots}}
 
 \begin{Schunk}
 \begin{figure}
-
-{\centering \includegraphics[width=1\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/toy-pca-animated-1} 
-
-}
-
-\caption{Six selected frames from the animated PCA plots in the previous figure. With animation, the start and end position of each optimisation is easier to identify.  A full video of this aimation can be found at \url{https://vimeo.com/user132007430/review/504242845/b73f37175a}}\label{fig:toy-pca-animated}
+\includegraphics[width=1\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/toy-pca-animated-1} \caption{Six selected frames from the animated PCA plots in the previous figure. With animation, the start and end position of each optimisation is easier to identify.  A full video of this aimation can be found at \url{https://vimeo.com/user132007430/review/504242845/b73f37175a}}\label{fig:toy-pca-animated}
 \end{figure}
 \end{Schunk}
 
-Animation is another display to show how the search porgresses from
+Animation is another display to show how the search progresses from
 start to finish in the space and an \texttt{animate\ =\ TRUE} argument
 is used to enable the animation. Figure \ref{fig:toy-pca-animated} shows
 six frames from the animation of the PCA plot in Figure
@@ -644,12 +619,7 @@ itself}\label{the-tour-looking-at-itself}}
 
 \begin{Schunk}
 \begin{figure}
-
-{\centering \includegraphics[width=1\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/toy-tour-1} 
-
-}
-
-\caption{Six selected frames from the tour animation for viewing the same two optmisations as previous two figures. The tour animation allows for an appreciation of the search bases in the original high dimensional space. A full video of this aimation can be found at \url{https://vimeo.com/user132007430/review/504328122/9be84db563}}\label{fig:toy-tour}
+\includegraphics[width=1\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/toy-tour-1} \caption{Six selected frames from the tour animation for viewing the same two optmisations as previous two figures. The tour animation allows for an appreciation of the search bases in the original high dimensional space. A full video of this aimation can be found at \url{https://vimeo.com/user132007430/review/504328122/9be84db563}}\label{fig:toy-tour}
 \end{figure}
 \end{Schunk}
 
@@ -666,18 +636,14 @@ the tour plot of the same two optimisations in the 5D space.
 \hypertarget{forming-a-torus}{%
 \subsection{Forming a torus}\label{forming-a-torus}}
 
+Something to fill here \ldots{}
+
 \hypertarget{application}{%
 \section{Diagnosing an optimiser}\label{application}}
 
-For a particular index function, the best algorithm to optimise depends
-on the character of the index and the data. If the index function is
-smooth and has a single maximum, all of the three algorithms introduced
-above can find the maximum. When multiple optima are present, simulated
-annealing (SA) may get stuck at a local maximum. In the case where the
-index function is non-smooth, pseudo derivative search may even fail to
-find the maximum. In this section, examples will be presented to outline
-how the diagnostic plots can be used to compare the performance of
-optimisers.
+In this section, several examples will be presented to show how the
+diagnostic plots discover something unexpected in the optimisation
+algorithm, and guide the implementation of some new features.
 
 \hypertarget{simulation-setup}{%
 \subsection{Simulation setup}\label{simulation-setup}}
@@ -686,9 +652,9 @@ Random variables with different distributions have been simulated and
 the distributional form of each variable is presented in Equations
 \ref{eq:sim-norm} to \ref{eq:sim-x7}. Variable \texttt{x1}, \texttt{x8},
 \texttt{x9} and \texttt{x10} are normal noise with zero mean and unit
-variance and \texttt{x2} to \texttt{x7} are normal mixtures with varied
+variance, and \texttt{x2} to \texttt{x7} are normal mixtures with varied
 weights and locations. All the variables have been scaled to have an
-overall unit variance before running the projection pursuit.
+overall unit variance before projection pursuit.
 
 \begin{align}
 x_1 \overset{d}{=} x_8 \overset{d}{=} x_9 \overset{d}{=} x_{10}& \sim \mathcal{N}(0, 1) \label{eq:sim-norm} \\
@@ -708,33 +674,31 @@ x_7 &\sim 0.5 \mathcal{N}(-5, 1) + 0.5 \mathcal{N}(5, 1)
 \hypertarget{monotonic}{%
 \subsection{A problem of non-monotonicity}\label{monotonic}}
 
-A non-monotonic interpolation path has already been given in Figure
-\ref{fig:toy-interp}: to get to the target basis from the current one,
-the interpolator may have passed a basis with even higher index value.
-This motivates the design of an interruption to check whether higher
-index value can be reached during the interpolation. If such a basis can
-be found, the optimiser will start the next iteration from that basis
-instead of the target one. Figure \ref{fig:interruption} contrasts the
-trace with and without the interruption for the simulated annealing
-optimiser and it can be observed that while the first two interpolation
-are identical, a better basis has been found than the target one in the
-third interpolation. Rather than starting the next iteration from the
-``target basis'' on Time 62, as shown in the left panel, the
-interruption, on the right panel, starts the next iteration from the
-``interpolation basis'' on Time 61. The interruption has also detected
-better basis on the fourth interpolation. With the interruption, the
-optimiser is able to find the final basis with a higher index value
-(0.865 vs.~0.879).
+An example of non-monotonic interpolation has been given in Figure
+\ref{fig:toy-interp}: a path that passes bases with higher index value
+than the target one. With optimiser SAJO, a non-monotonic interpolation
+is justified since the target bases do not necessarily have a higher
+index value than the current one, while this is not the case for SA. The
+original trace plot for a 2D projection, optimised by SA, is shown on
+the left panel of Figure \ref{fig:interruption} and one can observe
+clearly that the non-monotonic interpolation has undermined the
+optimiser to realise its full potential. Hence, an interruption is
+implemented to stop the interpolation at the basis with the highest
+index value. The right panel of Figure \ref{fig:interruption} presents
+the trace plot after implementing such interruption and it can be
+observed that while the first two interpolations are identical, in the
+third interpolation the basis at time 61 has a higher index value than
+the target. Rather than starting the next iteration from the target
+basis on Time 65 as shown in the left panel, the optimiser, on the right
+panel, starts the next iteration from the interpolation basis on Time
+61. With the interruption, the optimiser is able to find the final basis
+with a index value higher than the most promising basis when the
+interruption is not implemented.
 
 \begin{Schunk}
-\begin{widefigure}
-
-{\centering \includegraphics[width=1\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/interruption-1} 
-
-}
-
-\caption[Trace plot of 2D projection on \code{boa6} data with holes index optimised by optimiser SA]{Trace plot of 2D projection on \code{boa6} data with holes index optimised by optimiser SA. The purpose of the plot is to compare the effect of implementing the interruption that avoid fully interpolating to the target basis if a better one can be found during the interpolation. With this implementation, the optimiser is able to find a better final basis.}\label{fig:interruption}
-\end{widefigure}
+\begin{figure}
+\includegraphics[width=1\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/interruption-1} \caption[Trace plot of 2D projection on \code{boa6} data with holes index, optimised by optimiser SA]{Trace plot of 2D projection on \code{boa6} data with holes index, optimised by optimiser SA.}\label{fig:interruption}
+\end{figure}
 \end{Schunk}
 
 \hypertarget{close-but-not-close-enough}{%
@@ -743,12 +707,7 @@ enough}\label{close-but-not-close-enough}}
 
 \begin{Schunk}
 \begin{figure}
-
-{\centering \includegraphics[width=1\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/polish-1} 
-
-}
-
-\caption[Two-D projection on \code{boa6} data with holes index optimised by pseudo derivative]{Two-D projection on \code{boa6} data with holes index optimised by pseudo derivative. The left panel shows the final projected data before polish and the right panel shows the one after. The separation of the clusters on the y axis becomes sharper after the polish. }\label{fig:polish}
+\includegraphics[width=1\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/polish-1} \caption[Two-D projection on \code{boa6} data with holes index optimised by pseudo derivative]{Two-D projection on \code{boa6} data with holes index optimised by pseudo derivative. The left panel shows the final projected data before polish and the right panel shows the one after. The separation of the clusters on the y axis becomes sharper after the polish. }\label{fig:polish}
 \end{figure}
 \end{Schunk}
 
@@ -792,9 +751,9 @@ the edges of each cluster is relatively unshaved. The polish search
 start with this basis and on the right panel, the edges of the clusters
 are better trimmed.
 
-\hypertarget{fliping-the-sign-in-the-bases}{%
-\subsection{fliping the sign in the
-bases}\label{fliping-the-sign-in-the-bases}}
+\hypertarget{flipping-the-sign-in-the-bases}{%
+\subsection{Flipping the sign in the
+bases}\label{flipping-the-sign-in-the-bases}}
 
 \hypertarget{seeing-the-signal-in-the-noise}{%
 \subsection{Seeing the signal in the
@@ -816,14 +775,9 @@ simulated annealing algorithm can escape that local optimum and find the
 global one.
 
 \begin{Schunk}
-\begin{widefigure}
-
-{\centering \includegraphics[width=1\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/noisy-better-geo-1} 
-
-}
-
-\caption[1D projection on 5\-variable dataset \code{boa5} with \code{norm\_kol} index]{1D projection on 5\-variable dataset \code{boa5} with \code{norm\_kol} index. The trace plot shows the failure of pseudo derivative on non-smooth index. The PCA plot also shows that simulated annealing is searching the area close to the theoretical best while pseudo derivative can't couple with the non-continuity in the index.}\label{fig:noisy-better-geo}
-\end{widefigure}
+\begin{figure}
+\includegraphics[width=1\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/noisy-better-geo-1} \caption[1D projection on 5\-variable dataset \code{boa5} with \code{norm\_kol} index]{1D projection on 5\-variable dataset \code{boa5} with \code{norm\_kol} index. The trace plot shows the failure of pseudo derivative on non-smooth index. The PCA plot also shows that simulated annealing is searching the area close to the theoretical best while pseudo derivative can't couple with the non-continuity in the index.}\label{fig:noisy-better-geo}
+\end{figure}
 \end{Schunk}
 
 Figure \ref{fig:noisy-better-geo} presents the tracing plots of two
@@ -838,12 +792,7 @@ method breaks after the initial few attempts.
 
 \begin{Schunk}
 \begin{figure}
-
-{\centering \includegraphics[width=1\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/kol-result-1} 
-
-}
-
-\caption[1D projection of data \code{boa6} on \code{norm\_kol} index,  optimised by SA and SAJO]{1D projection of data \code{boa6} on \code{norm\_kol} index,  optimised by SA and SAJO. Two different neighbourhood size of 0.5 and 0.7 is used. The finish point of each path is larger than the start point and optimums are separately labelled with * representing the global optimum and x the local optimum The color of the path is based on whether the optimiser finds the global or local optimum, after polishing.}\label{fig:kol-result}
+\includegraphics[width=1\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/kol-result-1} \caption[1D projection of data \code{boa6} on \code{norm\_kol} index,  optimised by SA and SAJO]{1D projection of data \code{boa6} on \code{norm\_kol} index,  optimised by SA and SAJO. Two different neighbourhood size of 0.5 and 0.7 is used. The finish point of each path is larger than the start point and optimums are separately labelled with * representing the global optimum and x the local optimum The colour of the path is based on whether the optimiser finds the global or local optimum, after polishing.}\label{fig:kol-result}
 \end{figure}
 \end{Schunk}
 
@@ -929,10 +878,10 @@ functionality has been listed below.
     \code{get\_search\_count()} produces the summary table of the number
     of observation in each iteration
   \item
-    \code{get\_center()} produces the center point of the basis space
+    \code{get\_centre()} produces the centre point of the basis space
     estimated by the starting points
   \item
-    \code{get\_space\_param()} produces the coordinates of the center
+    \code{get\_space\_param()} produces the coordinates of the centre
     and radius of the basis space
   \item
     \code{get\_theo()} extracts the theoretical observations from the
@@ -974,14 +923,11 @@ functionality has been listed below.
   \item
     \code{clean\_method()} for clean up the name of the optimisers
   \item
-    \code{botanical\_palettes} is a collection of color palettes from
+    \code{botanical\_palettes} is a collection of colour palettes from
     Australian native plants. Quantitative palettes include daisy,
     banksia and cherry and sequential palettes contain fern and acacia.
   \item
-    \code{botanical\_pal()} as the color interpolator
-  \item
-    \code{scale\_color\_botanical()} is a ggplot2 scale for botanical
-    palettes.
+    \code{botanical\_pal()} as the colour interpolator
   \end{itemize}
 \end{itemize}
 
@@ -991,7 +937,7 @@ functionality has been listed below.
 This paper has illustrated setting up a data object that can be used for
 diagnosing a complex optimisation procedure. The ideas were illustrated
 using the optimisers available for projection pursuit guided tour. Here
-the constraint is the orthornormality condition of the projection bases.
+the constraint is the orthonormality condition of the projection bases.
 The approach used here could be broadly applied to understand other
 constrained optimisers.
 

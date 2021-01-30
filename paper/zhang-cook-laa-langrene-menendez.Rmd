@@ -38,7 +38,7 @@ knitr::opts_chunk$set(echo = FALSE,
                       root.dir = here::here(), 
                       fig.path = here::here("figs/"), 
                       cache = TRUE,
-                      fig.align = "center",
+                      fig.align = "centre",
                       fig.height = 3,
                       out.width = "100%")
 ```
@@ -56,13 +56,18 @@ read_chunk(here::here('scripts/implementation.R'))
 ```{r load-pkg}
 ```
 
+```{r }
+# spelling::spell_check_files(here::here("paper/zhang-cook-laa-langrene-menendez.Rmd"), lang = "en-GB", ignore = spelling::get_wordlist())
+```
+
+
 # Introduction
 
 Visualisation is widely used in exploratory data analysis [@tukey1977exploratory; @unwin2015graphical;  @healy2018data; @wilke2019fundamentals]. Presenting information in graphics often unveils information that would otherwise not be aware of and provides a more comprehensive understanding of the problem at hand. Task specific tools presented by @li2020visualizing show how visualisation can be used to understand the behaviour of neural network on classification models, but no general visualisation tool available for diagnosing optimisation procedure. The work presented in this paper brings visualization tools into optimisation problems with an aim to better understand the performance of the optimisers in practice.
 
 The goal of continuous optimisation is to find the best solution within the space of all feasible solutions where typically the best solution is decided by an objective function. Broadly speaking, optimization can be unconstrained or constrained [@kelley1999iterative]. The unconstrained problem can be formulated as a minimization (or maximization)  problem such as 
 $\min_{x} f(x)$ where $f:\mathbb{R}^n \rightarrow \mathbb{R}$ is an objective function with  certain properties defined in an $L^p$ space. In this case, solutions rely on gradient descent or ascent methods. In the constrained optimization problem additional restrictions  are introduced via a set of functions that can be convex or non-convex: $g_i:\mathbb{R}^n \rightarrow \mathbb{R}$ for $i = 1, \ldots k$ and hence the problem can be written as
-$\min_{x} f(x)$ *subject to* $g_i(x) \leq 0$. Here methods such as Langrange multipliers and convex optimization methods including linear and quadratic programming can be used.
+$\min_{x} f(x)$ *subject to* $g_i(x) \leq 0$. Here methods such as multipliers and convex optimization methods including linear and quadratic programming can be used.
 
 The focus of this paper is on the optimisation problem arising in the projection pursuit guided tour [@buja2005computational] which is an exploratory data analysis tool that is defined to detect *interesting structures* or features in high-dimensional data through a set of lower-dimensional projections that cover the entire high dimensional space using interpolation methods called tours [@cook2008grand]. The target of the optimisation is to identify the most *interesting* low-dimensional views of the data given by a corresponding projection matrix. The most *interesting* structures are formally defined by a function of projections, called index function which is optimized to uncover the most revelling structures in a high dimensional space [@cook1993projection]. 
 
@@ -268,28 +273,28 @@ The construction of diagnostic plots adopts the core concept in ggplot2:  gramma
 
 ## Checking how hard the optimiser is working
 
-A starting point of diagnosing an optimiser is to understand how many search the optimiser has conducted. One may want to simply plot the index value of the search points across its natural order. A point geometry may work well if each iteration has a similar number of points,  however, the plot will be disproportionate if some iterations have considerably more points than other - it over-emphasizes the iterations that have more search points! An alternative is to summarise the search in each iteration using boxplot where each iteration will be spaced out equally. Occasionally, one may still want to switch back to point geometry if the number of points is small and this can be achieved via the `cutoff` argument. Additional annotation can be added with new layers, for example, the number of points searched in each iteration can be added as text label at the bottom of each iteration; the anchor bases to interpolate are connected and highlighted in a larger size; and the color of the last iteration is in a grey scale to indicate no better basis found in this iteration. 
+A starting point of diagnosing an optimiser is to understand how many search the optimiser has conducted. One may want to simply plot the index value of the search points across its natural order. A point geometry may work well if each iteration has a similar number of points,  however, the plot will be disproportionate if some iterations have considerably more points than other - it over-emphasizes the iterations that have more search points! An alternative is to summarise the search in each iteration using boxplot where each iteration will be spaced out equally. Occasionally, one may still want to switch back to point geometry if the number of points is small and this can be achieved via the `cutoff` argument. Additional annotation can be added with new layers, for example, the number of points searched in each iteration can be added as text label at the bottom of each iteration; the anchor bases to interpolate are connected and highlighted in a larger size; and the colour of the last iteration is in a grey scale to indicate no better basis found in this iteration. 
 
 Figure \ref{fig:toy-search} shows the searches of two different optimisers: SA (left) and SAJO (right). Both optimisers quickly find better bases at the first few iterations,  then take longer in the later iterations, and finally finish when the maximum number of evaluation is reached. The anchor bases, the ones with the highest index value in each iteration, always have an increased index value in the optimiser SA while this is not the case for SAJO. This feature gives SA an advantage in simple example, like the one presented while the jump out component in SAJO allows for a more holistic search in more complicated examples.
 
-```{r toy-search, fig.env = "widefigure", fig.cap="A comparison of search by two otimisers: SA (left) and SAJO (right) on a 2D projection of a six-variable dataset, \\code{boa6}, using the holes index. Both optimisers find the final basis with similar index value while it takes SAJO more iteration because the algorithm allows a probabilistic acceptance of bases with lower index value, as observed in iteration 4 and 6-8."}
+```{r toy-search, fig.cap="A comparison of search by two otimisers: SA (left) and SAJO (right) on a 2D projection of a six-variable dataset, \\code{boa6}, using the holes index. Both optimisers find the final basis with similar index value while it takes SAJO more iteration because the algorithm allows a probabilistic acceptance of bases with lower index value, as observed in iteration 4 and 6-8."}
 ```
 
 ## Examining the optimisation progress {#toy-interp}
 
-```{r toy-interp, fig.env = "widefigure", fig.cap = "Trace plots of the interpolating bases with the same optimisation routine as the previous figure. Both traces are smooth while the change of index value in each iteration may not be monotinic."}
+```{r toy-interp, fig.cap = "Trace plots of the interpolating bases with the same optimisation routine as the previous figure. Both traces are smooth while the change of index value in each iteration may not be monotinic."}
 ```
 
 Another interest of diagnosing is to examine how the index value progresses for the points on the interpolation path since the projection on these bases are played by the tour animation. Trace plots are created with plotting the index value of the interpolation points against time. Figure \ref{fig:toy-interp} presents the trace plot of the two optimisation routines as \ref{fig:toy-search}. The trace plot is smooth in both plots and this is a character of the holes index function used. An interesting discovery is that with optimiser SAJO, the interpolator, in iteration 6-8, first passes through some bases with higher index value than the anchor bases.
 
 ## Understanding the optimiser's coverage of the search space {#toy-pca}
 
-```{r toy-pca, fig.height=6, fig.cap = "The PCA plot of 1D projection problem on the 5-variable dataset, \\code{boa5}, using the holes indexwith two optimisers: SA and PD. All the bases in PD has been flipped and a grey dashed line has been annotated to indicate the symmetry of two starting bases."}
+```{r toy-pca, fig.height=5, fig.cap = "The PCA plot of 1D projection problem on the 5-variable dataset, \\code{boa5}, using the holes indexwith two optimisers: SA and PD. All the bases in PD has been flipped and a grey dashed line has been annotated to indicate the symmetry of two starting bases."}
 ```
 
-Apart from checking the progression of an optimiser, looking at how the points evaluated by the optimisers look like in the space is another interest. Given the orthonormality constraint, the space of projection bases $\mathbf{A}_{p \times d}$ is a $p \times d$ dimension sphere and  dimension reduction methods, i.e. principal component analysis is applied first to project all the bases onto a 2D space. In a projection pursuit guided tour optimisation, there are various type of bases involved: 1) The start basis; 2) The anchor bases that have the highest index value in each iteration; 3) The search bases that an optimiser evaluated to produce the anchor bases; 4) The interpolating bases on the interpolation path; and finally 5) the end basis. The importance of these basis differs with the most important ones being the start, interpolating and end bases. Anchor and search bases can be turned on with argument `details = TRUE`. Sometimes, two optimisers can start with the same basis but finish with bases of opposite sign. This happens because the projection is invariate to the sign difference of the bases and so does the index value, however, this creates difficulties for comparing end bases. A flip sign device is implemented to flip the sign of all the bases in one optimisation if the situation described above happens and to ensure different routines finish close to each other.
+Apart from checking the progression of an optimiser, looking at how the points evaluated by the optimisers look like in the space is another interest. Given the orthonormality constraint, the space of projection bases $\mathbf{A}_{p \times d}$ is a $p \times d$ dimension sphere and  dimension reduction methods, i.e. principal component analysis is applied first to project all the bases onto a 2D space. In a projection pursuit guided tour optimisation, there are various type of bases involved: 1) The start basis; 2) The anchor bases that have the highest index value in each iteration; 3) The search bases that an optimiser evaluated to produce the anchor bases; 4) The interpolating bases on the interpolation path; and finally 5) the end basis. The importance of these basis differs with the most important ones being the start, interpolating and end bases. Anchor and search bases can be turned on with argument `details = TRUE`. Sometimes, two optimisers can start with the same basis but finish with bases of opposite sign. This happens because the projection is invariant to the sign difference of the bases and so does the index value, however, this creates difficulties for comparing end bases. A flip sign device is implemented to flip the sign of all the bases in one optimisation if the situation described above happens and to ensure different routines finish close to each other.
 
-Several annotations have been made to help understanding this plot. The original space of the bases is a high dimensional sphere and random bases on the sphere can be generated via the CRAN package \CRANpkg{geozoo} [@geozoo]. Along with the bases recorded during the optimisation and a zero basis, PCA is performed to get the first two PC coordinates of all the bases. The search space in the 2D space is a circle with the origin being the PC coordinates of the zero matrix, and radius estimated as the largest distance between the origin and all the bases. The theoretical best basis is known with simulated data and can be labelled for comparing the how close the ending basis to the theoretical one for different optimisers. Various aesthetics, i.e. size, alpha and color, are applicable to emphasize the crucial elements and adjust for the presentation. For example, anchor points and search points are less important and a smaller size and alpha is used; The interpolation paths are more informative if alpha increases from start to finish (that is, the path is more opaque towards the end).
+Several annotations have been made to help understanding this plot. The original space of the bases is a high dimensional sphere and random bases on the sphere can be generated via the CRAN package \CRANpkg{geozoo} [@geozoo]. Along with the bases recorded during the optimisation and a zero basis, PCA is performed to get the first two PC coordinates of all the bases. The search space in the 2D space is a circle with the origin being the PC coordinates of the zero matrix, and radius estimated as the largest distance between the origin and all the bases. The theoretical best basis is known with simulated data and can be labelled for comparing the how close the ending basis to the theoretical one for different optimisers. Various aesthetics, i.e. size, alpha and colour, are applicable to emphasize the crucial elements and adjust for the presentation. For example, anchor points and search points are less important and a smaller size and alpha is used; The interpolation paths are more informative if alpha increases from start to finish (that is, the path is more opaque towards the end).
 
 Figure \ref{fig:toy-pca} presents the PCA plot of a 1D projection of a 5-variable dataset, \code{boa5}, using the holes index with two optimisers, PD and SA, being compared. Both optimisers get close to the theoretical bases, annotated by "*" and in this particular example pseudo derivative search gets closer. One can also appreciate the nature of the two different searches: PD first evaluates points in a small neighbourhood for a promising direction, while SA evaluates points randomly in the search space to search for the next target. There are dashed lines annotated for SA and it describes the interruption of the interpolation, which has been briefly mentioned in Figure \ref{fig:toy-interp} and will be discussed in details in Section \ref{monotonic}.
 
@@ -298,7 +303,7 @@ Figure \ref{fig:toy-pca} presents the PCA plot of a 1D projection of a 5-variabl
 ```{r toy-pca-animated, fig.cap = "Six selected frames from the animated PCA plots in the previous figure. With animation, the start and end position of each optimisation is easier to identify.  A full video of this aimation can be found at \\url{https://vimeo.com/user132007430/review/504242845/b73f37175a}"}
 ```
 
-Animation is another display to show how the search porgresses from start to finish in the space and an  `animate = TRUE` argument is used to enable the animation. Figure \ref{fig:toy-pca-animated} shows six frames from the animation of the PCA plot in Figure \ref{fig:toy-pca}. An additional piece of information one can learn from this animation is that the SA search finds its end basis quicker than the PD search since SA has finished in the 5th frame while PD is still making more progression.
+Animation is another display to show how the search progresses from start to finish in the space and an  `animate = TRUE` argument is used to enable the animation. Figure \ref{fig:toy-pca-animated} shows six frames from the animation of the PCA plot in Figure \ref{fig:toy-pca}. An additional piece of information one can learn from this animation is that the SA search finds its end basis quicker than the PD search since SA has finished in the 5th frame while PD is still making more progression.
 
 ## The tour looking at itself
 
@@ -309,13 +314,16 @@ As mentioned in Section \ref{toy-pca}, the original $p \times d$ dimension space
 
 ## Forming a torus
 
+
+Something to fill here ...
+
 # Diagnosing an optimiser {#application}
 
-For a particular index function, the best algorithm to optimise depends on the character of the index and the data. If the index function is smooth and has a single maximum, all of the three algorithms introduced above can find the maximum.  When multiple optima are present, simulated annealing (SA) may get stuck at a local maximum.  In the case where the index function is non-smooth, pseudo derivative search may even fail to find the maximum. In this section, examples will be presented to outline how the diagnostic plots can be used to compare the performance of optimisers.
+In this section, several examples will be presented to show how the diagnostic plots discover something unexpected in the optimisation algorithm, and guide the implementation of some new features.
 
 ## Simulation setup
 
-Random variables with different distributions have been simulated and the distributional form of each variable is presented in Equations \ref{eq:sim-norm} to \ref{eq:sim-x7}. Variable `x1`, `x8`, `x9` and `x10` are normal noise with zero mean and unit variance and `x2` to `x7` are normal mixtures with varied weights and locations. All the variables have been scaled to have an overall unit variance before running the projection pursuit.
+Random variables with different distributions have been simulated and the distributional form of each variable is presented in Equations \ref{eq:sim-norm} to \ref{eq:sim-x7}. Variable `x1`, `x8`, `x9` and `x10` are normal noise with zero mean and unit variance, and `x2` to `x7` are normal mixtures with varied weights and locations. All the variables have been scaled to have an overall unit variance before projection pursuit.
 
 \begin{align}
 x_1 \overset{d}{=} x_8 \overset{d}{=} x_9 \overset{d}{=} x_{10}& \sim \mathcal{N}(0, 1) \label{eq:sim-norm} \\
@@ -334,9 +342,9 @@ x_7 &\sim 0.5 \mathcal{N}(-5, 1) + 0.5 \mathcal{N}(5, 1)
 
 ## A problem of non-monotonicity {#monotonic}
 
-A non-monotonic interpolation path has already been given in Figure \ref{fig:toy-interp}: to get to the target basis from the current one, the interpolator may have passed a basis with even higher index value. This motivates the design of an interruption to check whether higher index value can be reached during the interpolation. If such a basis can be found, the optimiser will start the next iteration from that basis instead of the target one. Figure \ref{fig:interruption} contrasts the trace with and without the interruption for the simulated annealing optimiser and it can be observed that while the first two interpolation are identical, a better basis has been found than the target one in the third interpolation. Rather than starting the next iteration from the "target basis" on Time 62, as shown in the left panel, the interruption, on the right panel, starts the next iteration from the "interpolation basis" on Time 61. The interruption has also detected better basis on the fourth interpolation. With the interruption, the optimiser is able to find the final basis with a higher index value (0.865 vs. 0.879).
+An example of non-monotonic interpolation has been given in Figure \ref{fig:toy-interp}: a path that passes bases with higher index value than the target one. With optimiser SAJO, a non-monotonic interpolation is justified since the target bases do not necessarily have a higher index value than the current one, while this is not the case for SA. The original trace plot for a 2D projection, optimised by SA, is shown on the left panel of Figure \ref{fig:interruption} and one can observe clearly that the non-monotonic interpolation has undermined the optimiser to realise its full potential. Hence, an interruption is implemented to stop the interpolation at the basis with the highest index value. The right panel of Figure \ref{fig:interruption} presents the trace plot after implementing such interruption and it can be observed that while the first two interpolations are identical, in the third interpolation the basis at time 61 has a higher index value than the target. Rather than starting the next iteration from the target basis on Time 65 as shown in the left panel, the optimiser, on the right panel, starts the next iteration from the interpolation basis on Time 61. With the interruption, the optimiser is able to find the final basis with a index value higher than the most promising basis when the interruption is not implemented.
 
-```{r interruption, fig.env = "widefigure", fig.cap = "Trace plot of 2D projection on \\code{boa6} data with holes index optimised by optimiser SA. The purpose of the plot is to compare the effect of implementing the interruption that avoid fully interpolating to the target basis if a better one can be found during the interpolation. With this implementation, the optimiser is able to find a better final basis."}
+```{r interruption, fig.cap = "Trace plot of 2D projection on \\code{boa6} data with holes index, optimised by optimiser SA."}
 ```
 
 ## Close but not close enough
@@ -355,7 +363,7 @@ The polish algorithm is similar to the simulated annealing one with three main d
 
 Figure \ref{fig:polish} presents the final projections found before (left) and after(right) applying the polish using the pseudo derivative optimiser. Before polishing, the four clusters are clearly shown while the edges of each cluster is relatively unshaved. The polish search start with this basis and on the right panel, the edges of the clusters are better trimmed.
 
-## fliping the sign in the bases
+## Flipping the sign in the bases
 
 
 ## Seeing the signal in the noise 
@@ -366,12 +374,12 @@ $$\max \left[F_{P}(u) - F_{y}(u)\right]$$
 With a more complex index function, it is interesting to understand 1) if all the three optimisers can reach the optimum, 2) when a local optimum is presented, whether the simulated annealing algorithm can escape that local optimum and find the global one.
 
 
-```{r noisy-better-geo, fig.env = "widefigure", fig.cap = "1D projection on 5\\-variable dataset \\code{boa5} with \\code{norm\\_kol} index. The trace plot shows the failure of pseudo derivative on non-smooth index. The PCA plot also shows that simulated annealing is searching the area close to the theoretical best while pseudo derivative can't couple with the non-continuity in the index."}
+```{r noisy-better-geo, fig.cap = "1D projection on 5\\-variable dataset \\code{boa5} with \\code{norm\\_kol} index. The trace plot shows the failure of pseudo derivative on non-smooth index. The PCA plot also shows that simulated annealing is searching the area close to the theoretical best while pseudo derivative can't couple with the non-continuity in the index."}
 ```
 
 Figure \ref{fig:noisy-better-geo} presents the tracing plots of two optimisers: pseudo derivative and simulated annealing and as expected, the interpolated path is no longer smooth in either case. There is barely any improvement on the index value in the pseudo derivative algorithm while the simulated annealing algorithm has managed to get close to the index value of the theoretical best, indicated by the horizontal dashed line. In the PCA plot, simulated annealing is able to move gradually towards the theoretical best while the pseudo derivative method breaks after the initial few attempts.
 
-```{r kol-result, fig.height = 6, fig.cap="1D projection of data \\code{boa6} on \\code{norm\\_kol} index,  optimised by SA and SAJO. Two different neighbourhood size of 0.5 and 0.7 is used. The finish point of each path is larger than the start point and optimums are separately labelled with * representing the global optimum and x the local optimum The color of the path is based on whether the optimiser finds the global or local optimum, after polishing."}
+```{r kol-result, fig.height = 5, fig.cap="1D projection of data \\code{boa6} on \\code{norm\\_kol} index,  optimised by SA and SAJO. Two different neighbourhood size of 0.5 and 0.7 is used. The finish point of each path is larger than the start point and optimums are separately labelled with * representing the global optimum and x the local optimum The colour of the path is based on whether the optimiser finds the global or local optimum, after polishing."}
 ```
 
 The next experiment compares the two simulated annealing optimisers, SA and SAJO,  for 20 simulation paths. Two search neighbourhood sizes, `alpha`, of 0.5 and 0.7 are also compared to understand the effect of neighbourhood size where a larger value indicating a wider search. Figure \ref{fig:kol-result} shows 80 (20 * 4) PCA projected interpolation paths faceted by optimiser and alpha. Several results can be drawn through the comparison: 1) With optimiser SA and a 0.5 neighbourhood search size, despite being the simplest and fastest, the optimiser fails to optimise for three instances where they finish neither near the local nor the global optimum. 2) With the same optimiser but a larger neighbourhood size of 0.7, more seeds have found the global optimum. 3) Comparing between the optimiser SA and SAJO with the same search size of 0.5, SAJO finishes closer to the theoretical for the ones that find the local optimum. This indicates that it is working harder to examine if there is other optimum in the space but a small search neighbourhood size makes it hard to conduct a holistic search of the whole space. 4) With optimiser SAJO and a larger neighbourhood size of 0.7, more seeds have found the global optimum. Also some finish points are getting closer to the position of the theoretical best, as comparing with the 0.5 neighbourhood size, and this would indicate fewer work for the subsequent polish.
@@ -395,8 +403,8 @@ The implementation of this projection has been divided into two packages: the da
   - \code{get\_anchor()} extracts the target observations found by the optimiser
   - \code{get\_search()} extracts the search observations evaluated by the optimiser
   - \code{get\_search\_count()} produces the summary table of the number of observation in each iteration
-  - \code{get\_center()} produces the center point of the basis space estimated by the starting points
-  - \code{get\_space\_param()} produces the coordinates of the center and radius of the basis space
+  - \code{get\_centre()} produces the centre point of the basis space estimated by the starting points
+  - \code{get\_space\_param()} produces the coordinates of the centre and radius of the basis space
   - \code{get\_theo()} extracts the theoretical observations from the data object
   - \code{get\_interrupt()} extract the end point of the interpolation and the target point when an interruption happens
   - \code{get\_basis\_matrix()}: flattens all the bases into a matrix
@@ -410,13 +418,12 @@ The implementation of this projection has been divided into two packages: the da
   - \code{add\_*()} are internal wrapper functions that facilitate the composition of PCA plot
   - \code{theme\_fern()} and \code{format\_label()} for better display of the grid lines and axis formatting
   - \code{clean\_method()} for clean up the name of the optimisers
-  - \code{botanical\_palettes} is a collection of color palettes from Australian native plants. Quantitative palettes include daisy, banksia and cherry and sequential palettes contain fern and acacia.
-  - \code{botanical\_pal()} as the color interpolator 
-  - \code{scale\_color\_botanical()} is a ggplot2 scale for botanical palettes. 
+  - \code{botanical\_palettes} is a collection of colour palettes from Australian native plants. Quantitative palettes include daisy, banksia and cherry and sequential palettes contain fern and acacia.
+  - \code{botanical\_pal()} as the colour interpolator 
 
 # Conclusion
 
-This paper has illustrated setting up a data object that can be used for diagnosing a complex optimisation procedure. The ideas were illustrated using the optimisers available for projection pursuit guided tour. Here the constraint is the orthornormality condition of the projection bases. The approach used here could be broadly applied to understand other constrained optimisers.
+This paper has illustrated setting up a data object that can be used for diagnosing a complex optimisation procedure. The ideas were illustrated using the optimisers available for projection pursuit guided tour. Here the constraint is the orthonormality condition of the projection bases. The approach used here could be broadly applied to understand other constrained optimisers.
 
 <!-- something about the diagnostic plots  -->
 Four diagnostic plots have been introduced to investigate the progression and the projection space of an optimiser. The implementation of these visualisations is designed to be easy-to-use with each plot can be produced with a simple supply of the data object. More advanced users may decide to modify on top of the basic plots or even build their own. 

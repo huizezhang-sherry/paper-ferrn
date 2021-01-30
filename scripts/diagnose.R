@@ -12,13 +12,13 @@ p1_anno <- bind_rows(
 p1 <- before %>%
   explore_trace_interp(accuracy_y = 0.001) +
   scale_color_continuous_botanical() +
-  ggtitle("without interruption") +
-  geom_point(data = p1_anno, size = 3) +
   geom_hline(data = get_best(after) %>% mutate(id = 78), aes(yintercept = index_val), color = "grey90") +
-  ggrepel::geom_label_repel(data = p1_anno, aes(label = anno), box.padding = 0.5, alpha = 0.5)
+  ggrepel::geom_label_repel(data = p1_anno, aes(label = anno), box.padding = 0.5, alpha = 0.5) +
+  ggtitle("without interruption")
 
 p2 <- after %>%
   explore_trace_interp(accuracy_y = 0.001) +
+
   ggtitle("with interruption") +
   scale_color_continuous_botanical()
 
