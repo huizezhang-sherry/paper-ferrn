@@ -28,7 +28,7 @@ p2 <- after %>%
 # set.seed(123456)
 # holes_2d_better <-
 #   animate_xy(boa6, tour_path = guided_tour(holes(), d = 2,
-#                                            search_f =  search_better, max.tries = 500),
+#                                            search_f =  search_better, max.tries = 400),
 #              rescale = FALSE)
 # last_basis <- get_best(holes_2d_better)$basis %>% .[[1]]
 # set.seed(123456)
@@ -37,12 +37,15 @@ p2 <- after %>%
 #                                            search_f =  search_polish),
 #              rescale = FALSE, start = last_basis)
 #
+# save(holes_2d_better, file = here::here("data", "holes_2d_better.rda"))
+# save(holes_2d_better_polish, file = here::here("data", "holes_2d_better_polish.rda"))
+#
 # set.seed(123456)
 # render(
 #   boa6,
-#   tour_path = guided_tour(holes(), d = 2, search_f = search_better, max.tries = 500),
+#   tour_path = guided_tour(holes(), d = 2, search_f = search_better, max.tries = 400),
 #   dev = "png",
-#   display = display_xy(axes = "bottomleft", verbose = TRUE),
+#   display = display_xy(axes = "off", verbose = TRUE, col = botanical_palettes$fern[[6]]),
 #   rescale = FALSE,
 #   frames = 500,
 #   file = here::here("anim","polish", "before%03d.png")
@@ -55,16 +58,28 @@ p2 <- after %>%
 #   boa6,
 #   tour_path =  guided_tour(holes(), d = 2, search_f = search_polish),
 #   dev = "png",
-#   display = display_xy(axes = "bottomleft", verbose = TRUE),
+#   display = display_xy(axes = "off", verbose = TRUE, col = botanical_palettes$fern[[1]]),
 #   start = last_basis,
 #   rescale = FALSE,
 #   frames = 100,
 #   file = here::here("anim","polish", "after%03d.png")
 # )
-before <- png::readPNG(here::here("anim","polish", "before079.png"))
-after <- png::readPNG(here::here("anim","polish", "after005.png"))
-gl <-  lapply(list(before, after), grid::rasterGrob)
-patchwork::wrap_plots(gl)
+
+p1 <- bind_rows(holes_2d_better, holes_2d_better_polish) %>%
+  clean_method() %>%
+  mutate(method = factor(method, levels = c("SA", "polish"))) %>%
+  get_interp() %>%
+  explore_trace_interp(color = method, cutoff = 100) +
+  scale_color_discrete_botanical(breaks = c("SA", "polish"), label = c("SA", "polish")) +
+  theme(legend.position = "bottom",
+        plot.margin = margin(2.5, 2, 0, 0, "cm"))
+
+before <- png::readPNG(here::here("anim","polish", "before073.png"))
+after <- png::readPNG(here::here("anim","polish", "after006.png"))
+
+p1 +
+  inset_element(grid::rasterGrob(before), left = 0.77, bottom = 0.45, right = 0.89, top = 0.67, align_to = "full") +
+  inset_element(grid::rasterGrob(after), left = 0.87, bottom = 0.7, right = 1, top = 1, align_to = "full")
 
 ## ---- noisy-better-geo
 ## code for generating kol_1d_geo, kol_1d_better and kol_1d_better_polish

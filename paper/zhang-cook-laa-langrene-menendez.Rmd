@@ -350,18 +350,17 @@ An example of non-monotonic interpolation has been given in Figure \ref{fig:toy-
 ## Close but not close enough
 
 
-```{r polish, fig.height= 2.5, fig.cap = "Two-D projection on \\code{boa6} data with holes index optimised by pseudo derivative. The left panel shows the final projected data before polish and the right panel shows the one after. The separation of the clusters on the y axis becomes sharper after the polish. "}
+```{r polish, fig.height= 5, fig.cap = "Trace plot of 2D projection on \\code{boa6} data with holes index, optimised first by SA and then by polish search. The polish step results in clearer cut on the edges of the four clusters in the data structure."}
 ```
 
-Once the final basis has been found by an optimiser, one may want to push further in the close neighbourhood to find an even better basis. A polish search takes the final basis as the start of a new guided tour to search for local breakthrough. 
-
-The polish algorithm is similar to the simulated annealing one with three main distinctions on 1) the number of candidate basis generated each time in the inner loop; 2) the search neighbourhood, `alpha`, and 3) the termination conditions. In simulated annealing, only one candidate basis $\mathbf{A}_l$ is generated every time while the polish algorithm allows for a specified number of basis to be evaluated for each repetition in the inner loop via an argument `n_sample`. The search neighbourhood in simulated annealing is reduced in the outer loop, that is, the alpha for one iteration of search remains the same, while in polish search, `alpha` is reduced once a set of candidate bases fails to make an improvement. To avoid the case the neighbourhood size becoming too small to generate meaningful search, more termination criteria have been added, apart from the original `max.tries` condition and  these include:
+Once the final basis has been found by an optimiser, one may want to push further in the close neighbourhood to see if an even better basis can be found. A polish search takes the final basis of an optimiser as the start of a new guided tour to search for local breakthrough. The polish algorithm is similar to the SA with three main distinctions: 1) 100 rather than one candidate bases are generated each time in the inner loop; 2) the search neighbourhood, `alpha`, is reduced in the inner loop, rather than in the outer loop, once a set of candidate bases fails to make an improvement; and 3) three more termination conditions have been added to ensure the new basis generated is distinguishable from the current in terms of the distance in the space,  percentage change in the index value, and neighbourhood: 
 
 1) the distance between the basis found and the current basis needs to be larger than 1e-3;
 2) the percentage change of the index value need to be larger than 1e-5; and
 3) the alpha parameter on itself needs to be larger than 0.01
 
-Figure \ref{fig:polish} presents the final projections found before (left) and after(right) applying the polish using the pseudo derivative optimiser. Before polishing, the four clusters are clearly shown while the edges of each cluster is relatively unshaved. The polish search start with this basis and on the right panel, the edges of the clusters are better trimmed.
+Figure \ref{fig:polish} presents the trace plot of a 2D projection, optimised by SA and followed by the polish search, along with the projection on the final basis of each algorithm. The end basis found by SA reveals the four clusters in the data, but the edges of each cluster are not clean-cut. Polish works with this end basis and further pushes the index value to produce even clear structure in the data. One can observe that the projection after polishing better distinguishes the four clusters with more trimmed edges, espeically along the vertical axis.
+
 
 ## Flipping the sign in the bases
 
