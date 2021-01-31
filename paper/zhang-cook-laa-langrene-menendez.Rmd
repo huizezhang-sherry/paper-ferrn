@@ -367,22 +367,23 @@ Figure \ref{fig:polish} presents the trace plot of a 2D projection, optimised by
 Something to fill here ...
 
 ```{r flip-sign, fig.cap = "PCA plot of 1D projection of boa6 data, optimised by SA, with seed 2463."}
-
 ```
 
 
 ## Seeing the signal in the noise 
 
-The index function, up until this point, are all smooth, while this is not the case for all. A 1D projection function based on the Kolmogorov test, `norm_kol`, compares the projected data, $\mathbf{Y}_{n \times 1}$ to a randomly generated normal distribution, $y_n$ based on the empirical cumulated distribution function (ECDF). Let $F_{.}(u)$ be the ECDF function with the subscript $P$ and $u$ indicating the projected and randomly generated ECDF respectively,  the index is defined as: 
+The index function before this section are all smooth, while this is not the case for all. A 1D projection function based on the Kolmogorov test, $I^{nk}(n)$, compares the projected data, $\mathbf{Y}_{n \times 1}$, to a randomly generated normal distribution, $\mathcal{N}_{n \times 1}$, based on the empirical cumulated distribution function (ECDF). Let $F_{.}(n)$ be the ECDF function, with two possible subscripts $Y$ and $\mathcal{N}$ representing the projected and randomly generated data, and $n$ denoting the number of observation, the Normal Kolmogorov, $I^{nk}(n)$, index is defined as: 
 
-$$\max \left[F_{P}(u) - F_{y}(u)\right]$$
-With a more complex index function, it is interesting to understand 1) if all the three optimisers can reach the optimum, 2) when a local optimum is presented, whether the simulated annealing algorithm can escape that local optimum and find the global one.
+$$I^{nk}(n) = \max \left[F_{Y}(n) - F_{\mathcal{N}}(n)\right]$$
+With a non-smooth index function, two research questions are raised to understand 
 
+1) if any optimiser fails to optimise a non-smooth index; and 
+2) whether the optimisers can find the global optimum despite the presence of a local optimum
 
-```{r noisy-better-geo, fig.cap = "1D projection on 5\\-variable dataset \\code{boa5} with \\code{norm\\_kol} index. The trace plot shows the failure of pseudo derivative on non-smooth index. The PCA plot also shows that simulated annealing is searching the area close to the theoretical best while pseudo derivative can't couple with the non-continuity in the index."}
+```{r noisy-better-geo, fig.height = 6, fig.cap = "Trace and PCA plot of 1D projection on 5\\-variable dataset, \\code{boa5}, with \\code{norm\\_kol} index, optimised by all three optimiers. Optimiser PD fails to optimise the non-smooth index while although both SA and SAJO success in optimise the index, SAJO takes much longer than SA and finishes off closer to the theoretial best."}
 ```
 
-Figure \ref{fig:noisy-better-geo} presents the tracing plots of two optimisers: pseudo derivative and simulated annealing and as expected, the interpolated path is no longer smooth in either case. There is barely any improvement on the index value in the pseudo derivative algorithm while the simulated annealing algorithm has managed to get close to the index value of the theoretical best, indicated by the horizontal dashed line. In the PCA plot, simulated annealing is able to move gradually towards the theoretical best while the pseudo derivative method breaks after the initial few attempts.
+Figure \ref{fig:noisy-better-geo} presents the trace and PCA plots of all three optimisers. As expected, none of the interpolated path is smooth. There is barely any improvement made by PD, indicating its failure in optimising non-smooth index. While SA and SAJO have managed to get close to the index value of the theoretical best, trace plot shows that it takes SAJO much longer to interpolate towards the final basis. This long interpolation path is partially due to the fluctuation in the early iterations, where the SAJO tends to generously accept inferior basis before concentrating near the optimum. The PCA plot shows the interpolation path and search points excluding the last termination iteration. [A sentence for PD]. Comparing the amount of random search done by SA and SAJO, it is surprising that although SAJO doesn't actually carry that many of search as SA. Combine the insight from both the trace and PCA plot, one can learn the two different search strategies by SA and SAJO: SA frequently samples in the space and only make a move when an improvement will be made, while SAJO first broadly accepts basis in the space and only starts the extensive search in a narrowed subspace. The specific decision of which optimiser to use will depends on the index curve in the basis space but if the basis space is highly non-smooth and spike, accepting inferior bases at first, as SAJO, can lead to a more efficient search, in terms of the overall number of points evaluated.
 
 ```{r kol-result, fig.height = 5, fig.cap="1D projection of data \\code{boa6} on \\code{norm\\_kol} index,  optimised by SA and SAJO. Two different neighbourhood size of 0.5 and 0.7 is used. The finish point of each path is larger than the start point and optimums are separately labelled with * representing the global optimum and x the local optimum The colour of the path is based on whether the optimiser finds the global or local optimum, after polishing."}
 ```
