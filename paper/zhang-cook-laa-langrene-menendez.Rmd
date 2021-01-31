@@ -362,7 +362,13 @@ Once the final basis has been found by an optimiser, one may want to push furthe
 Figure \ref{fig:polish} presents the trace plot of a 2D projection, optimised by SA and followed by the polish search, along with the projection on the final basis of each algorithm. The end basis found by SA reveals the four clusters in the data, but the edges of each cluster are not clean-cut. Polish works with this end basis and further pushes the index value to produce even clear structure in the data. One can observe that the projection after polishing better distinguishes the four clusters with more trimmed edges, espeically along the vertical axis.
 
 
-## Flipping the sign in the bases
+## Reconciling the orientation
+
+Something to fill here ...
+
+```{r flip-sign, fig.cap = "PCA plot of 1D projection of boa6 data, optimised by SA, with seed 2463."}
+
+```
 
 
 ## Seeing the signal in the noise 

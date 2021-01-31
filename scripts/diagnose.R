@@ -81,6 +81,32 @@ p1 +
   inset_element(grid::rasterGrob(before), left = 0.77, bottom = 0.45, right = 0.89, top = 0.67, align_to = "full") +
   inset_element(grid::rasterGrob(after), left = 0.87, bottom = 0.7, right = 1, top = 1, align_to = "full")
 
+## ---- flip-sign
+# set.seed(2463)
+# orientation_corrected <-
+#   animate_dist(boa6,
+#                tour_path = guided_tour(norm_kol(nrow(boa6)), d = 1,
+#                                        search_f = search_better, max.tries = 200, 0.7),
+#                rescale = FALSE)
+#
+# use ggobi/tourr version 0.6.0
+# set.seed(2463)
+# orientation_different <-
+#   animate_dist(boa6,
+#                tour_path = guided_tour(norm_kol(nrow(boa6)), d = 1,
+#                                        search_f = search_better, max.tries = 200, 0.7),
+#                rescale = FALSE)
+#
+# save(orientation_corrected, file = here::here("data", "orientation_corrected.rda"))
+# save(orientation_different, file = here::here("data", "orientation_different.rda"))
+
+bind_rows(orientation_corrected %>% mutate(sign = "flipped"),
+          orientation_different %>% mutate(sign = "original")) %>%
+  explore_space_pca(group = sign, flip = FALSE, start_size = 3) +
+  scale_color_discrete_botanical() +
+  facet_wrap(vars(fct_relevel(sign, c("original", "flipped")))) +
+  theme(legend.position = "none")
+
 ## ---- noisy-better-geo
 ## code for generating kol_1d_geo, kol_1d_better and kol_1d_better_polish
 # set.seed(123456)
