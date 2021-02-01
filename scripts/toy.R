@@ -37,7 +37,7 @@ bind_rows(holes_1d_geo, holes_1d_better) %>%
   bind_theoretical(matrix(c(0, 1, 0, 0, 0), nrow = 5),
                    index = tourr::holes(), raw_data = boa5)  %>%
   explore_space_pca(group = method, details = TRUE,
-                    interp_size = 1, ratio = 5) +
+                    interp_size = 1, ratio = 9) +
   scale_color_discrete_botanical()
 
 ## ----toy-pca-animated
