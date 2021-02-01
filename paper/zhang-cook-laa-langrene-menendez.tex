@@ -818,31 +818,30 @@ points evaluated.
 
 \begin{Schunk}
 \begin{figure}
-\includegraphics[width=1\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/kol-result-1} \caption[1D projection of data \code{boa6} on \code{norm\_kol} index,  optimised by SA and SAJO]{1D projection of data \code{boa6} on \code{norm\_kol} index,  optimised by SA and SAJO. Two different neighbourhood size of 0.5 and 0.7 is used. The finish point of each path is larger than the start point and optimums are separately labelled with * representing the global optimum and x the local optimum The colour of the path is based on whether the optimiser finds the global or local optimum, after polishing.}\label{fig:kol-result}
+\includegraphics[width=1\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/kol-result-1} \caption[PCA plot of 1D projection on the 6\-variable data, \code{boa6}, with normal kolmogorov index]{PCA plot of 1D projection on the 6\-variable data, \code{boa6}, with normal kolmogorov index. Two optimisers: SA and SAJO and two search sizes: 0.5 and 0.7 are used in the simulation for 20 replicates. Local optimum (x), is presented in this experiment, along with the global optimum (*). The final basis is larger and more opaque than the start basis for each path and color represents whether the global or local optimum is found, after polishing.}\label{fig:kol-result}
 \end{figure}
 \end{Schunk}
 
-The next experiment compares the two simulated annealing optimisers, SA
-and SAJO, for 20 simulation paths. Two search neighbourhood sizes,
-\texttt{alpha}, of 0.5 and 0.7 are also compared to understand the
-effect of neighbourhood size where a larger value indicating a wider
-search. Figure \ref{fig:kol-result} shows 80 (20 * 4) PCA projected
-interpolation paths faceted by optimiser and alpha. Several results can
-be drawn through the comparison: 1) With optimiser SA and a 0.5
-neighbourhood search size, despite being the simplest and fastest, the
-optimiser fails to optimise for three instances where they finish
-neither near the local nor the global optimum. 2) With the same
-optimiser but a larger neighbourhood size of 0.7, more seeds have found
-the global optimum. 3) Comparing between the optimiser SA and SAJO with
-the same search size of 0.5, SAJO finishes closer to the theoretical for
-the ones that find the local optimum. This indicates that it is working
-harder to examine if there is other optimum in the space but a small
-search neighbourhood size makes it hard to conduct a holistic search of
-the whole space. 4) With optimiser SAJO and a larger neighbourhood size
-of 0.7, more seeds have found the global optimum. Also some finish
-points are getting closer to the position of the theoretical best, as
-comparing with the 0.5 neighbourhood size, and this would indicate fewer
-work for the subsequent polish.
+The next experiment compares the performance of SA and SAJO when a local
+maximum exists. Two search neighbourhood sizes: 0.5 and 0.7, are
+compared to understand how a large search neighbourhood would affect the
+final basis and the length of the search. Figure \ref{fig:kol-result}
+shows 80 paths simulated using 20 seeds in the PCA plot, faceted by
+optimiser and search size. With SA and a search size of 0.5, despite
+being the simplest and fastest, SA fails to optimise in three instances
+where they finish neither near the local nor the global optimum. With a
+larger search size of 0.7, none of the seed fail and more seeds find the
+global maximum. Comparing SA and SAJO for a search size of 0.5, SAJO
+doesn't seem to improve the final basis found, despite having longer
+interpolation paths. However, the denser path near the local maximum is
+an indicator that SAJO is working hard to examine if there is any other
+optimum in the space but the relative small search size has diminished
+its ability to reach out to the true global maximum. With a larger
+search size, almost all the seeds (16 out of 20) have found the global
+maximum and some final bases are much closer to the theoretical best, as
+compared to the three other cases. This indicates that SAJO, with a
+reasonable large search size, is able to overcome the local optimum and
+optimise close towards the underlying true optimum.
 
 \hypertarget{implementation}{%
 \section{Implementation}\label{implementation}}
