@@ -108,7 +108,7 @@ include_graphics(here::here("img/tour-path.png"))
 
 ## Optimisation in the tour {#tour-optim}
 
-The optimisation problem in projection pursuit is stated as follows: Given a randomly start basis $\mathbf{A}_1$, projection pursuit finds the final projection basis $\mathbf{A}_T$ that satisfies the following optimisation problem: 
+In projection pursuit the optimisation problem (aims at ... describe it in simple words.) That is, it starts with a given randomly selected basis $\mathbf{A}_1$ and aims at finding an optimal final projection basis $\mathbf{A}_T$ in each iteration that satisfies the following optimisation problem: 
 
 
 \begin{align}
@@ -116,7 +116,7 @@ The optimisation problem in projection pursuit is stated as follows: Given a ran
 &s.t.  \mathbf{A}^{\prime} \mathbf{A} = I_d
 \end{align}
 
-\noindent where $I_d$ is the $d$-dimensional identity matrix and the constraint requires the projection bases $\mathbf{A}$ to be orthonormal. Several features of this optimisation are worth-noticing. 1) The optimisation is constrained and the space of the bases is a d-dimensional sphere. 2) The objective function may not be differentiable for a constructed index function. 3) Although finding the global maximum is the goal of an optimisation problem, it is also interesting to inspect local maximum in projection pursuit since it could present unexpected interesting projections. 4) The optimisation procedure needs to be easy to compute since the tour animation needs to be played in real-time during the optimisation.
+\noindent where $f$, $\mathcal{A}$, and $\mathbf{X}$ are defined as in section XX, and  $I_d$ is the $d$-dimensional identity matrix and the constraint requires the projection bases $\mathbf{A}$ to be orthonormal. Several features of this optimisation are worth-noticing. 1) The optimisation is constrained and the space of the bases is a d-dimensional sphere. 2) The objective function may not be differentiable for a constructed index function. 3) Although finding the global maximum is the goal of an optimisation problem, it is also interesting to inspect local maximum in projection pursuit since it could present unexpected interesting projections. 4) The optimisation procedure needs to be easy to compute since the tour animation needs to be played in real-time during the optimisation.
 
 ## Existing algorithms
 

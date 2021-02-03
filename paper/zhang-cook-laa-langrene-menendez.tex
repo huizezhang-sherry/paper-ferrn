@@ -214,18 +214,20 @@ implemented in the R package \CRANpkg{tourr} \citep{tourr}.
 \hypertarget{tour-optim}{%
 \subsection{Optimisation in the tour}\label{tour-optim}}
 
-The optimisation problem in projection pursuit is stated as follows:
-Given a randomly start basis \(\mathbf{A}_1\), projection pursuit finds
-the final projection basis \(\mathbf{A}_T\) that satisfies the following
-optimisation problem:
+In projection pursuit the optimisation problem (aims at \ldots{}
+describe it in simple words.) That is, it starts with a given randomly
+selected basis \(\mathbf{A}_1\) and aims at finding an optimal final
+projection basis \(\mathbf{A}_T\) in each iteration that satisfies the
+following optimisation problem:
 
 \begin{align}
 &\arg \max_{\mathbf{A} \in \mathcal{A}} f(\mathbf{X} \cdot \mathbf{A}) \\
 &s.t.  \mathbf{A}^{\prime} \mathbf{A} = I_d
 \end{align}
 
-\noindent where \(I_d\) is the \(d\)-dimensional identity matrix and the
-constraint requires the projection bases \(\mathbf{A}\) to be
+\noindent where \(f\), \(\mathcal{A}\), and \(\mathbf{X}\) are defined
+as in section XX, and \(I_d\) is the \(d\)-dimensional identity matrix
+and the constraint requires the projection bases \(\mathbf{A}\) to be
 orthonormal. Several features of this optimisation are worth-noticing.
 1) The optimisation is constrained and the space of the bases is a
 d-dimensional sphere. 2) The objective function may not be
