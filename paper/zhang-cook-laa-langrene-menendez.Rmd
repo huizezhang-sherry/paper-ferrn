@@ -115,7 +115,7 @@ The optimisation problem in projection pursuit is stated as follows: Given a ran
 &s.t.  \mathbf{A}^{\prime} \mathbf{A} = I_d
 \end{align}
 
-\noindent where $I_d$ is the $d$-dimensional identity matrix and the constraint requires the projection bases $\mathbf{A}$ to be orhtonormal. Several features of this optimisation are worth-noticing. 1) The optimisation is constrained and the space of the bases is a d-dimensional sphere. 2) The objective function may not be differentiable for a constructed index function. 3) Although finding the global maximum is the goal of an optimisation problem, it is also interesting to inspect local maximum in projection pursuit since it could present unexpected interesting projections. 4) The optimisation procedure needs to be easy to compute since the tour animation needs to be played in real-time during the optimisation.
+\noindent where $I_d$ is the $d$-dimensional identity matrix and the constraint requires the projection bases $\mathbf{A}$ to be orthonormal. Several features of this optimisation are worth-noticing. 1) The optimisation is constrained and the space of the bases is a d-dimensional sphere. 2) The objective function may not be differentiable for a constructed index function. 3) Although finding the global maximum is the goal of an optimisation problem, it is also interesting to inspect local maximum in projection pursuit since it could present unexpected interesting projections. 4) The optimisation procedure needs to be easy to compute since the tour animation needs to be played in real-time during the optimisation.
 
 ## Existing algorithms
 
@@ -346,7 +346,7 @@ Once the final basis has been found by an optimiser, one may want to push furthe
 2) the percentage change of the index value need to be larger than 1e-5; and
 3) the alpha parameter on itself needs to be larger than 0.01
 
-Figure \ref{fig:polish} presents the trace plot of a 2D projection, optimised by SA and followed by the polish. THe projection by the final basis of each algorithm is also shown. The end basis found by SA reveals the four clusters in the data, but the edges of each cluster are not clean-cut. Polish works with this end basis and further pushes the index value to produce much clear edges of the cluster, especially along the vertical axis.
+Figure \ref{fig:polish} presents the trace plot of a 2D projection, optimised by SA and followed by the polish. The projection by the final basis of each algorithm is also shown. The end basis found by SA reveals the four clusters in the data, but the edges of each cluster are not clean-cut. Polish works with this end basis and further pushes the index value to produce much clear edges of the cluster, especially along the vertical axis.
 
 
 ## Reconciling the orientation
