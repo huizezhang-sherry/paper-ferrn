@@ -102,7 +102,7 @@ Notation is first established before defining projection pursuit. Let $\mathbf{X
 As a general visualisation method, tour produces animations of high dimensional data via rotations low dimension planes. Different tour types choose these planes differently: grand tour [@cook2008grand] selects the planes randomly to provide a general overview;  manual tour [@cook1997manual] gradually phases in and out one variable to understand the contribution of that variable in the projection. Guided tour, the main interest of this paper, chooses the planes with the aid of projection pursuit, to gradually reveal the most interesting projection. Given a random start, projection pursuit iteratively finds bases with higher index values and the guided tour constructs the geodesic interpolation between these planes to form a tour path. Figure \ref{fig:tour-path} shows a sketch of the tour path where the blue frames are produced by the projection pursuit optimisation and the white frames are interpolations  between the blue frames. Mathematical details of the geodesic interpolation can be found in @buja2005computational. The tour method has been implemented in the R package \CRANpkg{tourr} [@tourr].
 
 ```{r tour-path, out.height="20%",out.width="50%", fig.cap="Each square (frame) represents the projected data with a corresponding basis. Blue frames are found by an optimisation algorithm iteratively whilst the white frames are constructed between two blue frames by geodesic interpolation."}
-include_graphics(here::here("img/tour_path.png"))
+include_graphics(here::here("img/tour-path.png"))
 ```
 
 ## Optimisation in the tour {#tour-optim}
