@@ -27,14 +27,14 @@ broad class of optimisers, to assess their performance. An R package,
 Visualisation is widely used in exploratory data analysis
 \citep{tukey1977exploratory, unwin2015graphical, healy2018data, wilke2019fundamentals}.
 Presenting information in graphics often unveils information that would
-otherwise not be aware of and provides a more comprehensive
+otherwise not be discovered and provides a more comprehensive
 understanding of the problem at hand. Task specific tools such as
 \citet{li2020visualizing} show how visualisation can be used to
-understand the behaviour of neural network on classification models, but
-no general visualisation tool is available for diagnosing optimisation
-procedures. The work presented in this paper brings visualization tools
-into optimisation problems with an aim to better understand the
-performance of the optimisers in practice.
+understand, for instance, the behaviour of neural network on
+classification models. However, no general visualisation tool is
+available for diagnosing optimisation procedures. The work presented in
+this paper brings visualization tools into optimisation problems with
+the aim to better understand the performance of optimisers in practice.
 
 The goal of continuous optimisation is to find the best solution within
 the space of all feasible solutions where typically the best solution is
@@ -164,47 +164,46 @@ Projection pursuit, coined by \citet{friedman1974projection}, detects
 interesting structures (e.g.~clustering, outliers and skewness) in
 multivariate data via low dimensions projection. Guided tour is one
 variation of a broader class of data visualisation methods, tour, which
-visualises high-dimensional data through a series of animated
-projection.
+displays high-dimensional data through a series of animated projections.
 
-Notation is first established before defining projection pursuit. Let
-\(\mathbf{X}_{n \times p}\) be the data matrix with \(n\) observations
-in \(p\) dimensions. A d-dimensional projection is a linear
-transformation from \(\mathbb{R}^p\) into \(\mathbb{R}^d\), and defined
-as \(\mathbf{Y} = \mathbf{X} \cdot \mathbf{A}\), where
+Let \(\mathbf{X}_{n \times p}\) be the data matrix with \(n\)
+observations in \(p\) dimensions. A d-dimensional projection is a linear
+transformation from \(\mathbb{R}^p\) into \(\mathbb{R}^d\) defined as
+\(\mathbf{Y} = \mathbf{X} \cdot \mathbf{A}\), where
 \(\mathbf{Y}_{n \times d}\) is the projected data and
-\(\mathbf{A}_{p\times d}\) is the projection basis Define
+\(\mathbf{A}_{p\times d}\) is the projection basis matrix. We define
 \(f: \mathbb{R}^{n \times d} \mapsto \mathbb{R}\) to be an index
-function that maps the projected data \(\mathbf{Y}\) onto an scalar.
-This is commonly known as the projection pursuit index function, or just
-index function, and is used to measure the ``interestingness'' of a
-given projection. A number of index functions have been proposed in the
-literature to detect different data structures
+function that maps the projected data \(\mathbf{Y}\) onto an scalar
+value. This is commonly known as the projection pursuit index function,
+or just index function, and is used to measure the ``interestingness''
+of a given projection. A number of index functions have been proposed in
+the literature to detect different data structures
 \citep[friedman1974projection;][]{hall1989polynomial, cook1993projection, posse1995projection}
 and to classify groups \citep{lee2005projection, lee2010projection}.
 
 As a general visualisation method, tour produces animations of high
-dimensional data via rotations low dimension planes. Different tour
-types choose these planes differently: grand tour \citep{cook2008grand}
-selects the planes randomly to provide a general overview; manual tour
+dimensional data via rotations of low dimension planes. There are
+different tour implementations depending on how the high dimensional
+space is investigated: grand tour \citep{cook2008grand} selects the
+planes randomly to provide a general overview; manual tour
 \citep{cook1997manual} gradually phases in and out one variable to
 understand the contribution of that variable in the projection. Guided
 tour, the main interest of this paper, chooses the planes with the aid
 of projection pursuit, to gradually reveal the most interesting
 projection. Given a random start, projection pursuit iteratively finds
-bases with higher index values and the guided tour constructs the
-geodesic interpolation between these planes to form a tour path. Figure
+bases with higher index values and the guided tour constructs a geodesic
+interpolation between these planes to form a tour path. Figure
 \ref{fig:tour-path} shows a sketch of the tour path where the blue
 frames are produced by the projection pursuit optimisation and the white
 frames are interpolations between the blue frames. Mathematical details
 of the geodesic interpolation can be found in
-\citet{buja2005computational}. The tour method has been implemented in
-the R package \CRANpkg{tourr} \citep{tourr}.
+\citet{buja2005computational}. The aforementioned tour method has been
+implemented in the R package \CRANpkg{tourr} \citep{tourr}.
 
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=0.5\linewidth,height=0.2\textheight]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/img/tour-path} 
+{\centering \includegraphics[width=0.5\linewidth,height=0.2\textheight]{/Users/pmen0008/Documents/paper-tour-vis/img/tour-path} 
 
 }
 
@@ -488,7 +487,7 @@ an advantage in this simple example to quickly find the optimum.
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/toy-search-1} 
+{\centering \includegraphics[width=1\linewidth]{/Users/pmen0008/Documents/paper-tour-vis/figs/toy-search-1} 
 
 }
 
@@ -502,7 +501,7 @@ an advantage in this simple example to quickly find the optimum.
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/toy-interp-1} 
+{\centering \includegraphics[width=1\linewidth]{/Users/pmen0008/Documents/paper-tour-vis/figs/toy-interp-1} 
 
 }
 
@@ -531,7 +530,7 @@ space}\label{toy-pca}}
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/toy-pca-1} 
+{\centering \includegraphics[width=1\linewidth]{/Users/pmen0008/Documents/paper-tour-vis/figs/toy-pca-1} 
 
 }
 
@@ -595,7 +594,7 @@ plots}\label{animating-the-diagnostic-plots}}
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/toy-pca-animated-1} 
+{\centering \includegraphics[width=1\linewidth]{/Users/pmen0008/Documents/paper-tour-vis/figs/toy-pca-animated-1} 
 
 }
 
@@ -619,7 +618,7 @@ itself}\label{the-tour-looking-at-itself}}
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/toy-tour-1} 
+{\centering \includegraphics[width=1\linewidth]{/Users/pmen0008/Documents/paper-tour-vis/figs/toy-tour-1} 
 
 }
 
@@ -696,7 +695,7 @@ from the target basis on Time 65, SA starts the next iteration at Time
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/interruption-1} 
+{\centering \includegraphics[width=1\linewidth]{/Users/pmen0008/Documents/paper-tour-vis/figs/interruption-1} 
 
 }
 
@@ -711,7 +710,7 @@ enough}\label{close-but-not-close-enough}}
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/polish-1} 
+{\centering \includegraphics[width=1\linewidth]{/Users/pmen0008/Documents/paper-tour-vis/figs/polish-1} 
 
 }
 
@@ -761,7 +760,7 @@ Something to fill here \ldots{}
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/flip-sign-1} 
+{\centering \includegraphics[width=1\linewidth]{/Users/pmen0008/Documents/paper-tour-vis/figs/flip-sign-1} 
 
 }
 
@@ -799,7 +798,7 @@ non-smooth index function, two research questions are raised:
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/noisy-better-geo-1} 
+{\centering \includegraphics[width=1\linewidth]{/Users/pmen0008/Documents/paper-tour-vis/figs/noisy-better-geo-1} 
 
 }
 
@@ -833,7 +832,7 @@ evaluated.
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/kol-result-1} 
+{\centering \includegraphics[width=1\linewidth]{/Users/pmen0008/Documents/paper-tour-vis/figs/kol-result-1} 
 
 }
 
