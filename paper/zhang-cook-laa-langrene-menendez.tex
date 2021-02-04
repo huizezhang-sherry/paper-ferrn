@@ -147,7 +147,7 @@ one within the general solvers is \code{optim()} in the \CRANpkg{stats}
 \citep{stats} package, which provides both gradient-based and
 derivative-free optimisation functions. Another general solver
 specialised in non-linear optimisation is \CRANpkg{nloptr}
-\citep{nloptr}. Specific solvers for simulated annealing includes
+\citep{nloptr}. Specific solvers for simulated annealing include
 \code{optim(..., method  "SANN")} and package \CRANpkg{GenSA}
 \citep{gensa} that deals with more complicated objective functions. For
 other task specific solvers, readers are recommended to visit the
@@ -162,27 +162,27 @@ Projection pursuit guided tour combines two different methods
 (projection pursuit and guided tour) in exploratory data analysis.
 Projection pursuit, coined by \citet{friedman1974projection}, detects
 interesting structures (e.g.~clustering, outliers and skewness) in
-multivariate data via low dimensions projection. Guided tour is one
+multivariate data via low-dimensional projections. Guided tour is one
 variation of a broader class of data visualisation methods, tour, which
 displays high-dimensional data through a series of animated projections.
 
 Let \(\mathbf{X}_{n \times p}\) be the data matrix with \(n\)
-observations in \(p\) dimensions. A d-dimensional projection is a linear
-transformation from \(\mathbb{R}^p\) into \(\mathbb{R}^d\) defined as
-\(\mathbf{Y} = \mathbf{X} \cdot \mathbf{A}\), where
+observations in \(p\) dimensions. A \(d\)-dimensional projection is a
+linear transformation from \(\mathbb{R}^p\) into \(\mathbb{R}^d\)
+defined as \(\mathbf{Y} = \mathbf{X} \cdot \mathbf{A}\), where
 \(\mathbf{Y}_{n \times d}\) is the projected data and
 \(\mathbf{A}_{p\times d}\) is the projection basis matrix. We define
 \(f: \mathbb{R}^{n \times d} \mapsto \mathbb{R}\) to be an index
-function that maps the projected data \(\mathbf{Y}\) onto an scalar
+function that maps the projected data \(\mathbf{Y}\) onto a scalar
 value. This is commonly known as the projection pursuit index function,
 or just index function, and is used to measure the ``interestingness''
 of a given projection. A number of index functions have been proposed in
 the literature to detect different data structures
-\citep[friedman1974projection;][]{hall1989polynomial, cook1993projection, posse1995projection}
+\citep{friedman1974projection, hall1989polynomial, cook1993projection, posse1995projection}
 and to classify groups \citep{lee2005projection, lee2010projection}.
 
 As a general visualisation method, tour produces animations of high
-dimensional data via rotations of low dimension planes. There are
+dimensional data via rotations of low-dimensional planes. There are
 different tour implementations depending on how the high dimensional
 space is investigated: grand tour \citep{cook2008grand} selects the
 planes randomly to provide a general overview; manual tour
@@ -203,7 +203,7 @@ implemented in the R package \CRANpkg{tourr} \citep{tourr}.
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=0.5\linewidth,height=0.2\textheight]{/Users/pmen0008/Documents/paper-tour-vis/img/tour-path} 
+{\centering \includegraphics[width=0.5\linewidth,height=0.2\textheight]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/img/tour-path} 
 
 }
 
@@ -214,11 +214,12 @@ implemented in the R package \CRANpkg{tourr} \citep{tourr}.
 \hypertarget{tour-optim}{%
 \subsection{Optimisation in the tour}\label{tour-optim}}
 
-In projection pursuit the optimisation problem (aims at \ldots{}
-describe it in simple words.) That is, it starts with a given randomly
-selected basis \(\mathbf{A}_1\) and aims at finding an optimal final
-projection basis \(\mathbf{A}_T\) in each iteration that satisfies the
-following optimisation problem:
+In projection pursuit the optimisation problem aims at finding the
+global optimum that gives the most interesting projection according to
+an index function. That is, it starts with a given randomly selected
+basis \(\mathbf{A}_1\) and aims at finding an optimal final projection
+basis \(\mathbf{A}_T\) in each iteration that satisfies the following
+optimisation problem:
 
 \begin{align}
 &\arg \max_{\mathbf{A} \in \mathcal{A}} f(\mathbf{X} \cdot \mathbf{A}) \\
@@ -226,14 +227,14 @@ following optimisation problem:
 \end{align}
 
 \noindent where \(f\), \(\mathcal{A}\), and \(\mathbf{X}\) are defined
-as in section XX, and \(I_d\) is the \(d\)-dimensional identity matrix
-and the constraint requires the projection bases \(\mathbf{A}\) to be
-orthonormal. Several features of this optimisation are worth-noticing.
-1) The optimisation is constrained and the space of the bases is a
-d-dimensional sphere. 2) The objective function may not be
-differentiable for a constructed index function. 3) Although finding the
-global maximum is the goal of an optimisation problem, it is also
-interesting to inspect local maximum in projection pursuit since it
+as in the previous section, and \(I_d\) is the \(d\)-dimensional
+identity matrix and the constraint requires the projection bases
+\(\mathbf{A}\) to be orthonormal. Several features of this optimisation
+are worth-noticing. 1) The optimisation is constrained and the space of
+the bases is a \(d\)-dimensional sphere. 2) The objective function may
+not be differentiable for a constructed index function. 3) Although
+finding the global maximum is the goal of an optimisation problem, it is
+also interesting to inspect local maximum in projection pursuit since it
 could present unexpected interesting projections. 4) The optimisation
 procedure needs to be easy to compute since the tour animation needs to
 be played in real-time during the optimisation.
@@ -327,12 +328,12 @@ of the PD.
 \begin{algorithm}
 \SetAlgoLined
 \Repeat{$l > l_{\max}$ or $p_{\text{diff}} > 0.001$}{
-  generate $n$ random directions $\mathbf{A}_{\text{rand}}$ \;
-  compute $2n$ candidate bases deviate from $\mathbf{A}_{\text{cur}}$ by an angle of $\delta$ while ensure orthogonality\;
-  compute the corresponding index value for each candidate bases\;
-  determine the search direction as from $\mathbf{A}_{\text{cur}}$ to the candidate bases with the largest index value\;
-  determine the step size via optimising the index value on the search direction over a 90 degree window\;
-  find the optima $\mathbf{A}_{**}$ and compute $I_{**} = f(\mathbf{A}_{**})$, $p_{\text{diff}} = (I_{**} - I_{\text{cur}})/I_{**}$\;
+  Generate $n$ random directions $\mathbf{A}_{\text{rand}}$ \;
+  Compute $2n$ candidate bases deviate from $\mathbf{A}_{\text{cur}}$ by an angle of $\delta$ while ensuring orthogonality\;
+  Compute the corresponding index value for each candidate bases\;
+  Determine the search direction as from $\mathbf{A}_{\text{cur}}$ to the candidate bases with the largest index value\;
+  Determine the step size via optimising the index value on the search direction over a 90 degree window\;
+  find the optimum $\mathbf{A}_{**}$ and compute $I_{**} = f(\mathbf{A}_{**})$, $p_{\text{diff}} = (I_{**} - I_{\text{cur}})/I_{**}$\;
   update $l = l + 1$\;
 }
 \caption{Pseudo derivative (PD)}
@@ -353,10 +354,10 @@ diagnostics}\label{data-structure-for-diagnostics}}
 
 Three main pieces of information are recorded for the projection pursuit
 optimisers: 1) projection bases \(\mathbf{A}\), 2) index values \(I\),
-and 3) state \(S\). For SA and SAJO, possible state include
+and 3) state \(S\). For SA and SAJO, possible states include
 \texttt{random\_search}, \texttt{new\_basis}, and
 \texttt{interpolation}. Pseudo derivative (PD) has a wider variety of
-state including \texttt{new\_basis}, \texttt{direction\_search},
+states including \texttt{new\_basis}, \texttt{direction\_search},
 \texttt{best\_direction\_search}, \texttt{best\_line\_search}, and
 \texttt{interpolation}. Multiple iterators index the information
 collected at different levels: \(t\) is a unique identifier prescribing
@@ -365,7 +366,7 @@ counter of the outer and inner loop respectively. Other parameters of
 interest recorded include \texttt{method} that tags the name of the
 optimiser, and \texttt{alpha} that indicates the sampling neighbourhood
 size for searching observations. A matrix notation of the data structure
-is presented in Equation \ref{eq:data-structure}.
+is presented in equation \ref{eq:data-structure}.
 
 \begin{equation}
 \renewcommand\arraystretch{2}  % default value: 1.0
@@ -436,7 +437,7 @@ T^\prime & \mathbf{A}_{T^\prime} & I_{T^\prime} &S_{T^\prime}  & J+1 &  l_{J+1} 
 \end{equation}
 
 \noindent where \(T^{\prime} = T + k_{J}+ l_{J+1}\). Note that there is
-no output in iteration \(J + 1\) since the optimiser doesn't find a
+no output in iteration \(J + 1\) since the optimiser does not find a
 better basis in the last iteration and terminates. The final basis found
 is \(A_T\) with index value \(I_T\).
 
@@ -459,19 +460,19 @@ freedom to composite plots with multiple elements on hands.
 working}\label{checking-how-hard-the-optimiser-is-working}}
 
 A starting point of diagnosing an optimiser is to understand how many
-search an optimiser has conducted. One may want to simply plot the index
-value of the search points across its natural order, but a point
+searches an optimiser has conducted. One may want to simply plot the
+index value of the search points across its natural order, but a point
 geometry may work well if each iteration has a similar number of points.
 When some iterations have considerably more points than others, using a
 point geometry over-emphasizes the iterations that have more search
 points since these iterations will occupy the mast majority of the plot
 space. An alternative is to summarise the search in each iteration using
-boxplot and each iteration will then be spaced out equally.
+boxplots and each iteration will then be spaced out equally.
 Occasionally, one may still want to switch back to a point geometry if
 the number of points is small in a particular iteration and this can be
 achieved via the \texttt{cutoff} argument in the search plot function.
 Additional annotations are added to facilitate better reading of the
-plot and these includes\\
+plot and these include\\
 1) the number of points searched in each iteration can be added as text
 label at the bottom of each iteration; 2) the anchor bases to
 interpolate are connected and highlighted in a larger size; and 3) the
@@ -489,11 +490,11 @@ an advantage in this simple example to quickly find the optimum.
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{/Users/pmen0008/Documents/paper-tour-vis/figs/toy-search-1} 
+{\centering \includegraphics[width=1\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/toy-search-1} 
 
 }
 
-\caption[A comparison of search by two otimisers]{A comparison of search by two otimisers: SA (left) and SAJO (right) on a 2D projection of a six-variable dataset, \code{boa6}, using the holes index. Both optimisers find the final basis with similar index value while it takes SAJO more iteration because the algorithm allows a probabilistic acceptance of bases with lower index value, as observed in iteration 4 and 6-8.}\label{fig:toy-search}
+\caption[A comparison of search by two optimisers]{A comparison of search by two optimisers: SA (left) and SAJO (right) on a 2D projection of a six-variable dataset, \code{boa6}, using the holes index. Both optimisers find the final basis with similar index value while it takes SAJO more iterations because the algorithm allows a probabilistic acceptance of bases with lower index value, as observed in iteration 4 and 6-8.}\label{fig:toy-search}
 \end{figure}
 \end{Schunk}
 
@@ -503,18 +504,18 @@ an advantage in this simple example to quickly find the optimum.
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{/Users/pmen0008/Documents/paper-tour-vis/figs/toy-interp-1} 
+{\centering \includegraphics[width=1\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/toy-interp-1} 
 
 }
 
-\caption[Trace plots of the interpolating bases with the same optimisation routine as the previous figure]{Trace plots of the interpolating bases with the same optimisation routine as the previous figure. Both traces are smooth while the change of index value in each iteration may not be monotinic.}\label{fig:toy-interp}
+\caption[Trace plots of the interpolating bases with the same optimisation routine as the previous figure]{Trace plots of the interpolating bases with the same optimisation routine as the previous figure. Both traces are smooth while the change of index value in each iteration may not be monotonic.}\label{fig:toy-interp}
 \end{figure}
 \end{Schunk}
 
-Another interest of diagnostic is to examine how the index value
-improves for interpolating bases since the projection on these bases is
-played by the tour animation. Trace plots are created with plotting the
-index value of the interpolation points against time. Figure
+Another interesting diagnostic is to examine how the index value
+improves between interpolating bases since the projection on these bases
+is played by the tour animation. Trace plots are created with plotting
+the index value of the interpolation points against time. Figure
 \ref{fig:toy-interp} presents the trace plot of the same optimisation
 routine as Figure \ref{fig:toy-search}. The trace plot is smooth and an
 interesting discovery is that in SAJO, the interpolation in iteration
@@ -532,7 +533,7 @@ space}\label{toy-pca}}
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{/Users/pmen0008/Documents/paper-tour-vis/figs/toy-pca-1} 
+{\centering \includegraphics[width=1\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/toy-pca-1} 
 
 }
 
@@ -543,27 +544,27 @@ space}\label{toy-pca}}
 Apart from checking the search and progression of an optimiser, looking
 at where the bases are positioned in the basis space is another
 interest. Given the orthonormality constraint, the space of projection
-bases \(\mathbf{A}_{p \times d}\) is a \(p \times d\) dimension sphere
-and dimension reduction methods, i.e.~principal component analysis is
-applied to first project all the bases onto a 2D space. In a projection
-pursuit guided tour optimisation, there are various type of bases
-involved: 1) The start basis; 2) The search bases that an optimiser
-evaluated to produce the anchor bases; 3) The anchor bases that have the
-highest index value in each iteration; 4) The interpolating bases on the
-interpolation path; and finally 5) the end basis. The importance of
-these basis differs and the most important ones are the start,
-interpolating and end bases. Anchor and search bases can be turned on
-with argument \texttt{details\ =\ TRUE}. Sometimes, two optimisers can
-start with the same basis but finish with bases of opposite sign. This
-happens because the projection is invariant to the sign difference of
-the bases and so does the index value, however, this creates
-difficulties for comparing the optimisers since the end bases will be
-symmetric with respect to the origin. A sign flipping step is conducted
-to flip the signs of all the bases in one routine if different
-optimisations finish at opposite places.
+bases \(\mathbf{A}_{p \times d}\) is a \(p \times d\)-dimensional
+sphere. A dimensionality reduction method, e.g.~principal component
+analysis is applied to first project all the bases onto a 2D space. In a
+projection pursuit guided tour optimisation, there are various types of
+bases involved: 1) The starting basis; 2) The search bases that the
+optimiser evaluated to produce the anchor bases; 3) The anchor bases
+that have the highest index value in each iteration; 4) The
+interpolating bases on the interpolation path; and finally 5) the end
+basis. The importance of these bases differs and the most important ones
+are the starting, interpolating and end bases. The anchor and search
+bases can be turned on with argument \texttt{details\ =\ TRUE}.
+Sometimes, two optimisers can start with the same basis but finish with
+bases of opposite sign. This happens because the projection is invariant
+to the sign difference of the bases and so does the index value,
+however, this creates difficulties for comparing the optimisers since
+the end bases will be symmetric with respect to the origin. A sign
+flipping step is conducted to flip the signs of all the bases in one
+routine if different optimisations finish at opposite places.
 
 Several annotations have been made to help understanding this plot. As
-mentioned previously, the original basis space is a high dimensional
+mentioned previously, the original basis space is a high-dimensional
 sphere and random bases on the sphere can be generated via the CRAN
 package \CRANpkg{geozoo} \citep{geozoo}. Along with the bases recorded
 during the optimisation and a zero basis, the parameters (centre and
@@ -571,12 +572,12 @@ radius) of the 2D space can be estimated. PCA is performed to get the
 first two PC coordinates of all the bases and the centre of the circle
 is the PC coordinates of the zero matrix, and radius is estimated as the
 largest distance from the centre to the basis. The theoretical best
-basis is known for simulated data and can be labelled to compare the how
+basis is known for simulated data and can be labelled to compare how
 close the end basis found by the optimisers is to the theoretical best.
 Various aesthetics, i.e.~size, alpha and colour, are applicable to
 emphasize critical elements and adjust for the presentation. For
 example, anchor points and search points are less important and hence a
-smaller size and alpha is used; Alpha can also be applied on the
+smaller size and alpha is used. Alpha can also be applied on the
 interpolation paths to show the start to finish from transparent to
 opaque.
 
@@ -596,7 +597,7 @@ plots}\label{animating-the-diagnostic-plots}}
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{/Users/pmen0008/Documents/paper-tour-vis/figs/toy-pca-animated-1} 
+{\centering \includegraphics[width=1\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/toy-pca-animated-1} 
 
 }
 
@@ -604,14 +605,14 @@ plots}\label{animating-the-diagnostic-plots}}
 \end{figure}
 \end{Schunk}
 
-Animation is another display to show how the search progresses from
-start to finish in the space and an \texttt{animate\ =\ TRUE} argument
+Animation is another type of display to show how the search progresses
+from start to finish in the space. An \texttt{animate\ =\ TRUE} argument
 is used to enable the animation in the PCA plot. Figure
 \ref{fig:toy-pca-animated} shows six frames from the animation of the
 PCA plot in Figure \ref{fig:toy-pca}. An additional piece of information
 one can learn from this animation is that SA finds its end basis quicker
 than PD since SA finishes its search in the 5th frame while PD is still
-making more progression.
+making more progress.
 
 \hypertarget{the-tour-looking-at-itself}{%
 \subsection{The tour looking at
@@ -620,26 +621,26 @@ itself}\label{the-tour-looking-at-itself}}
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{/Users/pmen0008/Documents/paper-tour-vis/figs/toy-tour-1} 
+{\centering \includegraphics[width=1\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/toy-tour-1} 
 
 }
 
-\caption{Six selected frames from the tour animation for viewing the same two optmisations as previous two figures. The tour animation allows for an appreciation of the search bases in the original high dimensional space. A full video of this aimation can be found at \url{https://vimeo.com/user132007430/review/504328122/9be84db563}}\label{fig:toy-tour}
+\caption{Six selected frames from the tour animation for viewing the same two optimisations as previous two figures. The tour animation allows for an appreciation of the search bases in the original high dimensional space. A full video of this aimation can be found at \url{https://vimeo.com/user132007430/review/504328122/9be84db563}}\label{fig:toy-tour}
 \end{figure}
 \end{Schunk}
 
 As mentioned previously, the original \(p \times d\) dimension space can
-be simulated via randomly generated bases in \CRANpkg{geozoo}
+be simulated via randomly generated bases in the \CRANpkg{geozoo}
 \citep{geozoo} package. While the PCA plot projects the bases from the
-direction that maximises the variance, the tour plot display of the
-original high dimensional space from various directions using animation.
-Figure \ref{fig:toy-tour} shows frames from the tour plot of the same
-two optimisations in its original 5D space.
+direction that maximises the variance, the tour plot displays the
+original high-dimensional space from various directions using animation.
+Figure \ref{fig:toy-tour} shows some frames from the tour plot of the
+same two optimisations in its original 5D space.
 
 \hypertarget{forming-a-torus}{%
 \subsection{Forming a torus}\label{forming-a-torus}}
 
-Something to fill here \ldots{}
+\textcolor{red}{Something to fill here ...}
 
 \hypertarget{application}{%
 \section{Diagnosing an optimiser}\label{application}}
@@ -652,12 +653,12 @@ optimisation, and guide the implementation of new features.
 \subsection{Simulation setup}\label{simulation-setup}}
 
 Random variables with different distributions have been simulated and
-the distributional form of each variable is presented in Equations
-\ref{eq:sim-norm} to \ref{eq:sim-x7}. Variable \texttt{x1}, \texttt{x8},
-\texttt{x9} and \texttt{x10} are normal noise with zero mean and unit
-variance and \texttt{x2} to \texttt{x7} are normal mixtures with varied
-weights and locations. All the variables have been scaled to have an
-overall unit variance before projection pursuit.
+the distributional form of each variable is presented in equations
+\ref{eq:sim-norm} to \ref{eq:sim-x7}. Variables \texttt{x1},
+\texttt{x8}, \texttt{x9} and \texttt{x10} are normal noise with zero
+mean and unit variance and \texttt{x2} to \texttt{x7} are normal
+mixtures with varied weights and locations. All the variables have been
+scaled to have an overall unit variance before projection pursuit.
 
 \begin{align}
 x_1 \overset{d}{=} x_8 \overset{d}{=} x_9 \overset{d}{=} x_{10}& \sim \mathcal{N}(0, 1) \label{eq:sim-norm} \\
@@ -690,14 +691,14 @@ implemented to stop at the best basis found in the interpolation. The
 right panel of Figure \ref{fig:interruption} shows the trace plot after
 implementing the interruption and while the first two interpolations are
 identical, the basis at Time 61 has a higher index value than the target
-in the third interpolations. Rather than starting the next iteration
-from the target basis on Time 65, SA starts the next iteration at Time
-61 on the right panel and reaches a better final basis.
+in the third interpolation. Rather than starting the next iteration from
+the target basis on Time 65, SA starts the next iteration at Time 61 on
+the right panel and reaches a better final basis.
 
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{/Users/pmen0008/Documents/paper-tour-vis/figs/interruption-1} 
+{\centering \includegraphics[width=1\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/interruption-1} 
 
 }
 
@@ -712,7 +713,7 @@ enough}\label{close-but-not-close-enough}}
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{/Users/pmen0008/Documents/paper-tour-vis/figs/polish-1} 
+{\centering \includegraphics[width=1\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/polish-1} 
 
 }
 
@@ -762,7 +763,7 @@ Something to fill here \ldots{}
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{/Users/pmen0008/Documents/paper-tour-vis/figs/flip-sign-1} 
+{\centering \includegraphics[width=1\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/flip-sign-1} 
 
 }
 
@@ -800,11 +801,11 @@ non-smooth index function, two research questions are raised:
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{/Users/pmen0008/Documents/paper-tour-vis/figs/noisy-better-geo-1} 
+{\centering \includegraphics[width=1\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/noisy-better-geo-1} 
 
 }
 
-\caption[Trace and PCA plot of 1D projection on 5\-variable dataset, \code{boa5}, with \code{norm\_kol} index, optimised by all three optimiers]{Trace and PCA plot of 1D projection on 5\-variable dataset, \code{boa5}, with \code{norm\_kol} index, optimised by all three optimiers. Optimiser PD fails to optimise the non-smooth index while although both SA and SAJO success in optimise the index, SAJO takes much longer than SA and finishes off closer to the theoretial best.}\label{fig:noisy-better-geo}
+\caption[Trace and PCA plot of 1D projection on 5\-variable dataset, \code{boa5}, with \code{norm\_kol} index, optimised by all three optimisers]{Trace and PCA plot of 1D projection on 5\-variable dataset, \code{boa5}, with \code{norm\_kol} index, optimised by all three optimisers. Optimiser PD fails to optimise the non-smooth index while although both SA and SAJO succeed in optimising the index, SAJO takes much longer than SA and finishes off closer to the theoretial best.}\label{fig:noisy-better-geo}
 \end{figure}
 \end{Schunk}
 
@@ -818,27 +819,27 @@ basis. This long interpolation path is partially due to the fluctuation
 in the early iterations, where the SAJO tends to generously accept
 inferior bases before concentrating near the optimum. The PCA plot shows
 the interpolation path and search points excluding the last termination
-iteration. {[}A sentence for PD{]}. Comparing the amount of random
-search done by SA and SAJO, it is surprising that SAJO doesn't carry
-that many of sampling as SA. Combine the insight from both the trace and
-PCA plot, one can learn the two different search strategies by SA and
-SAJO: SA frequently samples in the space and only make a move when an
-improvement is guaranteed to be made, while SAJO first broadly accepts
-bases in the space and then starts the extensive sampling in a narrowed
-subspace. The specific decision of which optimiser to use will depend on
-the index curve in the basis space but if the basis space is non-smooth,
-accepting inferior bases at first, as what SAJO has done, can lead to a
-more efficient search, in terms of the overall number of points
-evaluated.
+iteration. \textcolor{red}{[A sentence for PD]}. Comparing the amount of
+random search done by SA and SAJO, it is surprising that SAJO does not
+carry as many samples as SA. Combining the insights from both the trace
+and PCA plot, one can learn the two different search strategies by SA
+and SAJO: SA frequently samples in the space and only make a move when
+an improvement is guaranteed to be made, while SAJO first broadly
+accepts bases in the space and then starts the extensive sampling in a
+narrowed subspace. The specific decision of which optimiser to use will
+depend on the index curve in the basis space but if the basis space is
+non-smooth, accepting inferior bases at first, as what SAJO has done,
+can lead to a more efficient search, in terms of the overall number of
+points evaluated.
 
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{/Users/pmen0008/Documents/paper-tour-vis/figs/kol-result-1} 
+{\centering \includegraphics[width=1\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/kol-result-1} 
 
 }
 
-\caption[PCA plot of 1D projection on the 6\-variable data, \code{boa6}, with normal kolmogorov index]{PCA plot of 1D projection on the 6\-variable data, \code{boa6}, with normal kolmogorov index. Two optimisers: SA and SAJO and two search sizes: 0.5 and 0.7 are used in the simulation for 20 replicates. Local optimum (x), is presented in this experiment, along with the global optimum (*). The final basis is larger and more opaque than the start basis for each path and color represents whether the global or local optimum is found, after polishing.}\label{fig:kol-result}
+\caption[PCA plot of 1D projection on the 6\-variable data, \code{boa6}, with normal kolmogorov index]{PCA plot of 1D projection on the 6\-variable data, \code{boa6}, with normal kolmogorov index. Two optimisers: SA and SAJO and two search sizes: 0.5 and 0.7 are used in the simulation for 20 replicates. The local optimum (x), is presented in this experiment, along with the global optimum (*). The final basis is larger and more opaque than the start basis for each path and color represents whether the global or local optimum is found, after polishing.}\label{fig:kol-result}
 \end{figure}
 \end{Schunk}
 
@@ -851,7 +852,7 @@ search size. With SA and a search size of 0.5, despite being the
 simplest and fastest, the optimiser fails in three instances where the
 final basis lands neither near the local nor the global optimum. With a
 larger search size of 0.7, more seeds have found the global maximum.
-Comparing SA and SAJO for a search size of 0.5, SAJO doesn't seem to
+Comparing SA and SAJO for a search size of 0.5, SAJO does not seem to
 improve the final basis found, despite having longer interpolation
 paths. However, the denser paths near the local maximum is an indicator
 that SAJO is working hard to examine if there is any other optimum in
@@ -997,10 +998,10 @@ functionality is listed below.
     \code{theme\_fern()} and \code{format\_label()} for better display
     of the grid lines and axis formatting
   \item
-    \code{clean\_method()} for clean up the name of the optimisers
+    \code{clean\_method()} to clean up the name of the optimisers
   \item
     \code{botanical\_palettes} is a collection of colour palettes from
-    Australian native plants Quantitative palettes include daisy,
+    Australian native plants. Quantitative palettes include daisy,
     banksia and cherry and sequential palettes contain fern and acacia
   \item
     \code{botanical\_pal()} as the colour interpolator
@@ -1028,18 +1029,18 @@ may decide to modify on top of the basic plots or even build their own.
 
 Most of the work in this project has been translated into code in two
 packages: the collection of the data object is implemented in the
-existing \CRANpkg{tourr}\citep{tourr} package; manipulation and
-visualisation of the data object are implemented in the new \pkg{ferrn}
-package. Equipped with handy tools to diagnose the performance of
-optimisers, future work can extend the diagnostics to a wider range of
-index functions, i.e.~scagnostics, association, and information index
-\citep{laa2020using} and understand how the optimisers behave for index
-functions with different structures.
+existing \CRANpkg{tourr} \citep{tourr} package; while the manipulation
+and visualisation of the data object are implemented in the new
+\pkg{ferrn} package. Equipped with handy tools to diagnose the
+performance of optimisers, future work can extend the diagnostics to a
+wider range of index functions, i.e.~scagnostics, association, and
+information index \citep{laa2020using} and understand how the optimisers
+behave for index functions with different structures.
 
 \hypertarget{acknowledgements}{%
 \section{Acknowledgements}\label{acknowledgements}}
 
-This article is created using \CRANpkg{knitr}\citep{knitr} and
+This article is created using \CRANpkg{knitr} \citep{knitr} and
 \CRANpkg{rmarkdown} \citep{rmarkdown} in R. The source code for
 reproducing this paper can be found at:
 \url{https://github.com/huizezhang-sherry/paper-tour-vis}.
