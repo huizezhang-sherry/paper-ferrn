@@ -19,6 +19,8 @@ pursuit guided tour and introduce visual diagnostics based on the data
 object collected. These diagnostics and workflows can be applied to a
 broad class of optimisers, to assess their performance. An R package,
 \pkg{ferrn}, has been created to implement the diagnostics.
+
+\noindent \textit{keywords}: graphics, multivariate, optimization
 }
 
 \hypertarget{introduction}{%
@@ -176,8 +178,12 @@ defined as \(\mathbf{Y} = \mathbf{X} \cdot \mathbf{A}\), where
 function that maps the projected data \(\mathbf{Y}\) onto a scalar
 value. This is commonly known as the projection pursuit index function,
 or just index function, and is used to measure the ``interestingness''
-of a given projection. A number of index functions have been proposed in
-the literature to detect different data structures
+of a given projection. In the context of projection pursuit,
+interestingness means departure from normality
+\citep{diaconis1984asymptotics, huber1985projection}.
+\textcolor{red}{only include a couple of indices, using e.g.}A number of
+index functions have been proposed in the literature to detect different
+data structures
 \citep{friedman1974projection, hall1989polynomial, cook1993projection, posse1995projection}
 and to classify groups \citep{lee2005projection, lee2010projection}.
 
@@ -207,7 +213,7 @@ implemented in the R package \CRANpkg{tourr} \citep{tourr}.
 
 }
 
-\caption[Each square (frame) represents the projected data with a corresponding basis]{Each square (frame) represents the projected data with a corresponding basis. Blue frames are found by an optimisation algorithm iteratively whilst the white frames are constructed between two blue frames by geodesic interpolation.}\label{fig:tour-path}
+\caption[An illustration for demonstrating the steps in a tour path]{An illustration for demonstrating the steps in a tour path. Each square (frame) represents the projected data with a corresponding basis. Blue frames are found by an optimisation algorithm iteratively whilst the white frames are constructed between two blue frames by geodesic interpolation.}(\#fig:tour-path)
 \end{figure}
 \end{Schunk}
 
@@ -215,15 +221,14 @@ implemented in the R package \CRANpkg{tourr} \citep{tourr}.
 \subsection{Optimisation in the tour}\label{tour-optim}}
 
 In projection pursuit the optimisation problem aims at finding the
-global optimum that gives the most interesting projection according to
+global and local maxima that give interesting projections according to
 an index function. That is, it starts with a given randomly selected
 basis \(\mathbf{A}_1\) and aims at finding an optimal final projection
 basis \(\mathbf{A}_T\) in each iteration that satisfies the following
 optimisation problem:
 
 \begin{align}
-&\arg \max_{\mathbf{A} \in \mathcal{A}} f(\mathbf{X} \cdot \mathbf{A}) \\
-&s.t.  \mathbf{A}^{\prime} \mathbf{A} = I_d
+\arg \max_{\mathbf{A} \in \mathcal{A}} f(\mathbf{X} \cdot \mathbf{A})  ~~~ s.t. ~~~ \mathbf{A}^{\prime} \mathbf{A} = I_d
 \end{align}
 
 \noindent where \(f\), \(\mathcal{A}\), and \(\mathbf{X}\) are defined
@@ -494,7 +499,7 @@ an advantage in this simple example to quickly find the optimum.
 
 }
 
-\caption[A comparison of search by two optimisers]{A comparison of search by two optimisers: SA (left) and SAJO (right) on a 2D projection of a six-variable dataset, \code{boa6}, using the holes index. Both optimisers find the final basis with similar index value while it takes SAJO more iterations because the algorithm allows a probabilistic acceptance of bases with lower index value, as observed in iteration 4 and 6-8.}\label{fig:toy-search}
+\caption[A comparison of the searches by two optimisers]{A comparison of the searches by two optimisers: SA (left) and SAJO (right) on a 2D projection of a six-variable dataset, \code{boa6}, using the holes index. Both optimisers find the final basis with similar index value while it takes SAJO more iterations because the algorithm allows a probabilistic acceptance of bases with lower index value, as observed in iteration 4 and 6-8.}(\#fig:toy-search)
 \end{figure}
 \end{Schunk}
 
@@ -508,7 +513,7 @@ an advantage in this simple example to quickly find the optimum.
 
 }
 
-\caption[Trace plots of the interpolating bases with the same optimisation routine as the previous figure]{Trace plots of the interpolating bases with the same optimisation routine as the previous figure. Both traces are smooth while the change of index value in each iteration may not be monotonic.}\label{fig:toy-interp}
+\caption[Examing the index values as the optimisation progress for two optimisers using trace plot]{Examing the index values as the optimisation progress for two optimisers using trace plot. The lines indicate the interpolation and the dots indicate a new target is generated.}(\#fig:toy-interp)
 \end{figure}
 \end{Schunk}
 
@@ -537,7 +542,7 @@ space}\label{toy-pca}}
 
 }
 
-\caption[The PCA plot of 1D projection problem on the 5-variable dataset, \code{boa5}, using the holes index with two optimisers]{The PCA plot of 1D projection problem on the 5-variable dataset, \code{boa5}, using the holes index with two optimisers: SA and PD. All the bases in PD has been flipped and a grey dashed line has been annotated to indicate the symmetry of two starting bases.}\label{fig:toy-pca}
+\caption[The PCA plot of 1D projection problem on the 5-variable dataset, \code{boa5}, using the holes index with two optimisers]{The PCA plot of 1D projection problem on the 5-variable dataset, \code{boa5}, using the holes index with two optimisers: SA and PD. All the bases in PD has been flipped and a grey dashed line has been annotated to indicate the symmetry of two starting bases.}(\#fig:toy-pca)
 \end{figure}
 \end{Schunk}
 
@@ -601,7 +606,7 @@ plots}\label{animating-the-diagnostic-plots}}
 
 }
 
-\caption{Six selected frames from the animated PCA plots in the previous figure. With animation, the start and end position of each optimisation is easier to identify.  A full video of this aimation can be found at \url{https://vimeo.com/user132007430/review/504242845/b73f37175a}}\label{fig:toy-pca-animated}
+\caption{Six selected frames from the animated PCA plots in the previous figure. With animation, the start and end position of each optimisation is easier to identify.  A full video of this aimation can be found at \url{https://vimeo.com/user132007430/review/504242845/b73f37175a}}(\#fig:toy-pca-animated)
 \end{figure}
 \end{Schunk}
 
