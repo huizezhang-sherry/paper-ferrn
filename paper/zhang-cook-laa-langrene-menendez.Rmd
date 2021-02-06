@@ -126,17 +126,17 @@ Three optimisers have been implemented in the \CRANpkg{tourr} [@tourr] package: 
   \SetKwInOut{output}{output}
     \input{$f(.)$, $\alpha_1$, $l_{\max}$, $\text{cooling}$} 
     \output{$\mathbf{A}_{l}$}
-    generate random start $\mathbf{A}_1$ and set $\mathbf{A}_{\text{cur}} \coloneqq \mathbf{A}_1$, $I_{\text{cur}} = f(\mathbf{A}_{\text{cur}})$, $j = 1$\;
+    Generate random start $\mathbf{A}_1$ and set $\mathbf{A}_{\text{cur}} \coloneqq \mathbf{A}_1$, $I_{\text{cur}} = f(\mathbf{A}_{\text{cur}})$, $j = 1$\;
   \Repeat{$\mathbf{A}_l$ is too close to $\mathbf{A}_{\text{cur}}$ in terms of geodesic distance}{
-   set $l = 1$\;
+   Set $l = 1$\;
   \Repeat{$l > l_{\max}$ or $I_{l} > I_{\text{cur}}$}{
-    generate $\mathbf{A}_{l} = (1- \alpha_j)\mathbf{A}_{\text{cur}} + \alpha_j \mathbf{A}_{\text{rand}}$ and orthogonalise $\mathbf{A}_{l}$\;
-    compute $I_{l}  = f(\mathbf{A}_{l})$\;
-    update $l = l + 1$\;
+    Generate $\mathbf{A}_{l} = (1- \alpha_j)\mathbf{A}_{\text{cur}} + \alpha_j \mathbf{A}_{\text{rand}}$ and orthogonalise $\mathbf{A}_{l}$\;
+    Compute $I_{l}  = f(\mathbf{A}_{l})$\;
+    Update $l = l + 1$\;
   }
-  update $\alpha_{j+1} = \alpha_j * \text{cooling}$\;
-  construct the geodesic interpolation between $\mathbf{A}_{\text{cur}}$ and $\mathbf{A}_l$\; 
-  update $\mathbf{A}_{\text{cur}} = \mathbf{A}_l$ and $j = j + 1$\;
+  Update $\alpha_{j+1} = \alpha_j * \text{cooling}$\;
+  Construct the geodesic interpolation between $\mathbf{A}_{\text{cur}}$ and $\mathbf{A}_l$\; 
+  Update $\mathbf{A}_{\text{cur}} = \mathbf{A}_l$ and $j = j + 1$\;
 }
   \caption{Simulated annealing (SA)}
   \label{random-search}
@@ -147,10 +147,10 @@ Simulated annealing with jump out (SAJO) [@kirkpatrick1983optimization; @bertsim
 \begin{algorithm}
 \SetAlgoLined
 \Repeat{$l > l_{\max}$ or $I_{l} > I_{\text{cur}}$ or $P > U$}{
-    generate $\mathbf{A}_{l} = (1- \alpha_j)\mathbf{A}_{\text{cur}} + \alpha_j \mathbf{A}_{\text{rand}}$ and orthogonalise $\mathbf{A}_{l}$\;
-    compute $I_{l}  = f(\mathbf{A}_{l})$, $T(l) = \frac{T_0}{\log(l + 1)}$ and $P= \min\left\{\exp\left[-\frac{I_{\text{cur}} -I_{l}}{T(l)}\right],1\right\}$\;
-    draw $U$ from a uniform distribution: $U \sim \text{Unif(0, 1)}$\;
-    update $l = l + 1$\;
+    Generate $\mathbf{A}_{l} = (1- \alpha_j)\mathbf{A}_{\text{cur}} + \alpha_j \mathbf{A}_{\text{rand}}$ and orthogonalise $\mathbf{A}_{l}$\;
+    Compute $I_{l}  = f(\mathbf{A}_{l})$, $T(l) = \frac{T_0}{\log(l + 1)}$ and $P= \min\left\{\exp\left[-\frac{I_{\text{cur}} -I_{l}}{T(l)}\right],1\right\}$\;
+    Draw $U$ from a uniform distribution: $U \sim \text{Unif(0, 1)}$\;
+    Update $l = l + 1$\;
   }
   \caption{Simulated annealing with jump out (SAJO)}
   \label{simulated-annealing}
@@ -166,8 +166,8 @@ Pseudo derivative (PD) search [@cook1995grand] uses a different strategy than SA
   Compute the corresponding index value for each candidate bases\;
   Determine the search direction as from $\mathbf{A}_{\text{cur}}$ to the candidate bases with the largest index value\;
   Determine the step size via optimising the index value on the search direction over a 90 degree window\;
-  find the optimum $\mathbf{A}_{**}$ and compute $I_{**} = f(\mathbf{A}_{**})$, $p_{\text{diff}} = (I_{**} - I_{\text{cur}})/I_{**}$\;
-  update $l = l + 1$\;
+  Find the optimum $\mathbf{A}_{**}$ and compute $I_{**} = f(\mathbf{A}_{**})$, $p_{\text{diff}} = (I_{**} - I_{\text{cur}})/I_{**}$\;
+  Update $l = l + 1$\;
 }
 \caption{Pseudo derivative (PD)}
 \label{search-geodesic}
@@ -351,15 +351,6 @@ Once the final basis has been found by an optimiser, one may want to push furthe
 
 Figure \ref{fig:polish} presents the trace plot of a 2D projection, optimised by SA and followed by the polish. The projection by the final basis of each algorithm is also shown. The end basis found by SA reveals the four clusters in the data, but the edges of each cluster are not clean-cut. Polish works with this end basis and further pushes the index value to produce much clear edges of the cluster, especially along the vertical axis.
 
-
-## Reconciling the orientation
-
-Something to fill here ...
-
-```{r flip-sign, fig.cap = "PCA plot of 1D projection of boa6 data, optimised by SA, with seed 2463."}
-```
-
-
 ## Seeing the signal in the noise 
 
 The holes index function used for all the examples before this section produces a smooth interpolation, while this is not the case for all the indices. A 1D projection function, $I^{nk}(n)$, compares the projected data, $\mathbf{Y}_{n \times 1}$, to a randomly generated normal distribution, $\mathcal{N}_{n \times 1}$, based on the Kolmogorov test. Let $F_{.}(n)$ be the ECDF function, with two possible subscripts $Y$ and $\mathcal{N}$ representing the projected and randomly generated data, and $n$ denoting the number of observation, the Normal Kolmogorov index, $I^{nk}(n)$, is defined as: 
@@ -379,6 +370,13 @@ Figure \ref{fig:noisy-better-geo} presents the trace and PCA plots of all three 
 ```
 
 The next experiment compares the performance of SA and SAJO when a local maximum exists. Two search neighbourhood sizes: 0.5 and 0.7 are compared to understand how a large search neighbourhood would affect the final basis and the length of the search. Figure \ref{fig:kol-result} shows 80 paths simulated using 20 seeds in the PCA plot, faceted by  optimiser and search size. With SA and a search size of 0.5, despite being the simplest and fastest, the optimiser fails in three instances where the final basis lands neither near the local nor the global optimum. With a larger search size of 0.7, more seeds have found the global maximum. Comparing SA and SAJO for a search size of 0.5, SAJO does not seem to improve the final basis found, despite having longer interpolation paths. However, the denser paths near the local maximum is an indicator that SAJO is working hard to examine if there is any other optimum in the basis space but the relative small search size has diminished its ability to reach the global maximum. With a larger search size, almost all the seeds (16 out of 20) have found the global maximum and some final bases are much closer to the theoretical best, as compared to the three other cases. This indicates that SAJO, with a reasonable large search size, is able to overcome the local optimum and optimise close towards the global optimum.
+
+## Reconciling the orientation
+
+```{r flip-sign, fig.cap = "Comparison of the basis space before and after reconciling the orientation of the current and target basis for 1D projection of boa6 data, optimised by SA with seed 2463. On the left panel, one target basis is generated on the other half of the basis space and the interpolation is unsatisfactory. After implementing an orientation check on the determinant, this phenomenon disappears on the right panel."}
+```
+
+One interesting situation observed in the previous examples is that, for some simulations as shown on the left panel of Figure \ref{fig:flip-sign}, the target basis is generated on the other half of the basis space and the interpolator seems to draw a straight line to interpolate. As mentioned previously, bases with opposite signs do not affect the projection and index value, but clearly, we prefer the target to have the same orientation as the current basis. The orientation of two bases can be checked via calculating the determinant and a negative value indicates opposite direction. Hence an orientation check is carried out once a new target basis is generated and the sign in the target basis will be flipped if a negative determinant is obtained. The interpolation after implementing the orientation check is shown on the right panel of Figure \ref{fig:flip-sign} where the unsatisfactory interpolation no longer exist.
 
 # Implementation {#implementation}
 

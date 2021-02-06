@@ -69,7 +69,7 @@ p1 <- bind_rows(holes_2d_better, holes_2d_better_polish) %>%
   clean_method() %>%
   mutate(method = factor(method, levels = c("SA", "polish"))) %>%
   get_interp() %>%
-  explore_trace_interp(color = method, cutoff = 100) +
+  explore_trace_interp(color = method, cutoff = 100, target_size = 2, interp_size = 2) +
   scale_color_discrete_botanical(breaks = c("SA", "polish"), label = c("SA", "polish")) +
   theme(legend.position = "bottom",
         plot.margin = margin(2.5, 2, 0, 0, "cm"))
@@ -100,9 +100,14 @@ p1 +
 # save(orientation_corrected, file = here::here("data", "orientation_corrected.rda"))
 # save(orientation_different, file = here::here("data", "orientation_different.rda"))
 
-bind_rows(orientation_corrected %>% mutate(sign = "flipped"),
+dt <- bind_rows(orientation_corrected %>% mutate(sign = "flipped"),
           orientation_different %>% mutate(sign = "original")) %>%
-  explore_space_pca(group = sign, flip = FALSE, start_size = 3) +
+  compute_pca() %>%
+  pluck("aug")
+
+dt %>%
+  explore_space_pca(group = sign, pca = FALSE ,flip = FALSE, start_size = 3) +
+  add_anchor(dt = get_interp_last(dt), anchor_color = sign) +
   scale_color_discrete_botanical() +
   facet_wrap(vars(fct_relevel(sign, c("original", "flipped")))) +
   theme(legend.position = "none")

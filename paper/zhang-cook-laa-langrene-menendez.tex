@@ -213,7 +213,7 @@ implemented in the R package \CRANpkg{tourr} \citep{tourr}.
 
 }
 
-\caption[An illustration for demonstrating the steps in a tour path]{An illustration for demonstrating the steps in a tour path. Each square (frame) represents the projected data with a corresponding basis. Blue frames are found by an optimisation algorithm iteratively whilst the white frames are constructed between two blue frames by geodesic interpolation.}(\#fig:tour-path)
+\caption[An illustration for demonstrating the steps in a tour path]{An illustration for demonstrating the steps in a tour path. Each square (frame) represents the projected data with a corresponding basis. Blue frames are found by an optimisation algorithm iteratively whilst the white frames are constructed between two blue frames by geodesic interpolation.}\label{fig:tour-path}
 \end{figure}
 \end{Schunk}
 
@@ -276,17 +276,17 @@ times to find a better basis.
   \SetKwInOut{output}{output}
     \input{$f(.)$, $\alpha_1$, $l_{\max}$, $\text{cooling}$} 
     \output{$\mathbf{A}_{l}$}
-    generate random start $\mathbf{A}_1$ and set $\mathbf{A}_{\text{cur}} \coloneqq \mathbf{A}_1$, $I_{\text{cur}} = f(\mathbf{A}_{\text{cur}})$, $j = 1$\;
+    Generate random start $\mathbf{A}_1$ and set $\mathbf{A}_{\text{cur}} \coloneqq \mathbf{A}_1$, $I_{\text{cur}} = f(\mathbf{A}_{\text{cur}})$, $j = 1$\;
   \Repeat{$\mathbf{A}_l$ is too close to $\mathbf{A}_{\text{cur}}$ in terms of geodesic distance}{
-   set $l = 1$\;
+   Set $l = 1$\;
   \Repeat{$l > l_{\max}$ or $I_{l} > I_{\text{cur}}$}{
-    generate $\mathbf{A}_{l} = (1- \alpha_j)\mathbf{A}_{\text{cur}} + \alpha_j \mathbf{A}_{\text{rand}}$ and orthogonalise $\mathbf{A}_{l}$\;
-    compute $I_{l}  = f(\mathbf{A}_{l})$\;
-    update $l = l + 1$\;
+    Generate $\mathbf{A}_{l} = (1- \alpha_j)\mathbf{A}_{\text{cur}} + \alpha_j \mathbf{A}_{\text{rand}}$ and orthogonalise $\mathbf{A}_{l}$\;
+    Compute $I_{l}  = f(\mathbf{A}_{l})$\;
+    Update $l = l + 1$\;
   }
-  update $\alpha_{j+1} = \alpha_j * \text{cooling}$\;
-  construct the geodesic interpolation between $\mathbf{A}_{\text{cur}}$ and $\mathbf{A}_l$\; 
-  update $\mathbf{A}_{\text{cur}} = \mathbf{A}_l$ and $j = j + 1$\;
+  Update $\alpha_{j+1} = \alpha_j * \text{cooling}$\;
+  Construct the geodesic interpolation between $\mathbf{A}_{\text{cur}}$ and $\mathbf{A}_l$\; 
+  Update $\mathbf{A}_{\text{cur}} = \mathbf{A}_l$ and $j = j + 1$\;
 }
   \caption{Simulated annealing (SA)}
   \label{random-search}
@@ -311,10 +311,10 @@ inner loop.
 \begin{algorithm}
 \SetAlgoLined
 \Repeat{$l > l_{\max}$ or $I_{l} > I_{\text{cur}}$ or $P > U$}{
-    generate $\mathbf{A}_{l} = (1- \alpha_j)\mathbf{A}_{\text{cur}} + \alpha_j \mathbf{A}_{\text{rand}}$ and orthogonalise $\mathbf{A}_{l}$\;
-    compute $I_{l}  = f(\mathbf{A}_{l})$, $T(l) = \frac{T_0}{\log(l + 1)}$ and $P= \min\left\{\exp\left[-\frac{I_{\text{cur}} -I_{l}}{T(l)}\right],1\right\}$\;
-    draw $U$ from a uniform distribution: $U \sim \text{Unif(0, 1)}$\;
-    update $l = l + 1$\;
+    Generate $\mathbf{A}_{l} = (1- \alpha_j)\mathbf{A}_{\text{cur}} + \alpha_j \mathbf{A}_{\text{rand}}$ and orthogonalise $\mathbf{A}_{l}$\;
+    Compute $I_{l}  = f(\mathbf{A}_{l})$, $T(l) = \frac{T_0}{\log(l + 1)}$ and $P= \min\left\{\exp\left[-\frac{I_{\text{cur}} -I_{l}}{T(l)}\right],1\right\}$\;
+    Draw $U$ from a uniform distribution: $U \sim \text{Unif(0, 1)}$\;
+    Update $l = l + 1$\;
   }
   \caption{Simulated annealing with jump out (SAJO)}
   \label{simulated-annealing}
@@ -338,8 +338,8 @@ of the PD.
   Compute the corresponding index value for each candidate bases\;
   Determine the search direction as from $\mathbf{A}_{\text{cur}}$ to the candidate bases with the largest index value\;
   Determine the step size via optimising the index value on the search direction over a 90 degree window\;
-  find the optimum $\mathbf{A}_{**}$ and compute $I_{**} = f(\mathbf{A}_{**})$, $p_{\text{diff}} = (I_{**} - I_{\text{cur}})/I_{**}$\;
-  update $l = l + 1$\;
+  Find the optimum $\mathbf{A}_{**}$ and compute $I_{**} = f(\mathbf{A}_{**})$, $p_{\text{diff}} = (I_{**} - I_{\text{cur}})/I_{**}$\;
+  Update $l = l + 1$\;
 }
 \caption{Pseudo derivative (PD)}
 \label{search-geodesic}
@@ -499,7 +499,7 @@ an advantage in this simple example to quickly find the optimum.
 
 }
 
-\caption[A comparison of the searches by two optimisers]{A comparison of the searches by two optimisers: SA (left) and SAJO (right) on a 2D projection of a six-variable dataset, \code{boa6}, using the holes index. Both optimisers find the final basis with similar index value while it takes SAJO more iterations because the algorithm allows a probabilistic acceptance of bases with lower index value, as observed in iteration 4 and 6-8.}(\#fig:toy-search)
+\caption[A comparison of the searches by two optimisers]{A comparison of the searches by two optimisers: SA (left) and SAJO (right) on a 2D projection of a six-variable dataset, \code{boa6}, using the holes index. Both optimisers find the final basis with similar index value while it takes SAJO more iterations because the algorithm allows a probabilistic acceptance of bases with lower index value, as observed in iteration 4 and 6-8.}\label{fig:toy-search}
 \end{figure}
 \end{Schunk}
 
@@ -513,7 +513,7 @@ an advantage in this simple example to quickly find the optimum.
 
 }
 
-\caption[Examing the index values as the optimisation progress for two optimisers using trace plot]{Examing the index values as the optimisation progress for two optimisers using trace plot. The lines indicate the interpolation and the dots indicate a new target is generated.}(\#fig:toy-interp)
+\caption[Examing the index values as the optimisation progress for two optimisers using trace plot]{Examing the index values as the optimisation progress for two optimisers using trace plot. The lines indicate the interpolation and the dots indicate a new target is generated.}\label{fig:toy-interp}
 \end{figure}
 \end{Schunk}
 
@@ -542,7 +542,7 @@ space}\label{toy-pca}}
 
 }
 
-\caption[The PCA plot of 1D projection problem on the 5-variable dataset, \code{boa5}, using the holes index with two optimisers]{The PCA plot of 1D projection problem on the 5-variable dataset, \code{boa5}, using the holes index with two optimisers: SA and PD. All the bases in PD has been flipped and a grey dashed line has been annotated to indicate the symmetry of two starting bases.}(\#fig:toy-pca)
+\caption[The PCA plot of 1D projection problem on the 5-variable dataset, \code{boa5}, using the holes index with two optimisers]{The PCA plot of 1D projection problem on the 5-variable dataset, \code{boa5}, using the holes index with two optimisers: SA and PD. All the bases in PD has been flipped and a grey dashed line has been annotated to indicate the symmetry of two starting bases.}\label{fig:toy-pca}
 \end{figure}
 \end{Schunk}
 
@@ -606,7 +606,7 @@ plots}\label{animating-the-diagnostic-plots}}
 
 }
 
-\caption{Six selected frames from the animated PCA plots in the previous figure. With animation, the start and end position of each optimisation is easier to identify.  A full video of this aimation can be found at \url{https://vimeo.com/user132007430/review/504242845/b73f37175a}}(\#fig:toy-pca-animated)
+\caption{Six selected frames from the animated PCA plots in the previous figure. With animation, the start and end position of each optimisation is easier to identify.  A full video of this aimation can be found at \url{https://vimeo.com/user132007430/review/504242845/b73f37175a}}\label{fig:toy-pca-animated}
 \end{figure}
 \end{Schunk}
 
@@ -759,23 +759,6 @@ clean-cut. Polish works with this end basis and further pushes the index
 value to produce much clear edges of the cluster, especially along the
 vertical axis.
 
-\hypertarget{reconciling-the-orientation}{%
-\subsection{Reconciling the
-orientation}\label{reconciling-the-orientation}}
-
-Something to fill here \ldots{}
-
-\begin{Schunk}
-\begin{figure}
-
-{\centering \includegraphics[width=1\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/flip-sign-1} 
-
-}
-
-\caption[PCA plot of 1D projection of boa6 data, optimised by SA, with seed 2463]{PCA plot of 1D projection of boa6 data, optimised by SA, with seed 2463.}\label{fig:flip-sign}
-\end{figure}
-\end{Schunk}
-
 \hypertarget{seeing-the-signal-in-the-noise}{%
 \subsection{Seeing the signal in the
 noise}\label{seeing-the-signal-in-the-noise}}
@@ -868,6 +851,36 @@ final bases are much closer to the theoretical best, as compared to the
 three other cases. This indicates that SAJO, with a reasonable large
 search size, is able to overcome the local optimum and optimise close
 towards the global optimum.
+
+\hypertarget{reconciling-the-orientation}{%
+\subsection{Reconciling the
+orientation}\label{reconciling-the-orientation}}
+
+\begin{Schunk}
+\begin{figure}
+
+{\centering \includegraphics[width=1\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/flip-sign-1} 
+
+}
+
+\caption[Comparison of the basis space before and after reconciling the orientation of the current and target basis for 1D projection of boa6 data, optimised by SA with seed 2463]{Comparison of the basis space before and after reconciling the orientation of the current and target basis for 1D projection of boa6 data, optimised by SA with seed 2463. On the left panel, one target basis is generated on the other half of the basis space and the interpolation is unsatisfactory. After implementing an orientation check on the determinant, this phenomenon disappears on the right panel.}\label{fig:flip-sign}
+\end{figure}
+\end{Schunk}
+
+One interesting situation observed in the previous examples is that, for
+some simulations as shown on the left panel of Figure
+\ref{fig:flip-sign}, the target basis is generated on the other half of
+the basis space and the interpolator seems to draw a straight line to
+interpolate. As mentioned previously, bases with opposite signs do not
+affect the projection and index value, but clearly, we prefer the target
+to have the same orientation as the current basis. The orientation of
+two bases can be checked via calculating the determinant and a negative
+value indicates opposite direction. Hence an orientation check is
+carried out once a new target basis is generated and the sign in the
+target basis will be flipped if a negative determinant is obtained. The
+interpolation after implementing the orientation check is shown on the
+right panel of Figure \ref{fig:flip-sign} where the unsatisfactory
+interpolation no longer exist.
 
 \hypertarget{implementation}{%
 \section{Implementation}\label{implementation}}
