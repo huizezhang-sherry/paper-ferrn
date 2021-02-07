@@ -160,7 +160,7 @@ dt <- dplyr::bind_rows(kol_1d_geo, kol_1d_better, kol_1d_better_random) %>%
   bind_theoretical(matrix = matrix(c(0, -1, 0, 0, 0), ncol = 1), tourr::norm_kol(nrow(boa5)), raw_data = boa5)
 
 p1 <- dt %>%
-  explore_trace_interp(group = method, color = method) +
+  explore_trace_interp(group = method, color = method, accuracy_y = 0.02) +
   geom_hline(yintercept = theo_best_index_val, alpha = 0.5, linetype = 2) +
   scale_color_discrete_botanical() +
   facet_wrap(vars(method), scales = "free_x")
