@@ -67,13 +67,11 @@ gl <-  lapply(rl, grid::rasterGrob)
 wrap_plots(gl)
 
 ## ----toy-tour
-# prep <- prep_space_tour(dplyr::bind_rows(holes_1d_better, holes_1d_geo) %>%
-#                      bind_theoretical(matrix(c(0, 1, 0, 0, 0), nrow = 5),
-#                                       index = tourr::holes(), raw_data = boa5),
-#                    group = method, palette = botanical_palettes$fern[c(1,6)], axes = "bottomleft",
-#                    point_size = 3, end_size = 8, theo_size = 8)
+# prep <- prep_space_tour(dplyr::bind_rows(holes_1d_better, holes_1d_geo), flip = TRUE,
+#                         group = method, palette = botanical_palettes$fern[c(1,6)], axes = "bottomleft",
+#                         point_size = 3, end_size = 8)
 #
-# set.seed(123)
+# set.seed(123456)
 # render(
 #   prep$basis,
 #   tour_path = grand_tour(),
@@ -87,7 +85,7 @@ wrap_plots(gl)
 # )
 #
 # # render gif
-# set.seed(123)
+# set.seed(123456)
 # render_gif(
 #   prep$basis,
 #   tour_path = grand_tour(),
@@ -99,7 +97,7 @@ wrap_plots(gl)
 #   gif_file = here::here("anim","tour.gif")
 # )
 
-frames <- c("001", "038", "046", "079", "096", "100")
+frames <- c("001", "021", "056", "072", "079", "088")
 ani <- paste0(here::here("anim/"), "tour/", "tour", frames, ".png")
 rl <- lapply(ani, png::readPNG)
 gl <-  lapply(rl, grid::rasterGrob)
