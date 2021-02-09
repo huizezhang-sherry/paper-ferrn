@@ -299,6 +299,11 @@ As mentioned previously, the original $p \times d$ dimension space can be simula
 
 ## Forming a torus
 
+```{r toy-torus, fig.cap="Six frames selected from animating 5000 randomly generated 2D projection bases. \\textcolor{red}{one more sentence here.} The full video of the animation can be found at \\url{https://vimeo.com/user133215810/review/510046144/49e902d8ef}. "}
+```
+
+The orthogonality of the axes in the basis corresponds to the two circles being perpendicular to each other in the torus.
+
 \textcolor{red}{Something to fill here ...}
 
 # Diagnosing an optimiser {#application}
