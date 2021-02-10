@@ -147,6 +147,10 @@ wrap_plots(gl)
 #
 # path_geo <- bind_rows(holes_2d_geo_3var) %>% get_interp() %>% get_basis_matrix() %>% as_tibble()
 # path_better <- bind_rows(holes_2d_better_3var) %>% get_interp() %>% get_basis_matrix() %>% as_tibble()
+#
+# path_better <- holes_2d_better_3var %>% group_by(tries) %>% filter(loop != max(loop)) %>%get_interp() %>% get_basis_matrix() %>% as_tibble()
+#
+#
 # basis <- bind_rows(path_geo, path_better, random)  %>%
 #   mutate(id = as.factor(ifelse(row_number() > nrow(path_geo) + nrow(path_better), "random",
 #                      ifelse(row_number() <= nrow(path_geo), "geodesic", "better"))),
@@ -154,8 +158,8 @@ wrap_plots(gl)
 #          cex = ifelse(row_number() == 1, 5, cex)) %>%
 #   group_by(id) %>%
 #   mutate(cex = ifelse(row_number() == max(row_number()) & id != "random",
-#                       7, cex))
-#
+#                       7, cex)) %>%
+#   ungroup()
 #
 # pal <- RColorBrewer::brewer.pal(3, "Dark2")
 # pal <- c(botanical_pal(reverse = TRUE)(2), "grey60")
