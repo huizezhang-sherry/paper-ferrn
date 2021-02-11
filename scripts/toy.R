@@ -104,28 +104,19 @@ gl <-  lapply(rl, grid::rasterGrob)
 wrap_plots(gl)
 
 ## ----toy-torus
-# proj_d <-  2 # 2D because then you have 2 orthogonal circles
-# d <- 6
-# n_point <- 5000
-# index <- holes()
-# set.seed(123456)
-# random <- map(1:n_point, ~basis_random(n = d/proj_d,  d=proj_d)) %>%
-#   purrr::flatten_dbl() %>% matrix(ncol = d, byrow = TRUE) %>% as_tibble()
-#
 # set.seed(123456)
 # holes_2d_geo_3var <-
 #   animate_xy(boa6[, 1:3], tour_path = guided_tour(holes(), d = 2,
 #                                            search_f =  search_geodesic),
 #              rescale = FALSE)
 #
-# last <- get_best(holes_2d_geo_3var)$basis %>% .[[1]]
-#
-# set.seed(123456)
-# holes_2d_geo_3var_polish <-
-#   animate_xy(boa6[, 1:3], tour_path = guided_tour(holes(), d = 2,
-#                                                   search_f =  search_polish,
-#                                                   start = last),
-#              rescale = FALSE)
+# # last <- get_best(holes_2d_geo_3var)$basis %>% .[[1]]
+# #
+# # set.seed(123456)
+# # holes_2d_geo_3var_polish <-
+# #   animate_xy(boa6[, 1:3], tour_path = guided_tour(holes(), d = 2,
+# #                                                   search_f =  search_polish),
+# #              rescale = FALSE, start = last)
 #
 # set.seed(123456)
 # holes_2d_better_3var <-
@@ -133,32 +124,37 @@ wrap_plots(gl)
 #                                                   search_f =  search_better),
 #              rescale = FALSE)
 #
-# last <- get_best(holes_2d_better_3var)$basis %>% .[[1]]
-#
+# # last <- get_best(holes_2d_better_3var)$basis %>% .[[1]]
+# #
+# # set.seed(123456)
+# # holes_2d_better_3var_polish <-
+# #   animate_xy(boa6[, 1:3], tour_path = guided_tour(holes(), d = 2,
+# #                                                   search_f =  search_polish),
+# #              rescale = FALSE, start = last)
+# #
+# # save(holes_2d_better_3var, file = here::here("data", "holes_2d_better_3var.rda"))
+# # save(holes_2d_geo_3var, file = here::here("data", "holes_2d_geo_3var.rda"))
+# #
+# proj_d <-  2 # 2D because then you have 2 orthogonal circles
+# d <- 6
+# n_point <- 5000
 # set.seed(123456)
-# holes_2d_better_3var_polish <-
-#   animate_xy(boa6[, 1:3], tour_path = guided_tour(holes(), d = 2,
-#                                                   search_f =  search_polish),
-#              rescale = FALSE, start = last)
-#
-# save(holes_2d_better_3var, file = here::here("data", "holes_2d_better_3var.rda"))
-# save(holes_2d_geo_3var, file = here::here("data", "holes_2d_geo_3var.rda"))
+# random <- map(1:n_point, ~basis_random(n = d/proj_d,  d=proj_d)) %>%
+#   purrr::flatten_dbl() %>% matrix(ncol = d, byrow = TRUE) %>% as_tibble()
 #
 #
 # path_geo <- bind_rows(holes_2d_geo_3var) %>% get_interp() %>% get_basis_matrix() %>% as_tibble()
 # path_better <- bind_rows(holes_2d_better_3var) %>% get_interp() %>% get_basis_matrix() %>% as_tibble()
+# path_better <- bind_rows(holes_2d_better_3var) %>% get_interp() %>% filter(tries <= 2) %>% get_basis_matrix() %>% as_tibble()
+# # path_better <- holes_2d_better_3var %>% group_by(tries) %>% filter(loop != max(loop)) %>%get_interp() %>% get_basis_matrix() %>% as_tibble()
 #
-# path_better <- holes_2d_better_3var %>% group_by(tries) %>% filter(loop != max(loop)) %>%get_interp() %>% get_basis_matrix() %>% as_tibble()
-#
-#
-# basis <- bind_rows(path_geo, path_better, random)  %>%
+# basis <- bind_rows(path_geo, path_better, random) %>%
 #   mutate(id = as.factor(ifelse(row_number() > nrow(path_geo) + nrow(path_better), "random",
 #                      ifelse(row_number() <= nrow(path_geo), "geodesic", "better"))),
 #          cex = ifelse(id == "random", 0.5, 3),
 #          cex = ifelse(row_number() == 1, 5, cex)) %>%
 #   group_by(id) %>%
-#   mutate(cex = ifelse(row_number() == max(row_number()) & id != "random",
-#                       7, cex)) %>%
+#   mutate(cex = ifelse(row_number() == max(row_number()) & id != "random", 7, cex)) %>%
 #   ungroup()
 #
 # pal <- RColorBrewer::brewer.pal(3, "Dark2")
