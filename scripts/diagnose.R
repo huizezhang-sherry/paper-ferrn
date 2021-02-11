@@ -126,28 +126,28 @@ dt %>%
 #                                              search_f =  search_better, max.tries = 200),
 #                rescale = FALSE)
 #
-# last_basis <- get_best(kol_1d_better)$basis %>% .[[1]]
+# # last_basis <- get_best(kol_1d_better)$basis %>% .[[1]]
+# #
+# # set.seed(123456)
+# # kol_1d_better_polish <-
+# #   animate_dist(boa5, tour_path = guided_tour(norm_kol(nrow(boa5)), d = 1,
+# #                                              search_f = search_polish, max.tries = 200),
+# #                rescale = FALSE, start = last_basis)
 #
-# set.seed(123456)
-# kol_1d_better_polish <-
-#   animate_dist(boa5, tour_path = guided_tour(norm_kol(nrow(boa5)), d = 1,
-#                                              search_f = search_polish, max.tries = 200,
-#                                              start = last_basis),
-#                rescale = FALSE)
 # set.seed(123456)
 # kol_1d_better_random <-
 #   animate_dist(boa5, tour_path = guided_tour(norm_kol(nrow(boa5)), d = 1,
 #                                              search_f =  search_better_random, max.tries = 200),
 #                rescale = FALSE)
 #
-# last_basis <- get_best(kol_1d_better_random)$basis %>% .[[1]]
+# # last_basis <- get_best(kol_1d_better_random)$basis %>% .[[1]]
+# #
+# # set.seed(123456)
+# # kol_1d_better_random_polish <-
+# #   animate_dist(boa5, tour_path = guided_tour(norm_kol(nrow(boa5)), d = 1,
+# #                                              search_f =  search_polish, max.tries = 200),
+# #                rescale = FALSE, start = last_basis)
 #
-# set.seed(123456)
-# kol_1d_better_random_polish <-
-#   animate_dist(boa5, tour_path = guided_tour(norm_kol(nrow(boa5)), d = 1,
-#                                              search_f =  search_polish, max.tries = 200,
-#                                              start = last_basis),
-#                rescale = FALSE)
 # save(kol_1d_geo, file = here::here("data", "kol_1d_geo.rda"))
 # save(kol_1d_better, file = here::here("data", "kol_1d_better.rda"))
 # save(kol_1d_better_random, file = here::here("data", "kol_1d_better_random.rda"))
@@ -157,7 +157,7 @@ index <- tourr::norm_kol(nrow(boa5))
 theo_best_index_val <- index(as.matrix(boa5) %*% matrix(c(0, 1, 0, 0, 0), nrow = 5, ncol = 1))
 
 dt <- dplyr::bind_rows(kol_1d_geo, kol_1d_better, kol_1d_better_random) %>%
-  bind_theoretical(matrix = matrix(c(0, -1, 0, 0, 0), ncol = 1), tourr::norm_kol(nrow(boa5)), raw_data = boa5)
+  bind_theoretical(matrix = matrix(c(0, 1, 0, 0, 0), ncol = 1), tourr::norm_kol(nrow(boa5)), raw_data = boa5)
 
 p1 <- dt %>%
   explore_trace_interp(group = method, color = method, accuracy_y = 0.02) +
@@ -166,15 +166,15 @@ p1 <- dt %>%
   facet_wrap(vars(method), scales = "free_x")
 
 pca <- dt %>%
-  compute_pca(group = method, flip = FALSE) %>%
+  compute_pca(group = method) %>%
   purrr::pluck("aug")
 
 p2 <- pca %>%
-  explore_space_pca(group = method, pca = FALSE, details = FALSE, start_size = 1, interp_size = 0.5, end_size = 3) +
+  explore_space_pca(group = method, pca = FALSE, details = FALSE, start_size = 3, interp_size = 0.5, end_size = 5) +
   add_search(dt = pca %>% group_by(method) %>% filter(str_detect(info, "search")) %>% filter(tries != max(tries)),
-             search_size = 0.5, search_col = method) +
-  add_dir_search(dt = pca %>% filter(method == "PD") %>% get_dir_search(ratio = 1),
-                 dir_col = method) +
+             search_size = 0.5, search_col = method, search_alpha = 0.2) +
+  add_dir_search(dt = pca %>% filter(method == "PD") %>% get_dir_search(ratio = 10) %>% filter(tries != max(tries)),
+                 dir_col = method, dir_alpha = 0.2) +
   scale_color_discrete_botanical() +
   theme(legend.position = "none") +
   facet_wrap(vars(method))

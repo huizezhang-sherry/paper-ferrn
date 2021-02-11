@@ -821,18 +821,18 @@ basis. This long interpolation path is partially due to the fluctuation
 in the early iterations, where the SAJO tends to generously accept
 inferior bases before concentrating near the optimum. The PCA plot shows
 the interpolation path and search points excluding the last termination
-iteration. \textcolor{red}{[A sentence for PD]}. Comparing the amount of
-random search done by SA and SAJO, it is surprising that SAJO does not
-carry as many samples as SA. Combining the insights from both the trace
-and PCA plot, one can learn the two different search strategies by SA
-and SAJO: SA frequently samples in the space and only make a move when
-an improvement is guaranteed to be made, while SAJO first broadly
-accepts bases in the space and then starts the extensive sampling in a
-narrowed subspace. The specific decision of which optimiser to use will
-depend on the index curve in the basis space but if the basis space is
-non-smooth, accepting inferior bases at first, as what SAJO has done,
-can lead to a more efficient search, in terms of the overall number of
-points evaluated.
+iteration. Pseudo Derivative (PD) quickly gets stuck near the starting
+position. Comparing the amount of random search done by SA and SAJO, it
+is surprising that SAJO does not carry as many samples as SA. Combining
+the insights from both the trace and PCA plot, one can learn the two
+different search strategies by SA and SAJO: SA frequently samples in the
+space and only make a move when an improvement is guaranteed to be made,
+while SAJO first broadly accepts bases in the space and then starts the
+extensive sampling in a narrowed subspace. The specific decision of
+which optimiser to use will depend on the index curve in the basis space
+but if the basis space is non-smooth, accepting inferior bases at first,
+as what SAJO has done, can lead to a more efficient search, in terms of
+the overall number of points evaluated.
 
 \begin{Schunk}
 \begin{figure}
