@@ -606,7 +606,7 @@ plots}\label{animating-the-diagnostic-plots}}
 
 }
 
-\caption{Six frames selected from the animation of search paths in the PCA-projected basis space. With animation, the start and end position of each optimisation routine is clearly identified. The full video of the animation can be found at \url{https://vimeo.com/user132007430/review/504242845/b73f37175a}.}\label{fig:toy-pca-animated}
+\caption{Six frames selected from the animation of search paths in the PCA-projected basis space. With animation, the start and end position of each optimisation routine is clearly identified. The full video of the animation can be found at \url{https://vimeo.com/504242845}.}\label{fig:toy-pca-animated}
 \end{figure}
 \end{Schunk}
 
@@ -630,7 +630,7 @@ itself}\label{the-tour-looking-at-itself}}
 
 }
 
-\caption{Six frames selected from the tour view in the original 5D space for the same 1D projection problem as Figure \ref{fig:toy-pca} and \ref{fig:toy-pca-animated}. The full video of the animation can be found at \url{https://vimeo.com/user132007430/review/504328122/9be84db563}.}\label{fig:toy-tour}
+\caption{Six frames selected from the tour view in the original 5D space for the same 1D projection problem as Figure \ref{fig:toy-pca} and \ref{fig:toy-pca-animated}. The full video of the animation can be found at \url{https://vimeo.com/512885379}.}\label{fig:toy-tour}
 \end{figure}
 \end{Schunk}
 
@@ -645,6 +645,46 @@ same two optimisations in its original 5D space.
 \hypertarget{forming-a-torus}{%
 \subsection{Forming a torus}\label{forming-a-torus}}
 
+While the previous few examples have looked at the space of 1D bases in
+a unit sphere, this section visualises the space of 2D bases. Recall
+that the columns in a 2D basis are orthogonal to each other, the space
+of \(p \times 2\) bases is a \(p\)-D torus. If take \(p = 3\), one would
+see a classical 3D torus shape as shown by the grey points in Figure
+\ref{fig:toy-torus}. The two circles of the torus can be observed to be
+perpendicular to each other and this can be linked back to the
+orthogonality of the columns in the bases. Two paths optimised by SA and
+PD are plotted on top of the torus and coloured in green and brown
+respectively to match the previous few 1D space plots. The final basis
+found by PD and SA are shown in a larger shape and printed below
+respectively:
+
+\begin{Schunk}
+\begin{Soutput}
+#>              [,1]        [,2]
+#> [1,]  0.001196285  0.03273881
+#> [2,] -0.242432715  0.96965761
+#> [3,] -0.970167484 -0.24226493
+\end{Soutput}
+\end{Schunk}
+
+\begin{Schunk}
+\begin{Soutput}
+#>             [,1]         [,2]
+#> [1,]  0.05707994 -0.007220138
+#> [2,] -0.40196202 -0.915510160
+#> [3,] -0.91387549  0.402230054
+\end{Soutput}
+\end{Schunk}
+
+Both optimisers have found the third variable in the first column, but
+the second variable in the second column differs by a sign.One would
+expect to see this in the torus plot as the final bases match each other
+when projected onto one torus circle (due to the same sign in the first
+column) and be symmetric when projected onto the other (due the the sign
+difference in the second column). In Figure \ref{fig:toy-torus}, this
+can be seen most clearly in frame 5 where the two circles are rotated
+into a line from our view.
+
 \begin{Schunk}
 \begin{figure}
 
@@ -652,14 +692,9 @@ same two optimisations in its original 5D space.
 
 }
 
-\caption{Six frames selected from animating 5000 randomly generated 2D projection bases. \textcolor{red}{one more sentence here.} The full video of the animation can be found at \url{https://vimeo.com/user133215810/review/510046144/49e902d8ef}. }\label{fig:toy-torus}
+\caption{Six frames selected from the torus view of 2D basis space. The grey points are randomly generated 2D basis and the two paths are optimised by PD (brown) and SA (green) for a three-variable 2D projection problem using the holes index. The grey points show the space of the 2D basis as a torus. The full video of the animation can be found at \url{https://vimeo.com/512882784}.}\label{fig:toy-torus}
 \end{figure}
 \end{Schunk}
-
-The orthogonality of the axes in the basis corresponds to the two
-circles being perpendicular to each other in the torus.
-
-\textcolor{red}{Something to fill here ...}
 
 \hypertarget{application}{%
 \section{Diagnosing an optimiser}\label{application}}
