@@ -14,9 +14,9 @@ maximising the projection index strongly influences both the statistical
 and the computational aspects of the procedure.'' While much work has
 been done in proposing indices in the literature, less has been done on
 evaluating the performance of the optimisers. In this paper, we
-implement a data collection object in the optimisation of projeciton
+implement a data collection object in the optimisation of projection
 pursuit guided tour and introduce visual diagnostics based on the data
-object collected. These diagnostics and workflows can be applied to a
+object collected. These diagnostics and workflow can be applied to a
 broad class of optimisers, to assess their performance. An R package,
 \pkg{ferrn}, has been created to implement the diagnostics.
 
@@ -178,20 +178,21 @@ defined as \(\mathbf{Y} = \mathbf{X} \cdot \mathbf{A}\), where
 function that maps the projected data \(\mathbf{Y}\) onto a scalar
 value. This is commonly known as the projection pursuit index function,
 or just index function, and is used to measure the ``interestingness''
-of a given projection. In the context of projection pursuit,
-interestingness means departure from normality
-\citep{diaconis1984asymptotics, huber1985projection}.
-\textcolor{red}{only include a couple of indices, using e.g.}A number of
-index functions have been proposed in the literature to detect different
-data structures
-\citep{friedman1974projection, hall1989polynomial, cook1993projection, posse1995projection}
-and to classify groups \citep{lee2005projection, lee2010projection}.
-
-As a general visualisation method, tour produces animations of high
-dimensional data via rotations of low-dimensional planes. There are
-different tour implementations depending on how the high dimensional
-space is investigated: grand tour \citep{cook2008grand} selects the
-planes randomly to provide a general overview; manual tour
+of a given projection. In projection pursuit, higher index values are
+associated with interesting projections that depart from normality
+\citep{diaconis1984asymptotics, huber1985projection}, e.g.~Legendre
+index \citep{friedman1974projection}, Hermite index
+\citep{hall1989polynomial} and natural Hermite index
+\citep{cook1993projection} for measuring the distance between the
+density of projected data and a standard normal distribution, LDA index
+\citep{lee2005projection} and PDA index \citep{lee2010projection} for
+finding clustering structure in the data, and skewness-based index
+\citep{Loperfido2018} and kurtosis-based index \citep{Loperfido2020} for
+outlier detection. As a general visualisation method, tour produces
+animations of high dimensional data via rotations of low-dimensional
+planes. There are different tour implementations depending on how the
+high dimensional space is investigated: grand tour \citep{cook2008grand}
+selects the planes randomly to provide a general overview; manual tour
 \citep{cook1997manual} gradually phases in and out one variable to
 understand the contribution of that variable in the projection. Guided
 tour, the main interest of this paper, chooses the planes with the aid
