@@ -67,10 +67,10 @@ p2 <- after %>%
 
 p1 <- bind_rows(holes_2d_better, holes_2d_better_polish) %>%
   clean_method() %>%
-  mutate(method = factor(method, levels = c("SA", "polish"))) %>%
+  mutate(method = factor(method, levels = c("CRS", "polish"))) %>%
   get_interp() %>%
   explore_trace_interp(color = method, cutoff = 100, target_size = 2, interp_size = 2) +
-  scale_color_discrete_botanical(breaks = c("SA", "polish"), label = c("SA", "polish")) +
+  scale_color_discrete_botanical(breaks = c("CFRS", "polish"), label = c("CRS", "polish")) +
   theme(legend.position = "bottom",
         plot.margin = margin(2.5, 2, 0, 0, "cm"))
 
@@ -163,7 +163,7 @@ p1 <- dt %>%
   explore_trace_interp(group = method, color = method, accuracy_y = 0.02) +
   geom_hline(yintercept = theo_best_index_val, alpha = 0.5, linetype = 2) +
   scale_color_discrete_botanical() +
-  facet_wrap(vars(method), scales = "free_x")
+  facet_wrap(vars(fct_relevel(method, c("PD", "CRS", "SA"))), scales = "free_x")
 
 pca <- dt %>%
   compute_pca(group = method) %>%
@@ -177,7 +177,7 @@ p2 <- pca %>%
                  dir_col = method, dir_alpha = 0.2) +
   scale_color_discrete_botanical() +
   theme(legend.position = "none") +
-  facet_wrap(vars(method))
+  facet_wrap(vars(fct_relevel(method, c("PD", "CRS", "SA"))))
 
 (p1 / p2)
 

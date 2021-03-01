@@ -1,7 +1,7 @@
 % !TeX root = RJwrapper.tex
 \title{Visual Diagnostics for Constrained Optimisation with Application to
 Guided Tours}
-\author{by H.Sherry Zhang, Dianne Cook, Ursula Laa, Nicolas Langrené, Patricia Menéndez}
+\author{by H.Sherry Zhang, Dianne Cook, Ursula Laa, Nicolas Langrené, and Patricia Menéndez}
 
 \maketitle
 
@@ -247,9 +247,9 @@ the tour animation is viewed by the users during the optimisation.
 \subsection{Existing algorithms}\label{existing-algorithms}}
 
 Three optimisers have been implemented in the \CRANpkg{tourr}
-\citep{tourr} package: simulated annealing (SA), simulated annealing
-with jump out (SAJO), and pseudo derivative (PD). Simulated annealing
-(SA) is a random search optimiser that samples a candidate basis
+\citep{tourr} package: Creeping random search (CRS), simulated annealing
+(SA), and pseudo derivative (PD). Creeping random search (CRS) is a
+random search optimiser that samples a candidate basis
 \(\mathbf{A}_{l}\) in the neighbourhood of the current basis
 \(\mathbf{A}_{\text{cur}}\) by
 \(\mathbf{A}_{l} = (1- \alpha)\mathbf{A}_{\text{cur}} + \alpha \mathbf{A}_{\text{rand}}\)
@@ -287,13 +287,13 @@ times to find a better basis.
   Construct the geodesic interpolation between $\mathbf{A}_{\text{cur}}$ and $\mathbf{A}_l$\; 
   Update $\mathbf{A}_{\text{cur}} = \mathbf{A}_l$ and $j = j + 1$\;
 }
-  \caption{Simulated annealing (SA)}
+  \caption{Creeping random search (CRS)}
   \label{random-search}
 \end{algorithm}
 
-Simulated annealing with jump out (SAJO)
+Simulated annealing (SA)
 \citep{kirkpatrick1983optimization, bertsimas1993simulated} uses the
-same sampling process as SA but allows a probabilistic acceptance of a
+same sampling process as CRS but allows a probabilistic acceptance of a
 basis with lower index value than the current. Given an initial value of
 \(T_0\), the temperature at iteration \(l\) is defined as
 \(T(l) = \frac{T_0}{\log(l + 1)}\). When a candidate basis fails to have
@@ -315,7 +315,7 @@ inner loop.
     Draw $U$ from a uniform distribution: $U \sim \text{Unif(0, 1)}$\;
     Update $l = l + 1$\;
   }
-  \caption{Simulated annealing with jump out (SAJO)}
+  \caption{Simulated annealing (SA)}
   \label{simulated-annealing}
 \end{algorithm}
 
@@ -358,7 +358,7 @@ diagnostics}\label{data-structure-for-diagnostics}}
 
 Three main pieces of information are recorded for the projection pursuit
 optimisers: 1) projection bases \(\mathbf{A}\), 2) index values \(I\),
-and 3) state \(S\). For SA and SAJO, possible states include
+and 3) state \(S\). For CRS and SA, possible states include
 \texttt{random\_search}, \texttt{new\_basis}, and
 \texttt{interpolation}. Pseudo derivative (PD) has a wider variety of
 states including \texttt{new\_basis}, \texttt{direction\_search},
@@ -483,12 +483,12 @@ interpolate are connected and highlighted in a larger size; and 3) the
 colour of the last iteration is in a grey scale to indicate no better
 basis found in this iteration.
 
-Figure \ref{fig:toy-search} shows an example of the search plot for SA
-(left) and SAJO (right). Both optimisers quickly find better bases in
-the first few iterations and then take longer to find one in the later
+Figure \ref{fig:toy-search} shows an example of the search plot for CRS
+(left) and SA (right). Both optimisers quickly find better bases in the
+first few iterations and then take longer to find one in the later
 iterations. The anchor bases, the ones found with the highest index
 value in each iteration, always have an increased index value in the
-optimiser SA while this is not the case for SAJO. This feature gives SA
+optimiser CRS while this is not the case for SA. This feature gives SA
 an advantage in this simple example to quickly find the optimum.
 
 \begin{Schunk}
@@ -498,7 +498,7 @@ an advantage in this simple example to quickly find the optimum.
 
 }
 
-\caption[A comparison of the searches by two optimisers]{A comparison of the searches by two optimisers: SA (left) and SAJO (right) on a 2D projection problem of a six-variable dataset, \code{boa6} using holes index. Both optimisers reach the final basis with a similar index value while it takes SAJO longer to find the final basis.}\label{fig:toy-search}
+\caption[A comparison of the searches by two optimisers]{A comparison of the searches by two optimisers: CRS (left) and SA (right) on a 2D projection problem of a six-variable dataset, \code{boa6} using holes index. Both optimisers reach the final basis with a similar index value while it takes SA longer to find the final basis.}\label{fig:toy-search}
 \end{figure}
 \end{Schunk}
 
@@ -512,7 +512,7 @@ an advantage in this simple example to quickly find the optimum.
 
 }
 
-\caption[An inspection of the index values as the optimisation progress for two optimisers]{An inspection of the index values as the optimisation progress for two optimisers: SA (left) and SAJO (right). The holes index is optimised for a 2D projection problem on the six-variable dataset \code{boa6}. Lines indicate the interpolation and dots indicate new target bases generated by the optimisers. Interpolation in both optimisation is smooth while SAJO (right) is observed to first pass by some bases with higher index value before reach the target bases in Time 76-130.}\label{fig:toy-interp}
+\caption[An inspection of the index values as the optimisation progress for two optimisers]{An inspection of the index values as the optimisation progress for two optimisers: CRS (left) and SA (right). The holes index is optimised for a 2D projection problem on the six-variable dataset \code{boa6}. Lines indicate the interpolation and dots indicate new target bases generated by the optimisers. Interpolation in both optimisation is smooth while SA is observed to first pass by some bases with higher index value before reach the target bases in Time 76-130.}\label{fig:toy-interp}
 \end{figure}
 \end{Schunk}
 
@@ -524,13 +524,13 @@ plot of the same optimisers as Figure \ref{fig:toy-search} and one can
 observe that the trace is smooth in both cases. It may seem bizarre at
 the first sight that the interpolation in the left panel first passes
 some bases with higher index value before decreases to a lower target.
-This happens because on the one hand, the probabilistic acceptance in
-SAJO implies that some worse bases will be accepted by the optimiser. On
-the other hand, guided tour interpolate between the current and target
-basis to provide a smooth transition between projections. These two
-facts indicate that a non-monotonic interpolation can't be avoided for
-SAJO. Later, in section \ref{monotonic}, there will be a discussion on
-improving the non-monotonic interpolation for SA.
+This happens because on the one hand, the probabilistic acceptance in SA
+implies that some worse bases will be accepted by the optimiser. On the
+other hand, guided tour interpolate between the current and target basis
+to provide a smooth transition between projections. These two facts
+indicate that a non-monotonic interpolation can't be avoided for SA.
+Later, in section \ref{monotonic}, there will be a discussion on
+improving the non-monotonic interpolation for CRS.
 
 \hypertarget{toy-pca}{%
 \subsection{Understanding the optimiser's coverage of the search
@@ -543,7 +543,7 @@ space}\label{toy-pca}}
 
 }
 
-\caption[Search paths of SA (green) and PD (brow) in the PCA-reduced basis space for 1D projection problem on the five-variable dataset, \code{boa5} using holes index]{Search paths of SA (green) and PD (brow) in the PCA-reduced basis space for 1D projection problem on the five-variable dataset, \code{boa5} using holes index. The basis space, a 5D unit sphere, is projected onto a 2D circle by PCA. All the bases in PD has been flipped for easier comparison of the final bases and a grey dashed line has been annotated to indicate the symmetry of the two start bases.}\label{fig:toy-pca}
+\caption[Search paths of CRS (green) and PD (brown) in the PCA-reduced basis space for 1D projection problem on the five-variable dataset, \code{boa5} using holes index]{Search paths of CRS (green) and PD (brown) in the PCA-reduced basis space for 1D projection problem on the five-variable dataset, \code{boa5} using holes index. The basis space, a 5D unit sphere, is projected onto a 2D circle by PCA. All the bases in PD has been flipped for easier comparison of the final bases and a grey dashed line has been annotated to indicate the symmetry of the two start bases.}\label{fig:toy-pca}
 \end{figure}
 \end{Schunk}
 
@@ -587,13 +587,13 @@ smaller size and alpha is used. Alpha can also be applied on the
 interpolation paths to show the start to finish from transparent to
 opaque.
 
-Figure \ref{fig:toy-pca} shows the PCA plot of SA and PD for a 1D
+Figure \ref{fig:toy-pca} shows the PCA plot of CRS and PD for a 1D
 projection problem. Both optimisers find the optimum but PD gets closer.
 With PCA plot, one can visually appreciate the nature of these two
 optimisers: PD first evaluates points in a small neighbourhood for a
-promising direction, while SA evaluates points randomly in the search
+promising direction, while CRS evaluates points randomly in the search
 space to search for the next target. There are dashed lines annotated
-for SA and it describes the interruption of the interpolation, which
+for CRS and it describes the interruption of the interpolation, which
 will be discussed in details in Section \ref{monotonic}.
 
 \hypertarget{animating-the-diagnostic-plots}{%
@@ -607,7 +607,7 @@ plots}\label{animating-the-diagnostic-plots}}
 
 }
 
-\caption{Six frames selected from the animated version of the previous plot. With animation, the progression of the search paths from start to finish are better identified. SA (green) finishes the optimisation quicker than PD (brown) since there is no further movement for SA in the sixth frame. The full video of the animation can be found at \url{https://vimeo.com/504242845}.}\label{fig:toy-pca-animated}
+\caption{Six frames selected from the animated version of the previous plot. With animation, the progression of the search paths from start to finish are better identified. CRS (green) finishes the optimisation quicker than PD (brown) since there is no further movement for CRS in the sixth frame. The full video of the animation can be found at \url{https://vimeo.com/504242845}.}\label{fig:toy-pca-animated}
 \end{figure}
 \end{Schunk}
 
@@ -616,9 +616,9 @@ from start to finish in the space. An \texttt{animate\ =\ TRUE} argument
 is used to enable the animation in the PCA plot. Figure
 \ref{fig:toy-pca-animated} shows six frames from the animation of the
 PCA plot in Figure \ref{fig:toy-pca}. An additional piece of information
-one can learn from this animation is that SA finds its end basis quicker
-than PD since SA finishes its search in the 5th frame while PD is still
-making more progress.
+one can learn from this animation is that CRS finds its end basis
+quicker than PD since CRS finishes its search in the 5th frame while PD
+is still making more progress.
 
 \hypertarget{the-tour-looking-at-itself}{%
 \subsection{The tour looking at
@@ -653,10 +653,10 @@ of \(p \times 2\) bases is a \(p\)-D torus. If take \(p = 3\), one would
 see a classical 3D torus shape as shown by the grey points in Figure
 \ref{fig:toy-torus}. The two circles of the torus can be observed to be
 perpendicular to each other and this can be linked back to the
-orthogonality of the columns in the bases. Two paths optimised by SA and
-PD are plotted on top of the torus and coloured in green and brown
+orthogonality of the columns in the bases. Two paths optimised by CRS
+and PD are plotted on top of the torus and coloured in green and brown
 respectively to match the previous few 1D space plots. The final basis
-found by PD and SA are shown in a larger shape and printed below
+found by PD and CRS are shown in a larger shape and printed below
 respectively:
 
 \begin{Schunk}
@@ -693,7 +693,7 @@ into a line from our view.
 
 }
 
-\caption{Six frames selected from rotating the 2D basis space along with two search paths optimised by PD (brown) and SA (green). The projection problem is a 2D projection with three variables using holes index. The grey points are randomly generated 2D projection bases in the space and it can be observed that these points form a torus. The full video of the animation can be found at \url{https://vimeo.com/512882784}.}\label{fig:toy-torus}
+\caption{Six frames selected from rotating the 2D basis space along with two search paths optimised by PD (brown) and CRS (green). The projection problem is a 2D projection with three variables using holes index. The grey points are randomly generated 2D projection bases in the space and it can be observed that these points form a torus. The full video of the animation can be found at \url{https://vimeo.com/512882784}.}\label{fig:toy-torus}
 \end{figure}
 \end{Schunk}
 
@@ -735,20 +735,20 @@ x_7 &\sim 0.5 \mathcal{N}(-5, 1) + 0.5 \mathcal{N}(5, 1)
 
 An example of non-monotonic interpolation has been given in Figure
 \ref{fig:toy-interp}: a path that passes bases with higher index value
-than the target one. For SAJO, a non-monotonic interpolation is
-justified since target bases do not necessarily have a higher index
-value than the current one, while this is not the case for SA. The
-original trace plot for a 2D projection problem, optimised by SA, is
-shown on the left panel of Figure \ref{fig:interruption} and one can
-observe clearly that the non-monotonic interpolation has undermined the
-optimiser to realise its full potential. Hence, an interruption is
-implemented to stop at the best basis found in the interpolation. The
-right panel of Figure \ref{fig:interruption} shows the trace plot after
-implementing the interruption and while the first two interpolations are
-identical, the basis at Time 61 has a higher index value than the target
-in the third interpolation. Rather than starting the next iteration from
-the target basis on Time 65, SA starts the next iteration at Time 61 on
-the right panel and reaches a better final basis.
+than the target one. For SA, a non-monotonic interpolation is justified
+since target bases do not necessarily have a higher index value than the
+current one, while this is not the case for CRS. The original trace plot
+for a 2D projection problem, optimised by CRS, is shown on the left
+panel of Figure \ref{fig:interruption} and one can observe clearly that
+the non-monotonic interpolation has undermined the optimiser to realise
+its full potential. Hence, an interruption is implemented to stop at the
+best basis found in the interpolation. The right panel of Figure
+\ref{fig:interruption} shows the trace plot after implementing the
+interruption and while the first two interpolations are identical, the
+basis at Time 61 has a higher index value than the target in the third
+interpolation. Rather than starting the next iteration from the target
+basis on Time 65, CRS starts the next iteration at Time 61 on the right
+panel and reaches a better final basis.
 
 \begin{Schunk}
 \begin{figure}
@@ -757,7 +757,7 @@ the right panel and reaches a better final basis.
 
 }
 
-\caption[Comparison of the interpolation before and after implementing the interruption for the 2D projection problem on \code{boa6} data using holes index, optimised by SA]{Comparison of the interpolation before and after implementing the interruption for the 2D projection problem on \code{boa6} data using holes index, optimised by SA. On the left panel, basis with higher index value is found during the interpolation but not used. On the right panel, the interruption stops the interpolation at the basis with the highest index value for each iteration and results in a final basis with higher index value, as shown on the right panel.}\label{fig:interruption}
+\caption[Comparison of the interpolation before and after implementing the interruption for the 2D projection problem on \code{boa6} data using holes index, optimised by CRS]{Comparison of the interpolation before and after implementing the interruption for the 2D projection problem on \code{boa6} data using holes index, optimised by CRS. On the left panel, basis with higher index value is found during the interpolation but not used. On the right panel, the interruption stops the interpolation at the basis with the highest index value for each iteration and results in a final basis with higher index value, as shown on the right panel.}\label{fig:interruption}
 \end{figure}
 \end{Schunk}
 
@@ -772,7 +772,7 @@ enough}\label{close-but-not-close-enough}}
 
 }
 
-\caption[Comparison of the projected data before and after using polishing along with the trace of index value of a 2D projection problem on \code{boa6} data using holes index]{Comparison of the projected data before and after using polishing along with the trace of index value of a 2D projection problem on \code{boa6} data using holes index. Optimiser SA is used before the polish. The clustering structure in the data is detected by SA but the polish step improves the index value and produces clearer boundaries of the clusters, espeically along the vertial axis.}\label{fig:polish}
+\caption[Comparison of the projected data before and after using polishing along with the trace of index value of a 2D projection problem on \code{boa6} data using holes index]{Comparison of the projected data before and after using polishing along with the trace of index value of a 2D projection problem on \code{boa6} data using holes index. Optimiser CRS is used before the polish. The clustering structure in the data is detected by CRS but the polish step improves the index value and produces clearer boundaries of the clusters, espeically along the vertial axis.}\label{fig:polish}
 \end{figure}
 \end{Schunk}
 
@@ -780,7 +780,7 @@ Once the final basis has been found by an optimiser, one may want to
 push further in the close neighbourhood to see if an even better basis
 can be found. A polish search takes the final basis of an optimiser as
 the start of a new guided tour to search for local breakthrough. The
-polish algorithm is similar to the SA but with three distinctions: 1) a
+polish algorithm is similar to the CRS but with three distinctions: 1) a
 hundred rather than one candidate bases are generated each time in the
 inner loop; 2) the neighbourhood size is reduced in the inner loop,
 rather than in the outer loop; and 3) three more termination conditions
@@ -802,12 +802,12 @@ change in the index value, and neighbourhood size:
 \end{enumerate}
 
 Figure \ref{fig:polish} presents the trace plot of a 2D projection,
-optimised by SA and followed by the polish. The projection by the final
-basis of each algorithm is also shown. The end basis found by SA reveals
-the four clusters in the data, but the edges of each cluster are not
-clean-cut. Polish works with this end basis and further pushes the index
-value to produce much clear edges of the cluster, especially along the
-vertical axis.
+optimised by CRS and followed by the polish. The projection by the final
+basis of each algorithm is also shown. The end basis found by CRS
+reveals the four clusters in the data, but the edges of each cluster are
+not clean-cut. Polish works with this end basis and further pushes the
+index value to produce much clear edges of the cluster, especially along
+the vertical axis.
 
 \hypertarget{seeing-the-signal-in-the-noise}{%
 \subsection{Seeing the signal in the
@@ -843,31 +843,31 @@ non-smooth index function, two research questions are raised:
 
 }
 
-\caption[Comparison of the three optimisers in optimising $I^{nk}(n)$ index for a 1D projection problem on a five-variable dataset, \code{boa5}]{Comparison of the three optimisers in optimising $I^{nk}(n)$ index for a 1D projection problem on a five-variable dataset, \code{boa5}. Both SA and SAJO succeeds in the optimisation, PD fails to optimise this non-smooth index. Further, SAJO takes  much longer than SA to finish the optimisation, it finishes off closer to the theoretical best.}\label{fig:noisy-better-geo}
+\caption[Comparison of the three optimisers in optimising $I^{nk}(n)$ index for a 1D projection problem on a five-variable dataset, \code{boa5}]{Comparison of the three optimisers in optimising $I^{nk}(n)$ index for a 1D projection problem on a five-variable dataset, \code{boa5}. Both CRS and SA succeeds in the optimisation, PD fails to optimise this non-smooth index. Further, SA takes  much longer than CRS to finish the optimisation, it finishes off closer to the theoretical best.}\label{fig:noisy-better-geo}
 \end{figure}
 \end{Schunk}
 
 Figure \ref{fig:noisy-better-geo} presents the trace and PCA plots of
 all three optimisers and as expected, none of the interpolated path is
 smooth. There is barely any improvement made by PD, indicating its
-failure in optimising non-smooth index. While SA and SAJO have managed
-to get close to the index value of the theoretical best, trace plot
-shows that it takes SAJO much longer to interpolate towards the final
-basis. This long interpolation path is partially due to the fluctuation
-in the early iterations, where the SAJO tends to generously accept
-inferior bases before concentrating near the optimum. The PCA plot shows
-the interpolation path and search points excluding the last termination
+failure in optimising non-smooth index. While CRS and SA have managed to
+get close to the index value of the theoretical best, trace plot shows
+that it takes SA much longer to interpolate towards the final basis.
+This long interpolation path is partially due to the fluctuation in the
+early iterations, where the SA tends to generously accept inferior bases
+before concentrating near the optimum. The PCA plot shows the
+interpolation path and search points excluding the last termination
 iteration. Pseudo Derivative (PD) quickly gets stuck near the starting
-position. Comparing the amount of random search done by SA and SAJO, it
-is surprising that SAJO does not carry as many samples as SA. Combining
+position. Comparing the amount of random search done by CRS and SA, it
+is surprising that SA does not carry as many samples as CRS. Combining
 the insights from both the trace and PCA plot, one can learn the two
-different search strategies by SA and SAJO: SA frequently samples in the
+different search strategies by CRS and SA: CRS frequently samples in the
 space and only make a move when an improvement is guaranteed to be made,
-while SAJO first broadly accepts bases in the space and then starts the
+while SA first broadly accepts bases in the space and then starts the
 extensive sampling in a narrowed subspace. The specific decision of
 which optimiser to use will depend on the index curve in the basis space
 but if the basis space is non-smooth, accepting inferior bases at first,
-as what SAJO has done, can lead to a more efficient search, in terms of
+as what SA has done, can lead to a more efficient search, in terms of
 the overall number of points evaluated.
 
 \begin{Schunk}
@@ -877,28 +877,28 @@ the overall number of points evaluated.
 
 }
 
-\caption[Comparing 20 search paths in the PCA-projected basis space facetted by two optimisers]{Comparing 20 search paths in the PCA-projected basis space facetted by two optimisers: SA and SAJO, and two search sizes: 0.5 and 0.7. The optimisation is on the 1D projecton index, $I^{nk}(n)$, for \code{boa6} data, where a local optimum, annotated by the cross (x), is presented in this experiment, along with the global optimum (*).}\label{fig:kol-result}
+\caption[Comparing 20 search paths in the PCA-projected basis space facetted by two optimisers]{Comparing 20 search paths in the PCA-projected basis space facetted by two optimisers: CRS and SA, and two search sizes: 0.5 and 0.7. The optimisation is on the 1D projecton index, $I^{nk}(n)$, for \code{boa6} data, where a local optimum, annotated by the cross (x), is presented in this experiment, along with the global optimum (*).}\label{fig:kol-result}
 \end{figure}
 \end{Schunk}
 
-The next experiment compares the performance of SA and SAJO when a local
+The next experiment compares the performance of CRS and SA when a local
 maximum exists. Two search neighbourhood sizes: 0.5 and 0.7 are compared
 to understand how a large search neighbourhood would affect the final
 basis and the length of the search. Figure \ref{fig:kol-result} shows 80
 paths simulated using 20 seeds in the PCA plot, faceted by optimiser and
-search size. With SA and a search size of 0.5, despite being the
+search size. With CRS and a search size of 0.5, despite being the
 simplest and fastest, the optimiser fails in three instances where the
 final basis lands neither near the local nor the global optimum. With a
 larger search size of 0.7, more seeds have found the global maximum.
-Comparing SA and SAJO for a search size of 0.5, SAJO does not seem to
+Comparing CRS and SA for a search size of 0.5, SA does not seem to
 improve the final basis found, despite having longer interpolation
 paths. However, the denser paths near the local maximum is an indicator
-that SAJO is working hard to examine if there is any other optimum in
-the basis space but the relative small search size has diminished its
+that SA is working hard to examine if there is any other optimum in the
+basis space but the relative small search size has diminished its
 ability to reach the global maximum. With a larger search size, almost
 all the seeds (16 out of 20) have found the global maximum and some
 final bases are much closer to the theoretical best, as compared to the
-three other cases. This indicates that SAJO, with a reasonable large
+three other cases. This indicates that SA, with a reasonable large
 search size, is able to overcome the local optimum and optimise close
 towards the global optimum.
 
@@ -913,7 +913,7 @@ orientation}\label{reconciling-the-orientation}}
 
 }
 
-\caption[Comparison of the interpolation in the PCA-projected basis space before and after reconciling the orientation of the target basis]{Comparison of the interpolation in the PCA-projected basis space before and after reconciling the orientation of the target basis. Optimisation is on the 1D projection index, $I^{nk}(n)$, for boa6 data using SA with seed 2463. The dots represent the target basis in each iteration and the path shows the interpolation. On the left panel, one target basis is generated with an opposite orientation to the current basis (hence appear on the other side of the basis space) and the interpolator crosses the origin to perform the interpolation. The right panel shows the same interpolation after implementing an orientation check and the undesirable interpolation disappears.}\label{fig:flip-sign}
+\caption[Comparison of the interpolation in the PCA-projected basis space before and after reconciling the orientation of the target basis]{Comparison of the interpolation in the PCA-projected basis space before and after reconciling the orientation of the target basis. Optimisation is on the 1D projection index, $I^{nk}(n)$, for boa6 data using CRS with seed 2463. The dots represent the target basis in each iteration and the path shows the interpolation. On the left panel, one target basis is generated with an opposite orientation to the current basis (hence appear on the other side of the basis space) and the interpolator crosses the origin to perform the interpolation. The right panel shows the same interpolation after implementing an orientation check and the undesirable interpolation disappears.}\label{fig:flip-sign}
 \end{figure}
 \end{Schunk}
 
@@ -1118,36 +1118,51 @@ reproducing this paper can be found at:
 
 \address{%
 H.Sherry Zhang\\
-Monash University\\
+Monash University\\%
 Department of Econometrics and Business Statistics\\
+%
+%
+%
+\\\href{mailto:huize.zhang@monash.edu}{\nolinkurl{huize.zhang@monash.edu}}
 }
-\href{mailto:huize.zhang@monash.edu}{\nolinkurl{huize.zhang@monash.edu}}
 
 \address{%
 Dianne Cook\\
-Monash University\\
+Monash University\\%
 Department of Econometrics and Business Statistics\\
+%
+%
+%
+\\\href{mailto:dicook@monash.edu}{\nolinkurl{dicook@monash.edu}}
 }
-\href{mailto:dicook@monash.edu}{\nolinkurl{dicook@monash.edu}}
 
 \address{%
 Ursula Laa\\
-University of Natural Resources and Life Sciences\\
+University of Natural Resources and Life Sciences\\%
 Institute of Statistics\\
+%
+%
+%
+\\\href{mailto:ursula.laa@boku.ac.at}{\nolinkurl{ursula.laa@boku.ac.at}}
 }
-\href{mailto:ursula.laa@boku.ac.at}{\nolinkurl{ursula.laa@boku.ac.at}}
 
 \address{%
 Nicolas Langrené\\
-CSIRO Data61\\
+CSIRO Data61\\%
 34 Village Street, Docklands VIC 3008 Australia\\
+%
+%
+%
+\\\href{mailto:nicolas.langrene@csiro.au}{\nolinkurl{nicolas.langrene@csiro.au}}
 }
-\href{mailto:nicolas.langrene@csiro.au}{\nolinkurl{nicolas.langrene@csiro.au}}
 
 \address{%
 Patricia Menéndez\\
-Monash University\\
+Monash University\\%
 Department of Econometrics and Business Statistics\\
+%
+%
+%
+\\\href{mailto:patricia.menendez@monash.edu}{\nolinkurl{patricia.menendez@monash.edu}}
 }
-\href{mailto:patricia.menendez@monash.edu}{\nolinkurl{patricia.menendez@monash.edu}}
 
