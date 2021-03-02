@@ -45,12 +45,11 @@ p2 <- after %>%
 #   boa6,
 #   tour_path = guided_tour(holes(), d = 2, search_f = search_better, max.tries = 400),
 #   dev = "png",
-#   display = display_xy(axes = "off", verbose = TRUE, col = botanical_palettes$fern[[6]]),
+#   display = display_xy(axes = "off", verbose = TRUE, col = botanical_palettes$fern[[1]]),
 #   rescale = FALSE,
-#   frames = 500,
+#   frames = 00,
 #   file = here::here("anim","polish", "before%03d.png")
 # )
-#
 # last_basis <- get_best(holes_2d_better)$basis %>% .[[1]]
 #
 # set.seed(123456)
@@ -58,7 +57,7 @@ p2 <- after %>%
 #   boa6,
 #   tour_path =  guided_tour(holes(), d = 2, search_f = search_polish),
 #   dev = "png",
-#   display = display_xy(axes = "off", verbose = TRUE, col = botanical_palettes$fern[[1]]),
+#   display = display_xy(axes = "off", verbose = TRUE, col = botanical_palettes$fern[[6]]),
 #   start = last_basis,
 #   rescale = FALSE,
 #   frames = 100,
@@ -70,16 +69,19 @@ p1 <- bind_rows(holes_2d_better, holes_2d_better_polish) %>%
   mutate(method = factor(method, levels = c("CRS", "polish"))) %>%
   get_interp() %>%
   explore_trace_interp(color = method, cutoff = 100, target_size = 2, interp_size = 2) +
-  scale_color_discrete_botanical(breaks = c("CFRS", "polish"), label = c("CRS", "polish")) +
-  theme(legend.position = "bottom",
-        plot.margin = margin(2.5, 2, 0, 0, "cm"))
+  scale_color_discrete_botanical(breaks = c("CRS", "polish"), label = c("CRS", "polish")) +
+  theme(legend.position = "bottom")
+
+wrap <- function(path) png::readPNG(path) %>% grid::rasterGrob() %>% wrap_plots()
 
 before <- png::readPNG(here::here("anim","polish", "before073.png"))
 after <- png::readPNG(here::here("anim","polish", "after006.png"))
 
-p1 +
-  inset_element(grid::rasterGrob(before), left = 0.77, bottom = 0.45, right = 0.89, top = 0.67, align_to = "full") +
-  inset_element(grid::rasterGrob(after), left = 0.87, bottom = 0.7, right = 1, top = 1, align_to = "full")
+(wrap_plots(grid::rasterGrob(before)) |wrap_plots(grid::rasterGrob(after))) / p1
+
+# p1 +
+#   inset_element(grid::rasterGrob(before), left = 0.77, bottom = 0.45, right = 0.89, top = 0.67, align_to = "full") +
+#   inset_element(grid::rasterGrob(after), left = 0.87, bottom = 0.7, right = 1, top = 1, align_to = "full")
 
 ## ---- flip-sign
 # set.seed(2463)

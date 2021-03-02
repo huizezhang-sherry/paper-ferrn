@@ -374,9 +374,9 @@ Figure \ref{fig:polish} presents the trace plot of a 2D projection, optimised by
 
 ## Seeing the signal in the noise 
 
-The holes index function used for all the examples before this section produces a smooth interpolation, while this is not the case for all the indices. A 1D projection function, $I^{nk}(n)$, compares the projected data, $\mathbf{Y}_{n \times 1}$, to a randomly generated normal distribution, $\mathcal{N}_{n \times 1}$, based on the Kolmogorov test. Let $F_{.}(n)$ be the ECDF function, with two possible subscripts $Y$ and $\mathcal{N}$ representing the projected and randomly generated data, and $n$ denoting the number of observation, the Normal Kolmogorov index, $I^{nk}(n)$, is defined as: 
+The holes index function used for all the examples before this section produces a smooth interpolation, while this is not the case for all the indices. A 1D projection function, $I^{K}(n)$, compar‚es the projected data, $\mathbf{Y}_{n \times 1}$, to a randomly generated normal distribution, $\mathcal{N}_{n \times 1}$, based on the Kolmogorov test. Let $F_{.}(n)$ be the ECDF function, with two possible subscripts $Y$ and $\mathcal{N}$ representing the projected and randomly generated data, and $n$ denoting the number of observation, the Normal Kolmogorov index, $I^{nk}(n)$, is defined as: 
 
-$$I^{nk}(n) = \max \left[F_{Y}(n) - F_{\mathcal{N}}(n)\right]$$
+$$I^{K}(n) = \max \left[F_{Y}(n) - F_{\mathcal{N}}(n)\right]$$
 With a non-smooth index function, two research questions are raised: 
 
 1) whether any optimiser fails to optimise this non-smooth index; and 
