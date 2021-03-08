@@ -232,14 +232,16 @@ problem:
 \arg \max_{\mathbf{A} \in \mathcal{A}} f(\mathbf{X} \cdot \mathbf{A})  ~~~ s.t. ~~~ \mathbf{A}^{\prime} \mathbf{A} = I_d
 \end{align}
 
-\noindent where \(f\), \(\mathcal{A}\), and \(\mathbf{X}\) are defined
-as in the previous section, \(I_d\) is the \(d\)-dimensional identity
-matrix and the constraint ensures the projection bases \(\mathbf{A}\) to
-be orthonormal. It is worth noticing the following: 1) The optimisation
-is constrained and the basis space is a \(d\)-dimensional sphere. 2)
-There may be index functions for which the objective function might not
-be differentiable. 3) While finding the global optimum is the goal of
-the optimisation problem, interesting projections may also appear in the
+\noindent where \(f\) and \(\mathbf{X}\) are defined as in the previous
+section, \(\mathcal{A}\) is the set of all \(p\)-dimensional projection
+bases, \(I_d\) is the \(d\)-dimensional identity matrix, and the
+constraint ensures the projection bases, \(\mathbf{A}\), to be
+orthonormal. It is worth noticing the following: 1) The optimisation is
+constrained and the orthonormality constraint imposes a geometrical
+structure on the bases space: it forms a Stiefel manifold. 2) There may
+be index functions for which the objective function might not be
+differentiable. 3) While finding the global optimum is the goal of the
+optimisation problem, interesting projections may also appear in the
 local optimum. 4) The optimisation should be computationally agile since
 the tour animation is viewed by the users during the optimisation.
 
