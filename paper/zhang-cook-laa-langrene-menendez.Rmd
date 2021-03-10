@@ -64,9 +64,6 @@ knitr::read_chunk(
   here::here("scripts/kol_result.R")
 )
 
-
-
-
 ```
 
 ```{r load-pkg}
@@ -290,7 +287,7 @@ Another interesting diagnostic is to examine how the index value improves betwee
 
 ## Understanding the optimiser's coverage of the search space {#toy-pca}
 
-```{r toy-pca, fig.cap = "Search paths of CRS (green) and PD (brown) in the PCA-reduced basis space for 1D projection problem on the five-variable dataset, \\code{boa5} using holes index. The basis space, a 5D unit sphere, is projected onto a 2D circle by PCA. All the bases in PD has been flipped for easier comparison of the final bases and a grey dashed line has been annotated to indicate the symmetry of the two start bases."}
+```{r toy-pca, fig.asp=1, fig.height=2.5, fig.cap = "Search paths of CRS (green) and PD (brown) in the PCA-reduced basis space for 1D projection problem on the five-variable dataset, \\code{boa5} using holes index. The basis space, a 5D unit sphere, is projected onto a 2D circle by PCA. All the bases in PD has been flipped for easier comparison of the final bases and a grey dashed line has been annotated to indicate the symmetry of the two start bases."}
 ```
 
 Apart from checking the search and progression of an optimiser, looking at where the bases are positioned in the basis space is another interest. Given the orthonormality constraint, the space of projection bases $\mathbf{A}_{p \times d}$ is a $p \times d$-dimensional sphere. A dimensionality reduction method, e.g. principal component analysis is applied to first project all the bases onto a 2D space. In a projection pursuit guided tour optimisation, there are various types of bases involved: 1) The starting basis; 2) The search bases that the optimiser evaluated to produce the anchor bases; 3) The anchor bases that have the highest index value in each iteration; 4) The interpolating bases on the interpolation path; and finally 5) the end basis. The importance of these bases differs and the most important ones are the starting, interpolating and end bases. The anchor and search bases can be turned on with argument `details = TRUE`. Sometimes, two optimisers can start with the same basis but finish with bases of opposite sign. This happens because the projection is invariant to the sign difference of the bases and so does the index value, however, this creates difficulties for comparing the optimisers since the end bases will be symmetric with respect to the origin. A sign flipping step is conducted to flip the signs of all the bases in one routine if different optimisations finish at opposite places.
