@@ -61,8 +61,9 @@ exploratory data analysis tool used for detecting interesting structures
 in high-dimensional data through a set of lower-dimensional projections
 \citep{cook2008grand}. The goal of the optimisation is to identify the
 projection, characterised by the projection basis, that gives the most
-interesting low-dimensional view. The interestingness of the structure
-is defined by the index function, a function of the projection basis.
+interesting low-dimensional view. A view is interesting if it can show
+some unexpected structure of the data, e.g., bi-modality, clustering and
+outliers.
 
 The optimization challenges encountered in the projection pursuit guided
 tour problem are common to those of optimization in general. Examples of
@@ -102,31 +103,29 @@ trade-off between desirable accuracy and computational burden. In
 addition, the optimization results might depend on the algorithm
 starting values, affecting the consistency of results.
 
-Optimization methods can be divided into various classes, such as global
-optimisation \citep{kelley1999iterative, fletcher2013practical}, convex
-optimisation \citep{boyd2004convex} or stochastic optimisation
-\citep{nocedal2006numerical}. Our interest is on constrained
-optimization \citep{bertsekas2014constrained} as defined in the
-introduction section, and assuming it is not possible to find a solution
-to the problem in the way of a closed-form. That is, the problem
-consists of finding the minimum or maximum of a function \(f \in L^p\)
-in the constrained \(\mathbb{A}\) space.
+The optimisation problem of our interest is on constrained optimization
+\citep{bertsekas2014constrained} as defined in the introduction section,
+and assuming it is not possible to find a solution to the problem in the
+way of a closed-form. That is, the problem consists of finding the
+minimum or maximum of a function \(f \in L^p\) in the constrained
+\(\mathcal{A}\) space.
 
 A large class of methods utilises the gradient information of the
-objective function to perform the optimisation iterations, with the most
-notable one being the gradient ascent (descent) method. Although
-gradient optimization methods are popular, they rely on the availability
-of the objective function derivatives and on the complexity of the
-constraints. Derivative-free methods, which do not rely on the knowledge
-of the gradient, are more generally applicable. Derivative-free methods
-have been developed over the years, where the emphasis is on finding, in
-most cases, a near optimal solution. Examples of those include response
-surface methodology \citep{box1951experimental}, stochastic
-approximation \citep{robbins1951stochastic}, random search
-\citep{fu2015handbook} and heuristic methods
-\citep{sorensen2013metaheuristics}. Later, we will present a simulated
-annealing optimisation algorithm, which belongs to the class of random
-search methods, for optimisation with the guided tour.
+objective function, with the most notable one being the gradient ascent
+(descent) method. Although gradient optimization methods are popular,
+they rely on the availability of the objective function derivatives and
+on the complexity of the constraints. As will be shown in the next
+section, the independent variable, in our optimisation problem, is a
+matrix of projection basis and the computational time required to
+perform differentation on a matrix could impede the render of tour
+animation. Hence, gradient-based methods are not the focus of this paper
+and considerations will be given to derivative-free methods.
+Derivative-free methods, which do not rely on the knowledge of the
+gradient, are more generally applicable. Derivative-free methods have
+been developed over the years, where the emphasis is on finding, in most
+cases, a near optimal solution. Below will introduce two random search
+methods: creeping random search and simulated annealing, and a pseudo
+derivative search.
 
 A common search scheme utilised by both derivative-free methods and
 gradient methods is line search. In line search methods, users are
@@ -267,33 +266,11 @@ parameter \(\alpha\) is adjusted by a cooling parameter:
 \(\alpha_{j+1} = \alpha_j * \text{cooling}\) before the next iteration
 starts. The optimiser terminates when the maximum number of iteration
 \(l_{\max}\) is reached before a better basis can be found. The
-algorithm of SA is summarised in Algorithm \ref{random-search}.
-\citet{posse1995projection} has proposed a slightly different cooling
-scheme by introducing a halving parameter \(c\). In his proposal, the
-\(\alpha\) is only adjusted if the last iteration takes more than \(c\)
-times to find a better basis.
-
-\begin{algorithm}
-\SetAlgoLined
-  \SetKwInOut{input}{input}
-  \SetKwInOut{output}{output}
-    \input{$f(.)$, $\alpha_1$, $l_{\max}$, $\text{cooling}$} 
-    \output{$\mathbf{A}_{l}$}
-    Generate random start $\mathbf{A}_1$ and set $\mathbf{A}_{\text{cur}} \coloneqq \mathbf{A}_1$, $I_{\text{cur}} = f(\mathbf{A}_{\text{cur}})$, $j = 1$\;
-  \Repeat{$\mathbf{A}_l$ is too close to $\mathbf{A}_{\text{cur}}$ in terms of geodesic distance}{
-   Set $l = 1$\;
-  \Repeat{$l > l_{\max}$ or $I_{l} > I_{\text{cur}}$}{
-    Generate $\mathbf{A}_{l} = (1- \alpha_j)\mathbf{A}_{\text{cur}} + \alpha_j \mathbf{A}_{\text{rand}}$ and orthogonalise $\mathbf{A}_{l}$\;
-    Compute $I_{l}  = f(\mathbf{A}_{l})$\;
-    Update $l = l + 1$\;
-  }
-  Update $\alpha_{j+1} = \alpha_j * \text{cooling}$\;
-  Construct the geodesic interpolation between $\mathbf{A}_{\text{cur}}$ and $\mathbf{A}_l$\; 
-  Update $\mathbf{A}_{\text{cur}} = \mathbf{A}_l$ and $j = j + 1$\;
-}
-  \caption{Creeping random search (CRS)}
-  \label{random-search}
-\end{algorithm}
+algorithm of SA is summarised in Algorithm \ref{random-search} in the
+appendix. \citet{posse1995projection} has proposed a slightly different
+cooling scheme by introducing a halving parameter \(c\). In his
+proposal, the \(\alpha\) is only adjusted if the last iteration takes
+more than \(c\) times to find a better basis.
 
 Simulated annealing (SA)
 \citep{kirkpatrick1983optimization, bertsimas1993simulated} uses the
@@ -308,20 +285,8 @@ where \(I_{(\cdot)}\) denotes the index value of a given basis. This
 implementation allows the optimiser to make a move and explore the basis
 space even the landing basis does have a higher index value and hence
 enable the optimiser to jump out of a local optimum. The algorithm
-\ref{simulated-annealing} highlights how SAJO differs from SA in the
-inner loop.
-
-\begin{algorithm}
-\SetAlgoLined
-\Repeat{$l > l_{\max}$ or $I_{l} > I_{\text{cur}}$ or $P > U$}{
-    Generate $\mathbf{A}_{l} = (1- \alpha_j)\mathbf{A}_{\text{cur}} + \alpha_j \mathbf{A}_{\text{rand}}$ and orthogonalise $\mathbf{A}_{l}$\;
-    Compute $I_{l}  = f(\mathbf{A}_{l})$, $T(l) = \frac{T_0}{\log(l + 1)}$ and $P= \min\left\{\exp\left[-\frac{I_{\text{cur}} -I_{l}}{T(l)}\right],1\right\}$\;
-    Draw $U$ from a uniform distribution: $U \sim \text{Unif(0, 1)}$\;
-    Update $l = l + 1$\;
-  }
-  \caption{Simulated annealing (SA)}
-  \label{simulated-annealing}
-\end{algorithm}
+\ref{simulated-annealing} in the appendix highlights how SAJO differs
+from SA in the inner loop.
 
 Pseudo derivative (PD) search \citep{cook1995grand} uses a different
 strategy than SA and SAJO. Rather than randomly sample the basis space,
@@ -330,31 +295,17 @@ current basis. A step size is then chosen along the geodesic direction
 by another optimisation over an 90 degree angle from \(-\pi/4\) to
 \(\pi/4\). The resulting candidate basis \(\mathbf{A}_{**}\) is returned
 for the current iteration if it has a higher index value than the
-current one. Algorithm \ref{search-geodesic} summarises the inner loop
-of the PD.
-
-\begin{algorithm}
-\SetAlgoLined
-\Repeat{$l > l_{\max}$ or $p_{\text{diff}} > 0.001$}{
-  Generate $n$ random directions $\mathbf{A}_{\text{rand}}$ \;
-  Compute $2n$ candidate bases deviate from $\mathbf{A}_{\text{cur}}$ by an angle of $\delta$ while ensuring orthogonality\;
-  Compute the corresponding index value for each candidate bases\;
-  Determine the search direction as from $\mathbf{A}_{\text{cur}}$ to the candidate bases with the largest index value\;
-  Determine the step size via optimising the index value on the search direction over a 90 degree window\;
-  Find the optimum $\mathbf{A}_{**}$ and compute $I_{**} = f(\mathbf{A}_{**})$, $p_{\text{diff}} = (I_{**} - I_{\text{cur}})/I_{**}$\;
-  Update $l = l + 1$\;
-}
-\caption{Pseudo derivative (PD)}
-\label{search-geodesic}
-\end{algorithm}
+current one. Algorithm \ref{search-geodesic} in the appendix summarises
+the inner loop of the PD.
 
 \hypertarget{vis-diag}{%
 \section{Visual diagnostics}\label{vis-diag}}
 
 A data structure for diagnosing optimisers in projection pursuit guided
-tour is first defined. With a fixed data structure, the diagnostic plots
-presented later in this paper can be easily applied to diagnose other
-optimisation procedures.
+tour is first defined. With this data structure, four types of
+diagnostic plots are presented. In the section, examples will be given
+to show how these plot can be used to reveal issues in the projection
+pursuit optimisation.
 
 \hypertarget{data-structure-for-diagnostics}{%
 \subsection{Data structure for
@@ -385,12 +336,10 @@ t & \mathbf{A} & I & S & j &  l  & V_{1} & V_{2}\\
 1 & \mathbf{A}_1 & I_1 & S_1 & 1 & 1 & V_{11} & V_{12}\\
 \hline
 2 & \mathbf{A}_2 & I_2 & S_2 & 2 & 1  & V_{21}  & V_{22}\\
-3 & \mathbf{A}_3 & I_3 & S_3 & 2 & 2  & V_{31}  & V_{32}\\
 \vdots & \vdots &\vdots &\vdots  &\vdots & \vdots &\vdots  &\vdots\\
 \vdots & \vdots & \vdots &\vdots & 2 & l_2 & \vdots  & \vdots\\
 \hline
 \vdots &\vdots & \vdots &\vdots & 2  & 1& \vdots & \vdots\\
-\vdots &\vdots &\vdots &\vdots & 2 & 2& \vdots &  \vdots\\
 \vdots &\vdots &\vdots &\vdots &\vdots & \vdots & \vdots  &\vdots \\
 \vdots &\vdots &\vdots &\vdots & 2 & k_2 &\vdots  & \vdots\\
 \hline
@@ -417,11 +366,9 @@ T^\prime & \mathbf{A}_{T^\prime} & I_{T^\prime} &S_{T^\prime}  & J+1 &  l_{J+1} 
 \text{search (start basis)} \\
 \hline
 \text{search} \\
-\text{search} \\
 \vdots \\
 \text{search (accepted basis)} \\
 \hline
-\text{interpolate} \\
 \text{interpolate} \\
 \vdots \\
 \text{interpolate} \\
@@ -461,11 +408,11 @@ of graphics \citep{wickham2010layered} in ggplot2. In grammar of
 graphics, plots are not produced by calling the commands, named by the
 appearance of the plot, i.e., boxplot and histogram, but by the concept
 of stacked layers. Seeing plots as stacked layers gives analysts the
-freedom to composite plots with multiple elements on hands.
+freedom to compose plots with multiple elements on hand.
 
-\hypertarget{checking-how-hard-the-optimiser-is-working}{%
-\subsection{Checking how hard the optimiser is
-working}\label{checking-how-hard-the-optimiser-is-working}}
+\hypertarget{diagnostic-1-checking-how-hard-the-optimiser-is-working}{%
+\subsection{Diagnostic 1: Checking how hard the optimiser is
+working}\label{diagnostic-1-checking-how-hard-the-optimiser-is-working}}
 
 A starting point of diagnosing an optimiser is to understand how many
 searches an optimiser has conducted. One may want to simply plot the
@@ -507,7 +454,8 @@ an advantage in this simple example to quickly find the optimum.
 \end{Schunk}
 
 \hypertarget{toy-interp}{%
-\subsection{Examining the optimisation progress}\label{toy-interp}}
+\subsection{Diagnostic 2: Examining the optimisation
+progress}\label{toy-interp}}
 
 \begin{Schunk}
 \begin{figure}
@@ -537,8 +485,8 @@ Later, in section \ref{monotonic}, there will be a discussion on
 improving the non-monotonic interpolation for CRS.
 
 \hypertarget{toy-pca}{%
-\subsection{Understanding the optimiser's coverage of the search
-space}\label{toy-pca}}
+\subsection{Diagnostic 3a: Understanding the optimiser's coverage of the
+search space}\label{toy-pca}}
 
 \begin{Schunk}
 \begin{figure}
@@ -600,9 +548,9 @@ space to search for the next target. There are dashed lines annotated
 for CRS and it describes the interruption of the interpolation, which
 will be discussed in details in Section \ref{monotonic}.
 
-\hypertarget{animating-the-diagnostic-plots}{%
-\subsection{Animating the diagnostic
-plots}\label{animating-the-diagnostic-plots}}
+\hypertarget{diagnostic-3b-animating-the-diagnostic-plots}{%
+\subsection{Diagnostic 3b: Animating the diagnostic
+plots}\label{diagnostic-3b-animating-the-diagnostic-plots}}
 
 \begin{Schunk}
 \begin{figure}
@@ -624,9 +572,9 @@ one can learn from this animation is that CRS finds its end basis
 quicker than PD since CRS finishes its search in the 5th frame while PD
 is still making more progress.
 
-\hypertarget{the-tour-looking-at-itself}{%
-\subsection{The tour looking at
-itself}\label{the-tour-looking-at-itself}}
+\hypertarget{diagnostic-4a-the-tour-looking-at-itself}{%
+\subsection{Diagnostic 4a: The tour looking at
+itself}\label{diagnostic-4a-the-tour-looking-at-itself}}
 
 \begin{Schunk}
 \begin{figure}
@@ -647,8 +595,9 @@ original high-dimensional space from various directions using animation.
 Figure \ref{fig:toy-tour} shows some frames from the tour plot of the
 same two optimisations in its original 5D space.
 
-\hypertarget{forming-a-torus}{%
-\subsection{Forming a torus}\label{forming-a-torus}}
+\hypertarget{diagnostic-4b-forming-a-torus}{%
+\subsection{Diagnostic 4b: Forming a
+torus}\label{diagnostic-4b-forming-a-torus}}
 
 While the previous few examples have looked at the space of 1D bases in
 a unit sphere, this section visualises the space of 2D bases. Recall
@@ -1118,6 +1067,63 @@ reproducing this paper can be found at:
 \url{https://github.com/huizezhang-sherry/paper-tour-vis}.
 
 \bibliography{zhang-cook-laa-langrene-menendez}
+
+\newpage
+
+\hypertarget{appendix}{%
+\section{Appendix}\label{appendix}}
+
+Three algorithms (Creeping random search, simulated annealing, and
+pseudo derivative) used in projection pursuit guided tour optimisation.
+
+\begin{algorithm}
+\SetAlgoLined
+  \SetKwInOut{input}{input}
+  \SetKwInOut{output}{output}
+    \input{$f(.)$, $\alpha_1$, $l_{\max}$, $\text{cooling}$} 
+    \output{$\mathbf{A}_{l}$}
+    Generate random start $\mathbf{A}_1$ and set $\mathbf{A}_{\text{cur}} \coloneqq \mathbf{A}_1$, $I_{\text{cur}} = f(\mathbf{A}_{\text{cur}})$, $j = 1$\;
+  \Repeat{$\mathbf{A}_l$ is too close to $\mathbf{A}_{\text{cur}}$ in terms of geodesic distance}{
+   Set $l = 1$\;
+  \Repeat{$l > l_{\max}$ or $I_{l} > I_{\text{cur}}$}{
+    Generate $\mathbf{A}_{l} = (1- \alpha_j)\mathbf{A}_{\text{cur}} + \alpha_j \mathbf{A}_{\text{rand}}$ and orthogonalise $\mathbf{A}_{l}$\;
+    Compute $I_{l}  = f(\mathbf{A}_{l})$\;
+    Update $l = l + 1$\;
+  }
+  Update $\alpha_{j+1} = \alpha_j * \text{cooling}$\;
+  Construct the geodesic interpolation between $\mathbf{A}_{\text{cur}}$ and $\mathbf{A}_l$\; 
+  Update $\mathbf{A}_{\text{cur}} = \mathbf{A}_l$ and $j = j + 1$\;
+}
+  \caption{Creeping random search (CRS)}
+  \label{random-search}
+\end{algorithm}
+
+\begin{algorithm}
+\SetAlgoLined
+\Repeat{$l > l_{\max}$ or $I_{l} > I_{\text{cur}}$ or $P > U$}{
+    Generate $\mathbf{A}_{l} = (1- \alpha_j)\mathbf{A}_{\text{cur}} + \alpha_j \mathbf{A}_{\text{rand}}$ and orthogonalise $\mathbf{A}_{l}$\;
+    Compute $I_{l}  = f(\mathbf{A}_{l})$, $T(l) = \frac{T_0}{\log(l + 1)}$ and $P= \min\left\{\exp\left[-\frac{I_{\text{cur}} -I_{l}}{T(l)}\right],1\right\}$\;
+    Draw $U$ from a uniform distribution: $U \sim \text{Unif(0, 1)}$\;
+    Update $l = l + 1$\;
+  }
+  \caption{Simulated annealing (SA)}
+  \label{simulated-annealing}
+\end{algorithm}
+
+\begin{algorithm}
+\SetAlgoLined
+\Repeat{$l > l_{\max}$ or $p_{\text{diff}} > 0.001$}{
+  Generate $n$ random directions $\mathbf{A}_{\text{rand}}$ \;
+  Compute $2n$ candidate bases deviate from $\mathbf{A}_{\text{cur}}$ by an angle of $\delta$ while ensuring orthogonality\;
+  Compute the corresponding index value for each candidate bases\;
+  Determine the search direction as from $\mathbf{A}_{\text{cur}}$ to the candidate bases with the largest index value\;
+  Determine the step size via optimising the index value on the search direction over a 90 degree window\;
+  Find the optimum $\mathbf{A}_{**}$ and compute $I_{**} = f(\mathbf{A}_{**})$, $p_{\text{diff}} = (I_{**} - I_{\text{cur}})/I_{**}$\;
+  Update $l = l + 1$\;
+}
+\caption{Pseudo derivative (PD)}
+\label{search-geodesic}
+\end{algorithm}
 
 
 \address{%

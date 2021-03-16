@@ -82,7 +82,7 @@ The goal of continuous optimisation is to find the best solution within the spac
 $\min_{x} f(x)$ where $f:\mathbb{R}^n \rightarrow \mathbb{R}$ is an objective function with certain properties defined in an $L^p$ space. In this case, solutions rely on gradient descent or ascent methods. In the constrained optimization problem additional restrictions  are introduced via a set of functions that can be convex or non-convex: $g_i:\mathbb{R}^n \rightarrow \mathbb{R}$ for $i = 1, \ldots k$ and hence the problem can be written as
 $\min_{x} f(x)$ *subject to* $g_i(x) \leq 0$. Here methods such as multipliers and convex optimization methods including linear and quadratic programming can be used.
 
-The focus of this paper is on the optimisation problem arising in the projection pursuit guided tour [@buja2005computational], an exploratory data analysis tool used for detecting interesting structures in high-dimensional data through a set of lower-dimensional projections [@cook2008grand]. The goal of the optimisation is to identify the projection, characterised by the projection basis, that gives the most interesting low-dimensional view. The interestingness of the structure is defined by the index function, a function of the projection basis.
+The focus of this paper is on the optimisation problem arising in the projection pursuit guided tour [@buja2005computational], an exploratory data analysis tool used for detecting interesting structures in high-dimensional data through a set of lower-dimensional projections [@cook2008grand]. The goal of the optimisation is to identify the projection, characterised by the projection basis, that gives the most interesting low-dimensional view. A view is interesting if it can show some unexpected structure of the data, e.g., bi-modality, clustering and outliers.  
 
 The optimization challenges encountered in the projection pursuit guided tour problem are common to those of optimization in general. Examples of those include the existence of multiple optima (local and global), the trade off between computational burden and proximity to the optima,  dealing with noisy objective functions that might be non-smooth and non-differentiable [@jones1998efficient]. Those  are not unique to this context and therefore the visualization tools and optimization methods presented in this paper can be easily applied to any other optimization problems.
 
@@ -98,9 +98,14 @@ Finally, Section \ref{implementation} describes the R package: \pkg{ferrn}, that
 
 Optimisation problems are ubiquitous in many areas of study. While in some cases analytical solutions can be found, the majority of problems rely on numerical methods to find the optimal solution. These numerical methods follow iterative approaches that aim at finding the optimum by progressively improving the current solution until a desirable accuracy is achieved. Although this principle seems uncomplicated, a number of challenges arise such as the possible existence of multiple maxima (local and global), constraints and noisy objective function, and the trade-off between desirable accuracy and computational burden. In addition, the optimization results might depend on the algorithm starting values, affecting the consistency of results. 
 
-Optimization methods can be divided into various classes, such as global optimisation [@kelley1999iterative; @fletcher2013practical], convex optimisation [@boyd2004convex] or stochastic optimisation [@nocedal2006numerical]. Our interest is on constrained optimization [@bertsekas2014constrained] as defined in the introduction section, and assuming it is not possible to find a solution to the problem in the way of a closed-form. That is, the problem consists of finding the minimum or maximum of a function $f \in L^p$ in the constrained $\mathbb{A}$ space. 
+The optimisation problem of our interest is on constrained optimization [@bertsekas2014constrained] as defined in the introduction section, and assuming it is not possible to find a solution to the problem in the way of a closed-form. That is, the problem consists of finding the minimum or maximum of a function $f \in L^p$ in the constrained $\mathcal{A}$ space. 
 
-A large class of methods utilises the gradient information of the objective function to perform the optimisation iterations, with the most notable one being the gradient ascent (descent) method. Although gradient optimization methods are popular, they rely on the availability of the objective function derivatives and on the complexity of the constraints. Derivative-free methods, which do not rely on the knowledge of the gradient, are more generally applicable. Derivative-free methods have been developed over the years, where the emphasis is on finding, in most cases, a near optimal solution. Examples of those include response surface methodology [@box1951experimental], stochastic approximation [@robbins1951stochastic], random search [@fu2015handbook] and heuristic methods [@sorensen2013metaheuristics]. Later, we will present a simulated annealing optimisation algorithm, which belongs to the class of random search methods, for optimisation with the guided tour.
+A large class of methods utilises the gradient information of the objective function, with the most notable one being the gradient ascent (descent) method. Although gradient optimization methods are popular, they rely on the availability of the objective function derivatives and on the complexity of the constraints. As will be shown in the next section, the independent variable, in our optimisation problem, is a matrix of projection basis and the computational time required to perform differentation on a matrix could impede the render of tour animation. Hence, gradient-based methods are not the focus of this paper and considerations will be given to derivative-free methods. Derivative-free methods, which do not rely on the knowledge of the gradient, are more generally applicable. Derivative-free methods have been developed over the years, where the emphasis is on finding, in most cases, a near optimal solution. Below will introduce two random search methods: creeping random search and simulated annealing, and a pseudo derivative search.  
+
+<!-- Later, we will present a simulated annealing optimisation algorithm, which belongs to the class of random search methods, for optimisation with the guided tour. -->
+
+
+
 
 A common search scheme utilised by both derivative-free methods and gradient methods is line search. In line search methods, users are required to provide an initial estimate $x_{1}$ and, at each iteration, a search direction $S_k$ and a step size $\alpha_k$ are generated. Then one moves on to the next point following $x_{k+1} = x_k + \alpha_kS_k$ and the process is repeated until the desire convergence is reached. While gradient-based methods choose the search direction by the gradient, derivative-free methods uses local information of the objective function to determine the search direction. The choice of step size also needs considerations, as inadequate step sizes might prevent the optimisation method to converge to an optimum. An ideal step size can be chosen via finding the value of $\alpha_k \in \mathbb{R}$ that maximises $f(x_k + \alpha_kS_k)$ with respect to $\alpha_k$ at each iteration. 
 
@@ -131,64 +136,15 @@ In projection pursuit the optimisation problem aims at finding the global and lo
 
 ## Existing algorithms
 
-Three optimisers have been implemented in the \CRANpkg{tourr} [@tourr] package: Creeping random search (CRS), simulated annealing (SA), and pseudo derivative (PD). Creeping random search (CRS) is a random search optimiser that samples a candidate basis $\mathbf{A}_{l}$ in the neighbourhood of the current basis $\mathbf{A}_{\text{cur}}$ by $\mathbf{A}_{l} = (1- \alpha)\mathbf{A}_{\text{cur}} + \alpha \mathbf{A}_{\text{rand}}$ where $\alpha$ controls the radius of the sampling neighbourhood and $\mathbf{A}_{\text{rand}}$ is generated randomly. $\mathbf{A}_{l}$ is then orthonormalised to fulfil the basis constraint. If $\mathbf{A}_{l}$ has an index value higher than the current basis $\mathbf{A}_{\text{cur}}$, the optimiser outputs $\mathbf{A}_{l}$ for guided tour to construct an interpolation path. The neighbourhood parameter $\alpha$ is adjusted by a cooling parameter: $\alpha_{j+1} = \alpha_j * \text{cooling}$ before the next iteration starts. The optimiser terminates when the maximum number of iteration $l_{\max}$ is reached before a better basis can be found. The algorithm of SA is summarised in Algorithm \ref{random-search}. @posse1995projection has proposed a slightly different cooling scheme by introducing a halving parameter $c$. In his proposal, the $\alpha$ is only adjusted if the last iteration takes more than $c$ times to find a better basis.
+Three optimisers have been implemented in the \CRANpkg{tourr} [@tourr] package: Creeping random search (CRS), simulated annealing (SA), and pseudo derivative (PD). Creeping random search (CRS) is a random search optimiser that samples a candidate basis $\mathbf{A}_{l}$ in the neighbourhood of the current basis $\mathbf{A}_{\text{cur}}$ by $\mathbf{A}_{l} = (1- \alpha)\mathbf{A}_{\text{cur}} + \alpha \mathbf{A}_{\text{rand}}$ where $\alpha$ controls the radius of the sampling neighbourhood and $\mathbf{A}_{\text{rand}}$ is generated randomly. $\mathbf{A}_{l}$ is then orthonormalised to fulfil the basis constraint. If $\mathbf{A}_{l}$ has an index value higher than the current basis $\mathbf{A}_{\text{cur}}$, the optimiser outputs $\mathbf{A}_{l}$ for guided tour to construct an interpolation path. The neighbourhood parameter $\alpha$ is adjusted by a cooling parameter: $\alpha_{j+1} = \alpha_j * \text{cooling}$ before the next iteration starts. The optimiser terminates when the maximum number of iteration $l_{\max}$ is reached before a better basis can be found. The algorithm of SA is summarised in Algorithm \ref{random-search} in the appendix. @posse1995projection has proposed a slightly different cooling scheme by introducing a halving parameter $c$. In his proposal, the $\alpha$ is only adjusted if the last iteration takes more than $c$ times to find a better basis.
 
-\begin{algorithm}
-\SetAlgoLined
-  \SetKwInOut{input}{input}
-  \SetKwInOut{output}{output}
-    \input{$f(.)$, $\alpha_1$, $l_{\max}$, $\text{cooling}$} 
-    \output{$\mathbf{A}_{l}$}
-    Generate random start $\mathbf{A}_1$ and set $\mathbf{A}_{\text{cur}} \coloneqq \mathbf{A}_1$, $I_{\text{cur}} = f(\mathbf{A}_{\text{cur}})$, $j = 1$\;
-  \Repeat{$\mathbf{A}_l$ is too close to $\mathbf{A}_{\text{cur}}$ in terms of geodesic distance}{
-   Set $l = 1$\;
-  \Repeat{$l > l_{\max}$ or $I_{l} > I_{\text{cur}}$}{
-    Generate $\mathbf{A}_{l} = (1- \alpha_j)\mathbf{A}_{\text{cur}} + \alpha_j \mathbf{A}_{\text{rand}}$ and orthogonalise $\mathbf{A}_{l}$\;
-    Compute $I_{l}  = f(\mathbf{A}_{l})$\;
-    Update $l = l + 1$\;
-  }
-  Update $\alpha_{j+1} = \alpha_j * \text{cooling}$\;
-  Construct the geodesic interpolation between $\mathbf{A}_{\text{cur}}$ and $\mathbf{A}_l$\; 
-  Update $\mathbf{A}_{\text{cur}} = \mathbf{A}_l$ and $j = j + 1$\;
-}
-  \caption{Creeping random search (CRS)}
-  \label{random-search}
-\end{algorithm}
+Simulated annealing (SA) [@kirkpatrick1983optimization; @bertsimas1993simulated] uses the same sampling process as CRS but allows a probabilistic acceptance of a basis with lower index value than the current. Given an initial value of $T_0$, the temperature at iteration $l$ is defined as $T(l) = \frac{T_0}{\log(l + 1)}$. When a candidate basis fails to have an index value larger than the current basis, SAJO gives it a second chance to be accepted with probability $$P= \min\left\{\exp\left[-\frac{\mid I_{\text{cur}} - I_{l} \mid}{T(l)}\right],1\right\}$$ where $I_{(\cdot)}$ denotes the index value of a given basis. This implementation allows the optimiser to make a move and explore the basis space even the landing basis does have a higher index value and hence enable the optimiser to jump out of a local optimum. The algorithm \ref{simulated-annealing} in the appendix highlights how SAJO differs from SA in the inner loop.
 
-Simulated annealing (SA) [@kirkpatrick1983optimization; @bertsimas1993simulated] uses the same sampling process as CRS but allows a probabilistic acceptance of a basis with lower index value than the current. Given an initial value of $T_0$, the temperature at iteration $l$ is defined as $T(l) = \frac{T_0}{\log(l + 1)}$. When a candidate basis fails to have an index value larger than the current basis, SAJO gives it a second chance to be accepted with probability $$P= \min\left\{\exp\left[-\frac{\mid I_{\text{cur}} - I_{l} \mid}{T(l)}\right],1\right\}$$ where $I_{(\cdot)}$ denotes the index value of a given basis. This implementation allows the optimiser to make a move and explore the basis space even the landing basis does have a higher index value and hence enable the optimiser to jump out of a local optimum. The algorithm \ref{simulated-annealing} highlights how SAJO differs from SA in the inner loop.
-
-\begin{algorithm}
-\SetAlgoLined
-\Repeat{$l > l_{\max}$ or $I_{l} > I_{\text{cur}}$ or $P > U$}{
-    Generate $\mathbf{A}_{l} = (1- \alpha_j)\mathbf{A}_{\text{cur}} + \alpha_j \mathbf{A}_{\text{rand}}$ and orthogonalise $\mathbf{A}_{l}$\;
-    Compute $I_{l}  = f(\mathbf{A}_{l})$, $T(l) = \frac{T_0}{\log(l + 1)}$ and $P= \min\left\{\exp\left[-\frac{I_{\text{cur}} -I_{l}}{T(l)}\right],1\right\}$\;
-    Draw $U$ from a uniform distribution: $U \sim \text{Unif(0, 1)}$\;
-    Update $l = l + 1$\;
-  }
-  \caption{Simulated annealing (SA)}
-  \label{simulated-annealing}
-\end{algorithm}
-
-Pseudo derivative (PD) search [@cook1995grand] uses a different strategy than SA and SAJO. Rather than randomly sample the basis space, PD first computes a search direction by evaluating vases close to the current basis. A step size is then chosen along the geodesic direction by another optimisation over an 90 degree angle from $-\pi/4$ to $\pi/4$. The resulting candidate basis $\mathbf{A}_{**}$ is returned for the current iteration if it has a higher index value than the current one. Algorithm \ref{search-geodesic} summarises the inner loop of the PD.
-
-\begin{algorithm}
-\SetAlgoLined
-\Repeat{$l > l_{\max}$ or $p_{\text{diff}} > 0.001$}{
-  Generate $n$ random directions $\mathbf{A}_{\text{rand}}$ \;
-  Compute $2n$ candidate bases deviate from $\mathbf{A}_{\text{cur}}$ by an angle of $\delta$ while ensuring orthogonality\;
-  Compute the corresponding index value for each candidate bases\;
-  Determine the search direction as from $\mathbf{A}_{\text{cur}}$ to the candidate bases with the largest index value\;
-  Determine the step size via optimising the index value on the search direction over a 90 degree window\;
-  Find the optimum $\mathbf{A}_{**}$ and compute $I_{**} = f(\mathbf{A}_{**})$, $p_{\text{diff}} = (I_{**} - I_{\text{cur}})/I_{**}$\;
-  Update $l = l + 1$\;
-}
-\caption{Pseudo derivative (PD)}
-\label{search-geodesic}
-\end{algorithm}
+Pseudo derivative (PD) search [@cook1995grand] uses a different strategy than SA and SAJO. Rather than randomly sample the basis space, PD first computes a search direction by evaluating vases close to the current basis. A step size is then chosen along the geodesic direction by another optimisation over an 90 degree angle from $-\pi/4$ to $\pi/4$. The resulting candidate basis $\mathbf{A}_{**}$ is returned for the current iteration if it has a higher index value than the current one. Algorithm \ref{search-geodesic} in the appendix summarises the inner loop of the PD.
 
 # Visual diagnostics {#vis-diag}
 
-A data structure for diagnosing optimisers in projection pursuit guided tour is first defined. With a fixed data structure, the diagnostic plots presented later in this paper can be easily applied to diagnose other optimisation procedures.
+A data structure for diagnosing optimisers in projection pursuit guided tour is first defined. With this data structure, four types of diagnostic plots are presented. In the section, examples will be given to show how these plot can be used to reveal issues in the projection pursuit optimisation. 
 
 ## Data structure for diagnostics 
 
@@ -203,12 +159,10 @@ t & \mathbf{A} & I & S & j &  l  & V_{1} & V_{2}\\
 1 & \mathbf{A}_1 & I_1 & S_1 & 1 & 1 & V_{11} & V_{12}\\
 \hline
 2 & \mathbf{A}_2 & I_2 & S_2 & 2 & 1  & V_{21}  & V_{22}\\
-3 & \mathbf{A}_3 & I_3 & S_3 & 2 & 2  & V_{31}  & V_{32}\\
 \vdots & \vdots &\vdots &\vdots  &\vdots & \vdots &\vdots  &\vdots\\
 \vdots & \vdots & \vdots &\vdots & 2 & l_2 & \vdots  & \vdots\\
 \hline
 \vdots &\vdots & \vdots &\vdots & 2  & 1& \vdots & \vdots\\
-\vdots &\vdots &\vdots &\vdots & 2 & 2& \vdots &  \vdots\\
 \vdots &\vdots &\vdots &\vdots &\vdots & \vdots & \vdots  &\vdots \\
 \vdots &\vdots &\vdots &\vdots & 2 & k_2 &\vdots  & \vdots\\
 \hline
@@ -235,11 +189,9 @@ T^\prime & \mathbf{A}_{T^\prime} & I_{T^\prime} &S_{T^\prime}  & J+1 &  l_{J+1} 
 \text{search (start basis)} \\
 \hline
 \text{search} \\
-\text{search} \\
 \vdots \\
 \text{search (accepted basis)} \\
 \hline
-\text{interpolate} \\
 \text{interpolate} \\
 \vdots \\
 \text{interpolate} \\
@@ -266,9 +218,9 @@ T^\prime & \mathbf{A}_{T^\prime} & I_{T^\prime} &S_{T^\prime}  & J+1 &  l_{J+1} 
 
 The data structure constructed above meets the tidy data principle [@wickham2014tidy] that requires each observation to form a row and each variable to form a column. With tidy data structure, data wrangling and visualisation can be significantly simplified by well-developed packages such as \CRANpkg{dplyr} [@dplyr] and \CRANpkg{ggplot2} [@ggplot2].
 
-The construction of diagnostic plots adopts the core concept of grammar of graphics [@wickham2010layered] in ggplot2. In grammar of graphics, plots are not produced by calling the commands, named by the appearance of the plot, i.e., boxplot and histogram, but by the concept of stacked layers. Seeing plots as stacked layers gives analysts the freedom to composite plots with multiple elements on hands.
+The construction of diagnostic plots adopts the core concept of grammar of graphics [@wickham2010layered] in ggplot2. In grammar of graphics, plots are not produced by calling the commands, named by the appearance of the plot, i.e., boxplot and histogram, but by the concept of stacked layers. Seeing plots as stacked layers gives analysts the freedom to compose plots with multiple elements on hand.
 
-## Checking how hard the optimiser is working
+## Diagnostic 1: Checking how hard the optimiser is working
 
 A starting point of diagnosing an optimiser is to understand how many searches an optimiser has conducted. One may want to simply plot the index value of the search points across its natural order, but a point geometry may work well if each iteration has a similar number of points. When some iterations have considerably more points than others, using a point geometry over-emphasizes the iterations that have more search points since these iterations will occupy the mast majority of the plot space. An alternative is to summarise the search in each iteration using boxplots and each iteration will then be spaced out equally. Occasionally, one may still want to switch back to a point geometry if the number of points is small in a particular iteration and this can be achieved via the `cutoff` argument in the search plot function. Additional annotations are added to facilitate better reading of the plot and these include  
 1) the number of points searched in each iteration can be added as text label at the bottom of each iteration; 2) the anchor bases to interpolate are connected and highlighted in a larger size; and 3) the colour of the last iteration is in a grey scale to indicate no better basis found in this iteration. 
@@ -278,14 +230,14 @@ Figure \ref{fig:toy-search} shows an example of the search plot for CRS (left) a
 ```{r toy-search, fig.cap="A comparison of the searches by two optimisers: CRS (left) and SA (right) on a 2D projection problem of a six-variable dataset, \\code{boa6} using holes index. Both optimisers reach the final basis with a similar index value while it takes SA longer to find the final basis."}
 ```
 
-## Examining the optimisation progress {#toy-interp}
+## Diagnostic 2: Examining the optimisation progress {#toy-interp}
 
 ```{r toy-interp, fig.cap = "An inspection of the index values as the optimisation progress for two optimisers: CRS (left) and SA (right). The holes index is optimised for a 2D projection problem on the six-variable dataset \\code{boa6}. Lines indicate the interpolation and dots indicate new target bases generated by the optimisers. Interpolation in both optimisation is smooth while SA is observed to first pass by some bases with higher index value before reach the target bases in time 76-130."}
 ```
 
 Another interesting diagnostic is to examine how the index value improves between interpolating bases since the projection on these bases is played by the tour animation. Trace plots are created by plotting the index value against time. Figure \ref{fig:toy-interp} presents the trace plot of the same optimisers as Figure \ref{fig:toy-search} and one can observe that the trace is smooth in both cases. It may seem bizarre at the first sight that the interpolation in the left panel first passes some bases with higher index value before decreases to a lower target. This happens because on the one hand, the probabilistic acceptance in SA implies that some worse bases will be accepted by the optimiser. On the other hand, guided tour interpolate between the current and target basis to provide a smooth transition between projections. These two facts indicate that a non-monotonic interpolation can't be avoided for SA. Later, in section \ref{monotonic}, there will be a discussion on improving the non-monotonic interpolation for CRS.
 
-## Understanding the optimiser's coverage of the search space {#toy-pca}
+## Diagnostic 3a: Understanding the optimiser's coverage of the search space {#toy-pca}
 
 ```{r toy-pca, fig.asp=1, fig.height=2.5, fig.cap = "Search paths of CRS (green) and PD (brown) in the PCA-reduced basis space for 1D projection problem on the five-variable dataset, \\code{boa5} using holes index. The basis space, a 5D unit sphere, is projected onto a 2D circle by PCA. All the bases in PD has been flipped for easier comparison of the final bases and a grey dashed line has been annotated to indicate the symmetry of the two start bases."}
 ```
@@ -296,21 +248,21 @@ Several annotations have been made to help understanding this plot. As mentioned
 
 Figure \ref{fig:toy-pca} shows the PCA plot of CRS and PD for a 1D projection problem. Both optimisers find the optimum but PD gets closer. With PCA plot, one can visually appreciate the nature of these two optimisers: PD first evaluates points in a small neighbourhood for a promising direction, while CRS evaluates points randomly in the search space to search for the next target. There are dashed lines annotated for CRS and it describes the interruption of the interpolation, which will be discussed in details in Section \ref{monotonic}.
 
-## Animating the diagnostic plots
+## Diagnostic 3b: Animating the diagnostic plots
 
 ```{r toy-pca-animated, fig.cap = "Six frames selected from the animated version of the previous plot. With animation, the progression of the search paths from start to finish are better identified. CRS (green) finishes the optimisation quicker than PD (brown) since there is no further movement for CRS in the sixth frame. The full video of the animation can be found at \\url{https://vimeo.com/504242845}."}
 ```
 
 Animation is another type of display to show how the search progresses from start to finish in the space. An  `animate = TRUE` argument is used to enable the animation in the PCA plot. Figure \ref{fig:toy-pca-animated} shows six frames from the animation of the PCA plot in Figure \ref{fig:toy-pca}. An additional piece of information one can learn from this animation is that CRS finds its end basis quicker than PD since CRS finishes its search in the 5th frame while PD is still making more progress.
 
-## The tour looking at itself
+## Diagnostic 4a: The tour looking at itself
 
 ```{r toy-tour, fig.cap="Six frames selected from rotating the high dimensional basis space, along with the same two search paths from Figure \\ref{fig:toy-pca} and \\ref{fig:toy-pca-animated}. The basis space in this example is a 5D unit sphere, on which points (grey) are randomly generated via the CRAN package \\CRANpkg{geozoo}. The full video of the animation can be found at \\url{https://vimeo.com/512885379}."}
 ```
 
 As mentioned previously, the original $p \times d$ dimension space can be simulated via randomly generated bases in the \CRANpkg{geozoo} [@geozoo] package. While the PCA plot projects the bases from the direction that maximises the variance, the tour plot displays the original high-dimensional space from various directions using animation. Figure \ref{fig:toy-tour} shows some frames from the tour plot of the same two optimisations in its original 5D space.
 
-## Forming a torus
+## Diagnostic 4b: Forming a torus
 
 While the previous few examples have looked at the space of 1D bases in a unit sphere, this section visualises the space of 2D bases. Recall that the columns in a 2D basis are orthogonal to each other, the space of $p \times 2$ bases is a $p$-D torus. If take $p = 3$, one would see a classical 3D torus shape as shown by the grey points in Figure \ref{fig:toy-torus}. The two circles of the torus can be observed to be perpendicular to each other and this can be linked back to the orthogonality of the columns in the bases. Two paths optimised by CRS and PD are plotted on top of the torus and coloured in green and brown respectively to match the previous few 1D space plots. The final basis found by PD and CRS are shown in a larger shape  and printed below respectively:
 
@@ -465,3 +417,59 @@ Most of the work in this project has been translated into code in two packages: 
 This article is created using \CRANpkg{knitr} [@knitr] and \CRANpkg{rmarkdown} [@rmarkdown]  in R. The source code for reproducing this paper can be found at: \url{https://github.com/huizezhang-sherry/paper-tour-vis}.
 
 \bibliography{zhang-cook-laa-langrene-menendez}
+
+\newpage
+
+# Appendix
+
+Three algorithms (Creeping random search, simulated annealing, and pseudo derivative) used in projection pursuit guided tour optimisation.
+
+\begin{algorithm}
+\SetAlgoLined
+  \SetKwInOut{input}{input}
+  \SetKwInOut{output}{output}
+    \input{$f(.)$, $\alpha_1$, $l_{\max}$, $\text{cooling}$} 
+    \output{$\mathbf{A}_{l}$}
+    Generate random start $\mathbf{A}_1$ and set $\mathbf{A}_{\text{cur}} \coloneqq \mathbf{A}_1$, $I_{\text{cur}} = f(\mathbf{A}_{\text{cur}})$, $j = 1$\;
+  \Repeat{$\mathbf{A}_l$ is too close to $\mathbf{A}_{\text{cur}}$ in terms of geodesic distance}{
+   Set $l = 1$\;
+  \Repeat{$l > l_{\max}$ or $I_{l} > I_{\text{cur}}$}{
+    Generate $\mathbf{A}_{l} = (1- \alpha_j)\mathbf{A}_{\text{cur}} + \alpha_j \mathbf{A}_{\text{rand}}$ and orthogonalise $\mathbf{A}_{l}$\;
+    Compute $I_{l}  = f(\mathbf{A}_{l})$\;
+    Update $l = l + 1$\;
+  }
+  Update $\alpha_{j+1} = \alpha_j * \text{cooling}$\;
+  Construct the geodesic interpolation between $\mathbf{A}_{\text{cur}}$ and $\mathbf{A}_l$\; 
+  Update $\mathbf{A}_{\text{cur}} = \mathbf{A}_l$ and $j = j + 1$\;
+}
+  \caption{Creeping random search (CRS)}
+  \label{random-search}
+\end{algorithm}
+
+\begin{algorithm}
+\SetAlgoLined
+\Repeat{$l > l_{\max}$ or $I_{l} > I_{\text{cur}}$ or $P > U$}{
+    Generate $\mathbf{A}_{l} = (1- \alpha_j)\mathbf{A}_{\text{cur}} + \alpha_j \mathbf{A}_{\text{rand}}$ and orthogonalise $\mathbf{A}_{l}$\;
+    Compute $I_{l}  = f(\mathbf{A}_{l})$, $T(l) = \frac{T_0}{\log(l + 1)}$ and $P= \min\left\{\exp\left[-\frac{I_{\text{cur}} -I_{l}}{T(l)}\right],1\right\}$\;
+    Draw $U$ from a uniform distribution: $U \sim \text{Unif(0, 1)}$\;
+    Update $l = l + 1$\;
+  }
+  \caption{Simulated annealing (SA)}
+  \label{simulated-annealing}
+\end{algorithm}
+
+
+\begin{algorithm}
+\SetAlgoLined
+\Repeat{$l > l_{\max}$ or $p_{\text{diff}} > 0.001$}{
+  Generate $n$ random directions $\mathbf{A}_{\text{rand}}$ \;
+  Compute $2n$ candidate bases deviate from $\mathbf{A}_{\text{cur}}$ by an angle of $\delta$ while ensuring orthogonality\;
+  Compute the corresponding index value for each candidate bases\;
+  Determine the search direction as from $\mathbf{A}_{\text{cur}}$ to the candidate bases with the largest index value\;
+  Determine the step size via optimising the index value on the search direction over a 90 degree window\;
+  Find the optimum $\mathbf{A}_{**}$ and compute $I_{**} = f(\mathbf{A}_{**})$, $p_{\text{diff}} = (I_{**} - I_{\text{cur}})/I_{**}$\;
+  Update $l = l + 1$\;
+}
+\caption{Pseudo derivative (PD)}
+\label{search-geodesic}
+\end{algorithm}

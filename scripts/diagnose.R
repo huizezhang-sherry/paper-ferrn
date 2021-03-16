@@ -74,10 +74,13 @@ p1 <- bind_rows(holes_2d_better, holes_2d_better_polish) %>%
 
 wrap <- function(path) png::readPNG(path) %>% grid::rasterGrob() %>% wrap_plots()
 
-before <- png::readPNG(here::here("anim","polish", "before073.png"))
-after <- png::readPNG(here::here("anim","polish", "after006.png"))
-
-(wrap_plots(grid::rasterGrob(before)) |wrap_plots(grid::rasterGrob(after))) / p1
+first <- here::here("anim","polish", "before001.png")
+before <- here::here("anim","polish", "before073.png")
+after <- here::here("anim","polish", "after006.png")
+file <- c(first, before, after)
+rl <- lapply(file, png::readPNG)
+gl <-  lapply(rl, grid::rasterGrob)
+wrap_plots(gl) / p1 + plot_annotation(tag_levels = "A")
 
 # p1 +
 #   inset_element(grid::rasterGrob(before), left = 0.77, bottom = 0.45, right = 0.89, top = 0.67, align_to = "full") +
