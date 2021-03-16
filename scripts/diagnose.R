@@ -71,7 +71,6 @@ p1 <- bind_rows(holes_2d_better, holes_2d_better_polish) %>%
   explore_trace_interp(color = method, cutoff = 100, target_size = 2, interp_size = 2) +
   scale_color_discrete_botanical(breaks = c("CRS", "polish"), label = c("CRS", "polish")) +
   theme(legend.position = "bottom")
-
 wrap <- function(path) png::readPNG(path) %>% grid::rasterGrob() %>% wrap_plots()
 
 first <- here::here("anim","polish", "before001.png")
@@ -80,12 +79,11 @@ after <- here::here("anim","polish", "after006.png")
 file <- c(first, before, after)
 rl <- lapply(file, png::readPNG)
 gl <-  lapply(rl, grid::rasterGrob)
-wrap_plots(gl) / p1 + plot_annotation(tag_levels = "A")
 
-# p1 +
-#   inset_element(grid::rasterGrob(before), left = 0.77, bottom = 0.45, right = 0.89, top = 0.67, align_to = "full") +
-#   inset_element(grid::rasterGrob(after), left = 0.87, bottom = 0.7, right = 1, top = 1, align_to = "full")
+lay <- rbind(c(1,2,3),
+             c(4,4,4))
 
+gridExtra::grid.arrange(gl[[1]], gl[[2]], gl[[3]], p1, layout_matrix = lay)
 ## ---- flip-sign
 # set.seed(2463)
 # orientation_corrected <-
@@ -108,14 +106,16 @@ wrap_plots(gl) / p1 + plot_annotation(tag_levels = "A")
 dt <- bind_rows(orientation_corrected %>% mutate(sign = "flipped"),
           orientation_different %>% mutate(sign = "original")) %>%
   compute_pca() %>%
-  pluck("aug")
+  pluck("aug") %>%
+  mutate(sign = fct_relevel(as.factor(sign), c("original", "flipped")))
 
 dt %>%
   explore_space_pca(group = sign, pca = FALSE ,flip = FALSE, start_size = 3) +
   add_anchor(dt = get_interp_last(dt), anchor_color = sign) +
   scale_color_discrete_botanical() +
-  facet_wrap(vars(fct_relevel(sign, c("original", "flipped")))) +
-  theme(legend.position = "none")
+  facet_wrap(vars(sign)) +
+  theme(strip.text.x = element_text(margin = margin(.15, 0, .15, 0, "cm")))
+
 
 ## ---- noisy-better-geo
 ## code for generating kol_1d_geo, kol_1d_better and kol_1d_better_polish
@@ -185,4 +185,5 @@ p2 <- pca %>%
   facet_wrap(vars(fct_relevel(method, c("PD", "CRS", "SA"))))
 
 (p1 / p2)
+
 
