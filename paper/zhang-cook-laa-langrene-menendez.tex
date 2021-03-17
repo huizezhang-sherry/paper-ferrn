@@ -117,25 +117,31 @@ derivative-free methods, two of which are random search methods:
 creeping random search and simulated annealing, and the other one is
 pseudo derivative search.
 
-Random search {[}in practice, non-convex, non-smooth{]}. The original
-(pure) random search, Brooks, randomly evaluate points in the space
-regardless of the current position. Although gaurantee global
-convergence, as the dimensional increases, blindly sample points in the
-entire space would cost a long time for convergence to occur {[}spall,
-6{]}. Various algorithms improve on the pure random search by either
-concentrating on a narrower sampling space or a different updating
-machanism. Creeping random search, {[}R.C White{]}, is such a variation
-where a candidate point is generated within a neighbourhood of the
-current point and the current point is only updated if the candidate
-point makes an improvment on the function value. {[}no convergence
-guarantee{]}. A different random search algorithm, simulated annealing,
-takes a different updating procedure than creeping random search. Rather
-than only updating the current point when an improvement is made,
-simulated annealing uses a Metropolis acceptance criterion, where
-nonimproving candidates can still have a chance to be accepted. The
-convergence of simulated annealing algorithms has been widely researched
-{[}reference, reference, reference{]} and a global convergence is
-guaranteed {[}under what condition{]}.
+Random search mehtods \citep{zabinsky2013stochastic} contain a random
+sampling component in its algorithm and has shown its ability to
+optimise non-convex and non-smooth functions. The initial random search
+algorithm, pure random search \citep{Brooks1958-zk}, draws candidate
+points from the entire space without using any information of the
+current position and updates the current position when an improvement on
+the objective function is made. As the dimension of the space becomes
+larger, sampling from the entire space would indicate a long time for
+convergence to occur despite a guaranteed global convergence
+\citep{spall2005introduction}. Various algorithms have then been
+developed to improve pure random search by either concentrating on a
+narrower sampling space or using a different updating machanism.
+Creeping random search \citep{White1971-ci} is such a variation where a
+candidate point is generated within a neighbourhood of the current
+point. This gives creeping random search an advantage of being fast to
+compute, however, global convergence is not longer guaranteed. On the
+other hand, simulated annealing
+\citep{kirkpatrick1983optimization, bertsimas1993simulated}, takes a
+different updating machanism from the pure random search. Rather than
+only updating the current point when an improvement is made, simulated
+annealing uses a Metropolis acceptance criterion, where nonimproving
+candidates can still have a chance to be accepted. The convergence of
+simulated annealing algorithms has been widely researched
+\citep{mitra1986convergence, belisle1992convergence, granville1994simulated}
+and the global optimum can be attained under mild conditions.
 
 Pseudo derivative search uses a common search scheme in optimistaion:
 line search. In line search methods, users are required to provide an
