@@ -91,18 +91,6 @@ implements the visual diagnostics.
 \hypertarget{optim}{%
 \section{Optimisation methods}\label{optim}}
 
-Optimisation problems are ubiquitous in many areas of study. While in
-some cases analytical solutions can be found, the majority of problems
-rely on numerical methods to find the optimal solution. These numerical
-methods follow iterative approaches that aim at finding the optimum by
-progressively improving the current solution until a desirable accuracy
-is achieved. Although this principle seems uncomplicated, a number of
-challenges arise such as the possible existence of multiple maxima
-(local and global), constraints and noisy objective function, and the
-trade-off between desirable accuracy and computational burden. In
-addition, the optimization results might depend on the algorithm
-starting values, affecting the consistency of results.
-
 The optimisation problem of our interest is on constrained optimization
 \citep{bertsekas2014constrained} as defined in the introduction section,
 and assuming it is not possible to find a solution to the problem in the
@@ -120,41 +108,47 @@ matrix of projection basis and the computational time required to
 perform differentation on a matrix could impede the render of tour
 animation. Hence, gradient-based methods are not the focus of this paper
 and considerations will be given to derivative-free methods.
+
 Derivative-free methods, which do not rely on the knowledge of the
 gradient, are more generally applicable. Derivative-free methods have
 been developed over the years, where the emphasis is on finding, in most
-cases, a near optimal solution. Below will introduce two random search
-methods: creeping random search and simulated annealing, and a pseudo
-derivative search.
+cases, a near optimal solution. Below will introduce three
+derivative-free methods, two of which are random search methods:
+creeping random search and simulated annealing, and the other one is
+pseudo derivative search.
 
-A common search scheme utilised by both derivative-free methods and
-gradient methods is line search. In line search methods, users are
-required to provide an initial estimate \(x_{1}\) and, at each
-iteration, a search direction \(S_k\) and a step size \(\alpha_k\) are
-generated. Then one moves on to the next point following
-\(x_{k+1} = x_k + \alpha_kS_k\) and the process is repeated until the
-desire convergence is reached. While gradient-based methods choose the
-search direction by the gradient, derivative-free methods uses local
-information of the objective function to determine the search direction.
-The choice of step size also needs considerations, as inadequate step
-sizes might prevent the optimisation method to converge to an optimum.
-An ideal step size can be chosen via finding the value of
-\(\alpha_k \in \mathbb{R}\) that maximises \(f(x_k + \alpha_kS_k)\) with
-respect to \(\alpha_k\) at each iteration.
+Random search {[}in practice, non-convex, non-smooth{]}. The original
+(pure) random search, Brooks, randomly evaluate points in the space
+regardless of the current position. Although gaurantee global
+convergence, as the dimensional increases, blindly sample points in the
+entire space would cost a long time for convergence to occur {[}spall,
+6{]}. Various algorithms improve on the pure random search by either
+concentrating on a narrower sampling space or a different updating
+machanism. Creeping random search, {[}R.C White{]}, is such a variation
+where a candidate point is generated within a neighbourhood of the
+current point and the current point is only updated if the candidate
+point makes an improvment on the function value. {[}no convergence
+guarantee{]}. A different random search algorithm, simulated annealing,
+takes a different updating procedure than creeping random search. Rather
+than only updating the current point when an improvement is made,
+simulated annealing uses a Metropolis acceptance criterion, where
+nonimproving candidates can still have a chance to be accepted. The
+convergence of simulated annealing algorithms has been widely researched
+{[}reference, reference, reference{]} and a global convergence is
+guaranteed {[}under what condition{]}.
 
-Several R implementations address optimization problems with both
-general purpose as well as task specifics solvers. The most prominent
-one within the general solvers is \code{optim()} in the \CRANpkg{stats}
-\citep{stats} package, which provides both gradient-based and
-derivative-free optimisation functions. Another general solver
-specialised in non-linear optimisation is \CRANpkg{nloptr}
-\citep{nloptr}. Specific solvers for simulated annealing include
-\code{optim(..., method  "SANN")} and package \CRANpkg{GenSA}
-\citep{gensa} that deals with more complicated objective functions. For
-other task specific solvers, readers are recommended to visit the
-relevant sections in CRAN task review on
-\ctv{optimisation and mathematical programming}
-\citep{crantaskreviewoptim}.
+Pseudo derivative search uses a common search scheme in optimistaion:
+line search. In line search methods, users are required to provide an
+initial estimate \(x_{1}\) and, at each iteration, a search direction
+\(S_k\) and a step size \(\alpha_k\) are generated. Then one moves on to
+the next point following \(x_{k+1} = x_k + \alpha_kS_k\) and the process
+is repeated until the desire convergence is reached. In derivative-free
+methods, local information of the objective function are used to
+determine the search direction. The choice of step size also needs
+considerations, as inadequate step sizes might prevent the optimisation
+method to converge to an optimum. An ideal step size can be chosen via
+finding the value of \(\alpha_k \in \mathbb{R}\) that maximises
+\(f(x_k + \alpha_kS_k)\) with respect to \(\alpha_k\) at each iteration.
 
 \hypertarget{tour}{%
 \section{Projection pursuit guided tour}\label{tour}}
