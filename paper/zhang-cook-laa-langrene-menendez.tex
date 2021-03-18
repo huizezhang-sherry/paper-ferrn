@@ -62,8 +62,8 @@ in high-dimensional data through a set of lower-dimensional projections
 \citep{cook2008grand}. The goal of the optimisation is to identify the
 projection, characterised by the projection basis, that gives the most
 interesting low-dimensional view. A view is interesting if it can show
-some unexpected structure of the data, e.g., bi-modality, clustering and
-outliers.
+some structures of the data, e.g., bi-modality, clustering and outliers,
+other than normal distribution.
 
 The optimization challenges encountered in the projection pursuit guided
 tour problem are common to those of optimization in general. Examples of
@@ -180,19 +180,18 @@ or just index function, and is used to measure the ``interestingness''
 of a given projection. An interesting projection shows structures that
 are non-normal and this has been argued for two reasons: Theoretical
 proofs from \citet{diaconis1984asymptotics} show that projections tend
-to be normal as \(n\) and \(p\) approaching infinity under certain
-conditions. \citet{huber1985projection} illustrates that, for indices
-based on entropy measures, {[}\ldots{}{]}. Index functions proposed in
-the litearture include early indices that can be categorised by
-measuring the \(L^2\) distance between the projection and a normal
-distribution.(Legendre index \citep{friedman1974projection}, Hermite
-index \citep{hall1989polynomial}, and natural Hermite index
-\citep{cook1993projection}); chi-square index
-\citep{posse1995projection} for detecting spiral structure; kurtosis
-\citep{Loperfido2020} and skewness \citep{Loperfido2018} indices for
-detecting outliers in financial time series; and most recently,
-scagnostic indices \citep{laa2020using} for summarising structures in
-scatterplot matrices based on eight scagnostic measures.
+to be normal, as \(n\) and \(p\) approaching infinity under certain
+conditions. Index functions proposed in the litearture include early
+indices that can be categorised by measuring the \(L^2\) distance
+between the projection and a normal distribution: Legendre index
+\citep{friedman1974projection}, Hermite index
+\citep{hall1989polynomial}, and natural Hermite index
+\citep{cook1993projection}; chi-square index \citep{posse1995projection}
+for detecting spiral structure; kurtosis index \citep{Loperfido2020} and
+skewness index \citep{Loperfido2018} for detecting outliers in financial
+time series; and most recently, scagnostic indices \citep{laa2020using}
+for summarising structures in scatterplot matrices based on eight
+scagnostic measures.
 
 As a general visualisation method, tour produces animations of high
 dimensional data via rotations of low-dimensional planes. There are
