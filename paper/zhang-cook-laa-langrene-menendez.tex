@@ -19,7 +19,8 @@ implement a data collection object in the optimisation of projection
 pursuit guided tour and introduce visual diagnostics based on the data
 object collected. These diagnostics and this workflow can be applied to
 a broad class of optimisers, to assess their performance. An R package,
-\pkg{ferrn}, has been created to implement the diagnostics.
+\CRANpkg{ferrn} \citep{ferrn}, has been created to implement the
+diagnostics.
 
 \noindent \textit{keywords}: graphics, multivariate, optimization
 }
@@ -86,8 +87,8 @@ different diagnostic plots are designed with the data collected. Section
 \ref{application} shows applications of how these diagnostic plots can
 be used to discover interesting aspects of different optimisers and
 guide improvements to the existing algorithms. Finally, Section
-\ref{implementation} describes the R package: \pkg{ferrn}, that
-implements the visual diagnostics.
+\ref{implementation} describes the R package: \CRANpkg{ferrn}
+\citep{ferrn}, that implements the visual diagnostics.
 
 \hypertarget{optim}{%
 \section{Optimisation methods}\label{optim}}
@@ -853,7 +854,7 @@ ability to reach the global maximum. With a larger search size, almost
 all the seeds (16 out of 20) have found the global maximum and some
 final bases are much closer to the theoretical best, as compared to the
 three other cases. This indicates that SA, with a reasonable large
-search size, is able to overcome the local optimum and optimise close
+search window, is able to overcome the local optimum and optimise close
 towards the global optimum.
 
 \hypertarget{reconciling-the-orientation}{%
@@ -889,15 +890,11 @@ interpolation no longer exist.
 \hypertarget{implementation}{%
 \section{Implementation}\label{implementation}}
 
-The implementation of this projection has been divided into two
-packages: the data collection object is implemented in the existing CRAN
-package \CRANpkg{tourr} \citep{tourr} while the optimiser diagnostics
-have been implemented in a new package, \pkg{ferrn}. When a guided tour
-is run, the users can choose to collect the data by binding
-\texttt{animate\_*()} to a variable. Once the data object has been
-obtained, the \pkg{ferrn} package provides diagnostic plots shown in
-Section \ref{vis-diag}. The main functions of the \pkg{ferrn} package
-functionality is listed below.
+This project contributes to the software development in two packages: a
+data collection object is implemented in \CRANpkg{tourr} \citep{tourr},
+while the visual diagnostics of the optimisers is implemented in
+\CRANpkg{ferrn} \citep{ferrn}. Below list functions in the
+\CRANpkg{ferrn} \citep{ferrn} package:
 
 \begin{itemize}
 \item
