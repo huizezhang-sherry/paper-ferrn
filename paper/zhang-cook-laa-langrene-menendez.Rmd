@@ -376,7 +376,7 @@ This project contributes to the software development in two packages: a data col
   - \code{get\_search\_count()} extracts the count of search observations 
   - \code{get\_space\_param()} produces the coordinates of the centre and radius of the basis space
   - \code{get\_start()} extracts the starting observation
-  - \code{get\_theo()} extracts the theoretical best observations, if presented 
+  - \code{get\_theo()} extracts the theoretical best observations, if given 
   
 
 - \code{bind\_*()} incorporates additional information outside the tour optimisation into the data object.
@@ -384,18 +384,18 @@ This project contributes to the software development in two packages: a data col
   - \code{bind\_random()} binds randomly generated bases in the projection bases space to the data object
   - \code{bind\_random\_matrix()} binds randomly generated bases and outputs in a matrix format
 
-- \code{add\_*()} create ggprotos for different components for the PCA plot
-  - \code{add\_anchor()} is a wrapper for plotting anchor bases
-  - \code{add\_anno()} is a wrapper for annotating the symmetry of start bases
-  - \code{add\_dir\_search()} is a wrapper for plotting the directional search bases with magnified distance
-  - \code{add\_end()} is a wrapper for plotting end bases
-  - \code{add\_interp()} is a wrapper for plotting the interpolation path
-  - \code{add\_interp\_last()} is a wrapper for plotting the last interpolation bases for comparing with target bases when interruption is carried
-  - \code{add\_interrupt()} is a wrapper for linking the last interpolation bases with target ones when interruption is carried
-  - \code{add\_search()} is a wrapper for plotting search bases
-  - \code{add\_space()} is a wrapper for plotting the circular space 
-  - \code{add\_start()} is a wrapper for plotting start bases
-  - \code{add\_theo()} is a wrapper for plotting theoretical best bases, if applicable
+- \code{add\_*()} provides wrapper functions to create ggprotos for different components for the PCA plot
+  - \code{add\_anchor()} for plotting anchor bases
+  - \code{add\_anno()} for annotating the symmetry of start bases
+  - \code{add\_dir\_search()} for plotting the directional search bases with magnified distance
+  - \code{add\_end()} for plotting end bases
+  - \code{add\_interp()} for plotting the interpolation path
+  - \code{add\_interp\_last()} for plotting the last interpolation bases for comparing with target bases when interruption is used
+  - \code{add\_interrupt()} for linking the last interpolation bases with target ones when interruption is used
+  - \code{add\_search()} for plotting search bases
+  - \code{add\_space()} for plotting the circular space 
+  - \code{add\_start()} for plotting start bases
+  - \code{add\_theo()} for plotting theoretical best bases, if applicable
 
 - Utilities
   - \code{theme\_fern()} and \code{format\_label()} for better display of the grid lines and axis formatting
@@ -406,10 +406,10 @@ This project contributes to the software development in two packages: a data col
 
 # Conclusion
 
-This paper has illustrated setting up a data object that can be used for diagnosing a complex optimisation procedure. The ideas were illustrated using the optimisers available for projection pursuit guided tour. Here the constraint is the orthonormality condition of the projection bases. The approach used here could be broadly applied to understand other constrained optimisers.
+This paper has set up a data object that can be used for diagnosing a complex optimisation procedure. The ideas were illustrated using the optimisers available for projection pursuit guided tour. Here the constraint is the orthonormality condition of the projection bases. The approach used broadly applies to other constrained optimisers.
 
 <!-- something about the diagnostic plots  -->
-Four diagnostic plots have been introduced to investigate the progression and the projection space of an optimiser. The implementation of these visualisations is designed to be easy-to-use with each plot can be produced with a simple supply of the data object. More advanced users may decide to modify on top of the basic plots or even build their own. 
+Four diagnostic plots have been introduced to investigate the progression of the optimiser and the coverage in search space. The implementation of these visualisations is designed to be easy-to-use, each plot can be produced by supplying the data object to the corresponding function. More advanced users may decide to modify these basic graphs using the provided wrapper functions, or even build their own. 
 
 <!-- summarise what we have done and what might be done in the future. -->
 Most of the work in this project has been translated into code in two packages: the collection of the data object is implemented in the existing \CRANpkg{tourr} [@tourr] package; while the manipulation and visualisation of the data object are implemented in the new \pkg{ferrn} package. Equipped with handy tools to diagnose the performance of optimisers, future work can extend the diagnostics to a wider range of index functions, i.e. scagnostics, association, and information index [@laa2020using] and understand how the optimisers behave for index functions with different structures.
