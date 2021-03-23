@@ -1,7 +1,8 @@
 % !TeX root = RJwrapper.tex
-\title{Visual Diagnostics for Constrained Optimisation with Application to
-Guided Tours}
-\author{by H.Sherry Zhang, Dianne Cook, Ursula Laa, Nicolas Langrené, and Patricia Menéndez}
+\title{Visual Diagnostics for Constrained Optimisation with Application
+to Guided Tours}
+\author{by H.Sherry Zhang, Dianne Cook, Ursula Laa, Nicolas
+Langrené, and Patricia Menéndez}
 
 \maketitle
 
@@ -18,7 +19,8 @@ implement a data collection object in the optimisation of projection
 pursuit guided tour and introduce visual diagnostics based on the data
 object collected. These diagnostics and this workflow can be applied to
 a broad class of optimisers, to assess their performance. An R package,
-\pkg{ferrn}, has been created to implement the diagnostics.
+\CRANpkg{ferrn} \citep{ferrn}, has been created to implement the
+diagnostics.
 
 \noindent \textit{keywords}: graphics, multivariate, optimization
 }
@@ -28,19 +30,20 @@ a broad class of optimisers, to assess their performance. An R package,
 
 Visualisation is widely used in exploratory data analysis
 \citep{tukey1977exploratory, unwin2015graphical, healy2018data, wilke2019fundamentals}.
-Presenting information in graphics often unveils information that would
+Presenting information in graphics often unveils insights that would
 otherwise not be discovered and provides a more comprehensive
 understanding of the problem at hand. Task specific tools such as
 \citet{li2020visualizing} show how visualisation can be used to
-understand, for instance, the behaviour of neural network on
-classification models. However, no general visualisation tool is
-available for diagnosing optimisation procedures. The work presented in
-this paper brings visualization tools into optimisation problems with
-the aim to better understand the performance of optimisers in practice.
+understand, for instance, the behaviour of the optimisation for the
+example of neural network classification models. However, no general
+visualisation tool is available for diagnosing optimisation procedures.
+The work presented in this paper brings visualization tools into
+optimisation problems with the aim to better understand the performance
+of optimisers in practice.
 
 The goal of continuous optimisation is to find the best solution within
 the space of all feasible solutions where typically the best solution is
-decided by an objective function. Broadly speaking, optimization can be
+defined via an objective function. Broadly speaking, optimization can be
 unconstrained or constrained \citep{kelley1999iterative}. The
 unconstrained problem can be formulated as a minimization (or
 maximization) problem such as \(\min_{x} f(x)\) where
@@ -60,20 +63,19 @@ projection pursuit guided tour \citep{buja2005computational}, an
 exploratory data analysis tool used for detecting interesting structures
 in high-dimensional data through a set of lower-dimensional projections
 \citep{cook2008grand}. The goal of the optimisation is to identify the
-projection, characterised by the projection basis, that gives the most
+projection, represented by the projection matrix, that gives the most
 interesting low-dimensional view. A view is interesting if it can show
-some structures of the data, e.g., bi-modality, clustering and outliers,
-other than normal distribution.
+some structures of the data other than a normal distribution, e.g.,
+bi-modality, clustering and outliers.
 
 The optimization challenges encountered in the projection pursuit guided
-tour problem are common to those of optimization in general. Examples of
-those include the existence of multiple optima (local and global), the
-trade off between computational burden and proximity to the optima,
+tour problem are common to those of optimization in general. Examples
+include the existence of multiple optima (local and global), the
+trade-off between computational burden and proximity to the optima, or
 dealing with noisy objective functions that might be non-smooth and
-non-differentiable \citep{jones1998efficient}. Those are not unique to
-this context and therefore the visualization tools and optimization
-methods presented in this paper can be easily applied to any other
-optimization problems.
+non-differentiable \citep{jones1998efficient}. The visualization tools
+and optimization methods presented in this paper can therefore easily be
+applied to other optimization problems.
 
 The remainder of the paper is organised as follows. Section \ref{optim}
 provides an overview of optimisation methods, specifically line search
@@ -84,9 +86,9 @@ structure is defined to capture information during the optimisation, and
 different diagnostic plots are designed with the data collected. Section
 \ref{application} shows applications of how these diagnostic plots can
 be used to discover interesting aspects of different optimisers and
-guide improvement to the existing algorithms. Finally, Section
-\ref{implementation} describes the R package: \pkg{ferrn}, that
-implements the visual diagnostics.
+guide improvements to the existing algorithms. Finally, Section
+\ref{implementation} describes the R package: \CRANpkg{ferrn}
+\citep{ferrn}, that implements the visual diagnostics.
 
 \hypertarget{optim}{%
 \section{Optimisation methods}\label{optim}}
@@ -98,48 +100,47 @@ way of a closed-form. That is, the problem consists of finding the
 minimum or maximum of a function \(f \in L^p\) in the constrained
 \(\mathcal{A}\) space.
 
-A large class of methods utilises the gradient information of the
-objective function, with the most notable one being the gradient ascent
-(descent) method. Although gradient optimization methods are popular,
-they rely on the availability of the objective function derivatives and
-on the complexity of the constraints. As will be shown in the next
-section, the independent variable, in our optimisation problem, is a
-matrix of projection basis and the computational time required to
-perform differentation on a matrix could impede the render of tour
+A large class of methods uses the gradient information of the objective
+function, with the most notable one being the gradient ascent (descent)
+method. Although gradient optimization methods are popular, they rely on
+the availability of the objective function derivatives and on the
+limited complexity of the constraints. As will be shown in the next
+section, the independent variables in our optimisation problem are the
+entries of a projection matrix and the computational time required to
+perform differentiation on a matrix could impede the render of tour
 animation. Hence, gradient-based methods are not the focus of this paper
 and considerations will be given to derivative-free methods.
 
 Derivative-free methods, which do not rely on the knowledge of the
 gradient, are more generally applicable. Derivative-free methods have
 been developed over the years, where the emphasis is on finding, in most
-cases, a near optimal solution. Below will introduce three
-derivative-free methods, two of which are random search methods:
-creeping random search and simulated annealing, and the other one is
-pseudo derivative search.
+cases, a near optimal solution. Here we consider three derivative-free
+methods, two of which are random search methods: creeping random search
+and simulated annealing, and the other one is pseudo derivative search.
 
-Random search mehtods \citep{zabinsky2013stochastic} contain a random
-sampling component in its algorithm and has shown its ability to
-optimise non-convex and non-smooth functions. The initial random search
-algorithm, pure random search \citep{Brooks1958-zk}, draws candidate
-points from the entire space without using any information of the
-current position and updates the current position when an improvement on
-the objective function is made. As the dimension of the space becomes
-larger, sampling from the entire space would indicate a long time for
-convergence to occur despite a guaranteed global convergence
-\citep{spall2005introduction}. Various algorithms have then been
-developed to improve pure random search by either concentrating on a
-narrower sampling space or using a different updating machanism.
-Creeping random search \citep{White1971-ci} is such a variation where a
-candidate point is generated within a neighbourhood of the current
-point. This gives creeping random search an advantage of being fast to
-compute, however, global convergence is not longer guaranteed. On the
-other hand, simulated annealing
-\citep{kirkpatrick1983optimization, bertsimas1993simulated}, takes a
-different updating machanism from the pure random search. Rather than
-only updating the current point when an improvement is made, simulated
-annealing uses a Metropolis acceptance criterion, where nonimproving
-candidates can still have a chance to be accepted. The convergence of
-simulated annealing algorithms has been widely researched
+Random search methods \citep{zabinsky2013stochastic} have a random
+sampling component as part of their algorithm and have been shown to
+have the ability to optimise non-convex and non-smooth functions. The
+initial random search algorithm, pure random search
+\citep{Brooks1958-zk}, draws candidate points from the entire space
+without using any information of the current position and updates the
+current position when an improvement on the objective function is made.
+As the dimension of the space becomes larger, sufficient sampling from
+the entire space would require a long time for convergence to occur,
+despite a guaranteed global convergence \citep{spall2005introduction}.
+Various algorithms have thus been developed to improve pure random
+search by either concentrating on a narrower sampling space or using a
+different updating machanism. Creeping random search
+\citep{White1971-ci} is such a variation, where a candidate point is
+generated within a neighbourhood of the current point. This makes
+creeping random search faster to compute, however, global convergence is
+not longer guaranteed. On the other hand, simulated annealing
+\citep{kirkpatrick1983optimization, bertsimas1993simulated}, introduces
+a different updating mechanism. Rather than only updating the current
+point when an improvement is made, simulated annealing uses a Metropolis
+acceptance criterion, where worse candidates still have a chance to be
+accepted. The convergence of simulated annealing algorithms has been
+widely researched
 \citep{mitra1986convergence, belisle1992convergence, granville1994simulated}
 and the global optimum can be attained under mild conditions.
 
@@ -148,11 +149,11 @@ line search. In line search methods, users are required to provide an
 initial estimate \(x_{1}\) and, at each iteration, a search direction
 \(S_k\) and a step size \(\alpha_k\) are generated. Then one moves on to
 the next point following \(x_{k+1} = x_k + \alpha_kS_k\) and the process
-is repeated until the desire convergence is reached. In derivative-free
-methods, local information of the objective function are used to
+is repeated until the desired convergence is reached. In derivative-free
+methods, local information of the objective function is used to
 determine the search direction. The choice of step size also needs
-considerations, as inadequate step sizes might prevent the optimisation
-method to converge to an optimum. An ideal step size can be chosen via
+consideration, as inadequate step sizes might prevent the optimisation
+method to converge to an optimum. An ideal step size can be chosen by
 finding the value of \(\alpha_k \in \mathbb{R}\) that maximises
 \(f(x_k + \alpha_kS_k)\) with respect to \(\alpha_k\) at each iteration.
 
@@ -172,7 +173,7 @@ observations in \(p\) dimensions. A \(d\)-dimensional projection is a
 linear transformation from \(\mathbb{R}^p\) into \(\mathbb{R}^d\)
 defined as \(\mathbf{Y} = \mathbf{X} \cdot \mathbf{A}\), where
 \(\mathbf{Y}_{n \times d}\) is the projected data and
-\(\mathbf{A}_{p\times d}\) is the projection basis matrix. We define
+\(\mathbf{A}_{p\times d}\) is the projection matrix. We define
 \(f: \mathbb{R}^{n \times d} \mapsto \mathbb{R}\) to be an index
 function that maps the projected data \(\mathbf{Y}\) onto a scalar
 value. This is commonly known as the projection pursuit index function,
@@ -180,7 +181,7 @@ or just index function, and is used to measure the ``interestingness''
 of a given projection. An interesting projection shows structures that
 are non-normal and this has been argued for two reasons: Theoretical
 proofs from \citet{diaconis1984asymptotics} show that projections tend
-to be normal, as \(n\) and \(p\) approaching infinity under certain
+to be normal, as \(n\) and \(p\) approach infinity under certain
 conditions. Index functions proposed in the litearture include early
 indices that can be categorised by measuring the \(L^2\) distance
 between the projection and a normal distribution: Legendre index
@@ -195,9 +196,9 @@ scagnostic measures.
 
 As a general visualisation method, tour produces animations of high
 dimensional data via rotations of low-dimensional planes. There are
-different tour implementations depending on how the high dimensional
-space is investigated: grand tour \citep{cook2008grand} selects the
-planes randomly to provide a general overview; manual tour
+different versions depending on how the high dimensional space is
+investigated: grand tour \citep{cook2008grand} selects the planes
+randomly to provide a general overview; manual tour
 \citep{cook1997manual} gradually phases in and out one variable to
 understand the contribution of that variable in the projection. Guided
 tour, the main interest of this paper, chooses the planes with the aid
@@ -226,12 +227,11 @@ implemented in the R package \CRANpkg{tourr} \citep{tourr}.
 \hypertarget{tour-optim}{%
 \subsection{Optimisation in the tour}\label{tour-optim}}
 
-In projection pursuit the optimisation problem aims at finding the
-global and local maxima that give interesting projections according to
-an index function. That is, it starts with a given randomly selected
-basis \(\mathbf{A}_1\) and aims at finding an optimal final projection
-basis \(\mathbf{A}_T\) that satisfies the following optimisation
-problem:
+In projection pursuit the optimisation aims at finding the global and
+local maxima that give interesting projections according to an index
+function. That is, it starts with a given randomly selected basis
+\(\mathbf{A}_1\) and aims at finding an optimal final projection basis
+\(\mathbf{A}_T\) that satisfies the following optimisation problem:
 
 \begin{align}
 \arg \max_{\mathbf{A} \in \mathcal{A}} f(\mathbf{X} \cdot \mathbf{A})  ~~~ s.t. ~~~ \mathbf{A}^{\prime} \mathbf{A} = I_d
@@ -247,8 +247,8 @@ structure on the bases space: it forms a Stiefel manifold. 2) There may
 be index functions for which the objective function might not be
 differentiable. 3) While finding the global optimum is the goal of the
 optimisation problem, interesting projections may also appear in the
-local optimum. 4) The optimisation should be computationally agile since
-the tour animation is viewed by the users during the optimisation.
+local optimum. 4) The optimisation should be fast to compute since the
+tour animation is viewed by the users during the optimisation.
 
 \hypertarget{existing-algorithms}{%
 \subsection{Existing algorithms}\label{existing-algorithms}}
@@ -270,7 +270,7 @@ parameter \(\alpha\) is adjusted by a cooling parameter:
 \(\alpha_{j+1} = \alpha_j * \text{cooling}\) before the next iteration
 starts. The optimiser terminates when the maximum number of iteration
 \(l_{\max}\) is reached before a better basis can be found. The
-algorithm of SA is summarised in Algorithm \ref{random-search} in the
+algorithm of CRS is summarised in Algorithm \ref{random-search} in the
 appendix. \citet{posse1995projection} has proposed a slightly different
 cooling scheme by introducing a halving parameter \(c\). In his
 proposal, the \(\alpha\) is only adjusted if the last iteration takes
@@ -282,25 +282,25 @@ same sampling process as CRS but allows a probabilistic acceptance of a
 basis with lower index value than the current. Given an initial value of
 \(T_0\), the temperature at iteration \(l\) is defined as
 \(T(l) = \frac{T_0}{\log(l + 1)}\). When a candidate basis fails to have
-an index value larger than the current basis, SAJO gives it a second
+an index value larger than the current basis, SA gives it a second
 chance to be accepted with probability
 \[P= \min\left\{\exp\left[-\frac{\mid I_{\text{cur}} - I_{l} \mid}{T(l)}\right],1\right\}\]
 where \(I_{(\cdot)}\) denotes the index value of a given basis. This
 implementation allows the optimiser to make a move and explore the basis
-space even the landing basis does have a higher index value and hence
-enable the optimiser to jump out of a local optimum. The algorithm
-\ref{simulated-annealing} in the appendix highlights how SAJO differs
-from SA in the inner loop.
+space even if the candidate basis does not have a higher index value and
+hence enable the optimiser to jump out of a local optimum. The algorithm
+\ref{simulated-annealing} in the appendix highlights how SA differs from
+CRS in the inner loop.
 
 Pseudo derivative (PD) search \citep{cook1995grand} uses a different
-strategy than SA and SAJO. Rather than randomly sample the basis space,
-PD first computes a search direction by evaluating vases close to the
-current basis. A step size is then chosen along the geodesic direction
-by another optimisation over an 90 degree angle from \(-\pi/4\) to
-\(\pi/4\). The resulting candidate basis \(\mathbf{A}_{**}\) is returned
-for the current iteration if it has a higher index value than the
-current one. Algorithm \ref{search-geodesic} in the appendix summarises
-the inner loop of the PD.
+strategy than CRS and SA. Rather than randomly sample the basis space,
+PD first computes a search direction by evaluating bases close to the
+current basis. A step size is then chosen along the corresponding
+geodesic by another optimisation over an 90 degree angle from \(-\pi/4\)
+to \(\pi/4\). The resulting candidate basis \(\mathbf{A}_{**}\) is
+returned for the current iteration if it has a higher index value than
+the current one. Algorithm \ref{search-geodesic} in the appendix
+summarises the inner loop of the PD.
 
 \hypertarget{vis-diag}{%
 \section{Visual diagnostics}\label{vis-diag}}
@@ -419,31 +419,26 @@ freedom to compose plots with multiple elements on hand.
 working}\label{diagnostic-1-checking-how-hard-the-optimiser-is-working}}
 
 A starting point of diagnosing an optimiser is to understand how many
-searches an optimiser has conducted. One may want to simply plot the
-index value of the search points across its natural order, but a point
-geometry may work well if each iteration has a similar number of points.
-When some iterations have considerably more points than others, using a
-point geometry over-emphasizes the iterations that have more search
-points since these iterations will occupy the mast majority of the plot
-space. An alternative is to summarise the search in each iteration using
-boxplots and each iteration will then be spaced out equally.
-Occasionally, one may still want to switch back to a point geometry if
-the number of points is small in a particular iteration and this can be
-achieved via the \texttt{cutoff} argument in the search plot function.
-Additional annotations are added to facilitate better reading of the
-plot and these include\\
-1) the number of points searched in each iteration can be added as text
-label at the bottom of each iteration; 2) the anchor bases to
-interpolate are connected and highlighted in a larger size; and 3) the
-colour of the last iteration is in a grey scale to indicate no better
-basis found in this iteration.
+searches it has conducted, i.e.~we to summarise how the index is
+increasing over iterations and how many tries need to be sampled at each
+iteration. This is achieved using the search plot function: a boxplot
+shows the distribution of index values for each try, where the selected
+basis (corresponding to the highest index value) is always shown as a
+point. In case of few tries at a given iteration showing the data points
+directly may be preferred over the boxplot, this is controlled via the
+\texttt{cutoff} argument. Additional annotations are added to facilitate
+better reading of the plot and these include 1) the number of points
+searched in each iteration can be added as text label at the bottom of
+each iteration; 2) the anchor bases to interpolate are connected and
+highlighted in a larger size; and 3) the colour of the last iteration is
+in a grey scale to indicate no better basis found in this iteration.
 
 Figure \ref{fig:toy-search} shows an example of the search plot for CRS
 (left) and SA (right). Both optimisers quickly find better bases in the
 first few iterations and then take longer to find one in the later
 iterations. The anchor bases, the ones found with the highest index
 value in each iteration, always have an increased index value in the
-optimiser CRS while this is not the case for SA. This feature gives SA
+optimiser CRS while this is not the case for SA. This feature gives CRS
 an advantage in this simple example to quickly find the optimum.
 
 \begin{Schunk}
@@ -474,19 +469,20 @@ progress}\label{toy-interp}}
 
 Another interesting diagnostic is to examine how the index value
 improves between interpolating bases since the projection on these bases
-is played by the tour animation. Trace plots are created by plotting the
+is shown in the tour animation. Trace plots are created by plotting the
 index value against time. Figure \ref{fig:toy-interp} presents the trace
-plot of the same optimisers as Figure \ref{fig:toy-search} and one can
-observe that the trace is smooth in both cases. It may seem bizarre at
-the first sight that the interpolation in the left panel first passes
-some bases with higher index value before decreases to a lower target.
-This happens because on the one hand, the probabilistic acceptance in SA
-implies that some worse bases will be accepted by the optimiser. On the
-other hand, guided tour interpolate between the current and target basis
-to provide a smooth transition between projections. These two facts
-indicate that a non-monotonic interpolation can't be avoided for SA.
-Later, in section \ref{monotonic}, there will be a discussion on
-improving the non-monotonic interpolation for CRS.
+plot of the same optimisations as Figure \ref{fig:toy-search} and one
+can observe that the trace is smooth in both cases. It may seem bizarre
+at the first sight that the interpolation sometimes passes bases with
+higher index value before it decreases to a lower target. This happens
+because on the one hand, the probabilistic acceptance in SA implies that
+some worse bases will be accepted by the optimiser. In addition, the
+guided tour interpolates between the current and target basis to provide
+a smooth transition between projections, and sometimes a higher index
+value will be observed along the interpolation path. This indicates that
+a non-monotonic interpolation can't be avoided, even for CRS. Later, in
+section \ref{monotonic}, there will be a discussion on improving the
+non-monotonic interpolation for CRS.
 
 \hypertarget{toy-pca}{%
 \subsection{Diagnostic 3a: Understanding the optimiser's coverage of the
@@ -504,26 +500,27 @@ search space}\label{toy-pca}}
 \end{Schunk}
 
 Apart from checking the search and progression of an optimiser, looking
-at where the bases are positioned in the basis space is another
+at where the bases are positioned in the basis space is also of
 interest. Given the orthonormality constraint, the space of projection
-bases \(\mathbf{A}_{p \times d}\) is a \(p \times d\)-dimensional
-sphere. A dimensionality reduction method, e.g.~principal component
-analysis is applied to first project all the bases onto a 2D space. In a
-projection pursuit guided tour optimisation, there are various types of
-bases involved: 1) The starting basis; 2) The search bases that the
-optimiser evaluated to produce the anchor bases; 3) The anchor bases
-that have the highest index value in each iteration; 4) The
-interpolating bases on the interpolation path; and finally 5) the end
-basis. The importance of these bases differs and the most important ones
-are the starting, interpolating and end bases. The anchor and search
-bases can be turned on with argument \texttt{details\ =\ TRUE}.
-Sometimes, two optimisers can start with the same basis but finish with
-bases of opposite sign. This happens because the projection is invariant
-to the sign difference of the bases and so does the index value,
-however, this creates difficulties for comparing the optimisers since
-the end bases will be symmetric with respect to the origin. A sign
-flipping step is conducted to flip the signs of all the bases in one
-routine if different optimisations finish at opposite places.
+bases \(\mathbf{A}_{p \times d}\) is a Stiefel manifold. For
+one-dimensional projections this forms a \(p\)-dimensional sphere. A
+dimensionality reduction method, e.g.~principal component analysis is
+applied to first project all the bases onto a 2D space. In a projection
+pursuit guided tour optimisation, there are various types of bases
+involved: 1) The starting basis; 2) The search bases that the optimiser
+evaluated to produce the anchor bases; 3) The anchor bases that have the
+highest index value in each iteration; 4) The interpolating bases on the
+interpolation path; and finally 5) the end basis. The importance of
+these bases differs and the most important ones are the starting,
+interpolating and end bases. The anchor and search bases can be turned
+on with argument \texttt{details\ =\ TRUE}. Sometimes, two optimisers
+can start with the same basis but finish with bases of opposite sign.
+This happens because the projection is invariant to orientation of the
+basis and so is the index value. However, this creates difficulties for
+comparing the optimisers since the end bases will be symmetric with
+respect to the origin. A sign flipping step is conducted to flip the
+signs of all the bases in one routine if different optimisations finish
+at opposite places.
 
 Several annotations have been made to help understanding this plot. As
 mentioned previously, the original basis space is a high-dimensional
@@ -545,7 +542,7 @@ opaque.
 
 Figure \ref{fig:toy-pca} shows the PCA plot of CRS and PD for a 1D
 projection problem. Both optimisers find the optimum but PD gets closer.
-With PCA plot, one can visually appreciate the nature of these two
+With the PCA plot, one can visually appreciate the nature of these two
 optimisers: PD first evaluates points in a small neighbourhood for a
 promising direction, while CRS evaluates points randomly in the search
 space to search for the next target. There are dashed lines annotated
@@ -605,16 +602,15 @@ torus}\label{diagnostic-4b-forming-a-torus}}
 
 While the previous few examples have looked at the space of 1D bases in
 a unit sphere, this section visualises the space of 2D bases. Recall
-that the columns in a 2D basis are orthogonal to each other, the space
-of \(p \times 2\) bases is a \(p\)-D torus. If take \(p = 3\), one would
-see a classical 3D torus shape as shown by the grey points in Figure
-\ref{fig:toy-torus}. The two circles of the torus can be observed to be
-perpendicular to each other and this can be linked back to the
-orthogonality of the columns in the bases. Two paths optimised by CRS
-and PD are plotted on top of the torus and coloured in green and brown
-respectively to match the previous few 1D space plots. The final basis
-found by PD and CRS are shown in a larger shape and printed below
-respectively:
+that the columns in a 2D basis are orthogonal to each other, so the
+space of \(p \times 2\) bases is a \(p\)-D torus. For \(p = 3\) one
+would see a classical 3D torus shape as shown by the grey points in
+Figure \ref{fig:toy-torus}. The two circles of the torus can be observed
+to be perpendicular to each other and this can be linked back to the
+orthogonality. Two paths from CRS and PD are plotted on top of the torus
+and coloured in green and brown respectively to match the previous
+plots. The final basis found by PD and CRS are shown in a larger shape
+and printed below respectively:
 
 \begin{Schunk}
 \begin{Soutput}
@@ -634,14 +630,15 @@ respectively:
 \end{Soutput}
 \end{Schunk}
 
-Both optimisers have found the third variable in the first column, but
-the second variable in the second column differs by a sign.One would
-expect to see this in the torus plot as the final bases match each other
-when projected onto one torus circle (due to the same sign in the first
-column) and be symmetric when projected onto the other (due the the sign
-difference in the second column). In Figure \ref{fig:toy-torus}, this
-can be seen most clearly in frame 5 where the two circles are rotated
-into a line from our view.
+Both optimisers have found the third variable in the first direction,
+and the second variable in the second direction. Note however the
+different orientation of the basis, following from the different sign in
+the second column. One would expect to see this in the torus plot as the
+final bases match each other when projected onto one torus circle (due
+to the same sign in the first column) and be symmetric when projected
+onto the other (due the the sign difference in the second column). In
+Figure \ref{fig:toy-torus}, this can be seen most clearly in frame 5
+where the two circles are rotated into a line from our view.
 
 \begin{Schunk}
 \begin{figure}
@@ -893,15 +890,11 @@ interpolation no longer exist.
 \hypertarget{implementation}{%
 \section{Implementation}\label{implementation}}
 
-The implementation of this projection has been divided into two
-packages: the data collection object is implemented in the existing CRAN
-package \CRANpkg{tourr} \citep{tourr} while the optimiser diagnostics
-have been implemented in a new package, \pkg{ferrn}. When a guided tour
-is run, the users can choose to collect the data by binding
-\texttt{animate\_*()} to a variable. Once the data object has been
-obtained, the \pkg{ferrn} package provides diagnostic plots shown in
-Section \ref{vis-diag}. The main functions of the \pkg{ferrn} package
-functionality is listed below.
+This project contributes to the software development in two packages: a
+data collection object is implemented in \CRANpkg{tourr} \citep{tourr},
+while the visual diagnostics of the optimisers is implemented in
+\CRANpkg{ferrn} \citep{ferrn}. Below list functions in the
+\CRANpkg{ferrn} \citep{ferrn} package:
 
 \begin{itemize}
 \item
@@ -1180,4 +1173,3 @@ Department of Econometrics and Business Statistics\\
 %
 \\\href{mailto:patricia.menendez@monash.edu}{\nolinkurl{patricia.menendez@monash.edu}}
 }
-

@@ -22,7 +22,7 @@ author:
     address: Department of Econometrics and Business Statistics
     email:  patricia.menendez@monash.edu 
 abstract: |
-  Guided tour searches for interesting low-dimensional views of high-dimensional data via optimising a projection pursuit index function. The first paper of projection pursuit by @friedman1974projection stated that "the technique used for maximising the projection index strongly influences both the statistical and the computational aspects of the procedure." While much work has been done in proposing  indices in the literature, less has been done on evaluating the performance of the optimisers. In this paper, we implement a data collection object in the optimisation of projection pursuit guided tour and introduce visual diagnostics based on the data object collected. These diagnostics and this workflow can be applied to a broad class of optimisers, to assess their performance. An R package, \pkg{ferrn}, has been created to implement the diagnostics. 
+  Guided tour searches for interesting low-dimensional views of high-dimensional data via optimising a projection pursuit index function. The first paper of projection pursuit by @friedman1974projection stated that "the technique used for maximising the projection index strongly influences both the statistical and the computational aspects of the procedure." While much work has been done in proposing  indices in the literature, less has been done on evaluating the performance of the optimisers. In this paper, we implement a data collection object in the optimisation of projection pursuit guided tour and introduce visual diagnostics based on the data object collected. These diagnostics and this workflow can be applied to a broad class of optimisers, to assess their performance. An R package, \CRANpkg{ferrn} [@ferrn], has been created to implement the diagnostics. 
   
   \noindent \textit{keywords}: graphics, multivariate, optimization
 preamble: >
@@ -91,7 +91,7 @@ Section \ref{optim} provides an overview of optimisation methods, specifically l
 Section \ref{tour} reviews projection pursuit guided tour, defines the optimisation problem and outlines three existing algorithms.
 Section \ref{vis-diag} presents the new visual diagnostics. A data structure is defined to capture information during the optimisation, and different diagnostic plots are designed with the data collected.
 Section \ref{application} shows applications of how these diagnostic plots can be used to discover interesting aspects of different optimisers and guide improvements to the existing algorithms.
-Finally, Section \ref{implementation} describes the R package: \pkg{ferrn}, that implements the visual diagnostics.
+Finally, Section \ref{implementation} describes the R package: \CRANpkg{ferrn} [@ferrn], that implements the visual diagnostics.
 
 
 # Optimisation methods {#optim}
@@ -355,7 +355,7 @@ One interesting situation observed in the previous examples is that, for some si
 
 # Implementation {#implementation}
 
-The implementation of this projection has been divided into two packages: the data collection object is implemented in the existing CRAN package \CRANpkg{tourr} [@tourr] while the optimiser diagnostics have been implemented in a new package, \pkg{ferrn}. When a guided tour is run, the users can choose to collect the data by binding `animate_*()` to a variable. Once the data object has been obtained, the \pkg{ferrn} package provides diagnostic plots shown in Section \ref{vis-diag}. The main functions of the \pkg{ferrn} package functionality is listed below.
+This project contributes to the software development in two packages: a data collection object is implemented in \CRANpkg{tourr} [@tourr], while the visual diagnostics of the optimisers is implemented in \CRANpkg{ferrn} [@ferrn].  Below list functions in the \CRANpkg{ferrn} [@ferrn] package: 
 
 - Main plotting functions: 
 
