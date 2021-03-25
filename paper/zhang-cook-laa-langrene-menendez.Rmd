@@ -90,7 +90,7 @@ The remainder of the paper is organised as follows.
 The next section provides an overview of optimisation methods, specifically line search methods.  A review of the projection pursuit guided tour, an overview of the optimisation problem and outlines of three existing algorithms follows.
 The third section presents the new visual diagnostics, including the the design of a data structure to capture information during the optimisation, from which several diagnostic plots are created.
 An illustration of how the diagnostic plots can be used to examine the performance of different optimisers and guide improvements to the existing algorithms applications is shown using simulated data.
-Finally, an explanation of the \ref{implementation} in the R package, \CRANpkg{ferrn} [@ferrn], is provided.
+Finally, an explanation of the implementation in the R package, \CRANpkg{ferrn} [@ferrn], is provided.
 
 
 # Optimisation methods {#optim}
