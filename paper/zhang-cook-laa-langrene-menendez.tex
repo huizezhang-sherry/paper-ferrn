@@ -50,35 +50,35 @@ of optimisers in practice.
 
 The focus of this paper is on the optimisation problem arising in the
 projection pursuit guided tour \citep{buja2005computational}, an
-exploratory data analysis tool used for detecting interesting structures
-in high-dimensional data through a set of lower-dimensional projections
-\citep{cook2008grand}. The goal of the optimisation is to identify the
-projection, represented by the projection matrix, that gives the most
-interesting low-dimensional view. A view is interesting if it can show
-some structures of the data other than a normal distribution, e.g.,
-bi-modality, clustering, and outliers.
+exploratory data analysis technique used for detecting interesting
+structures in high-dimensional data through a set of lower-dimensional
+projections \citep{cook2008grand}. The goal of the optimisation is to
+identify the projection, represented by the projection matrix, that
+gives the most interesting low-dimensional view. A view is interesting
+if it can show some structures of the data that depart from normalality,
+such as bimodality, clustering, or outliers.
 
 The optimization challenges encountered in the projection pursuit guided
 tour problem are common to those of optimization in general. Examples
 include the existence of multiple optima (local and global), the
 trade-off between computational burden and proximity to the optima, or
 dealing with noisy objective functions that might be non-smooth and
-non-differentiable \citep{jones1998efficient}. The visualization tools
-and optimization methods presented in this paper can therefore easily be
-applied to other optimization problems.
+non-differentiable \citep{jones1998efficient}. The visualization tools,
+optimization methods and conceptual framework presented in this paper
+can therefore be applied to other optimization problems.
 
-The remainder of the paper is organised as follows. Section \ref{optim}
+The remainder of the paper is organised as follows. The next section
 provides an overview of optimisation methods, specifically line search
-methods. Section \ref{tour} reviews projection pursuit guided tour,
-defines the optimisation problem and outlines three existing algorithms.
-Section \ref{vis-diag} presents the new visual diagnostics. A data
-structure is defined to capture information during the optimisation, and
-different diagnostic plots are designed with the data collected. Section
-\ref{application} shows applications of how these diagnostic plots can
-be used to examine the performance of different optimisers and guide
-improvements to the existing algorithms. Finally, Section
-\ref{implementation} describes the R package: \CRANpkg{ferrn}
-\citep{ferrn}, that implements the visual diagnostics.
+methods. A review of the projection pursuit guided tour, an overview of
+the optimisation problem and outlines of three existing algorithms
+follows. The third section presents the new visual diagnostics,
+including the the design of a data structure to capture information
+during the optimisation, from which several diagnostic plots are
+created. An illustration of how the diagnostic plots can be used to
+examine the performance of different optimisers and guide improvements
+to the existing algorithms applications is shown using simulated data.
+Finally, an explanation of the \ref{implementation} in the R package,
+\CRANpkg{ferrn} \citep{ferrn}, is provided.
 
 \hypertarget{optim}{%
 \section{Optimisation methods}\label{optim}}
