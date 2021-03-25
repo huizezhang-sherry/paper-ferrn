@@ -92,17 +92,20 @@ required to perform differentiation on a matrix could impede the render
 of tour animation. Hence, gradient-based methods are not the focus of
 this paper and considerations will be given to derivative-free methods.
 
-Derivative-free methods, which do not rely on the knowledge of the
-gradient, are more generally applicable. Derivative-free methods have
-been developed over the years, where the emphasis is on finding, in most
-cases, a near optimal solution. Here we consider three derivative-free
-methods, two of which are random search methods: creeping random search
-and simulated annealing, and the other one is pseudo derivative search.
+Derivative-free methods
+\citep{rios2013derivative, conn2009introduction}, which do not rely on
+the knowledge of the gradient, are more generally applicable.
+Derivative-free methods have been developed over the years, where the
+emphasis is on finding, in most cases, a near optimal solution. Here we
+consider three derivative-free methods, two of which are random search
+methods: creeping random search and simulated annealing, and the other
+one is pseudo derivative search.
 
-Random search methods \citep{zabinsky2013stochastic, Romeijn2009} have a
-random sampling component as part of their algorithm and have been shown
-to have the ability to optimise non-convex and non-smooth functions. The
-initial random search algorithm, pure random search
+Random search methods
+\citep{zabinsky2013stochastic, Romeijn2009, andradottir2015review} have
+a random sampling component as part of their algorithm and have been
+shown to have the ability to optimise non-convex and non-smooth
+functions. The initial random search algorithm, pure random search
 \citep{Brooks1958-zk}, draws candidate points from the entire space
 without using any information of the current position and updates the
 current position when an improvement on the objective function is made.
@@ -296,10 +299,10 @@ diagnostic plots are presented.
 \subsection{Data structure for
 diagnostics}\label{data-structure-for-diagnostics}}
 
-Three main pieces of information are recorded for the projection pursuit
-optimisers: 1) projection bases \(\mathbf{A}\), 2) index values \(I\),
-and 3) state \(S\). For CRS and SA, possible states include
-\texttt{random\_search}, \texttt{new\_basis}, and
+Three main pieces of information are recorded during the projection
+pursuit optimisation: 1) projection bases \(\mathbf{A}\), 2) index
+values \(I\), and 3) state \(S\). For CRS and SA, possible states
+include \texttt{random\_search}, \texttt{new\_basis}, and
 \texttt{interpolation}. Pseudo derivative (PD) has a wider variety of
 states including \texttt{new\_basis}, \texttt{direction\_search},
 \texttt{best\_direction\_search}, \texttt{best\_line\_search}, and
@@ -401,18 +404,19 @@ working}\label{diagnostic-1-checking-how-hard-the-optimiser-is-working}}
 
 A starting point of diagnosing an optimiser is to understand how many
 searches it has conducted, i.e.~we want to summarise how the index is
-increasing over iterations and how many tries need to be sampled at each
-iteration. This is achieved using the search plot function: a boxplot
-shows the distribution of index values for each try, where the selected
-basis (corresponding to the highest index value) is always shown as a
-point. In case of few tries at a given iteration showing the data points
-directly may be preferred over the boxplot, this is controlled via the
-\texttt{cutoff} argument. Additional annotations are added to facilitate
-better reading of the plot and these include 1) the number of points
-searched in each iteration can be added as text label at the bottom of
-each iteration; 2) the anchor bases to interpolate are connected and
-highlighted in a larger size; and 3) the colour of the last iteration is
-in a grey scale to indicate no better basis found in this iteration.
+increasing over iterations and how many basis need to be sampled at each
+iteration. This is achieved using the function
+\texttt{explore\_trace\_search()}: a boxplot shows the distribution of
+index values for each try, where the accepted basis (corresponding to
+the highest index value) is always shown as a point. In the case of few
+tries at a given iteration, showing the data points directly may be
+preferred over the boxplot, this is controlled via the \texttt{cutoff}
+argument. Additional annotations are added to facilitate better reading
+of the plot and these include 1) the number of points searched in each
+iteration can be added as text label at the bottom of each iteration; 2)
+the anchor bases to interpolate are connected and highlighted in a
+larger size; and 3) the colour of the last iteration is in a grey scale
+to indicate no better basis found in this iteration.
 
 Figure \ref{fig:toy-search} shows an example of the search plot for CRS
 (left) and SA (right). Both optimisers quickly find better bases in the
@@ -448,13 +452,13 @@ progress}\label{toy-interp}}
 \end{figure}
 \end{Schunk}
 
-Another interesting diagnostic is to examine how the index value
-improves between interpolating bases since the projection on these bases
-is shown in the tour animation. Trace plots are created by plotting the
-index value against time. Figure \ref{fig:toy-interp} presents the trace
-plot of the same optimisations as Figure \ref{fig:toy-search} and one
-can observe that the trace is smooth in both cases. It may seem bizarre
-at the first sight that the interpolation sometimes passes bases with
+Another interesting feature to examine is the changes on the index value
+between interpolating bases since the projection on these bases is shown
+in the tour animation. Trace plots are created by plotting the index
+value against time. Figure \ref{fig:toy-interp} presents the trace plot
+of the same optimisations as Figure \ref{fig:toy-search} and one can
+observe that the trace is smooth in both cases. It may seem bizarre at
+the first sight that the interpolation sometimes passes bases with
 higher index value before it decreases to a lower target. This happens
 because on the one hand, the probabilistic acceptance in SA implies that
 some worse bases will be accepted by the optimiser. In addition, the
