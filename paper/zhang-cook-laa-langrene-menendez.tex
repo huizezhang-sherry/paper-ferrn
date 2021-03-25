@@ -41,23 +41,6 @@ The work presented in this paper brings visualization tools into
 optimisation problems with the aim to better understand the performance
 of optimisers in practice.
 
-The goal of continuous optimisation is to find the best solution within
-the space of all feasible solutions where typically the best solution is
-defined via an objective function. Broadly speaking, optimization can be
-unconstrained or constrained \citep{kelley1999iterative}. The
-unconstrained problem can be formulated as a minimization (or
-maximization) problem such as \(\min_{x} f(x)\) where
-\(f:\mathbb{R}^n \rightarrow \mathbb{R}\) is an objective function with
-certain properties defined in an \(L^p\) space. In this case, solutions
-rely on gradient descent or ascent methods. In the constrained
-optimization problem additional restrictions are introduced via a set of
-functions that can be convex or non-convex:
-\(g_i:\mathbb{R}^n \rightarrow \mathbb{R}\) for \(i = 1, \ldots k\) and
-hence the problem can be written as \(\min_{x} f(x)\) \emph{subject to}
-\(g_i(x) \leq 0\). Here methods such as multipliers and convex
-optimization methods including linear and quadratic programming can be
-used.
-
 The focus of this paper is on the optimisation problem arising in the
 projection pursuit guided tour \citep{buja2005computational}, an
 exploratory data analysis tool used for detecting interesting structures
@@ -448,7 +431,7 @@ an advantage in this simple example to quickly find the optimum.
 
 }
 
-\caption[A comparison of the searches by two optimisers]{A comparison of the searches by two optimisers: CRS (left) and SA (right) on a 2D projection problem of a six-variable dataset, \code{boa6} using holes index. Both optimisers reach the final basis with a similar index value while it takes SA longer to find the final basis.}\label{fig:toy-search}
+\caption[A comparison of the searches by two optimisers]{A comparison of the searches by two optimisers: CRS (left) and SA (right) on a 2D projection problem of a six-variable dataset, \code{boa6} using holes index. Both optimisers reach the final basis with a similar index value while it takes SA longer to find the final basis. In the earlier iterations, optimisers quickly find a better basis to proceed while in the later iterations, most sampled bases fail to make an improvement on the index value and boxplot is used to summarise the distribution of the index values. There is no better basis found in the last iteration, 9 (left) and 15 (right), before reaching the maximum number of try and hence it is colored grey.}\label{fig:toy-search}
 \end{figure}
 \end{Schunk}
 
@@ -667,7 +650,9 @@ the distributional form of each variable is presented in equations
 \texttt{x8}, \texttt{x9} and \texttt{x10} are normal noise with zero
 mean and unit variance and \texttt{x2} to \texttt{x7} are normal
 mixtures with varied weights and locations. All the variables have been
-scaled to have an overall unit variance before projection pursuit.
+scaled to have an overall unit variance before projection pursuit. Holes
+index \citep{cook2008grand}, used for detecting binormality of the
+variables, is used throughout the examples unless otherwise specified.
 
 \begin{align}
 x_1 \overset{d}{=} x_8 \overset{d}{=} x_9 \overset{d}{=} x_{10}& \sim \mathcal{N}(0, 1) \label{eq:sim-norm} \\

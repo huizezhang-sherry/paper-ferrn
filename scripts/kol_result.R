@@ -9,7 +9,7 @@ clean_pca <- clean %>%
                    raw_data = boa6) %>%
   mutate(seed_sim = paste0(seed, sim),
          alpha = ifelse(str_detect(sim, "tuned"), 0.7, 0.5),
-         optimiser = ifelse(str_detect(sim, "random"), "SAJO", "SA"),
+         optimiser = ifelse(str_detect(sim, "random"), "SA", "CRS"),
          var_found = as.factor(ifelse(var_found == "V7", "global", "local")),
          var_found = fct_relevel(var_found, "global", after = 1)) %>%
   compute_pca(group = seed_sim) %>%
