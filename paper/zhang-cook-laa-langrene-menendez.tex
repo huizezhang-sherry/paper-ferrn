@@ -7,20 +7,20 @@ Langrené, and Patricia Menéndez}
 \maketitle
 
 \abstract{%
-Guided tour searches for interesting low-dimensional views of
-high-dimensional data via optimising a projection pursuit index
-function. The first paper of projection pursuit by
-\citet{friedman1974projection} stated that ``the technique used for
+Guided tour \citep{cook1995grand} searches for interesting
+low-dimensional views of high-dimensional data via optimising a
+projection pursuit index function. The first paper of projection pursuit
+by \citet{friedman1974projection} stated that ``the technique used for
 maximising the projection index strongly influences both the statistical
 and the computational aspects of the procedure.'' While much work has
 been done in proposing indices in the literature, less has been done on
-evaluating the performance of the optimisers. In this paper, we
-implement a data collection object in the optimisation of projection
-pursuit guided tour and introduce visual diagnostics based on the data
-object collected. These diagnostics and this workflow can be applied to
-a broad class of optimisers, to assess their performance. An R package,
-\CRANpkg{ferrn} \citep{ferrn}, has been created to implement the
-diagnostics.
+evaluating the performance of the optimisers. In this paper, we propose
+a data collection object in the optimisation of projection pursuit
+guided tour and introduce visual diagnostics for examining the
+performance of the optimisation procedure. These diagnostics and this
+workflow can be applied to a broad class of optimisers to assess their
+performance. An R package, \CRANpkg{ferrn} \citep{ferrn}, has been
+created to implement the diagnostics.
 
 \noindent \textit{keywords}: graphics, multivariate, optimization
 }
@@ -68,31 +68,29 @@ Section \ref{vis-diag} presents the new visual diagnostics. A data
 structure is defined to capture information during the optimisation, and
 different diagnostic plots are designed with the data collected. Section
 \ref{application} shows applications of how these diagnostic plots can
-be used to discover interesting aspects of different optimisers and
-guide improvements to the existing algorithms. Finally, Section
+be used to examine the performance of different optimisers and guide
+improvements to the existing algorithms. Finally, Section
 \ref{implementation} describes the R package: \CRANpkg{ferrn}
 \citep{ferrn}, that implements the visual diagnostics.
 
 \hypertarget{optim}{%
 \section{Optimisation methods}\label{optim}}
 
-The optimisation problem of our interest is on constrained optimization
-\citep{bertsekas2014constrained} as defined in the introduction section,
-and assuming it is not possible to find a solution to the problem in the
-way of a closed-form. That is, the problem consists of finding the
-minimum or maximum of a function \(f \in L^p\) in the constrained
-\(\mathcal{A}\) space.
+The optimisation problem considered in this paper is on constrained
+optimization \citep{bertsekas2014constrained} and assuming it is not
+possible to find a solution to the problem in the way of a closed-form.
+That is, the problem consists of finding the minimum or maximum of a
+function \(f \in L^p\) in the constrained \(\mathcal{A}\) space.
 
-A large class of methods uses the gradient information of the objective
+Gradient-based methods are commonly used to optimise an objective
 function, with the most notable one being the gradient ascent (descent)
-method. Although gradient optimization methods are popular, they rely on
-the availability of the objective function derivatives and on the
-limited complexity of the constraints. As will be shown in the next
-section, the independent variables in our optimisation problem are the
-entries of a projection matrix and the computational time required to
-perform differentiation on a matrix could impede the render of tour
-animation. Hence, gradient-based methods are not the focus of this paper
-and considerations will be given to derivative-free methods.
+method. Although these methods are popular, they rely on the
+availability of the objective function derivatives. As will be shown in
+the next section, the independent variables in our optimisation problem
+are the entries of a projection matrix and the computational time
+required to perform differentiation on a matrix could impede the render
+of tour animation. Hence, gradient-based methods are not the focus of
+this paper and considerations will be given to derivative-free methods.
 
 Derivative-free methods, which do not rely on the knowledge of the
 gradient, are more generally applicable. Derivative-free methods have
@@ -101,9 +99,9 @@ cases, a near optimal solution. Here we consider three derivative-free
 methods, two of which are random search methods: creeping random search
 and simulated annealing, and the other one is pseudo derivative search.
 
-Random search methods \citep{zabinsky2013stochastic} have a random
-sampling component as part of their algorithm and have been shown to
-have the ability to optimise non-convex and non-smooth functions. The
+Random search methods \citep{zabinsky2013stochastic, Romeijn2009} have a
+random sampling component as part of their algorithm and have been shown
+to have the ability to optimise non-convex and non-smooth functions. The
 initial random search algorithm, pure random search
 \citep{Brooks1958-zk}, draws candidate points from the entire space
 without using any information of the current position and updates the
@@ -125,7 +123,7 @@ acceptance criterion, where worse candidates still have a chance to be
 accepted. The convergence of simulated annealing algorithms has been
 widely researched
 \citep{mitra1986convergence, belisle1992convergence, granville1994simulated}
-and the global optimum can be attained under mild conditions.
+and the global optimum can be attained under mild regularity conditions.
 
 Pseudo derivative search uses a common search scheme in optimistaion:
 line search. In line search methods, users are required to provide an
@@ -144,11 +142,13 @@ finding the value of \(\alpha_k \in \mathbb{R}\) that maximises
 \section{Projection pursuit guided tour}\label{tour}}
 
 Projection pursuit guided tour combines two different methods
-(projection pursuit and guided tour) in exploratory data analysis.
-Projection pursuit, coined by \citet{friedman1974projection}, detects
-interesting structures (e.g.~clustering, outliers and skewness) in
-multivariate data via low-dimensional projections. Guided tour is one
-variation of a broader class of data visualisation methods, tour, which
+(projection pursuit and guided tour) to explore interesting features in
+a high dimensional space. Projection pursuit, coined by
+\citet{friedman1974projection}, detects interesting structures
+(e.g.~clustering, outliers and skewness) in multivariate data via
+low-dimensional projections. Guided tour
+\citep{cook2008grand, cook1995grand} is one variation of a broader class
+of data visualisation methods, tour \citep{buja2005computational}, which
 displays high-dimensional data through a series of animated projections.
 
 Let \(\mathbf{X}_{n \times p}\) be the data matrix with \(n\)
@@ -165,10 +165,10 @@ of a given projection. An interesting projection shows structures that
 are non-normal since theoretical proofs from
 \citet{diaconis1984asymptotics} have shown that projections tend to be
 normal, as \(n\) and \(p\) approach infinity under certain conditions.
-Index functions proposed in the litearture include early indices that
-can be categorised by measuring the \(L^2\) distance between the
-projection and a normal distribution: Legendre index
-\citep{friedman1974projection}, Hermite index
+There has been plentiful index functions proposed in the literature and
+here list a few: early indices that can be categorised as measuring the
+\(L^2\) distance between the projection and a normal distribution:
+Legendre index \citep{friedman1974projection}, Hermite index
 \citep{hall1989polynomial}, and natural Hermite index
 \citep{cook1993projection}; chi-square index \citep{posse1995projection}
 for detecting spiral structure; kurtosis index \citep{Loperfido2020} and
@@ -290,9 +290,7 @@ summarises the inner loop of the PD.
 
 A data structure for diagnosing optimisers in projection pursuit guided
 tour is first defined. With this data structure, four types of
-diagnostic plots are presented. In the section, examples will be given
-to show how these plot can be used to reveal issues in the projection
-pursuit optimisation.
+diagnostic plots are presented.
 
 \hypertarget{data-structure-for-diagnostics}{%
 \subsection{Data structure for
