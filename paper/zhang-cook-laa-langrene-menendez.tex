@@ -7,20 +7,27 @@ Langrené, and Patricia Menéndez}
 \maketitle
 
 \abstract{%
-Guided tour \citep{cook1995grand} searches for interesting
-low-dimensional views of high-dimensional data via optimising a
-projection pursuit index function. The first paper of projection pursuit
-by \citet{friedman1974projection} stated that ``the technique used for
-maximising the projection index strongly influences both the statistical
-and the computational aspects of the procedure.'' While much work has
-been done in proposing indices in the literature, less has been done on
-evaluating the performance of the optimisers. In this paper, we propose
-a data collection object in the optimisation of projection pursuit
-guided tour and introduce visual diagnostics for examining the
-performance of the optimisation procedure. These diagnostics and this
-workflow can be applied to a broad class of optimisers to assess their
-performance. An R package, \CRANpkg{ferrn} \citep{ferrn}, has been
-created to implement the diagnostics.
+A guided tour helps to visualise high-dimensional data by showing the
+low-dimensional projections along a projection pursuit optimization
+path. Projection pursuit is a generalisation of principal component
+analysis, in the sense that different indexes are used to define the
+interestingness of the projected data. While much work has been done in
+developing new indexes in the literature, less has been done on
+understanding the optimization. Index functions can be noisy, they might
+have multiple local maxima as well as an optimal maximum, and it is
+constrained to generate orthonormal projection frames, which complicates
+the optimization. In addition, projection pursuit is primarily used for
+exploratory data analysis, and finding the local maxima is also useful.
+The guided tour is especially useful for exploration, because it
+conducts geodesic interpolation connecting steps in the optimisation and
+shows how the projected data changes as a maxima is approached. This
+work provides new visual diagnostics for examining a choice of
+optimisation procedure, based on the provision of a new data object
+which collects information throughout the optimisation. It has helped to
+diagnose and fix several problems with projection pursuit guided tour.
+This work might be useful more broadly for diagnosing optimisers, and
+comparing their performance. The diagnostics are implemented in the R
+package, \pkg{ferrn}.
 
 \noindent \textit{keywords}: graphics, multivariate, optimization
 }
@@ -239,12 +246,11 @@ tour animation is viewed by the users during the optimisation.
 \hypertarget{existing-algorithms}{%
 \subsection{Existing algorithms}\label{existing-algorithms}}
 
-Three optimisers have been implemented in the \CRANpkg{tourr}
-\citep{tourr} package: Creeping random search (CRS), simulated annealing
-(SA), and pseudo derivative (PD). Creeping random search (CRS) is a
-random search optimiser that samples a candidate basis
-\(\mathbf{A}_{l}\) in the neighbourhood of the current basis
-\(\mathbf{A}_{\text{cur}}\) by
+Three optimisers have been implemented in the \pkg{tourr} \citep{tourr}
+package: Creeping random search (CRS), simulated annealing (SA), and
+pseudo derivative (PD). Creeping random search (CRS) is a random search
+optimiser that samples a candidate basis \(\mathbf{A}_{l}\) in the
+neighbourhood of the current basis \(\mathbf{A}_{\text{cur}}\) by
 \(\mathbf{A}_{l} = (1- \alpha)\mathbf{A}_{\text{cur}} + \alpha \mathbf{A}_{\text{rand}}\)
 where \(\alpha\) controls the radius of the sampling neighbourhood and
 \(\mathbf{A}_{\text{rand}}\) is generated randomly. \(\mathbf{A}_{l}\)
@@ -871,10 +877,10 @@ interpolation no longer exist.
 \section{Implementation}\label{implementation}}
 
 This project contributes to the software development in two packages: a
-data collection object is implemented in \CRANpkg{tourr} \citep{tourr},
+data collection object is implemented in \pkg{tourr} \citep{tourr},
 while the visual diagnostics of the optimisers is implemented in
-\CRANpkg{ferrn} \citep{ferrn}. Below list functions in the
-\CRANpkg{ferrn} \citep{ferrn} package:
+\pkg{ferrn} \citep{ferrn}. Below list functions in the \pkg{ferrn}
+\citep{ferrn} package:
 
 \begin{itemize}
 \item
@@ -1010,29 +1016,25 @@ while the visual diagnostics of the optimisers is implemented in
 \hypertarget{conclusion}{%
 \section{Conclusion}\label{conclusion}}
 
-This paper has set up a data object that can be used for diagnosing a
-complex optimisation procedure. The ideas were illustrated using the
-optimisers available for projection pursuit guided tour. Here the
-constraint is the orthonormality condition of the projection bases. The
-approach used broadly applies to other constrained optimisers.
+This paper has provided several visual diagnostics that can be used for
+diagnosing a complex optimisation procedure. The methods were
+illustrated using the optimisers available for projection pursuit guided
+tour. The methods are implemented in the package \pkg{ferrn}, and
+changes were made in the \pkg{tourr} package to generate the necessary
+data. This work complements with the work of \citet{laa2020using} and
+will be useful for researchers when designing new projection pursuit
+indexes.
 
-Four diagnostic plots have been introduced to investigate the
-progression of the optimiser and its coverage in search space. The
-implementation of these visualisations is designed to be easy-to-use,
-each plot can be produced by supplying the data object to the
-corresponding function. More advanced users may decide to modify these
-basic graphs using the provided wrapper functions, or even build their
-own.
-
-Most of the work in this project has been translated into code in two
-packages: the collection of the data object is implemented in the
-existing \CRANpkg{tourr} \citep{tourr} package; while the manipulation
-and visualisation of the data object are implemented in the new
-\pkg{ferrn} package. Equipped with handy tools to diagnose the
-performance of optimisers, future work can extend the diagnostics to a
-wider range of index functions, i.e.~scagnostics, association, and
-information index \citep{laa2020using} and understand how the optimisers
-behave for index functions with different structures.
+This work might be considered an effort to bring transparency into
+algorithms. Although little attention is paid by algorithm developers to
+providing ways to output information during intermediate steps, this is
+an important component for enabling others to understand and diagnose
+the performance. Algorithms are an essential component of artificial
+intelligence that is used to make daily life easier. Interpretability of
+algorithms is important to guard against aspects like bias and
+inappropriate use. The data object underlying the visual diagnostics
+here is an example of what might be useful in algorithm development
+generally.
 
 \hypertarget{acknowledgements}{%
 \section{Acknowledgements}\label{acknowledgements}}
