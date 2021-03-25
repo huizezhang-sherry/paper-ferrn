@@ -50,35 +50,35 @@ of optimisers in practice.
 
 The focus of this paper is on the optimisation problem arising in the
 projection pursuit guided tour \citep{buja2005computational}, an
-exploratory data analysis tool used for detecting interesting structures
-in high-dimensional data through a set of lower-dimensional projections
-\citep{cook2008grand}. The goal of the optimisation is to identify the
-projection, represented by the projection matrix, that gives the most
-interesting low-dimensional view. A view is interesting if it can show
-some structures of the data other than a normal distribution, e.g.,
-bi-modality, clustering, and outliers.
+exploratory data analysis technique used for detecting interesting
+structures in high-dimensional data through a set of lower-dimensional
+projections \citep{cook2008grand}. The goal of the optimisation is to
+identify the projection, represented by the projection matrix, that
+gives the most interesting low-dimensional view. A view is interesting
+if it can show some structures of the data that depart from normalality,
+such as bimodality, clustering, or outliers.
 
 The optimization challenges encountered in the projection pursuit guided
 tour problem are common to those of optimization in general. Examples
 include the existence of multiple optima (local and global), the
 trade-off between computational burden and proximity to the optima, or
 dealing with noisy objective functions that might be non-smooth and
-non-differentiable \citep{jones1998efficient}. The visualization tools
-and optimization methods presented in this paper can therefore easily be
-applied to other optimization problems.
+non-differentiable \citep{jones1998efficient}. The visualization tools,
+optimization methods and conceptual framework presented in this paper
+can therefore be applied to other optimization problems.
 
-The remainder of the paper is organised as follows. Section \ref{optim}
+The remainder of the paper is organised as follows. The next section
 provides an overview of optimisation methods, specifically line search
-methods. Section \ref{tour} reviews projection pursuit guided tour,
-defines the optimisation problem and outlines three existing algorithms.
-Section \ref{vis-diag} presents the new visual diagnostics. A data
-structure is defined to capture information during the optimisation, and
-different diagnostic plots are designed with the data collected. Section
-\ref{application} shows applications of how these diagnostic plots can
-be used to examine the performance of different optimisers and guide
-improvements to the existing algorithms. Finally, Section
-\ref{implementation} describes the R package: \CRANpkg{ferrn}
-\citep{ferrn}, that implements the visual diagnostics.
+methods. A review of the projection pursuit guided tour, an overview of
+the optimisation problem and outlines of three existing algorithms
+follows. The third section presents the new visual diagnostics,
+including the the design of a data structure to capture information
+during the optimisation, from which several diagnostic plots are
+created. An illustration of how the diagnostic plots can be used to
+examine the performance of different optimisers and guide improvements
+to the existing algorithms applications is shown using simulated data.
+Finally, an explanation of the implementation in the R package,
+\CRANpkg{ferrn} \citep{ferrn}, is provided.
 
 \hypertarget{optim}{%
 \section{Optimisation methods}\label{optim}}
@@ -1019,6 +1019,7 @@ while the visual diagnostics of the optimisers is implemented in
 This paper has provided several visual diagnostics that can be used for
 diagnosing a complex optimisation procedure. The methods were
 illustrated using the optimisers available for projection pursuit guided
+<<<<<<< HEAD
 tour. The methods are implemented in the package \pkg{ferrn}, and
 changes were made in the \pkg{tourr} package to generate the necessary
 data. This work complements with the work of \citet{laa2020using} and
@@ -1035,6 +1036,29 @@ algorithms is important to guard against aspects like bias and
 inappropriate use. The data object underlying the visual diagnostics
 here is an example of what might be useful in algorithm development
 generally.
+=======
+tour. Here the constraint is the orthonormality condition of the
+projection bases. The approach used broadly applies to other constrained
+optimisers.
+
+Four diagnostic plots have been introduced to investigate the
+progression of the optimiser and its coverage in search space. The
+implementation of these visualisations is designed to be easy-to-use,
+each plot can be produced by supplying the data object to the
+corresponding function. More advanced users may decide to modify these
+basic graphs using the provided wrapper functions, or even build their
+own.
+
+Most of the work in this project has been translated into code in two
+packages: the collection of the data object is implemented in the
+existing \pkg{tourr} \citep{tourr} package; while the manipulation and
+visualisation of the data object are implemented in the new \pkg{ferrn}
+package. Equipped with handy tools to diagnose the performance of
+optimisers, future work can extend the diagnostics to a wider range of
+index functions, i.e.~scagnostics, association, and information index
+\citep{laa2020using} and understand how the optimisers behave for index
+functions with different structures.
+>>>>>>> d4a86b629b7de269c66258f31922fb6c96e5a513
 
 \hypertarget{acknowledgements}{%
 \section{Acknowledgements}\label{acknowledgements}}
