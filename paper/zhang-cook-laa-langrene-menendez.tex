@@ -66,7 +66,7 @@ in high-dimensional data through a set of lower-dimensional projections
 projection, represented by the projection matrix, that gives the most
 interesting low-dimensional view. A view is interesting if it can show
 some structures of the data other than a normal distribution, e.g.,
-bi-modality, clustering and outliers.
+bi-modality, clustering, and outliers.
 
 The optimization challenges encountered in the projection pursuit guided
 tour problem are common to those of optimization in general. Examples
@@ -179,12 +179,12 @@ function that maps the projected data \(\mathbf{Y}\) onto a scalar
 value. This is commonly known as the projection pursuit index function,
 or just index function, and is used to measure the ``interestingness''
 of a given projection. An interesting projection shows structures that
-are non-normal and this has been argued for two reasons: Theoretical
-proofs from \citet{diaconis1984asymptotics} show that projections tend
-to be normal, as \(n\) and \(p\) approach infinity under certain
-conditions. Index functions proposed in the litearture include early
-indices that can be categorised by measuring the \(L^2\) distance
-between the projection and a normal distribution: Legendre index
+are non-normal since theoretical proofs from
+\citet{diaconis1984asymptotics} have shown that projections tend to be
+normal, as \(n\) and \(p\) approach infinity under certain conditions.
+Index functions proposed in the litearture include early indices that
+can be categorised by measuring the \(L^2\) distance between the
+projection and a normal distribution: Legendre index
 \citep{friedman1974projection}, Hermite index
 \citep{hall1989polynomial}, and natural Hermite index
 \citep{cook1993projection}; chi-square index \citep{posse1995projection}
@@ -216,7 +216,7 @@ implemented in the R package \CRANpkg{tourr} \citep{tourr}.
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=0.5\linewidth,height=0.2\textheight]{/Users/ursulalaa/papers/paper-tour-vis/img/tour-path} 
+{\centering \includegraphics[width=0.5\linewidth,height=0.2\textheight]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/img/tour-path} 
 
 }
 
@@ -419,7 +419,7 @@ freedom to compose plots with multiple elements on hand.
 working}\label{diagnostic-1-checking-how-hard-the-optimiser-is-working}}
 
 A starting point of diagnosing an optimiser is to understand how many
-searches it has conducted, i.e.~we to summarise how the index is
+searches it has conducted, i.e.~we want to summarise how the index is
 increasing over iterations and how many tries need to be sampled at each
 iteration. This is achieved using the search plot function: a boxplot
 shows the distribution of index values for each try, where the selected
@@ -444,7 +444,7 @@ an advantage in this simple example to quickly find the optimum.
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{/Users/ursulalaa/papers/paper-tour-vis/figs/toy-search-1} 
+{\centering \includegraphics[width=1\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/toy-search-1} 
 
 }
 
@@ -459,7 +459,7 @@ progress}\label{toy-interp}}
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{/Users/ursulalaa/papers/paper-tour-vis/figs/toy-interp-1} 
+{\centering \includegraphics[width=1\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/toy-interp-1} 
 
 }
 
@@ -491,7 +491,7 @@ search space}\label{toy-pca}}
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{/Users/ursulalaa/papers/paper-tour-vis/figs/toy-pca-1} 
+{\centering \includegraphics[width=1\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/toy-pca-1} 
 
 }
 
@@ -510,14 +510,14 @@ pursuit guided tour optimisation, there are various types of bases
 involved: 1) The starting basis; 2) The search bases that the optimiser
 evaluated to produce the anchor bases; 3) The anchor bases that have the
 highest index value in each iteration; 4) The interpolating bases on the
-interpolation path; and finally 5) the end basis. The importance of
+interpolation path; and finally, 5) the end basis. The importance of
 these bases differs and the most important ones are the starting,
 interpolating and end bases. The anchor and search bases can be turned
 on with argument \texttt{details\ =\ TRUE}. Sometimes, two optimisers
 can start with the same basis but finish with bases of opposite sign.
-This happens because the projection is invariant to orientation of the
-basis and so is the index value. However, this creates difficulties for
-comparing the optimisers since the end bases will be symmetric with
+This happens because the projection is invariant to the orientation of
+the basis and so is the index value. However, this creates difficulties
+for comparing the optimisers since the end bases will be symmetric with
 respect to the origin. A sign flipping step is conducted to flip the
 signs of all the bases in one routine if different optimisations finish
 at opposite places.
@@ -556,7 +556,7 @@ plots}\label{diagnostic-3b-animating-the-diagnostic-plots}}
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{/Users/ursulalaa/papers/paper-tour-vis/figs/toy-pca-animated-1} 
+{\centering \includegraphics[width=1\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/toy-pca-animated-1} 
 
 }
 
@@ -580,7 +580,7 @@ itself}\label{diagnostic-4a-the-tour-looking-at-itself}}
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{/Users/ursulalaa/papers/paper-tour-vis/figs/toy-tour-1} 
+{\centering \includegraphics[width=1\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/toy-tour-1} 
 
 }
 
@@ -607,10 +607,10 @@ space of \(p \times 2\) bases is a \(p\)-D torus. For \(p = 3\) one
 would see a classical 3D torus shape as shown by the grey points in
 Figure \ref{fig:toy-torus}. The two circles of the torus can be observed
 to be perpendicular to each other and this can be linked back to the
-orthogonality. Two paths from CRS and PD are plotted on top of the torus
-and coloured in green and brown respectively to match the previous
-plots. The final basis found by PD and CRS are shown in a larger shape
-and printed below respectively:
+orthogonality condition. Two paths from CRS and PD are plotted on top of
+the torus and coloured in green and brown respectively to match the
+previous plots. The final basis found by PD and CRS are shown in a
+larger shape and printed below respectively:
 
 \begin{Schunk}
 \begin{Soutput}
@@ -643,7 +643,7 @@ where the two circles are rotated into a line from our view.
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{/Users/ursulalaa/papers/paper-tour-vis/figs/toy-torus-1} 
+{\centering \includegraphics[width=1\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/toy-torus-1} 
 
 }
 
@@ -699,15 +699,15 @@ full potential. Hence, an interruption is implemented to stop at the
 best basis found in the interpolation. The right panel of Figure
 \ref{fig:interruption} shows the trace plot after implementing the
 interruption and while the first two interpolations are identical, the
-basis at Time 61 has a higher index value than the target in the third
+basis at time 61 has a higher index value than the target in the third
 interpolation. Rather than starting the next iteration from the target
-basis on Time 65, CRS starts the next iteration at Time 61 on the right
+basis on time 65, CRS starts the next iteration at time 61 on the right
 panel and reaches a better final basis.
 
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{/Users/ursulalaa/papers/paper-tour-vis/figs/interruption-1} 
+{\centering \includegraphics[width=1\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/interruption-1} 
 
 }
 
@@ -722,7 +722,7 @@ enough}\label{close-but-not-close-enough}}
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{/Users/ursulalaa/papers/paper-tour-vis/figs/polish-1} 
+{\centering \includegraphics[width=1\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/polish-1} 
 
 }
 
@@ -794,7 +794,7 @@ non-smooth index function, two research questions are raised:
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{/Users/ursulalaa/papers/paper-tour-vis/figs/noisy-better-geo-1} 
+{\centering \includegraphics[width=1\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/noisy-better-geo-1} 
 
 }
 
@@ -809,7 +809,7 @@ failure in optimising non-smooth index functions. While CRS and SA have
 managed to get close to the index value of the theoretical best, the
 trace plot shows that it takes SA much longer to find the final basis.
 This long interpolation path is partially due to the fluctuation in the
-early iterations, where the SA tends to generously accept inferior bases
+early iterations, where SA tends to generously accept inferior bases
 before concentrating near the optimum. The PCA plot shows the
 interpolation path and search points excluding the last termination
 iteration. Pseudo Derivative (PD) quickly gets stuck near the starting
@@ -828,7 +828,7 @@ the overall number of points evaluated.
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{/Users/ursulalaa/papers/paper-tour-vis/figs/kol-result-1} 
+{\centering \includegraphics[width=1\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/kol-result-1} 
 
 }
 
@@ -864,7 +864,7 @@ orientation}\label{reconciling-the-orientation}}
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{/Users/ursulalaa/papers/paper-tour-vis/figs/flip-sign-1} 
+{\centering \includegraphics[width=1\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/flip-sign-1} 
 
 }
 
@@ -1037,7 +1037,7 @@ constraint is the orthonormality condition of the projection bases. The
 approach used broadly applies to other constrained optimisers.
 
 Four diagnostic plots have been introduced to investigate the
-progression of the optimiser and the coverage in search space. The
+progression of the optimiser and its coverage in search space. The
 implementation of these visualisations is designed to be easy-to-use,
 each plot can be produced by supplying the data object to the
 corresponding function. More advanced users may decide to modify these
