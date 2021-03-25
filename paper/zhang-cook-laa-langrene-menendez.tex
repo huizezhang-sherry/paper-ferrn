@@ -475,7 +475,7 @@ search space}\label{toy-pca}}
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/toy-pca-1} 
+{\centering \includegraphics[width=1\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/toy-pca} 
 
 }
 
@@ -1019,12 +1019,9 @@ while the visual diagnostics of the optimisers is implemented in
 This paper has provided several visual diagnostics that can be used for
 diagnosing a complex optimisation procedure. The methods were
 illustrated using the optimisers available for projection pursuit guided
-<<<<<<< HEAD
-tour. The methods are implemented in the package \pkg{ferrn}, and
-changes were made in the \pkg{tourr} package to generate the necessary
-data. This work complements with the work of \citet{laa2020using} and
-will be useful for researchers when designing new projection pursuit
-indexes.
+tour. Here the constraint is the orthonormality condition of the
+projection bases. The approach used broadly applies to other constrained
+optimisers.
 
 This work might be considered an effort to bring transparency into
 algorithms. Although little attention is paid by algorithm developers to
@@ -1036,29 +1033,6 @@ algorithms is important to guard against aspects like bias and
 inappropriate use. The data object underlying the visual diagnostics
 here is an example of what might be useful in algorithm development
 generally.
-=======
-tour. Here the constraint is the orthonormality condition of the
-projection bases. The approach used broadly applies to other constrained
-optimisers.
-
-Four diagnostic plots have been introduced to investigate the
-progression of the optimiser and its coverage in search space. The
-implementation of these visualisations is designed to be easy-to-use,
-each plot can be produced by supplying the data object to the
-corresponding function. More advanced users may decide to modify these
-basic graphs using the provided wrapper functions, or even build their
-own.
-
-Most of the work in this project has been translated into code in two
-packages: the collection of the data object is implemented in the
-existing \pkg{tourr} \citep{tourr} package; while the manipulation and
-visualisation of the data object are implemented in the new \pkg{ferrn}
-package. Equipped with handy tools to diagnose the performance of
-optimisers, future work can extend the diagnostics to a wider range of
-index functions, i.e.~scagnostics, association, and information index
-\citep{laa2020using} and understand how the optimisers behave for index
-functions with different structures.
->>>>>>> d4a86b629b7de269c66258f31922fb6c96e5a513
 
 \hypertarget{acknowledgements}{%
 \section{Acknowledgements}\label{acknowledgements}}
