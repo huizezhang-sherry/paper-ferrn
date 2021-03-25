@@ -8,12 +8,12 @@ Langrené, and Patricia Menéndez}
 
 \abstract{%
 A guided tour helps to visualise high-dimensional data by showing the
-low-dimensional projections along a projection pursuit optimization
+low-dimensional projections along a projection pursuit optimisation
 path. Projection pursuit is a generalisation of principal component
 analysis, in the sense that different indexes are used to define the
 interestingness of the projected data. While much work has been done in
 developing new indexes in the literature, less has been done on
-understanding the optimization. Index functions can be noisy, they might
+understanding the optimisation. Index functions can be noisy, they might
 have multiple local maxima as well as an optimal maximum, and it is
 constrained to generate orthonormal projection frames, which complicates
 the optimization. In addition, projection pursuit is primarily used for
@@ -53,7 +53,7 @@ structures in high-dimensional data through a set of lower-dimensional
 projections \citep{cook2008grand}. The goal of the optimisation is to
 identify the projection, represented by the projection matrix, that
 gives the most interesting low-dimensional view. A view is interesting
-if it can show some structures of the data that depart from normalality,
+if it can show some structures of the data that depart from normality,
 such as bimodality, clustering, or outliers.
 
 The optimization challenges encountered in the projection pursuit guided
@@ -119,7 +119,7 @@ the entire space would require a long time for convergence to occur,
 despite a guaranteed global convergence \citep{spall2005introduction}.
 Various algorithms have thus been developed to improve pure random
 search by either concentrating on a narrower sampling space or using a
-different updating machanism. Creeping random search
+different updating mechanism. Creeping random search
 \citep{White1971-ci} is such a variation, where a candidate point is
 generated within a neighbourhood of the current point. This makes
 creeping random search faster to compute, however, global convergence is
@@ -132,7 +132,7 @@ accepted. The convergence of simulated annealing algorithms has been
 widely researched \citep{mitra1986convergence, granville1994simulated}
 and the global optimum can be attained under mild regularity conditions.
 
-Pseudo derivative search uses a common search scheme in optimistaion:
+Pseudo derivative search uses a common search scheme in optimisation:
 line search. In line search methods, users are required to provide an
 initial estimate \(x_{1}\) and, at each iteration, a search direction
 \(S_k\) and a step size \(\alpha_k\) are generated. Then one moves on to
@@ -173,7 +173,7 @@ are non-normal since theoretical proofs from
 \citet{diaconis1984asymptotics} have shown that projections tend to be
 normal, as \(n\) and \(p\) approach infinity under certain conditions.
 There has been plentiful index functions proposed in the literature and
-here list a few: early indices that can be categorised as measuring the
+here list a few: early indexes that can be categorised as measuring the
 \(L^2\) distance between the projection and a normal distribution:
 Legendre index \citep{friedman1974projection}, Hermite index
 \citep{hall1989polynomial}, and natural Hermite index
@@ -182,7 +182,7 @@ for detecting spiral structure; LDA index\citep{lee2005projection} and
 PDA \citep{lee2010projection} index for supervised classification;
 kurtosis index \citep{Loperfido2020} and skewness index
 \citep{Loperfido2018} for detecting outliers in financial time series;
-and most recently, scagnostic indices \citep{laa2020using} for
+and most recently, scagnostic indexes \citep{laa2020using} for
 summarising structures in scatterplot matrices based on eight scagnostic
 measures.
 
@@ -277,9 +277,9 @@ basis, SA gives it a second chance to be accepted with probability
 where \(I_{(\cdot)}\) denotes the index value of a given basis. This
 implementation allows the optimiser to make a move and explore the basis
 space even if the candidate basis does not have a higher index value and
-hence enable the optimiser to jump out of a local optimum. The algorithm
-\ref{simulated-annealing} in the appendix highlights how SA differs from
-CRS in the inner loop.
+hence enables the optimiser to jump out of a local optimum. The
+algorithm \ref{simulated-annealing} in the appendix highlights how SA
+differs from CRS in the inner loop.
 
 Pseudo derivative (PD) search uses a different strategy than CRS and SA.
 Rather than randomly sample the basis space, PD first computes a search
@@ -407,7 +407,7 @@ argument. Additional annotations are added to facilitate better reading
 of the plot and these include 1) the number of points searched in each
 iteration can be added as text label at the bottom of each iteration; 2)
 the anchor bases to interpolate are connected and highlighted in a
-larger size; and 3) the colour of the last iteration is in a grey scale
+larger size; and 3) the colour of the last iteration is in a greyscale
 to indicate no better basis found in this iteration.
 
 Figure \ref{fig:toy-search} shows an example of the search plot for CRS
@@ -440,11 +440,11 @@ progress}\label{toy-interp}}
 
 }
 
-\caption[An inspection of the index values as the optimisation progress for two optimisers]{An inspection of the index values as the optimisation progress for two optimisers: CRS (left) and SA (right). The holes index is optimised for a 2D projection problem on the six-variable dataset \code{boa6}. Lines indicate the interpolation and dots indicate new target bases generated by the optimisers. Interpolation in both optimisation is smooth while SA is observed to first pass by some bases with higher index value before reach the target bases in time 76-130.}\label{fig:toy-interp}
+\caption[An inspection of the index values as the optimisation progress for two optimisers]{An inspection of the index values as the optimisation progress for two optimisers: CRS (left) and SA (right). The holes index is optimised for a 2D projection problem on the six-variable dataset \code{boa6}. Lines indicate the interpolation and dots indicate new target bases generated by the optimisers. Interpolation in both optimisation is smooth while SA is observed to first pass by some bases with higher index value before reaching the target bases in time 76-130.}\label{fig:toy-interp}
 \end{figure}
 \end{Schunk}
 
-Another interesting feature to examine is the changes on the index value
+Another interesting feature to examine is the changes in the index value
 between interpolating bases since the projection on these bases is shown
 in the tour animation. Trace plots are created by plotting the index
 value against time. Figure \ref{fig:toy-interp} presents the trace plot
@@ -452,14 +452,14 @@ of the same optimisations as Figure \ref{fig:toy-search} and one can
 observe that the trace is smooth in both cases. It may seem bizarre at
 the first sight that the interpolation sometimes passes bases with
 higher index value before it decreases to a lower target. This happens
-because on the one hand, the probabilistic acceptance in SA implies that
-some worse bases will be accepted by the optimiser. In addition, the
-guided tour interpolates between the current and target basis to provide
-a smooth transition between projections, and sometimes a higher index
-value will be observed along the interpolation path. This indicates that
-a non-monotonic interpolation can't be avoided, even for CRS. Later, in
-section \ref{monotonic}, there will be a discussion on improving the
-non-monotonic interpolation for CRS.
+because, on the one hand, the probabilistic acceptance in SA implies
+that some worse bases will be accepted by the optimiser. In addition,
+the guided tour interpolates between the current and target basis to
+provide a smooth transition between projections, and sometimes a higher
+index value will be observed along the interpolation path. This
+indicates that a non-monotonic interpolation can't be avoided, even for
+CRS. Later, in section \ref{monotonic}, there will be a discussion on
+improving the non-monotonic interpolation for CRS.
 
 \hypertarget{toy-pca}{%
 \subsection{Diagnostic 3a: Understanding the optimiser's coverage of the
@@ -472,7 +472,7 @@ search space}\label{toy-pca}}
 
 }
 
-\caption[Search paths of CRS (green) and PD (brown) in the PCA-reduced basis space for 1D projection problem on the five-variable dataset, \code{boa5} using holes index]{Search paths of CRS (green) and PD (brown) in the PCA-reduced basis space for 1D projection problem on the five-variable dataset, \code{boa5} using holes index. The basis space, a 5D unit sphere, is projected onto a 2D circle by PCA. All the bases in PD has been flipped for easier comparison of the final bases and a grey dashed line has been annotated to indicate the symmetry of the two start bases.}\label{fig:toy-pca}
+\caption[Search paths of CRS (green) and PD (brown) in the PCA-reduced basis space for 1D projection problem on the five-variable dataset, \code{boa5} using holes index]{Search paths of CRS (green) and PD (brown) in the PCA-reduced basis space for 1D projection problem on the five-variable dataset, \code{boa5} using holes index. The basis space, a 5D unit sphere, is projected onto a 2D circle by PCA. All the bases in PD have been flipped for easier comparison of the final bases and a grey dashed line has been annotated to indicate the symmetry of the two start bases.}\label{fig:toy-pca}
 \end{figure}
 \end{Schunk}
 
@@ -480,7 +480,7 @@ Apart from checking the search and progression of an optimiser, looking
 at where the bases are positioned in the basis space is also of
 interest. Given the orthonormality constraint, the space of projection
 bases \(\mathbf{A}_{p \times d}\) is a Stiefel manifold. For
-one-dimensional projections this forms a \(p\)-dimensional sphere. A
+one-dimensional projections, this forms a \(p\)-dimensional sphere. A
 dimensionality reduction method, e.g.~principal component analysis is
 applied to first project all the bases onto a 2D space. In a projection
 pursuit guided tour optimisation, there are various types of bases
@@ -489,15 +489,15 @@ evaluated to produce the anchor bases; 3) The anchor bases that have the
 highest index value in each iteration; 4) The interpolating bases on the
 interpolation path; and finally, 5) the end basis. The importance of
 these bases differs and the most important ones are the starting,
-interpolating and end bases. The anchor and search bases can be turned
+interpolating, and end bases. The anchor and search bases can be turned
 on with argument \texttt{details\ =\ TRUE}. Sometimes, two optimisers
 can start with the same basis but finish with bases of opposite sign.
 This happens because the projection is invariant to the orientation of
 the basis and so is the index value. However, this creates difficulties
-for comparing the optimisers since the end bases will be symmetric with
-respect to the origin. A sign flipping step is conducted to flip the
-signs of all the bases in one routine if different optimisations finish
-at opposite places.
+for comparing the optimisers since the end bases will be symmetric to
+the origin. A sign flipping step is conducted to flip the signs of all
+the bases in one routine if different optimisations finish at opposite
+places.
 
 Several annotations have been made to help understanding this plot. As
 mentioned previously, the original basis space is a high-dimensional
@@ -510,10 +510,10 @@ is the PC coordinates of the zero matrix, and radius is estimated as the
 largest distance from the centre to the basis. The theoretical best
 basis is known for simulated data and can be labelled to compare how
 close the end basis found by the optimisers is to the theoretical best.
-Various aesthetics, i.e.~size, alpha and colour, are applicable to
+Various aesthetics, i.e.~size, alpha, and colour, are applicable to
 emphasize critical elements and adjust for the presentation. For
 example, anchor points and search points are less important and hence a
-smaller size and alpha is used. Alpha can also be applied on the
+smaller size and alpha are used. Alpha can also be applied on the
 interpolation paths to show the start to finish from transparent to
 opaque.
 
@@ -524,7 +524,7 @@ optimisers: PD first evaluates points in a small neighbourhood for a
 promising direction, while CRS evaluates points randomly in the search
 space to search for the next target. There are dashed lines annotated
 for CRS and it describes the interruption of the interpolation, which
-will be discussed in details in Section \ref{monotonic}.
+will be discussed in detail in Section \ref{monotonic}.
 
 \hypertarget{diagnostic-3b-animating-the-diagnostic-plots}{%
 \subsection{Diagnostic 3b: Animating the diagnostic
@@ -537,7 +537,7 @@ plots}\label{diagnostic-3b-animating-the-diagnostic-plots}}
 
 }
 
-\caption{Six frames selected from the animated version of the previous plot. With animation, the progression of the search paths from start to finish are better identified. CRS (green) finishes the optimisation quicker than PD (brown) since there is no further movement for CRS in the sixth frame. The full video of the animation can be found at \url{https://vimeo.com/504242845}.}\label{fig:toy-pca-animated}
+\caption{Six frames selected from the animated version of the previous plot. With animation, the progression of the search paths from start to finish is better identified. CRS (green) finishes the optimisation quicker than PD (brown) since there is no further movement for CRS in the sixth frame. The full video of the animation can be found at \url{https://vimeo.com/504242845}.}\label{fig:toy-pca-animated}
 \end{figure}
 \end{Schunk}
 
@@ -612,10 +612,10 @@ and the second variable in the second direction. Note however the
 different orientation of the basis, following from the different sign in
 the second column. One would expect to see this in the torus plot as the
 final bases match each other when projected onto one torus circle (due
-to the same sign in the first column) and be symmetric when projected
-onto the other (due the the sign difference in the second column). In
-Figure \ref{fig:toy-torus}, this can be seen most clearly in frame 5
-where the two circles are rotated into a line from our view.
+to the same sign in the first column) and are symmetric when projected
+onto the other (due the sign difference in the second column). In Figure
+\ref{fig:toy-torus}, this can be seen most clearly in frame 5 where the
+two circles are rotated into a line from our view.
 
 \begin{Schunk}
 \begin{figure}
@@ -624,7 +624,7 @@ where the two circles are rotated into a line from our view.
 
 }
 
-\caption{Six frames selected from rotating the 2D basis space along with two search paths optimised by PD (brown) and CRS (green). The projection problem is a 2D projection with three variables using holes index. The grey points are randomly generated 2D projection bases in the space and it can be observed that these points form a torus. The full video of the animation can be found at \url{https://vimeo.com/512882784}.}\label{fig:toy-torus}
+\caption{Six frames selected from rotating the 2D basis space along with two search paths optimised by PD (brown) and CRS (green). The projection problem is a 2D projection with three variables using the holes index. The grey points are randomly generated 2D projection bases in the space and it can be observed that these points form a torus. The full video of the animation can be found at \url{https://vimeo.com/512882784}.}\label{fig:toy-torus}
 \end{figure}
 \end{Schunk}
 
@@ -640,13 +640,13 @@ optimisation, and guide the implementation of new features.
 
 Random variables with different distributions have been simulated and
 the distributional form of each variable is presented in equations
-\ref{eq:sim-norm} to \ref{eq:sim-x7}. Variables \texttt{x1},
-\texttt{x8}, \texttt{x9} and \texttt{x10} are normal noise with zero
-mean and unit variance and \texttt{x2} to \texttt{x7} are normal
-mixtures with varied weights and locations. All the variables have been
-scaled to have an overall unit variance before projection pursuit. Holes
-index \citep{cook2008grand}, used for detecting binormality of the
-variables, is used throughout the examples unless otherwise specified.
+\ref{eq:sim-norm} to \ref{eq:sim-x7}. Variables \texttt{x1}, \texttt{x8}
+to \texttt{x10} are normal noise with zero mean and unit variance and
+\texttt{x2} to \texttt{x7} are normal mixtures with varied weights and
+locations. All the variables have been scaled to have an overall unit
+variance before projection pursuit. Holes index \citep{cook2008grand},
+used for detecting bimodality of the variables, is used throughout the
+examples unless otherwise specified.
 
 \begin{align}
 x_1 \overset{d}{=} x_8 \overset{d}{=} x_9 \overset{d}{=} x_{10}& \sim \mathcal{N}(0, 1) \label{eq:sim-norm} \\
@@ -705,7 +705,7 @@ enough}\label{close-but-not-close-enough}}
 
 }
 
-\caption[Comparison of the projected data before and after using polishing for a 2D projection problem on \code{boa6} data using holes index]{Comparison of the projected data before and after using polishing for a 2D projection problem on \code{boa6} data using holes index. Top row shows the intial projected data and the final views after CRS and polish search and the second row traces the index value. The clustering structure in the data is detected by CRS (top middle panel) but the polish step improves the index value and produces clearer boundaries of the clusters (top right panel), especially along the vertial axis.}\label{fig:polish}
+\caption[Comparison of the projected data before and after using polishing for a 2D projection problem on \code{boa6} data using holes index]{Comparison of the projected data before and after using polishing for a 2D projection problem on \code{boa6} data using holes index. The top row shows the initial projected data and the final views after CRS and polish search and the second row traces the index value. The clustering structure in the data is detected by CRS (top middle panel) but the polish step improves the index value and produces clearer boundaries of the clusters (top right panel), especially along the vertical axis.}\label{fig:polish}
 \end{figure}
 \end{Schunk}
 
@@ -718,8 +718,8 @@ hundred rather than one candidate bases are generated each time in the
 inner loop; 2) the neighbourhood size is reduced in the inner loop,
 rather than in the outer loop; and 3) three more termination conditions
 have been added to ensure the new basis generated is distinguishable
-from the current one in terms of the distance in the space, percentage
-change in the index value, and neighbourhood size:
+from the current one in terms of the distance in the space, the
+percentage change in the index value, and neighbourhood size:
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi})}
@@ -728,20 +728,20 @@ change in the index value, and neighbourhood size:
   the distance between the basis found and the current basis needs to be
   larger than 1e-3;
 \item
-  the percentage change of the index value need to be larger than 1e-5;
+  the percentage change of the index value needs to be larger than 1e-5;
   and
 \item
   the alpha parameter on itself needs to be larger than 0.01
 \end{enumerate}
 
-Figure \ref{fig:polish} presents the projectd data and trace plot of a
+Figure \ref{fig:polish} presents the projected data and trace plot of a
 2D projection, optimised by CRS and followed by the polish step. The top
-row shows the intial projection, the final projection after CRS, and the
-final projection after polish, repsectively. The end basis found by CRS
-reveals the four clusters in the data, but the edges of each cluster are
-not clean-cut. Polish works with this end basis and further pushes the
-index value to produce much clear edges of the cluster, especially along
-the vertical axis.
+row shows the initial projection, the final projection after CRS, and
+the final projection after polish, respectively The end basis found by
+CRS reveals the four clusters in the data, but the edges of each cluster
+are not clean-cut. Polish works with this end basis and further pushes
+the index value to produce clearer edges of the cluster, especially
+along the vertical axis.
 
 \hypertarget{seeing-the-signal-in-the-noise}{%
 \subsection{Seeing the signal in the
@@ -749,13 +749,13 @@ noise}\label{seeing-the-signal-in-the-noise}}
 
 The holes index function used for all the examples before this section
 produces a smooth interpolation, while this is not the case for all the
-indices. An example of a noisy index function for 1D projections
-compares the projected data, \(\mathbf{Y}_{n \times 1}\), to a randomly
-generated normal distribution, \(\mathcal{N}_{n \times 1}\), using the
-Kolmogorov test. Let \(F_{.}(n)\) be the ECDF function, with two
-possible subscripts \(Y\) and \(\mathcal{N}\) representing the projected
-and randomly generated data, and \(n\) denoting the number of
-observation, the Normal Kolmogorov index, \(I^{nk}(n)\), is defined as:
+indexes An example of a noisy index function for 1D projections compares
+the projected data, \(\mathbf{Y}_{n \times 1}\), to a randomly generated
+normal distribution, \(\mathcal{N}_{n \times 1}\), using the Kolmogorov
+test. Let \(F_{.}(n)\) be the ECDF function, with two possible
+subscripts \(Y\) and \(\mathcal{N}\) representing the projected and
+randomly generated data, and \(n\) denoting the number of observation,
+the Normal Kolmogorov index, \(I^{nk}(n)\), is defined as:
 
 \[I^{K}(n) = \max \left[F_{Y}(n) - F_{\mathcal{N}}(n)\right]\] With a
 non-smooth index function, two research questions are raised:
@@ -777,7 +777,7 @@ non-smooth index function, two research questions are raised:
 
 }
 
-\caption[Comparison of the three optimisers in optimising $I^{nk}(n)$ index for a 1D projection problem on a five-variable dataset, \code{boa5}]{Comparison of the three optimisers in optimising $I^{nk}(n)$ index for a 1D projection problem on a five-variable dataset, \code{boa5}. Both CRS and SA succeeds in the optimisation, PD fails to optimise this non-smooth index. Further, SA takes  much longer than CRS to finish the optimisation, it finishes off closer to the theoretical best.}\label{fig:noisy-better-geo}
+\caption[Comparison of the three optimisers in optimising $I^{nk}(n)$ index for a 1D projection problem on a five-variable dataset, \code{boa5}]{Comparison of the three optimisers in optimising $I^{nk}(n)$ index for a 1D projection problem on a five-variable dataset, \code{boa5}. Both CRS and SA succeed in the optimisation, PD fails to optimise this non-smooth index. Further, SA takes  much longer than CRS to finish the optimisation, it finishes off closer to the theoretical best.}\label{fig:noisy-better-geo}
 \end{figure}
 \end{Schunk}
 
@@ -811,7 +811,7 @@ the overall number of points evaluated.
 
 }
 
-\caption[Comparing 20 search paths in the PCA-projected basis space facetted by two optimisers]{Comparing 20 search paths in the PCA-projected basis space facetted by two optimisers: CRS and SA, and two search sizes: 0.5 and 0.7. The optimisation is on the 1D projecton index, $I^{nk}(n)$, for \code{boa6} data, where a local optimum, annotated by the cross (x), is presented in this experiment, along with the global optimum (*).}\label{fig:kol-result}
+\caption[Comparing 20 search paths in the PCA-projected basis space facetted by two optimisers]{Comparing 20 search paths in the PCA-projected basis space facetted by two optimisers: CRS and SA, and two search sizes: 0.5 and 0.7. The optimisation is on the 1D projection index, $I^{nk}(n)$, for \code{boa6} data, where a local optimum, annotated by the cross (x), is presented in this experiment, along with the global optimum (*).}\label{fig:kol-result}
 \end{figure}
 \end{Schunk}
 
@@ -819,8 +819,8 @@ The next experiment compares the performance of CRS and SA when a local
 maximum exists. Two search neighbourhood sizes: 0.5 and 0.7 are compared
 to understand how a large search neighbourhood would affect the final
 basis and the length of the search. Figure \ref{fig:kol-result} shows 80
-paths simulated using 20 seeds in the PCA plot, faceted by optimiser and
-search size. With CRS and a search size of 0.5, despite being the
+paths simulated using 20 seeds in the PCA plot, faceted by the optimiser
+and search size. With CRS and a search size of 0.5, despite being the
 simplest and fastest, the optimiser fails in three instances where the
 final basis lands neither near the local nor the global optimum. With a
 larger search size of 0.7, more seeds have found the global maximum.
@@ -828,7 +828,7 @@ Comparing CRS and SA for a search size of 0.5, SA does not seem to
 improve the final basis found, despite having longer interpolation
 paths. However, the denser paths near the local maximum is an indicator
 that SA is working hard to examine if there is any other optimum in the
-basis space but the relative small search size has diminished its
+basis space but the relatively small search size has diminished its
 ability to reach the global maximum. With a larger search size, almost
 all the seeds (16 out of 20) have found the global maximum and some
 final bases are much closer to the theoretical best, as compared to the
@@ -852,7 +852,7 @@ orientation}\label{reconciling-the-orientation}}
 \end{Schunk}
 
 One interesting situation observed in the previous examples is that, for
-some simulations as shown on the left panel of Figure
+some simulations, as shown on the left panel of Figure
 \ref{fig:flip-sign}, the target basis is generated on the other half of
 the basis space and the interpolator seems to draw a straight line to
 interpolate. As mentioned previously, bases with opposite signs do not
@@ -864,7 +864,7 @@ carried out once a new target basis is generated and the sign in the
 target basis will be flipped if a negative determinant is obtained. The
 interpolation after implementing the orientation check is shown on the
 right panel of Figure \ref{fig:flip-sign} where the unsatisfactory
-interpolation no longer exist.
+interpolation no longer exists.
 
 \hypertarget{implementation}{%
 \section{Implementation}\label{implementation}}
@@ -997,7 +997,7 @@ while the visual diagnostics of the optimisers is implemented in
   \item
     \code{botanical\_palettes} is a collection of colour palettes from
     Australian native plants. Quantitative palettes include daisy,
-    banksia and cherry and sequential palettes contain fern and acacia
+    banksia, and cherry and sequential palettes contain fern and acacia
   \item
     \code{botanical\_pal()} as the colour interpolator
   \item
