@@ -28,8 +28,6 @@ diagnose and fix several problems with projection pursuit guided tour.
 This work might be useful more broadly for diagnosing optimisers, and
 comparing their performance. The diagnostics are implemented in the R
 package, \pkg{ferrn}.
-
-\noindent \textit{keywords}: graphics, multivariate, optimization
 }
 
 \hypertarget{introduction}{%
@@ -100,7 +98,7 @@ of tour animation. Hence, gradient-based methods are not the focus of
 this paper and considerations will be given to derivative-free methods.
 
 Derivative-free methods
-\citep{rios2013derivative, conn2009introduction}, which do not rely on
+\citep{conn2009introduction, rios2013derivative}, which do not rely on
 the knowledge of the gradient, are more generally applicable.
 Derivative-free methods have been developed over the years, where the
 emphasis is on finding, in most cases, a near optimal solution. Here we
@@ -109,7 +107,7 @@ methods: creeping random search and simulated annealing, and the other
 one is pseudo derivative search.
 
 Random search methods
-\citep{zabinsky2013stochastic, Romeijn2009, andradottir2015review} have
+\citep{Romeijn2009, zabinsky2013stochastic, andradottir2015review} have
 a random sampling component as part of their algorithm and have been
 shown to have the ability to optimise non-convex and non-smooth
 functions. The initial random search algorithm, pure random search
@@ -131,8 +129,7 @@ a different updating mechanism. Rather than only updating the current
 point when an improvement is made, simulated annealing uses a Metropolis
 acceptance criterion, where worse candidates still have a chance to be
 accepted. The convergence of simulated annealing algorithms has been
-widely researched
-\citep{mitra1986convergence, belisle1992convergence, granville1994simulated}
+widely researched \citep{mitra1986convergence, granville1994simulated}
 and the global optimum can be attained under mild regularity conditions.
 
 Pseudo derivative search uses a common search scheme in optimistaion:
@@ -156,10 +153,10 @@ Projection pursuit guided tour combines two different methods
 a high dimensional space. Projection pursuit, coined by
 \citet{friedman1974projection}, detects interesting structures
 (e.g.~clustering, outliers and skewness) in multivariate data via
-low-dimensional projections. Guided tour
-\citep{cook2008grand, cook1995grand} is one variation of a broader class
-of data visualisation methods, tour \citep{buja2005computational}, which
-displays high-dimensional data through a series of animated projections.
+low-dimensional projections. Guided tour \citep{cook1995grand} is one
+variation of a broader class of data visualisation methods, tour
+\citep{buja2005computational}, which displays high-dimensional data
+through a series of animated projections.
 
 Let \(\mathbf{X}_{n \times p}\) be the data matrix with \(n\)
 observations in \(p\) dimensions. A \(d\)-dimensional projection is a
@@ -181,11 +178,13 @@ here list a few: early indices that can be categorised as measuring the
 Legendre index \citep{friedman1974projection}, Hermite index
 \citep{hall1989polynomial}, and natural Hermite index
 \citep{cook1993projection}; chi-square index \citep{posse1995projection}
-for detecting spiral structure; kurtosis index \citep{Loperfido2020} and
-skewness index \citep{Loperfido2018} for detecting outliers in financial
-time series; and most recently, scagnostic indices \citep{laa2020using}
-for summarising structures in scatterplot matrices based on eight
-scagnostic measures.
+for detecting spiral structure; LDA index\citep{lee2005projection} and
+PDA \citep{lee2010projection} index for supervised classification;
+kurtosis index \citep{Loperfido2020} and skewness index
+\citep{Loperfido2018} for detecting outliers in financial time series;
+and most recently, scagnostic indices \citep{laa2020using} for
+summarising structures in scatterplot matrices based on eight scagnostic
+measures.
 
 As a general visualisation method, tour produces animations of high
 dimensional data via rotations of low-dimensional planes. There are
@@ -268,14 +267,12 @@ cooling scheme by introducing a halving parameter \(c\). In his
 proposal, the \(\alpha\) is only adjusted if the last iteration takes
 more than \(c\) times to find a better basis.
 
-Simulated annealing (SA)
-\citep{kirkpatrick1983optimization, bertsimas1993simulated} uses the
-same sampling process as CRS but allows a probabilistic acceptance of a
-basis with lower index value than the current. Given an initial value of
-\(T_0\), the temperature at iteration \(l\) is defined as
-\(T(l) = \frac{T_0}{\log(l + 1)}\). When a candidate basis fails to have
-an index value larger than the current basis, SA gives it a second
-chance to be accepted with probability
+Simulated annealing (SA) uses the same sampling process as CRS but
+allows a probabilistic acceptance of a basis with lower index value than
+the current. Given an initial value of \(T_0\), the temperature at
+iteration \(l\) is defined as \(T(l) = \frac{T_0}{\log(l + 1)}\). When a
+candidate basis fails to have an index value larger than the current
+basis, SA gives it a second chance to be accepted with probability
 \[P= \min\left\{\exp\left[-\frac{\mid I_{\text{cur}} - I_{l} \mid}{T(l)}\right],1\right\}\]
 where \(I_{(\cdot)}\) denotes the index value of a given basis. This
 implementation allows the optimiser to make a move and explore the basis
@@ -284,15 +281,15 @@ hence enable the optimiser to jump out of a local optimum. The algorithm
 \ref{simulated-annealing} in the appendix highlights how SA differs from
 CRS in the inner loop.
 
-Pseudo derivative (PD) search \citep{cook1995grand} uses a different
-strategy than CRS and SA. Rather than randomly sample the basis space,
-PD first computes a search direction by evaluating bases close to the
-current basis. A step size is then chosen along the corresponding
-geodesic by another optimisation over an 90 degree angle from \(-\pi/4\)
-to \(\pi/4\). The resulting candidate basis \(\mathbf{A}_{**}\) is
-returned for the current iteration if it has a higher index value than
-the current one. Algorithm \ref{search-geodesic} in the appendix
-summarises the inner loop of the PD.
+Pseudo derivative (PD) search uses a different strategy than CRS and SA.
+Rather than randomly sample the basis space, PD first computes a search
+direction by evaluating bases close to the current basis. A step size is
+then chosen along the corresponding geodesic by another optimisation
+over an 90 degree angle from \(-\pi/4\) to \(\pi/4\). The resulting
+candidate basis \(\mathbf{A}_{**}\) is returned for the current
+iteration if it has a higher index value than the current one. Algorithm
+\ref{search-geodesic} in the appendix summarises the inner loop of the
+PD.
 
 \hypertarget{vis-diag}{%
 \section{Visual diagnostics}\label{vis-diag}}
@@ -323,8 +320,7 @@ is presented in equation \ref{eq:data-structure}.
 
 \begin{equation}
 \renewcommand\arraystretch{2}  % default value: 1.0
-\left[
-\begin{array}{c|ccc|cc|cc}
+\begin{pmatrix}
 t & \mathbf{A} & I & S & j &  l  & V_{1} & V_{2}\\
 \hline
 1 & \mathbf{A}_1 & I_1 & S_1 & 1 & 1 & V_{11} & V_{12}\\
@@ -350,11 +346,9 @@ T & \mathbf{A}_T & I_T &S_T  & J &  l_{J} & V_{T1}& V_{T2}\\
 \vdots& \vdots & \vdots & \vdots & J+1 & 1 & \vdots& \vdots\\
 \vdots &\vdots &\vdots &\vdots &\vdots & \vdots &\vdots &\vdots \\
 T^\prime & \mathbf{A}_{T^\prime} & I_{T^\prime} &S_{T^\prime}  & J+1 &  l_{J+1} & V_{T^\prime 1}& V_{T^\prime 2}\\
-\end{array}
-\right]
+\end{pmatrix}
 = 
-\left[
-\begin{array}{c}
+\begin{pmatrix}
 \text{column name} \\
 \hline
 \text{search (start basis)} \\
@@ -380,8 +374,7 @@ T^\prime & \mathbf{A}_{T^\prime} & I_{T^\prime} &S_{T^\prime}  & J+1 &  l_{J+1} 
 \text{search (no output)} \\
 \vdots \\
 \text{search (no output)} \\
-\end{array}
-\right]
+\end{pmatrix}
 \label{eq:data-structure}
 \end{equation}
 
@@ -508,8 +501,8 @@ at opposite places.
 
 Several annotations have been made to help understanding this plot. As
 mentioned previously, the original basis space is a high-dimensional
-sphere and random bases on the sphere can be generated via the CRAN
-package \CRANpkg{geozoo} \citep{geozoo}. Along with the bases recorded
+sphere and random bases on the sphere can be generated via
+\CRANpkg{geozoo} \citep{geozoo} package. Along with the bases recorded
 during the optimisation and a zero basis, the parameters (centre and
 radius) of the 2D space can be estimated. PCA is performed to get the
 first two PC coordinates of all the bases and the centre of the circle
@@ -573,7 +566,7 @@ itself}\label{diagnostic-4a-the-tour-looking-at-itself}}
 \end{Schunk}
 
 As mentioned previously, the original \(p \times d\) dimension space can
-be simulated via randomly generated bases in the \CRANpkg{geozoo}
+be simulated via randomly generated bases in the \pkg{geozoo}
 \citep{geozoo} package. While the PCA plot projects the bases from the
 direction that maximises the variance, the tour plot displays the
 original high-dimensional space from various directions using animation.
