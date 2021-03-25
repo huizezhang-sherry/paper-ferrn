@@ -40,6 +40,7 @@ knitr::opts_chunk$set(echo = FALSE,
                       cache = TRUE,
                       fig.align = "center",
                       fig.height = 3,
+                      fig.retina = 5,
                       out.width = "100%")
 ```
 
@@ -405,7 +406,7 @@ This project contributes to the software development in two packages: a data col
 
 # Conclusion
 
-This paper has set up a data object that can be used for diagnosing a complex optimisation procedure. The ideas were illustrated using the optimisers available for projection pursuit guided tour. Here the constraint is the orthonormality condition of the projection bases. The approach used broadly applies to other constrained optimisers.
+This paper has provided several visual diagnostics that can be used for diagnosing a complex optimisation procedure. The methods were illustrated using the optimisers available for projection pursuit guided tour. Here the constraint is the orthonormality condition of the projection bases. The approach used broadly applies to other constrained optimisers.
 
 <!-- something about the diagnostic plots  -->
 Four diagnostic plots have been introduced to investigate the progression of the optimiser and its coverage in search space. The implementation of these visualisations is designed to be easy-to-use, each plot can be produced by supplying the data object to the corresponding function. More advanced users may decide to modify these basic graphs using the provided wrapper functions, or even build their own. 
