@@ -6,6 +6,9 @@ library(tourr)
 files <- paste0("data/", list.files(here::here("data")))
 purrr::walk(.x = files, ~load(here::here(.x), env = globalenv()))
 
+## ----tour-path
+include_graphics(here::here("figs/tour-path.png"))
+
 ## ---- toy-search
 p1 <- holes_2d_better_max_tries %>%
   mutate(max_tries = 500) %>%
