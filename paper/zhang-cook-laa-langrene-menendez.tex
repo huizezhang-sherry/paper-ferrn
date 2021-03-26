@@ -7,16 +7,16 @@ Langrené, and Patricia Menéndez}
 \maketitle
 
 \abstract{%
-A guided tour helps to visualise high-dimensional data by showing the
+A guided tour helps to visualise high-dimensional data by showing
 low-dimensional projections along a projection pursuit optimisation
 path. Projection pursuit is a generalisation of principal component
 analysis, in the sense that different indexes are used to define the
 interestingness of the projected data. While much work has been done in
 developing new indexes in the literature, less has been done on
-understanding the optimisation. Index functions can be noisy, they might
-have multiple local maxima as well as an optimal maximum, and it is
-constrained to generate orthonormal projection frames, which complicates
-the optimization. In addition, projection pursuit is primarily used for
+understanding the optimisation. Index functions can be noisy, might have
+multiple local maxima as well as an optimal maximum, and are constrained
+to generate orthonormal projection frames, which complicates the
+optimization. In addition, projection pursuit is primarily used for
 exploratory data analysis, and finding the local maxima is also useful.
 The guided tour is especially useful for exploration, because it
 conducts geodesic interpolation connecting steps in the optimisation and
@@ -27,7 +27,7 @@ which collects information throughout the optimisation. It has helped to
 diagnose and fix several problems with projection pursuit guided tour.
 This work might be useful more broadly for diagnosing optimisers, and
 comparing their performance. The diagnostics are implemented in the R
-package, \pkg{ferrn}.
+package \pkg{ferrn}.
 }
 
 \hypertarget{introduction}{%
@@ -52,9 +52,9 @@ exploratory data analysis technique used for detecting interesting
 structures in high-dimensional data through a set of lower-dimensional
 projections \citep{cook2008grand}. The goal of the optimisation is to
 identify the projection, represented by the projection matrix, that
-gives the most interesting low-dimensional view. A view is interesting
-if it can show some structures of the data that depart from normality,
-such as bimodality, clustering, or outliers.
+gives the most interesting low-dimensional view. A view is said to be
+interesting if it can show some structures of the data that depart from
+normality, such as bimodality, clustering, or outliers.
 
 The optimization challenges encountered in the projection pursuit guided
 tour problem are common to those of optimization in general. Examples
@@ -66,13 +66,13 @@ optimization methods and conceptual framework presented in this paper
 can therefore be applied to other optimization problems.
 
 The remainder of the paper is organised as follows. The next section
-provides an overview of optimisation methods, specifically line search
-methods. A review of the projection pursuit guided tour, an overview of
-the optimisation problem and outlines of three existing algorithms
-follows. The third section presents the new visual diagnostics,
-including the the design of a data structure to capture information
-during the optimisation, from which several diagnostic plots are
-created. An illustration of how the diagnostic plots can be used to
+provides an overview of optimisation methods, specifically random search
+and line search methods. A review of the projection pursuit guided tour,
+an overview of the optimisation problem and outlines of three existing
+algorithms follows. The third section presents the new visual
+diagnostics, including the design of a data structure to capture
+information during the optimisation, from which several diagnostic plots
+are created. An illustration of how the diagnostic plots can be used to
 examine the performance of different optimisers and guide improvements
 to the existing algorithms applications is shown using simulated data.
 Finally, an explanation of the implementation in the R package,
@@ -81,11 +81,11 @@ Finally, an explanation of the implementation in the R package,
 \hypertarget{optim}{%
 \section{Optimisation methods}\label{optim}}
 
-The optimisation problem considered in this paper is on constrained
-optimization \citep{bertsekas2014constrained} and assuming it is not
+The type of optimisation problem considered in this paper is constrained
+optimization \citep{bertsekas2014constrained}, assuming it is not
 possible to find a solution to the problem in the way of a closed-form.
-That is, the problem consists of finding the minimum or maximum of a
-function \(f \in L^p\) in the constrained \(\mathcal{A}\) space.
+That is, the problem consists in finding the minimum or maximum of a
+function \(f \in L^p\) in the constrained space \(\mathcal{A}\).
 
 Gradient-based methods are commonly used to optimise an objective
 function, with the most notable one being the gradient ascent (descent)
@@ -93,9 +93,10 @@ method. Although these methods are popular, they rely on the
 availability of the objective function derivatives. As will be shown in
 the next section, the independent variables in our optimisation problem
 are the entries of a projection matrix and the computational time
-required to perform differentiation on a matrix could impede the render
-of tour animation. Hence, gradient-based methods are not the focus of
-this paper and considerations will be given to derivative-free methods.
+required to perform differentiation on a matrix could impede the
+rendering of tour animation. Hence, gradient-based methods are not the
+focus of this paper and consideration will be given to derivative-free
+methods.
 
 Derivative-free methods
 \citep{conn2009introduction, rios2013derivative}, which do not rely on
@@ -104,7 +105,7 @@ Derivative-free methods have been developed over the years, where the
 emphasis is on finding, in most cases, a near optimal solution. Here we
 consider three derivative-free methods, two of which are random search
 methods: creeping random search and simulated annealing, and the other
-one is pseudo derivative search.
+one is pseudo-derivative search.
 
 Random search methods
 \citep{Romeijn2009, zabinsky2013stochastic, andradottir2015review} have
@@ -123,7 +124,7 @@ different updating mechanism. Creeping random search
 \citep{White1971-ci} is such a variation, where a candidate point is
 generated within a neighbourhood of the current point. This makes
 creeping random search faster to compute, however, global convergence is
-not longer guaranteed. On the other hand, simulated annealing
+no longer guaranteed. On the other hand, simulated annealing
 \citep{kirkpatrick1983optimization, bertsimas1993simulated}, introduces
 a different updating mechanism. Rather than only updating the current
 point when an improvement is made, simulated annealing uses a Metropolis
@@ -132,7 +133,7 @@ accepted. The convergence of simulated annealing algorithms has been
 widely researched \citep{mitra1986convergence, granville1994simulated}
 and the global optimum can be attained under mild regularity conditions.
 
-Pseudo derivative search uses a common search scheme in optimisation:
+Pseudo-derivative search uses a common search scheme in optimisation:
 line search. In line search methods, users are required to provide an
 initial estimate \(x_{1}\) and, at each iteration, a search direction
 \(S_k\) and a step size \(\alpha_k\) are generated. Then one moves on to
@@ -150,7 +151,7 @@ finding the value of \(\alpha_k \in \mathbb{R}\) that maximises
 
 Projection pursuit guided tour combines two different methods
 (projection pursuit and guided tour) to explore interesting features in
-a high dimensional space. Projection pursuit, coined by
+a high-dimensional space. Projection pursuit, coined by
 \citet{friedman1974projection}, detects interesting structures
 (e.g.~clustering, outliers and skewness) in multivariate data via
 low-dimensional projections. Guided tour \citep{cook1995grand} is one
@@ -172,13 +173,13 @@ of a given projection. An interesting projection shows structures that
 are non-normal since theoretical proofs from
 \citet{diaconis1984asymptotics} have shown that projections tend to be
 normal, as \(n\) and \(p\) approach infinity under certain conditions.
-There has been plentiful index functions proposed in the literature and
-here list a few: early indexes that can be categorised as measuring the
-\(L^2\) distance between the projection and a normal distribution:
+There have been many index functions proposed in the literature, here
+are a few examples: early indexes that can be categorised as measuring
+the \(L^2\) distance between the projection and a normal distribution:
 Legendre index \citep{friedman1974projection}, Hermite index
 \citep{hall1989polynomial}, and natural Hermite index
 \citep{cook1993projection}; chi-square index \citep{posse1995projection}
-for detecting spiral structure; LDA index\citep{lee2005projection} and
+for detecting spiral structure; LDA index \citep{lee2005projection} and
 PDA \citep{lee2010projection} index for supervised classification;
 kurtosis index \citep{Loperfido2020} and skewness index
 \citep{Loperfido2018} for detecting outliers in financial time series;
@@ -186,9 +187,9 @@ and most recently, scagnostic indexes \citep{laa2020using} for
 summarising structures in scatterplot matrices based on eight scagnostic
 measures.
 
-As a general visualisation method, tour produces animations of high
-dimensional data via rotations of low-dimensional planes. There are
-different versions depending on how the high dimensional space is
+As a general visualisation method, tour produces animations of
+high-dimensional data via rotations of low-dimensional planes. There are
+different versions depending on how the high-dimensional space is
 investigated: grand tour \citep{cook2008grand} selects the planes
 randomly to provide a general overview; manual tour
 \citep{cook1997manual} gradually phases in and out one variable to
@@ -246,8 +247,8 @@ tour animation is viewed by the users during the optimisation.
 \subsection{Existing algorithms}\label{existing-algorithms}}
 
 Three optimisers have been implemented in the \pkg{tourr} \citep{tourr}
-package: Creeping random search (CRS), simulated annealing (SA), and
-pseudo derivative (PD). Creeping random search (CRS) is a random search
+package: creeping random search (CRS), simulated annealing (SA), and
+pseudo-derivative (PD). Creeping random search (CRS) is a random search
 optimiser that samples a candidate basis \(\mathbf{A}_{l}\) in the
 neighbourhood of the current basis \(\mathbf{A}_{\text{cur}}\) by
 \(\mathbf{A}_{l} = (1- \alpha)\mathbf{A}_{\text{cur}} + \alpha \mathbf{A}_{\text{rand}}\)
@@ -269,10 +270,11 @@ more than \(c\) times to find a better basis.
 
 Simulated annealing (SA) uses the same sampling process as CRS but
 allows a probabilistic acceptance of a basis with lower index value than
-the current. Given an initial value of \(T_0\), the temperature at
-iteration \(l\) is defined as \(T(l) = \frac{T_0}{\log(l + 1)}\). When a
-candidate basis fails to have an index value larger than the current
-basis, SA gives it a second chance to be accepted with probability
+the current one. Given an initial value of \(T_0\), the ``temperature''
+at iteration \(l\) is defined as \(T(l) = \frac{T_0}{\log(l + 1)}\).
+When a candidate basis fails to have an index value larger than the
+current basis, SA gives it a second chance to be accepted with
+probability
 \[P= \min\left\{\exp\left[-\frac{\mid I_{\text{cur}} - I_{l} \mid}{T(l)}\right],1\right\}\]
 where \(I_{(\cdot)}\) denotes the index value of a given basis. This
 implementation allows the optimiser to make a move and explore the basis
@@ -281,7 +283,7 @@ hence enables the optimiser to jump out of a local optimum. The
 algorithm \ref{simulated-annealing} in the appendix highlights how SA
 differs from CRS in the inner loop.
 
-Pseudo derivative (PD) search uses a different strategy than CRS and SA.
+Pseudo-derivative (PD) search uses a different strategy than CRS and SA.
 Rather than randomly sample the basis space, PD first computes a search
 direction by evaluating bases close to the current basis. A step size is
 then chosen along the corresponding geodesic by another optimisation
@@ -306,7 +308,7 @@ Three main pieces of information are recorded during the projection
 pursuit optimisation: 1) projection bases \(\mathbf{A}\), 2) index
 values \(I\), and 3) state \(S\). For CRS and SA, possible states
 include \texttt{random\_search}, \texttt{new\_basis}, and
-\texttt{interpolation}. Pseudo derivative (PD) has a wider variety of
+\texttt{interpolation}. Pseudo-derivative (PD) has a wider variety of
 states including \texttt{new\_basis}, \texttt{direction\_search},
 \texttt{best\_direction\_search}, \texttt{best\_line\_search}, and
 \texttt{interpolation}. Multiple iterators index the information
@@ -450,16 +452,16 @@ in the tour animation. Trace plots are created by plotting the index
 value against time. Figure \ref{fig:toy-interp} presents the trace plot
 of the same optimisations as Figure \ref{fig:toy-search} and one can
 observe that the trace is smooth in both cases. It may seem bizarre at
-the first sight that the interpolation sometimes passes bases with
-higher index value before it decreases to a lower target. This happens
-because, on the one hand, the probabilistic acceptance in SA implies
-that some worse bases will be accepted by the optimiser. In addition,
-the guided tour interpolates between the current and target basis to
-provide a smooth transition between projections, and sometimes a higher
-index value will be observed along the interpolation path. This
-indicates that a non-monotonic interpolation can't be avoided, even for
-CRS. Later, in section \ref{monotonic}, there will be a discussion on
-improving the non-monotonic interpolation for CRS.
+first sight that the interpolation sometimes passes bases with higher
+index value before it decreases to a lower target. This happens because,
+on the one hand, the probabilistic acceptance in SA implies that some
+worse bases will be accepted by the optimiser. In addition, the guided
+tour interpolates between the current and target basis to provide a
+smooth transition between projections, and sometimes a higher index
+value will be observed along the interpolation path. This indicates that
+a non-monotonic interpolation cannot be avoided, even for CRS. Later, in
+section \ref{monotonic}, there will be a discussion on improving the
+non-monotonic interpolation for CRS.
 
 \hypertarget{toy-pca}{%
 \subsection{Diagnostic 3a: Understanding the optimiser's coverage of the
@@ -501,21 +503,20 @@ places.
 
 Several annotations have been made to help understanding this plot. As
 mentioned previously, the original basis space is a high-dimensional
-sphere and random bases on the sphere can be generated via
+sphere and random bases on the sphere can be generated via the
 \CRANpkg{geozoo} \citep{geozoo} package. Along with the bases recorded
 during the optimisation and a zero basis, the parameters (centre and
-radius) of the 2D space can be estimated. PCA is performed to get the
-first two PC coordinates of all the bases and the centre of the circle
-is the PC coordinates of the zero matrix, and radius is estimated as the
-largest distance from the centre to the basis. The theoretical best
-basis is known for simulated data and can be labelled to compare how
-close the end basis found by the optimisers is to the theoretical best.
-Various aesthetics, i.e.~size, alpha, and colour, are applicable to
-emphasize critical elements and adjust for the presentation. For
-example, anchor points and search points are less important and hence a
-smaller size and alpha are used. Alpha can also be applied on the
-interpolation paths to show the start to finish from transparent to
-opaque.
+radius) of the 2D space can be estimated by PCA. The centre of the
+circle is the first two PC coordinates of the zero matrix, and the
+radius is estimated as the largest distance from the centre to the
+basis. The theoretical best basis is known for simulated data and can be
+labelled to compare how close the end basis found by the optimisers is
+to the theoretical best. Various aesthetics, i.e.~size, alpha
+(transparency), and colour, are applicable to emphasize critical
+elements and adjust for the presentation. For example, anchor points and
+search points are less important and hence a smaller size and alpha are
+used. Alpha can also be applied on the interpolation paths to show the
+start to finish from transparent to opaque.
 
 Figure \ref{fig:toy-pca} shows the PCA plot of CRS and PD for a 1D
 projection problem. Both optimisers find the optimum but PD gets closer.
@@ -541,14 +542,14 @@ plots}\label{diagnostic-3b-animating-the-diagnostic-plots}}
 \end{figure}
 \end{Schunk}
 
-Animation is another type of display to show how the search progresses
-from start to finish in the space. An \texttt{animate\ =\ TRUE} argument
-is used to enable the animation in the PCA plot. Figure
-\ref{fig:toy-pca-animated} shows six frames from the animation of the
-PCA plot in Figure \ref{fig:toy-pca}. An additional piece of information
-one can learn from this animation is that CRS finds its end basis
-quicker than PD since CRS finishes its search in the 5th frame while PD
-is still making more progress.
+An animation is another type of display to show how the search
+progresses from start to finish in the space. An
+\texttt{animate\ =\ TRUE} argument is used to enable the animation in
+the PCA plot. Figure \ref{fig:toy-pca-animated} shows six frames from
+the animation of the PCA plot in Figure \ref{fig:toy-pca}. An additional
+piece of information one can learn from this animation is that CRS finds
+its end basis quicker than PD since CRS finishes its search in the 5th
+frame while PD is still making more progress.
 
 \hypertarget{diagnostic-4a-the-tour-looking-at-itself}{%
 \subsection{Diagnostic 4a: The tour looking at
@@ -561,7 +562,7 @@ itself}\label{diagnostic-4a-the-tour-looking-at-itself}}
 
 }
 
-\caption{Six frames selected from rotating the high dimensional basis space, along with the same two search paths from Figure \ref{fig:toy-pca} and \ref{fig:toy-pca-animated}. The basis space in this example is a 5D unit sphere, on which points (grey) are randomly generated via the CRAN package \CRANpkg{geozoo}. The full video of the animation can be found at \url{https://vimeo.com/512885379}.}\label{fig:toy-tour}
+\caption{Six frames selected from rotating the high-dimensional basis space, along with the same two search paths from Figure \ref{fig:toy-pca} and \ref{fig:toy-pca-animated}. The basis space in this example is a 5D unit sphere, on which points (grey) are randomly generated via the CRAN package \CRANpkg{geozoo}. The full video of the animation can be found at \url{https://vimeo.com/512885379}.}\label{fig:toy-tour}
 \end{figure}
 \end{Schunk}
 
@@ -644,9 +645,9 @@ the distributional form of each variable is presented in equations
 to \texttt{x10} are normal noise with zero mean and unit variance and
 \texttt{x2} to \texttt{x7} are normal mixtures with varied weights and
 locations. All the variables have been scaled to have an overall unit
-variance before projection pursuit. Holes index \citep{cook2008grand},
-used for detecting bimodality of the variables, is used throughout the
-examples unless otherwise specified.
+variance before projection pursuit. The holes index
+\citep{cook2008grand}, used for detecting bimodality of the variables,
+is used throughout the examples unless otherwise specified.
 
 \begin{align}
 x_1 \overset{d}{=} x_8 \overset{d}{=} x_9 \overset{d}{=} x_{10}& \sim \mathcal{N}(0, 1) \label{eq:sim-norm} \\
@@ -777,7 +778,7 @@ non-smooth index function, two research questions are raised:
 
 }
 
-\caption[Comparison of the three optimisers in optimising $I^{nk}(n)$ index for a 1D projection problem on a five-variable dataset, \code{boa5}]{Comparison of the three optimisers in optimising $I^{nk}(n)$ index for a 1D projection problem on a five-variable dataset, \code{boa5}. Both CRS and SA succeed in the optimisation, PD fails to optimise this non-smooth index. Further, SA takes  much longer than CRS to finish the optimisation, it finishes off closer to the theoretical best.}\label{fig:noisy-better-geo}
+\caption[Comparison of the three optimisers in optimising $I^{nk}(n)$ index for a 1D projection problem on a five-variable dataset, \code{boa5}]{Comparison of the three optimisers in optimising $I^{nk}(n)$ index for a 1D projection problem on a five-variable dataset, \code{boa5}. Both CRS and SA succeed in the optimisation, PD fails to optimise this non-smooth index. Further, SA takes  much longer than CRS to finish the optimisation, but finishes off closer to the theoretical best.}\label{fig:noisy-better-geo}
 \end{figure}
 \end{Schunk}
 
@@ -791,7 +792,7 @@ This long interpolation path is partially due to the fluctuation in the
 early iterations, where SA tends to generously accept inferior bases
 before concentrating near the optimum. The PCA plot shows the
 interpolation path and search points excluding the last termination
-iteration. Pseudo Derivative (PD) quickly gets stuck near the starting
+iteration. Pseudo-Derivative (PD) quickly gets stuck near the starting
 position. Comparing the amount of random search done by CRS and SA, it
 is surprising that SA does not carry as many samples as CRS. Combining
 the insights from both the trace and PCA plot, one can learn the two
@@ -811,7 +812,7 @@ the overall number of points evaluated.
 
 }
 
-\caption[Comparing 20 search paths in the PCA-projected basis space facetted by two optimisers]{Comparing 20 search paths in the PCA-projected basis space facetted by two optimisers: CRS and SA, and two search sizes: 0.5 and 0.7. The optimisation is on the 1D projection index, $I^{nk}(n)$, for \code{boa6} data, where a local optimum, annotated by the cross (x), is presented in this experiment, along with the global optimum (*).}\label{fig:kol-result}
+\caption[Comparing 20 search paths in the PCA-projected basis space faceted by two optimisers]{Comparing 20 search paths in the PCA-projected basis space faceted by two optimisers: CRS and SA, and two search sizes: 0.5 and 0.7. The optimisation is on the 1D projection index, $I^{nk}(n)$, for \code{boa6} data, where a local optimum, annotated by the cross (x), is presented in this experiment, along with the global optimum (*).}\label{fig:kol-result}
 \end{figure}
 \end{Schunk}
 
@@ -872,8 +873,8 @@ interpolation no longer exists.
 This project contributes to the software development in two packages: a
 data collection object is implemented in \pkg{tourr} \citep{tourr},
 while the visual diagnostics of the optimisers is implemented in
-\pkg{ferrn} \citep{ferrn}. Below list functions in the \pkg{ferrn}
-\citep{ferrn} package:
+\pkg{ferrn} \citep{ferrn}. The functions in the \pkg{ferrn}
+\citep{ferrn} package are listed below:
 
 \begin{itemize}
 \item
@@ -883,13 +884,13 @@ while the visual diagnostics of the optimisers is implemented in
   \tightlist
   \item
     \code{explore\_trace\_search()} produces summary plots in Figure
-    \ref{fig:toy-search}
+    \ref{fig:toy-search}.
   \item
-    \code{explore\_trace\_interp()}produces trace plots for the
-    interpolation points in Figure \ref{fig:toy-interp}
+    \code{explore\_trace\_interp()} produces trace plots for the
+    interpolation points in Figure \ref{fig:toy-interp}.
   \item
     \code{explore\_space\_pca()} produces the PCA plot of projection
-    bases on the reduced space in Figure \ref{fig:toy-pca}. Animated
+    bases on the reduced space in Figure \ref{fig:toy-pca}. The animated
     version in Figure \ref{fig:toy-pca-animated} can be turned on via
     the argument \texttt{animate\ =\ TRUE}.
   \item
@@ -1042,8 +1043,8 @@ reproducing this paper can be found at:
 \hypertarget{appendix}{%
 \section{Appendix}\label{appendix}}
 
-Three algorithms (Creeping random search, simulated annealing, and
-pseudo derivative) used in projection pursuit guided tour optimisation.
+Three algorithms (creeping random search, simulated annealing, and
+pseudo-derivative) used in projection pursuit guided tour optimisation.
 
 \begin{algorithm}
 \SetAlgoLined
@@ -1090,7 +1091,7 @@ pseudo derivative) used in projection pursuit guided tour optimisation.
   Find the optimum $\mathbf{A}_{**}$ and compute $I_{**} = f(\mathbf{A}_{**})$, $p_{\text{diff}} = (I_{**} - I_{\text{cur}})/I_{**}$\;
   Update $l = l + 1$\;
 }
-\caption{Pseudo derivative (PD)}
+\caption{Pseudo-derivative (PD)}
 \label{search-geodesic}
 \end{algorithm}
 
