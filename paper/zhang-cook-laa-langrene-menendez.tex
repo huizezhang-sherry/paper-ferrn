@@ -732,7 +732,7 @@ change in the index value, and neighbourhood size:
   the relative change of the index value needs to be larger than 1e-5;
   and
 \item
-  the alpha parameter on itself needs to be larger than 0.01
+  the alpha parameter needs to be larger than 0.01
 \end{enumerate}
 
 Figure \ref{fig:polish} presents the projected data and trace plot of a
@@ -753,12 +753,13 @@ produces a smooth interpolation, while this is not the case for all the
 indexes An example of a noisy index function for 1D projections compares
 the projected data, \(\mathbf{Y}_{n \times 1}\), to a randomly generated
 normal distribution, \(\mathcal{N}_{n \times 1}\), using the Kolmogorov
-test. Let \(F_{.}(n)\) be the ECDF function, with two possible
-subscripts \(Y\) and \(\mathcal{N}\) representing the projected and
-randomly generated data, and \(n\) denoting the number of observation,
-the Normal Kolmogorov index, \(I^{nk}(n)\), is defined as:
+test. Let \(F_{.}(n)\) be the ECDF function (empirical cummulative
+distribution function), with two possible subscripts \(Y\) and
+\(\mathcal{N}\) representing the projected and randomly generated data,
+and \(n\) denoting the number of observation, the Normal Kolmogorov
+index \(I^{nk}(n)\), is defined as:
 
-\[I^{K}(n) = \max \left[F_{Y}(n) - F_{\mathcal{N}}(n)\right]\] With a
+\[I^{K}(n) = \max \left[F_{Y}(n) - F_{\mathcal{N}}(n)\right].\] With a
 non-smooth index function, two research questions are raised:
 
 \begin{enumerate}

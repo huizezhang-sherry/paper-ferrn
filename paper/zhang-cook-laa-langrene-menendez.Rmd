@@ -300,15 +300,15 @@ Once the final basis has been found by an optimiser, one may want to push furthe
 
 1) the distance between the basis found and the current basis needs to be larger than 1e-3;
 2) the relative change of the index value needs to be larger than 1e-5; and
-3) the alpha parameter on itself needs to be larger than 0.01
+3) the alpha parameter needs to be larger than 0.01
 
 Figure \ref{fig:polish} presents the projected data and trace plot of a 2D projection, optimised by CRS and followed by the polish step. The top row shows the initial projection, the final projection after CRS, and the final projection after polish, respectively The end basis found by CRS reveals the four clusters in the data, but the edges of each cluster are not clean-cut. Polish works with this end basis and further pushes the index value to produce clearer edges of the cluster, especially along the vertical axis.
 
 ## Seeing the signal in the noise 
 
-The holes index function used for all the examples before this section produces a smooth interpolation, while this is not the case for all the indexes An example of a noisy index function for 1D projections compares the projected data, $\mathbf{Y}_{n \times 1}$, to a randomly generated normal distribution, $\mathcal{N}_{n \times 1}$, using the Kolmogorov test. Let $F_{.}(n)$ be the ECDF function, with two possible subscripts $Y$ and $\mathcal{N}$ representing the projected and randomly generated data, and $n$ denoting the number of observation, the Normal Kolmogorov index, $I^{nk}(n)$, is defined as: 
+The holes index function used for all the examples before this section produces a smooth interpolation, while this is not the case for all the indexes An example of a noisy index function for 1D projections compares the projected data, $\mathbf{Y}_{n \times 1}$, to a randomly generated normal distribution, $\mathcal{N}_{n \times 1}$, using the Kolmogorov test. Let $F_{.}(n)$ be the ECDF function (empirical cummulative distribution function), with two possible subscripts $Y$ and $\mathcal{N}$ representing the projected and randomly generated data, and $n$ denoting the number of observation, the Normal Kolmogorov index $I^{nk}(n)$, is defined as: 
 
-$$I^{K}(n) = \max \left[F_{Y}(n) - F_{\mathcal{N}}(n)\right]$$
+$$I^{K}(n) = \max \left[F_{Y}(n) - F_{\mathcal{N}}(n)\right].$$
 With a non-smooth index function, two research questions are raised: 
 
 1) whether any optimiser fails to optimise this non-smooth index; and 
