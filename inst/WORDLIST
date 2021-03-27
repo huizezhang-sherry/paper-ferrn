@@ -1,11 +1,13 @@
 anno
 arg
 arraystretch
+bimodality
 ccc
 cdot
 coloneqq
 color
 CRANpkg
+CRS
 ctv
 dir
 diag
@@ -24,6 +26,7 @@ Hermite
 hline
 interp
 interpolator
+knitr
 kol
 kS
 laa
@@ -36,6 +39,7 @@ mathbb
 mathbf
 mathcal
 menendez
+newpage
 nk
 nloptr
 noindent
@@ -44,14 +48,16 @@ orthonormalised
 param
 pca
 pkg
+pmatrix
 renewcommand
 rightarrow
 rmarkdown
-SAJO
+scagnostic
 scagnostics
 SetAlgoLined
 SetKwInOut
 sim
+Stiefel
 th
 theo
 tibble
@@ -60,3 +66,4 @@ u
 Unif
 vdots
 zhang
+

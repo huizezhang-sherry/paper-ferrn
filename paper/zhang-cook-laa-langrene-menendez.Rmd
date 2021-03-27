@@ -48,22 +48,9 @@ knitr::opts_chunk$set(echo = FALSE,
 ```
 
 ```{r external, include = FALSE, cache = FALSE}
-library(knitr)
-library(tidyverse)
-library(ferrn)
-
 knitr::read_chunk(
-  here::here("scripts/toy.R")
+  here::here("paper", "zhang-cook-laa-langrene-menendez.R")
 )
-
-knitr::read_chunk(
-  here::here("scripts/diagnose.R")
-)
-
-knitr::read_chunk(
-  here::here("scripts/kol_result.R")
-)
-
 ```
 
 ```{r load-pkg}
@@ -99,7 +86,7 @@ Finally, an explanation of the implementation in the R package, \CRANpkg{ferrn} 
 
 The type of optimisation problem considered in this paper is constrained optimization [@bertsekas2014constrained], assuming it is not possible to find a solution to the problem in the way of a closed-form. That is, the problem consists in finding the minimum or maximum of a function $f \in L^p$ in the constrained space $\mathcal{A}$. 
 
-Gradient-based methods are commonly used to optimise an objective function, with the most notable one being the gradient ascent (descent) method. Although these methods are popular, they rely on the availability of the objective function derivatives. As will be shown in the next section, the independent variables in our optimisation problem are the entries of a projection matrix and the computational time required to perform differentiation on a matrix could impede the rendering of tour animation. Hence, gradient-based methods are not the focus of this paper and consideration will be given to derivative-free methods. 
+Gradient-based methods are commonly used to optimise an objective function, with the most notable one being the gradient ascent (descent) method. Although these methods are popular, they rely on the availability of the objective function derivatives. As will be shown in the next section, the independent variables in our optimisation problem are the entries of a projection matrix and the computational time required to perform differentiation on a matrix could impede the rendering of tour animation. In addition, some objective functions rely on the empirical distribution of the data, which makes it in general not possible to get the gradient. Hence, gradient-based methods are not the focus of this paper and consideration will be given to derivative-free methods. 
 
 Derivative-free methods [@conn2009introduction; @rios2013derivative], which do not rely on the knowledge of the gradient, are more generally applicable. Derivative-free methods have been developed over the years, where the emphasis is on finding, in most cases, a near optimal solution. Here we consider three derivative-free methods, two of which are random search methods: creeping random search and simulated annealing, and the other one is pseudo-derivative search.  
 
@@ -233,7 +220,7 @@ Another interesting feature to examine is the changes in the index value between
 
 ## Diagnostic 3a: Understanding the optimiser's coverage of the search space {#toy-pca}
 
-```{r toy-pca, fig.height = 5, fig.cap = "Search paths of CRS (green) and PD (brown) in the PCA-reduced basis space for 1D projection problem on the five-variable dataset, \\code{boa5} using holes index. The basis space, a 5D unit sphere, is projected onto a 2D circle by PCA. All the bases in PD have been flipped for easier comparison of the final bases and a grey dashed line has been annotated to indicate the symmetry of the two start bases."}
+```{r toy-pca, fig.height = 4, fig.asp = 1, fig.cap = "Search paths of CRS (green) and PD (brown) in the PCA-reduced basis space for 1D projection problem on the five-variable dataset, \\code{boa5} using holes index. The basis space, a 5D unit sphere, is projected onto a 2D circle by PCA. All the bases in PD have been flipped for easier comparison of the final bases and a grey dashed line has been annotated to indicate the symmetry of the two start bases."}
 ```
 
 Apart from checking the search and progression of an optimiser, looking at where the bases are positioned in the basis space is also of interest. Given the orthonormality constraint, the space of projection bases $\mathbf{A}_{p \times d}$ is a Stiefel manifold. For one-dimensional projections, this forms a $p$-dimensional sphere. A dimensionality reduction method, e.g. principal component analysis is applied to first project all the bases onto a 2D space. In a projection pursuit guided tour optimisation, there are various types of bases involved: 1) The starting basis; 2) The search bases that the optimiser evaluated to produce the anchor bases; 3) The anchor bases that have the highest index value in each iteration; 4) The interpolating bases on the interpolation path; and finally, 5) the end basis. The importance of these bases differs and the most important ones are the starting, interpolating, and end bases. The anchor and search bases can be turned on with argument `details = TRUE`. Sometimes, two optimisers can start with the same basis but finish with bases of opposite sign. This happens because the projection is invariant to the orientation of the basis and so is the index value. However, this creates difficulties for comparing the optimisers since the end bases will be symmetric to the origin. A sign flipping step is conducted to flip the signs of all the bases in one routine if different optimisations finish at opposite places.
@@ -309,10 +296,10 @@ An example of non-monotonic interpolation has been given in Figure \ref{fig:toy-
 ```{r polish, fig.height= 5, fig.cap = "Comparison of the projected data before and after using polishing for a 2D projection problem on \\code{boa6} data using holes index. The top row shows the initial projected data and the final views after CRS and polish search and the second row traces the index value. The clustering structure in the data is detected by CRS (top middle panel) but the polish step improves the index value and produces clearer boundaries of the clusters (top right panel), especially along the vertical axis."}
 ```
 
-Once the final basis has been found by an optimiser, one may want to push further in the close neighbourhood to see if an even better basis can be found. A polish search takes the final basis of an optimiser as the start of a new guided tour to search for local improvements. The polish algorithm is similar to the CRS but with three distinctions: 1) a hundred rather than one candidate bases are generated each time in the inner loop; 2) the neighbourhood size is reduced in the inner loop, rather than in the outer loop; and 3) three more termination conditions have been added to ensure the new basis generated is distinguishable from the current one in terms of the distance in the space, the percentage change in the index value, and neighbourhood size: 
+Once the final basis has been found by an optimiser, one may want to push further in the close neighbourhood to see if an even better basis can be found. A polish search takes the final basis of an optimiser as the start of a new guided tour to search for local improvements. The polish algorithm is similar to the CRS but with three distinctions: 1) a hundred rather than one candidate bases are generated each time in the inner loop; 2) the neighbourhood size is reduced in the inner loop, rather than in the outer loop; and 3) three more termination conditions have been added to ensure the new basis generated is distinguishable from the current one in terms of the distance in the space, the relative change in the index value, and neighbourhood size: 
 
 1) the distance between the basis found and the current basis needs to be larger than 1e-3;
-2) the percentage change of the index value needs to be larger than 1e-5; and
+2) the relative change of the index value needs to be larger than 1e-5; and
 3) the alpha parameter on itself needs to be larger than 0.01
 
 Figure \ref{fig:polish} presents the projected data and trace plot of a 2D projection, optimised by CRS and followed by the polish step. The top row shows the initial projection, the final projection after CRS, and the final projection after polish, respectively The end basis found by CRS reveals the four clusters in the data, but the edges of each cluster are not clean-cut. Polish works with this end basis and further pushes the index value to produce clearer edges of the cluster, especially along the vertical axis.

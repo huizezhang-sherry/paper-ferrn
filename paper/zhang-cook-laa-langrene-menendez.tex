@@ -94,7 +94,9 @@ availability of the objective function derivatives. As will be shown in
 the next section, the independent variables in our optimisation problem
 are the entries of a projection matrix and the computational time
 required to perform differentiation on a matrix could impede the
-rendering of tour animation. Hence, gradient-based methods are not the
+rendering of tour animation. In addition, some objective functions rely
+on the empirical distribution of the data, which makes it in general not
+possible to get the gradient. Hence, gradient-based methods are not the
 focus of this paper and consideration will be given to derivative-free
 methods.
 
@@ -719,8 +721,8 @@ hundred rather than one candidate bases are generated each time in the
 inner loop; 2) the neighbourhood size is reduced in the inner loop,
 rather than in the outer loop; and 3) three more termination conditions
 have been added to ensure the new basis generated is distinguishable
-from the current one in terms of the distance in the space, the
-percentage change in the index value, and neighbourhood size:
+from the current one in terms of the distance in the space, the relative
+change in the index value, and neighbourhood size:
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi})}
@@ -729,7 +731,7 @@ percentage change in the index value, and neighbourhood size:
   the distance between the basis found and the current basis needs to be
   larger than 1e-3;
 \item
-  the percentage change of the index value needs to be larger than 1e-5;
+  the relative change of the index value needs to be larger than 1e-5;
   and
 \item
   the alpha parameter on itself needs to be larger than 0.01
