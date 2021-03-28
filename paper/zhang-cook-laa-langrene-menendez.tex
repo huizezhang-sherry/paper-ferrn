@@ -1,7 +1,8 @@
 % !TeX root = RJwrapper.tex
-\title{Visual Diagnostics for Constrained Optimisation with Application to
-Guided Tours}
-\author{by H.Sherry Zhang, Dianne Cook, Ursula Laa, Nicolas Langrené, and Patricia Menéndez}
+\title{Visual Diagnostics for Constrained Optimisation with Application
+to Guided Tours}
+\author{by H.Sherry Zhang, Dianne Cook, Ursula Laa, Nicolas
+Langrené, and Patricia Menéndez}
 
 \maketitle
 
@@ -16,16 +17,17 @@ understanding the optimisation. Index functions can be noisy, might have
 multiple local maxima as well as an optimal maximum, and are constrained
 to generate orthonormal projection frames, which complicates the
 optimization. In addition, projection pursuit is primarily used for
-exploratory data analysis. The guided tour is especially useful for
-exploration, because it conducts geodesic interpolation connecting steps
-in the optimisation and shows how the projected data changes as a maxima
-is approached. This work provides new visual diagnostics for examining a
-choice of optimisation procedure, based on the provision of a new data
-object which collects information throughout the optimisation. It has
-helped to diagnose and fix several problems with projection pursuit
-guided tour. This work might be useful more broadly for diagnosing
-optimisers, and comparing their performance. The diagnostics are
-implemented in the R package \pkg{ferrn}.
+exploratory data analysis, and finding the local maxima is also useful.
+The guided tour is especially useful for exploration, because it
+conducts geodesic interpolation connecting steps in the optimisation and
+shows how the projected data changes as a maxima is approached. This
+work provides new visual diagnostics for examining a choice of
+optimisation procedure, based on the provision of a new data object
+which collects information throughout the optimisation. It has helped to
+diagnose and fix several problems with projection pursuit guided tour.
+This work might be useful more broadly for diagnosing optimisers, and
+comparing their performance. The diagnostics are implemented in the R
+package \pkg{ferrn}.
 }
 
 \hypertarget{introduction}{%
@@ -69,12 +71,12 @@ and line search methods. A review of the projection pursuit guided tour,
 an overview of the optimisation problem and outlines of three existing
 algorithms follows. The third section presents the new visual
 diagnostics, including the design of a data structure to capture
-information during the optimisation process, from which several
-diagnostic plots are created. An illustration of how the diagnostic
-plots can be used to examine the performance of different optimisers and
-guide improvements to existing algorithms is shown using simulated data.
-Finally, an explanation of the implementation in the R package,
-\CRANpkg{ferrn} \citep{ferrn}, is provided.
+information during the optimisation, from which several diagnostic plots
+are created. An illustration of how the diagnostic plots can be used to
+examine the performance of different optimisers and guide improvements
+to existing algorithms is shown using simulated data. Finally, an
+explanation of the implementation in the R package, \CRANpkg{ferrn}
+\citep{ferrn}, is provided.
 
 \hypertarget{optim}{%
 \section{Optimisation methods}\label{optim}}
@@ -209,7 +211,7 @@ implemented in the R package \CRANpkg{tourr} \citep{tourr}.
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=0.7\linewidth]{/Users/pmen0008/Desktop/paper-tour-vis/figs/tour-path} 
+{\centering \includegraphics[width=0.7\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/tour-path} 
 
 }
 
@@ -241,7 +243,7 @@ be index functions for which the objective function might not be
 differentiable. 3) While finding the global optimum is the goal of the
 optimisation problem, interesting projections may also appear in the
 local optimum. 4) The optimisation should be fast to compute since the
-tour animation is viewed by the users during the optimisation process.
+tour animation is viewed by the users during the optimisation.
 
 \hypertarget{existing-algorithms}{%
 \subsection{Existing algorithms}\label{existing-algorithms}}
@@ -423,7 +425,7 @@ an advantage in this simple example to quickly find the optimum.
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{/Users/pmen0008/Desktop/paper-tour-vis/figs/toy-search-1} 
+{\centering \includegraphics[width=1\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/toy-search-1} 
 
 }
 
@@ -438,7 +440,7 @@ progress}\label{toy-interp}}
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{/Users/pmen0008/Desktop/paper-tour-vis/figs/toy-interp-1} 
+{\centering \includegraphics[width=1\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/toy-interp-1} 
 
 }
 
@@ -470,7 +472,7 @@ search space}\label{toy-pca}}
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{/Users/pmen0008/Desktop/paper-tour-vis/figs/toy-pca} 
+{\centering \includegraphics[width=1\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/toy-pca} 
 
 }
 
@@ -534,7 +536,7 @@ plots}\label{diagnostic-3b-animating-the-diagnostic-plots}}
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{/Users/pmen0008/Desktop/paper-tour-vis/figs/toy-pca-animated-1} 
+{\centering \includegraphics[width=1\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/toy-pca-animated-1} 
 
 }
 
@@ -558,7 +560,7 @@ itself}\label{diagnostic-4a-the-tour-looking-at-itself}}
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{/Users/pmen0008/Desktop/paper-tour-vis/figs/toy-tour-1} 
+{\centering \includegraphics[width=1\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/toy-tour-1} 
 
 }
 
@@ -621,7 +623,7 @@ two circles are rotated into a line from our view.
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{/Users/pmen0008/Desktop/paper-tour-vis/figs/toy-torus-1} 
+{\centering \includegraphics[width=1\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/toy-torus-1} 
 
 }
 
@@ -687,7 +689,7 @@ panel and reaches a better final basis.
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{/Users/pmen0008/Desktop/paper-tour-vis/figs/interruption-1} 
+{\centering \includegraphics[width=1\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/interruption-1} 
 
 }
 
@@ -702,7 +704,7 @@ enough}\label{close-but-not-close-enough}}
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{/Users/pmen0008/Desktop/paper-tour-vis/figs/polish-1} 
+{\centering \includegraphics[width=1\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/polish-1} 
 
 }
 
@@ -775,7 +777,7 @@ non-smooth index function, two research questions are raised:
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{/Users/pmen0008/Desktop/paper-tour-vis/figs/noisy-better-geo-1} 
+{\centering \includegraphics[width=1\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/noisy-better-geo-1} 
 
 }
 
@@ -809,7 +811,7 @@ the overall number of points evaluated.
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{/Users/pmen0008/Desktop/paper-tour-vis/figs/kol-result-1} 
+{\centering \includegraphics[width=1\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/kol-result-1} 
 
 }
 
@@ -845,7 +847,7 @@ orientation}\label{reconciling-the-orientation}}
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{/Users/pmen0008/Desktop/paper-tour-vis/figs/flip-sign-1} 
+{\centering \includegraphics[width=1\linewidth]{/Users/hzha400/Documents/PhD/research/paper-tour-vis/figs/flip-sign-1} 
 
 }
 
@@ -1146,4 +1148,3 @@ Melbourne, Australia%
 %
 \\\href{mailto:patricia.menendez@monash.edu}{\nolinkurl{patricia.menendez@monash.edu}}
 }
-
