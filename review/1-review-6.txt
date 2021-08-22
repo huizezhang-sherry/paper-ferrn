@@ -1,0 +1,35 @@
+
+These experiments are interesting and so is the methodology.
+The conclusions could do with beefing up
+What can we learn about how to optimise the holes index for 1 and 2d?
+Does this apply to other smooth indices? What about non-smooth indices?
+What about indices in other dimensions?
+
+
+
+Should refer to earlier work on scagnostic indices, page 3
+
+
+figure 2 caption "using the holes index"  "and a boxplot". What is the colour scale for the points?
+The text related to figure 2 in the bottom of page 5 should mention the dataset and
+the index, giving references if needed.
+
+"with higher index value"  -> "with a higher index value".
+The word "the" is missing in a few other places in the paper.
+
+In Figure 3 would be better if the y-axes scales were the same for the two graphs.
+
+What is the star in figures 4 and 5? This is not mentioned in the text or caption
+
+In the text you say things like "details=TRUE" and "animate=TRUE" but what functions are you referring to?
+
+In Figure 9, it seems CRS is doing better here than in Figure 8-- maybe this could be mentioned.
+
+"not the case for all the indexes" missing a "." page 11
+
+For the Kolmogorov index, why are you using randomly generated data instead of normal quantiles?
+
+Fix references with "et al"
+
+
+ 
