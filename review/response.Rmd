@@ -37,6 +37,8 @@ Grassmannian manifold: GR9k,V) is a space that parametrize all k-dimension a lin
 
 **It is feasible to generalise the tour method for diagnosing other optimisers, providing the parameter space can be simulated. In our examples, the parameter to trace (projection base ($p \times d$) ) lives in an p-sphere, which can be simulated by the `geozoo` package. **
 
+Probably here the reviewer would like to see a kind of "recipie" about how to use the framework of the paper for other optimisers?
+
 - Figure 4 "...All the bases in PD have been flipped for easier comparison of the final bases..."
   - This is related to the major comment. In the figure, PD flipped in sign but stopped at a basis representation similar to the destination of the CRS. Flipping the sign back, does it mean that PD and CRS diverged but stopped at the similar subspace with opposite basis representations? Also, given that PD and CRS have the same starting bases and one is flipped, why wouldn't the dashed line pass the origin (gray dot) in the figure?
 
@@ -60,10 +62,14 @@ Grassmannian manifold: GR9k,V) is a space that parametrize all k-dimension a lin
 
 \textcolor{red}{The description of data is in the subsection simulation setup in the next section.}
 
+It might be worth to mentioned about the 5D in the simulation sep up subsection so that it is introduced explicitly for the readers.
+
 - "While the previous few examples have looked at the space of 1D bases ...  2D bases"
   - I don't think the terms "1D bases" and "2D bases" are standard. Perhaps (orthonormal) "1-frames" and "2-frames"?
 
 **Changed to "While the previous few examples have looked at the space of 1-frames in a unit sphere, this section visualises the space of 2-frames."**
+
+And the frames are orthonormal, right?
 
 # Reviewer 2
 
@@ -74,6 +80,8 @@ Does this apply to other smooth indices? What about non-smooth indices?
 What about indices in other dimensions?
 
 \textcolor{red}{Is the reviewer suggesting adding more details in the first paragraph of the conclusion?}
+
+I think the reviewer here wants to see a bit more detail on the conclusions and have provided a number of questions that could be answered in order to add some interesting points on that section.
 
 1. Should refer to earlier work on scagnostic indices, page 3
 
@@ -95,6 +103,8 @@ What about indices in other dimensions?
 
 **Added "The black star is the theoretical best basis the optimisers aiming to find." in the caption of figure 4.**
 
+"The black star **represents** the theoretical ...
+
 6. In the text you say things like "details=TRUE" and "animate=TRUE" but what functions are you referring to?
 
 **Mention of "details=TRUE" and "animate=TRUE" is removed from subsection diagnostic 3a and 3b to the implementation section: `explore_space_pca()` produces the PCA plot of projection bases on the reduced space. Figure 4 includes the additional details of anchor and search bases, which can be turned on by the argument `details = TRUE`. The animated version in Figure 5 is produced with argument `animate = TRUE`.**
@@ -110,6 +120,9 @@ What about indices in other dimensions?
 9. For the Kolmogorov index, why are you using randomly generated data instead of normal quantiles?
 
 \textcolor{red}{TODO}
+
+The Kolmogorov Smirnoff index here looks at the difference between a theoretical pdf and an empirical one based on data. I am not sure what would be the reasoning for using normal quantiles in this index. That would imply you are assuming normality on the theoretial pdf.
+
 
 10. Fix references with "et al"
 
