@@ -25,6 +25,10 @@ The tool is likely to be of interest to the R community.  Most of my comments ar
   - For 1D projections, flipping the sign is sufficient. For p-D projections of $\mathbb{R}^n$​, one may need a little more. To my knowledge most index functions are invariant to any rotations that happens within the p-subspace. This makes me wonder that in general, one may want to align two bases so that their difference does not contain any "within-subspace" components. In other words, one may want to compare representations in the Grassmannian manifold  (space of k-subspaces) instead of in the Stiefel manifold (space of orthonormal k-frames).
 
 \textcolor{red}{Is this a comment or anything to change?}
+I think the reviewer want us to comment on the sign flipping for higher order dimensions. It seems that the reviewer is suggesting that instead of comparing the bases on the space of the orthonormal k-frames it might be good to compare their representation in the Grassmannian manifold.
+
+Grassmannian manifold: GR9k,V) is a space that parametrize all k-dimension a linear subspaces of the n-dimensional vector sace V.(Wikpedia source)
+
 
 
 ### Minor comment
