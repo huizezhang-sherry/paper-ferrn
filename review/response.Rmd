@@ -29,7 +29,7 @@ I think the reviewer want us to comment on the sign flipping for higher order di
 
 Grassmannian manifold: GR9k,V) is a space that parametrize all k-dimension a linear subspaces of the n-dimensional vector sace V.(Wikpedia source)
 
-
+**ANS: With p-D bases, the correction of orientation is a bit more complicated. Take 2D as an example, two bases can be aligned in the first axis but not in the second. This would means there are $2^p$ possibility to check. **
 
 ### Minor comment
 
@@ -42,12 +42,13 @@ Probably here the reviewer would like to see a kind of "recipie" about how to us
 - Figure 4 "...All the bases in PD have been flipped for easier comparison of the final bases..."
   - This is related to the major comment. In the figure, PD flipped in sign but stopped at a basis representation similar to the destination of the CRS. Flipping the sign back, does it mean that PD and CRS diverged but stopped at the similar subspace with opposite basis representations? Also, given that PD and CRS have the same starting bases and one is flipped, why wouldn't the dashed line pass the origin (gray dot) in the figure?
 
-\textcolor{red}{The grey dot is the the zero matrix after projecting by the PCA. }
+**Yes the reviewer is giving a decent explanation in describing the effect of flipping. The gray dot should land on the dashed line and this is a mistake due to the data not being updated after flipping in the code. This has now been corrected. **
   
-- "Recall that the columns in a 2D basis are orthogonal to each other, so the space of *p* × 2 bases is a *p*-D torus"
+- "Recall that the columns in a 2D basis are orthogonal to each other, so the space of *p* × 2 bases is a *p*-D torus". 
+
   - It is not clear to me why "so". For p=2, the space of 2x2 bases is a pair of 1-D tori instead of just one (because you have two orientations for a pair of orthogonal vectors), right? For p=3, the space of 3x2 bases is SO(3), which is not a 3-D torus? Ref: https://en.wikipedia.org/wiki/Stiefel_manifold
   
-\textcolor{red}{TODO}
+- We change the wording of the sentence to "**a torus in the $p$-D space**"
 
 ### Writing
 
@@ -60,7 +61,7 @@ Probably here the reviewer would like to see a kind of "recipie" about how to us
 - "Figure 6 shows some frames from the tour plot of the same two optimisations in its original 5D space."
   - I think this is the first mention of "5D space"/5D data in the main text (apart from the caption in Figure 4), so it may be worth clarifying what the original 5D space is. 
 
-\textcolor{red}{The description of data is in the subsection simulation setup in the next section.}
+**The explanation of data set is introduced in the subsection *Simulation setup* under *Diagnosing an optimiser*. To avoid ambiguity, we change the "original 5D space" to "original space" and give more details about the original space in the figure caption: "The basis space in this example is a 5D unit sphere ...". **
 
 It might be worth to mentioned about the 5D in the simulation sep up subsection so that it is introduced explicitly for the readers.
 
@@ -119,9 +120,7 @@ I think the reviewer here wants to see a bit more detail on the conclusions and 
 
 9. For the Kolmogorov index, why are you using randomly generated data instead of normal quantiles?
 
-\textcolor{red}{TODO}
-
-The Kolmogorov Smirnoff index here looks at the difference between a theoretical pdf and an empirical one based on data. I am not sure what would be the reasoning for using normal quantiles in this index. That would imply you are assuming normality on the theoretial pdf.
+**The Kolmogorov Smirnoff index here looks at the difference between a theoretical pdf and an empirical one based on data. I am not sure what would be the reasoning for using normal quantiles in this index. That would imply you are assuming normality on the theoretial pdf.**
 
 
 10. Fix references with "et al"

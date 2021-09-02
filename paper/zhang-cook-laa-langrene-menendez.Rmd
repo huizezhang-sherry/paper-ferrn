@@ -49,7 +49,7 @@ knitr::opts_chunk$set(echo = FALSE,
 
 ```{r external, include = FALSE, cache = FALSE}
 knitr::read_chunk(
-  here::here("paper", "zhang-cook-laa-langrene-menendez.R")
+  here::here("paper", "script.R")
 )
 ```
 
@@ -241,11 +241,11 @@ An animation is another type of display to show how the search progresses from s
 ```{r toy-tour, fig.cap="Six frames selected from rotating the high-dimensional basis space, along with the same two search paths from Figure \\ref{fig:toy-pca} and \\ref{fig:toy-pca-animated}. The basis space in this example is a 5D unit sphere, on which points (grey) are randomly generated via the CRAN package \\CRANpkg{geozoo}. The full video of the animation can be found at \\url{https://vimeo.com/512885379}."}
 ```
 
-As mentioned previously, the original $p \times d$ dimension space can be simulated via randomly generated bases in the \pkg{geozoo} [@geozoo] package. While the PCA plot projects the bases from the direction that maximises the variance, the tour plot displays the original high-dimensional space from various directions using animation. Figure \ref{fig:toy-tour} shows some frames from the tour plot of the same two optimisations in its original 5D space.
+As mentioned previously, the original $p \times d$ dimension space can be simulated via randomly generated bases in the \pkg{geozoo} [@geozoo] package. While the PCA plot projects the bases from the direction that maximises the variance, the tour plot displays the original high-dimensional space from various directions using animation. Figure \ref{fig:toy-tour} shows some frames from the tour plot of the same two optimisations in its original space.
 
 ## Diagnostic 4b: Forming a torus
 
-While the previous few examples have looked at the space of 1-frames in a unit sphere, this section visualises the space of 2-frames. Recall that the columns in a 2D basis are orthogonal to each other, so the space of $p \times 2$ bases is a $p$-D torus. For $p = 3$ one would see a classical 3D torus shape as shown by the grey points in Figure \ref{fig:toy-torus}. The two circles of the torus can be observed to be perpendicular to each other and this can be linked back to the orthogonality condition. Two paths from CRS and PD are plotted on top of the torus and coloured in green and brown respectively to match the previous plots. The final basis found by PD and CRS are shown in a larger shape  and printed below respectively:
+While the previous few examples have looked at the space of 1-frames in a unit sphere, this section visualises the space of 2-frames. Recall that the columns in a 2D basis are orthogonal to each other, so the space of $p \times 2$ bases is a torus in the $p$-D space. For $p = 3$ one would see a classical 3D torus shape as shown by the grey points in Figure \ref{fig:toy-torus}. The two circles of the torus can be observed to be perpendicular to each other and this can be linked back to the orthogonality condition. Two paths from CRS and PD are plotted on top of the torus and coloured in green and brown respectively to match the previous plots. The final basis found by PD and CRS are shown in a larger shape  and printed below respectively:
 
 ```{r}
 holes_2d_geo_3var %>% get_best() %>% pull(basis) %>% .[[1]]

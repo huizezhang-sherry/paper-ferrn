@@ -13,7 +13,7 @@ knitr::opts_chunk$set(echo = FALSE,
 
 ## ----external, include = FALSE, cache = FALSE---------------------------------
 knitr::read_chunk(
-  here::here("paper", "zhang-cook-laa-langrene-menendez.R")
+  here::here("paper", "script.R")
 )
 
 
