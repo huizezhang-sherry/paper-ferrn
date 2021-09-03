@@ -22,11 +22,11 @@ knitr::include_graphics(here::here("figs/tour-path.png"))
 #
 # p <- (p1 | p2) + plot_layout(widths = c(1.5,2)) & theme_bw() & theme(legend.position = "none")
 #
-# ggsave(p, filename = "toy-search.pdf",
-#        path = here::here("figs"), device = "pdf",
+# ggsave(p, filename = "toy-search.svg",
+#        path = here::here("figs"), device = "svg",
 #        width = 10, height = 5)
 
-knitr::include_graphics(here::here("figs/toy-search.pdf"))
+knitr::include_graphics(here::here("figs/toy-search.svg"))
 
 ## ---- toy-interp
 p1 <- holes_2d_better_max_tries %>%
@@ -50,9 +50,9 @@ p2 <- holes_2d_better_random %>%
 #   scale_color_discrete_botanical() +
 #   theme(legend.text = element_text(size = "10pt"))
 #
-# ggsave(p, filename = "toy-pca.pdf",
+# ggsave(p, filename = "toy-pca.svg",
 #        path = here::here("figs"))
-knitr::include_graphics(here::here("figs", "toy-pca.pdf"))
+knitr::include_graphics(here::here("figs", "toy-pca.svg"))
 
 
 ## ----toy-pca-animated
@@ -68,18 +68,21 @@ knitr::include_graphics(here::here("figs", "toy-pca.pdf"))
 #         renderer = file_renderer("anim/pca/",
 #                                  prefix = "pca", overwrite = TRUE))
 
-# vimeo version with legend
-# ani <- dt %>%
-#   explore_space_pca(group = method, animate = TRUE, interp_size = 3,
-#                     theo_size = 45, start_size = 10, end_size = 20) +
-#   scale_color_botanical(palette = "fern")
-# anim_save(ani, filename = here::here("anim/toy-pca-animated.mp4"))
-
 frames <- c("0001", "0038", "0046", "0079", "0086", "0100")
 ani <- paste0(here::here("anim/"), "pca/", "pca", frames, ".png")
 rl <- lapply(ani, png::readPNG)
 gl <-  lapply(rl, grid::rasterGrob)
 wrap_plots(gl)
+
+
+## ----toy-pca-animated-interactive
+# ani <- dt %>%
+#   explore_space_pca(group = method, animate = TRUE, interp_size = 3,
+#                     theo_size = 45, start_size = 10, end_size = 20) +
+#   scale_color_botanical(palette = "fern")
+# anim_save(ani, filename = here::here("anim/toy-pca-animated.mp4"))
+knitr::include_graphics(here::here("anim/toy-pca-animated.gif"))
+
 
 ## ----toy-tour
 # prep <- prep_space_tour(dplyr::bind_rows(holes_1d_better, holes_1d_geo), flip = TRUE,
@@ -203,6 +206,10 @@ ani <- paste0(here::here("anim/"), "torus/", "torus", frames, ".png")
 rl <- lapply(ani, png::readPNG)
 gl <-  lapply(rl, grid::rasterGrob)
 wrap_plots(gl)
+
+## ----toy-torus-interactive
+knitr::include_graphics(here::here("anim/torus.gif"))
+
 
 ## ----interruption
 # clean up interrupt_no nand interrupt_yes
@@ -405,9 +412,9 @@ gridExtra::grid.arrange(gl[[1]], gl[[2]], gl[[3]], p1, layout_matrix = lay)
 # p <- (p1 / p2)
 #
 #
-# ggsave(p, filename = "noisy-better-geo.pdf",
+# ggsave(p, filename = "noisy-better-geo.svg",
 #        path = here::here("figs"), width = 10, height = 8)
-knitr::include_graphics(here::here("figs", "noisy-better-geo.pdf"))
+knitr::include_graphics(here::here("figs", "noisy-better-geo.svg"))
 
 #
 # compute_kol_sim <- function(optim_data, polish_data, search_f, alpha = 0.5, max.tries = 200){
@@ -525,9 +532,9 @@ knitr::include_graphics(here::here("figs", "noisy-better-geo.pdf"))
 #   theme(strip.text = element_text(size = "10pt", margin = margin(.15, 0, .15, 0, "cm")),
 #         legend.text = element_text(size = "10pt"))
 #
-# ggsave(p, filename = "kol-result.pdf",
+# ggsave(p, filename = "kol-result.svg",
 #        path = here::here("figs"))
-knitr::include_graphics(here::here("figs", "kol-result.pdf"))
+knitr::include_graphics(here::here("figs", "kol-result.svg"))
 
 ## ---- flip-sign
 # set.seed(2463)
@@ -562,6 +569,6 @@ knitr::include_graphics(here::here("figs", "kol-result.pdf"))
 #   theme(strip.text.x = element_text(size = "10pt", margin = margin(.15, 0, .15, 0, "cm")),
 #         legend.text = element_text(size = "10pt"))
 #
-# ggsave(p, filename = "flip-sign.pdf",
+# ggsave(p, filename = "flip-sign.svg",
 #        path = here::here("figs"), width = 10, height = 5)
-knitr::include_graphics(here::here("figs", "flip-sign.pdf"))
+knitr::include_graphics(here::here("figs", "flip-sign.svg"))
