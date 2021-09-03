@@ -10,17 +10,23 @@ purrr::walk(.x = files, ~load(here::here(.x), env = globalenv()))
 knitr::include_graphics(here::here("figs/tour-path.png"))
 
 ## ---- toy-search
-p1 <- holes_2d_better_max_tries %>%
-  mutate(max_tries = 500) %>%
-  explore_trace_search(label.size = 0.03,label.padding = 0.1, segment.size = 0,  extend_lower = 0.93) +
-  scale_color_continuous_botanical()
+# p1 <- holes_2d_better_max_tries %>%
+#   mutate(max_tries = 500) %>%
+#   explore_trace_search(label.size = 0.03,label.padding = 0.1, segment.size = 0,  extend_lower = 0.99) +
+#   scale_color_continuous_botanical()
+#
+# p2 <- holes_2d_better_random %>%
+#   mutate(max_tries = 25) %>%
+#   explore_trace_search(label.size = 0.01, label.padding = 0.1, segment.size = 0, extend_lower = 0.99) +
+#   scale_color_continuous_botanical()
+#
+# p <- (p1 | p2) + plot_layout(widths = c(1.5,2)) & theme_bw() & theme(legend.position = "none")
+#
+# ggsave(p, filename = "toy-search.pdf",
+#        path = here::here("figs"), device = "pdf",
+#        width = 10, height = 5)
 
-p2 <- holes_2d_better_random %>%
-  mutate(max_tries = 25) %>%
-  explore_trace_search(label.size = 0.01, label.padding = 0.1, segment.size = 0, extend_lower = 0.93) +
-  scale_color_continuous_botanical()
-
-(p1 | p2) & theme_bw() + theme(legend.position = "none")
+knitr::include_graphics(here::here("figs/toy-search.pdf"))
 
 ## ---- toy-interp
 p1 <- holes_2d_better_max_tries %>%
@@ -33,7 +39,7 @@ p2 <- holes_2d_better_random %>%
   explore_trace_interp( accuracy_x = 14) +
   scale_color_continuous_botanical()
 
-p1 | p2
+(p1 | p2) & ylim(0.8, 0.96)
 
 ## ----toy-pca
 # p <- bind_rows(holes_1d_geo, holes_1d_better) %>%
@@ -41,11 +47,11 @@ p1 | p2
 #                    index = tourr::holes(), raw_data = boa5)  %>%
 #   explore_space_pca(group = method, details = TRUE,
 #                     interp_size = 1) +
-#   scale_color_discrete_botanical()
+#   scale_color_discrete_botanical() +
+#   theme(legend.text = element_text(size = "10pt"))
 #
 # ggsave(p, filename = "toy-pca.pdf",
-#        path = here::here("figs"),
-#        width = 4, height = 4)
+#        path = here::here("figs"))
 knitr::include_graphics(here::here("figs", "toy-pca.pdf"))
 
 
@@ -264,7 +270,7 @@ p2 <- after %>%
   ggtitle("with interruption") +
   scale_color_continuous_botanical()
 
-(p1 | p2)
+(p1 | p2) & ylim(0.8, 0.9)
 
 ## ----polish
 # set.seed(123456)
@@ -368,33 +374,40 @@ gridExtra::grid.arrange(gl[[1]], gl[[2]], gl[[3]], p1, layout_matrix = lay)
 # save(kol_1d_better_random, file = here::here("data", "kol_1d_better_random.rda"))
 
 
-index <- tourr::norm_kol(nrow(boa5))
-theo_best_index_val <- index(as.matrix(boa5) %*% matrix(c(0, 1, 0, 0, 0), nrow = 5, ncol = 1))
-
-dt <- dplyr::bind_rows(kol_1d_geo, kol_1d_better, kol_1d_better_random) %>%
-  bind_theoretical(matrix = matrix(c(0, 1, 0, 0, 0), ncol = 1), tourr::norm_kol(nrow(boa5)), raw_data = boa5)
-
-p1 <- dt %>%
-  explore_trace_interp(group = method, color = method, accuracy_y = 0.02) +
-  geom_hline(yintercept = theo_best_index_val, alpha = 0.5, linetype = 2) +
-  scale_color_discrete_botanical() +
-  facet_wrap(vars(fct_relevel(method, c("PD", "CRS", "SA"))), scales = "free_x")
-
-pca <- dt %>%
-  compute_pca(group = method) %>%
-  purrr::pluck("aug")
-
-p2 <- pca %>%
-  explore_space_pca(group = method, pca = FALSE, details = FALSE, start_size = 3, interp_size = 0.5, end_size = 5) +
-  add_search(dt = pca %>% group_by(method) %>% filter(str_detect(info, "search")) %>% filter(tries != max(tries)),
-             search_size = 0.5, search_col = method, search_alpha = 0.2) +
-  add_dir_search(dt = pca %>% filter(method == "PD") %>% get_dir_search(ratio = 10) %>% filter(tries != max(tries)),
-                 dir_col = method, dir_alpha = 0.2) +
-  scale_color_discrete_botanical() +
-  theme(legend.position = "none") +
-  facet_wrap(vars(fct_relevel(method, c("PD", "CRS", "SA"))))
-
-(p1 / p2)
+# index <- tourr::norm_kol(nrow(boa5))
+# theo_best_index_val <- index(as.matrix(boa5) %*% matrix(c(0, 1, 0, 0, 0), nrow = 5, ncol = 1))
+#
+# dt <- dplyr::bind_rows(kol_1d_geo, kol_1d_better, kol_1d_better_random) %>%
+#   bind_theoretical(matrix = matrix(c(0, 1, 0, 0, 0), ncol = 1), tourr::norm_kol(nrow(boa5)), raw_data = boa5)
+#
+# p1 <- dt %>%
+#   explore_trace_interp(group = method, color = method, accuracy_y = 0.02) +
+#   geom_hline(yintercept = theo_best_index_val, alpha = 0.5, linetype = 2) +
+#   scale_color_discrete_botanical() +
+#   facet_wrap(vars(fct_relevel(method, c("PD", "CRS", "SA"))), scales = "free_x") +
+#   theme(strip.text = element_text(size = "10pt", margin = margin(0.15, 0, 0.15, 0, unit = "cm")))
+#
+# pca <- dt %>%
+#   compute_pca(group = method) %>%
+#   purrr::pluck("aug")
+#
+# p2 <- pca %>%
+#   explore_space_pca(group = method, pca = FALSE, details = FALSE, start_size = 3, interp_size = 0.5, end_size = 5, theo_size = 15) +
+#   add_search(dt = pca %>% group_by(method) %>% filter(str_detect(info, "search")) %>% filter(tries != max(tries)),
+#              search_size = 0.5, search_col = method, search_alpha = 0.2) +
+#   add_dir_search(dt = pca %>% filter(method == "PD") %>% get_dir_search(ratio = 10) %>% filter(tries != max(tries)),
+#                  dir_col = method, dir_alpha = 0.2) +
+#   scale_color_discrete_botanical() +
+#   theme(legend.position = "none") +
+#   facet_wrap(vars(fct_relevel(method, c("PD", "CRS", "SA")))) +
+#   theme(strip.text = element_text(size = "10pt", margin = margin(0.15, 0, 0.15, 0, unit = "cm")))
+#
+# p <- (p1 / p2)
+#
+#
+# ggsave(p, filename = "noisy-better-geo.pdf",
+#        path = here::here("figs"), width = 10, height = 8)
+knitr::include_graphics(here::here("figs", "noisy-better-geo.pdf"))
 
 #
 # compute_kol_sim <- function(optim_data, polish_data, search_f, alpha = 0.5, max.tries = 200){
@@ -475,40 +488,46 @@ p2 <- pca %>%
 # save(clean, file = here::here("data", "clean.rda"))
 
 ## ----kol-result
-clean_pca <- clean %>%
-  filter(method != "search_polish") %>%
-  bind_theoretical(matrix = matrix(c(0, 1, 0, 0, 0, 0), nrow = 6),
-                   index = tourr::norm_kol(nrow(boa6)),
-                   raw_data = boa6) %>%
-  bind_theoretical(matrix = matrix(c(0, 0, 1, 0, 0, 0), nrow = 6),
-                   index = tourr::norm_kol(nrow(boa6)),
-                   raw_data = boa6) %>%
-  mutate(seed_sim = paste0(seed, sim),
-         alpha = ifelse(str_detect(sim, "tuned"), 0.7, 0.5),
-         optimiser = ifelse(str_detect(sim, "random"), "SA", "CRS"),
-         var_found = as.factor(ifelse(var_found == "V7", "global", "local")),
-         var_found = fct_relevel(var_found, "global", after = 1)) %>%
-  compute_pca(group = seed_sim) %>%
-  pluck("aug")
-
-global_max <- clean_pca %>%
-  filter(info == "theoretical") %>%
-  filter(index_val == max(index_val)) %>%
-  select(-alpha, -optimiser)
-
-local_max <- clean_pca %>%
-  filter(info == "theoretical") %>%
-  filter(index_val == min(index_val)) %>%
-  select(-alpha, -optimiser)
-
-clean_pca %>% drop_na() %>% rename(`search size` = alpha) %>%
-  explore_space_pca(pca = FALSE, group = seed_sim, color = var_found,
-                    start_size = 1, start_alpha = 0.5, end_size = 2,
-                    interp_size = 0.5) +
-  add_theo(dt = global_max, theo_size = 20) +
-  add_theo(dt = local_max, theo_label = "x", theo_size = 10) +
-  scale_color_discrete_botanical() +
-  facet_grid(`search size` ~ optimiser, labeller = label_both)
+# clean_pca <- clean %>%
+#   filter(method != "search_polish") %>%
+#   bind_theoretical(matrix = matrix(c(0, 1, 0, 0, 0, 0), nrow = 6),
+#                    index = tourr::norm_kol(nrow(boa6)),
+#                    raw_data = boa6) %>%
+#   bind_theoretical(matrix = matrix(c(0, 0, 1, 0, 0, 0), nrow = 6),
+#                    index = tourr::norm_kol(nrow(boa6)),
+#                    raw_data = boa6) %>%
+#   mutate(seed_sim = paste0(seed, sim),
+#          alpha = ifelse(str_detect(sim, "tuned"), 0.7, 0.5),
+#          optimiser = ifelse(str_detect(sim, "random"), "SA", "CRS"),
+#          var_found = as.factor(ifelse(var_found == "V7", "global", "local")),
+#          var_found = fct_relevel(var_found, "global", after = 1)) %>%
+#   compute_pca(group = seed_sim) %>%
+#   pluck("aug")
+#
+# global_max <- clean_pca %>%
+#   filter(info == "theoretical") %>%
+#   filter(index_val == max(index_val)) %>%
+#   select(-alpha, -optimiser)
+#
+# local_max <- clean_pca %>%
+#   filter(info == "theoretical") %>%
+#   filter(index_val == min(index_val)) %>%
+#   select(-alpha, -optimiser)
+#
+# p <- clean_pca %>% drop_na() %>% rename(`search size` = alpha) %>%
+#   explore_space_pca(pca = FALSE, group = seed_sim, color = var_found,
+#                     start_size = 1, start_alpha = 0.5, end_size = 2,
+#                     interp_size = 0.5) +
+#   add_theo(dt = global_max, theo_size = 20) +
+#   add_theo(dt = local_max, theo_label = "x", theo_size = 10) +
+#   scale_color_discrete_botanical() +
+#   facet_grid(`search size` ~ optimiser, labeller = label_both) +
+#   theme(strip.text = element_text(size = "10pt", margin = margin(.15, 0, .15, 0, "cm")),
+#         legend.text = element_text(size = "10pt"))
+#
+# ggsave(p, filename = "kol-result.pdf",
+#        path = here::here("figs"))
+knitr::include_graphics(here::here("figs", "kol-result.pdf"))
 
 ## ---- flip-sign
 # set.seed(2463)
@@ -529,15 +548,20 @@ clean_pca %>% drop_na() %>% rename(`search size` = alpha) %>%
 # save(orientation_corrected, file = here::here("data", "orientation_corrected.rda"))
 # save(orientation_different, file = here::here("data", "orientation_different.rda"))
 
-dt <- bind_rows(orientation_corrected %>% mutate(sign = "flipped"),
-                orientation_different %>% mutate(sign = "original")) %>%
-  compute_pca() %>%
-  pluck("aug") %>%
-  mutate(sign = fct_relevel(as.factor(sign), c("original", "flipped")))
-
-dt %>%
-  explore_space_pca(group = sign, pca = FALSE ,flip = FALSE, start_size = 3) +
-  add_anchor(dt = get_interp_last(dt), anchor_color = sign) +
-  scale_color_discrete_botanical() +
-  facet_wrap(vars(sign)) +
-  theme(strip.text.x = element_text(margin = margin(.15, 0, .15, 0, "cm")))
+# dt <- bind_rows(orientation_corrected %>% mutate(sign = "flipped"),
+#                 orientation_different %>% mutate(sign = "original")) %>%
+#   compute_pca() %>%
+#   pluck("aug") %>%
+#   mutate(sign = fct_relevel(as.factor(sign), c("original", "flipped")))
+#
+# p <- dt %>%
+#   explore_space_pca(group = sign, pca = FALSE ,flip = FALSE, start_size = 3, interp_size = 1) +
+#   add_anchor(dt = get_interp_last(dt), anchor_color = sign) +
+#   scale_color_discrete_botanical() +
+#   facet_wrap(vars(sign)) +
+#   theme(strip.text.x = element_text(size = "10pt", margin = margin(.15, 0, .15, 0, "cm")),
+#         legend.text = element_text(size = "10pt"))
+#
+# ggsave(p, filename = "flip-sign.pdf",
+#        path = here::here("figs"), width = 10, height = 5)
+knitr::include_graphics(here::here("figs", "flip-sign.pdf"))
