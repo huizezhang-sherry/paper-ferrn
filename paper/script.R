@@ -63,7 +63,7 @@ knitr::include_graphics(here::here("figs", "toy-pca.svg"))
 #   explore_space_pca(group = method, animate = TRUE, interp_size = 3,
 #                     theo_size = 45, start_size = 10, end_size = 20) +
 #   theme(legend.position = "none") +
-#   scale_color_botanical(palette = "fern")
+#   scale_color_continuous_botanical(palette = "fern")
 # animate(ani, nframes = 100, device = "png",
 #         renderer = file_renderer("anim/pca/",
 #                                  prefix = "pca", overwrite = TRUE))
@@ -77,10 +77,12 @@ wrap_plots(gl)
 
 ## ----toy-pca-animated-interactive
 # ani <- dt %>%
-#   explore_space_pca(group = method, animate = TRUE, interp_size = 3,
-#                     theo_size = 45, start_size = 10, end_size = 20) +
-#   scale_color_botanical(palette = "fern")
-# anim_save(ani, filename = here::here("anim/toy-pca-animated.mp4"))
+#   explore_space_pca(group = method, animate = TRUE, interp_size = 1,
+#                     theo_size = 20, start_size = 3, end_size = 5) +
+#   scale_color_discrete_botanical(palette = "fern")
+# anim_save(ani,
+#           filename = here::here("anim/toy-pca-animated.gif"),
+#           renderer = gifski_renderer(width = 500, height = 500))
 knitr::include_graphics(here::here("anim/toy-pca-animated.gif"))
 
 
@@ -102,7 +104,17 @@ knitr::include_graphics(here::here("anim/toy-pca-animated.gif"))
 #   here::here("anim","tour", "tour%03d.png")
 # )
 #
-# # render gif
+
+frames <- c("001", "021", "056", "072", "079", "088")
+ani <- paste0(here::here("anim/"), "tour/", "tour", frames, ".png")
+rl <- lapply(ani, png::readPNG)
+gl <-  lapply(rl, grid::rasterGrob)
+wrap_plots(gl)
+
+## ----toy-tour-interactive
+# prep <- prep_space_tour(dplyr::bind_rows(holes_1d_better, holes_1d_geo), flip = TRUE,
+#                         group = method, palette = botanical_palettes$fern[c(1,6)], axes = "bottomleft",
+#                         rand_size = 0.5, point_size = 2, end_size = 5)
 # set.seed(123456)
 # render_gif(
 #   prep$basis,
@@ -114,14 +126,10 @@ knitr::include_graphics(here::here("anim/toy-pca-animated.gif"))
 #   frames = 100,
 #   gif_file = here::here("anim","tour.gif")
 # )
-
-frames <- c("001", "021", "056", "072", "079", "088")
-ani <- paste0(here::here("anim/"), "tour/", "tour", frames, ".png")
-rl <- lapply(ani, png::readPNG)
-gl <-  lapply(rl, grid::rasterGrob)
-wrap_plots(gl)
+knitr::include_graphics(here::here("anim/tour.gif"))
 
 ## ----toy-torus
+# generate 2D paths
 # set.seed(123456)
 # holes_2d_geo_3var <-
 #   animate_xy(boa6[, 1:3], tour_path = guided_tour(holes(), d = 2,
@@ -153,6 +161,7 @@ wrap_plots(gl)
 # # save(holes_2d_better_3var, file = here::here("data", "holes_2d_better_3var.rda"))
 # # save(holes_2d_geo_3var, file = here::here("data", "holes_2d_geo_3var.rda"))
 # #
+# generating random sphere
 # proj_d <-  2 # 2D because then you have 2 orthogonal circles
 # d <- 6
 # n_point <- 5000
@@ -163,8 +172,6 @@ wrap_plots(gl)
 #
 # path_geo <- bind_rows(holes_2d_geo_3var) %>% get_interp() %>% get_basis_matrix() %>% as_tibble()
 # path_better <- bind_rows(holes_2d_better_3var) %>% get_interp() %>% get_basis_matrix() %>% as_tibble()
-# path_better <- bind_rows(holes_2d_better_3var) %>% get_interp() %>% filter(tries <= 2) %>% get_basis_matrix() %>% as_tibble()
-# # path_better <- holes_2d_better_3var %>% group_by(tries) %>% filter(loop != max(loop)) %>%get_interp() %>% get_basis_matrix() %>% as_tibble()
 #
 # basis <- bind_rows(path_geo, path_better, random) %>%
 #   mutate(id = as.factor(ifelse(row_number() > nrow(path_geo) + nrow(path_better), "random",
@@ -190,6 +197,35 @@ wrap_plots(gl)
 #   here::here("anim","torus", "torus%03d.png")
 # )
 #
+frames <- c("001", "017", "064", "068", "075", "100")
+ani <- paste0(here::here("anim/"), "torus/", "torus", frames, ".png")
+rl <- lapply(ani, png::readPNG)
+gl <-  lapply(rl, grid::rasterGrob)
+wrap_plots(gl)
+
+## ----toy-torus-interactive
+# proj_d <-  2 # 2D because then you have 2 orthogonal circles
+# d <- 6
+# n_point <- 5000
+# set.seed(123456)
+# random <- map(1:n_point, ~basis_random(n = d/proj_d,  d=proj_d)) %>%
+#   purrr::flatten_dbl() %>% matrix(ncol = d, byrow = TRUE) %>% as_tibble()
+# path_geo <- holes_2d_geo_3var %>% get_interp() %>% get_basis_matrix() %>% as_tibble()
+# path_better <- holes_2d_better_3var %>% group_by(tries) %>% filter(loop != max(loop)) %>% get_interp() %>% get_basis_matrix() %>% as_tibble()
+#
+# basis <- bind_rows(path_geo, path_better, random) %>%
+#   mutate(id = as.factor(ifelse(row_number() > nrow(path_geo) + nrow(path_better), "random",
+#                                ifelse(row_number() <= nrow(path_geo), "geodesic", "better"))),
+#          cex = ifelse(id == "random", 0.5, 2),
+#          cex = ifelse(row_number() == 1, 2, cex)) %>%
+#   group_by(id) %>%
+#   mutate(cex = ifelse(row_number() == max(row_number()) & id != "random", 5, cex)) %>%
+#   ungroup()
+#
+# pal <- RColorBrewer::brewer.pal(3, "Dark2")
+# pal <- c(botanical_pal(reverse = TRUE)(2), "grey60")
+# col <- pal[basis$id]
+#
 # # render gif
 # set.seed(123)
 # render_gif(
@@ -200,14 +236,6 @@ wrap_plots(gl)
 #   frames = 100,
 #   gif_file = here::here("anim","torus.gif")
 # )
-
-frames <- c("001", "017", "064", "068", "075", "100")
-ani <- paste0(here::here("anim/"), "torus/", "torus", frames, ".png")
-rl <- lapply(ani, png::readPNG)
-gl <-  lapply(rl, grid::rasterGrob)
-wrap_plots(gl)
-
-## ----toy-torus-interactive
 knitr::include_graphics(here::here("anim/torus.gif"))
 
 
