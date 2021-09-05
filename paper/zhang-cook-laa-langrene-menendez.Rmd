@@ -250,7 +250,7 @@ As mentioned previously, the original $p \times d$ dimension space can be simula
 ```{r toy-tour, fig.cap="Six frames selected from rotating the high-dimensional basis space, along with the same two search paths from Figure \\ref{fig:toy-pca} and \\ref{fig:toy-pca-animated}. The basis space in this example is a 5D unit sphere, on which points (grey) are randomly generated via the CRAN package geozoo. The full animation can be seen in the html version of the paper."}
 ```
 
-```{r toy-tour-interactive, fig.cap="Animating the two paths from Figure \\ref{fig:toy-pca} and \\ref{fig:toy-pca-animated} in the full basis space. The full basis space in this example is a 5D unit sphere, on which points (grey) are randomly generated via the CRAN package geozoo."}
+```{r toy-tour-interactive, fig.cap="Animating the two paths from Figure \\ref{fig:toy-pca} and \\ref{fig:toy-pca-animated} in the full basis space. The full basis space in this example is a 5D unit sphere, on which points (grey) are randomly generated via the CRAN package geozoo.", eval = knitr::is_html_output()}
 ```
 
 ## Diagnostic 4b: Forming a torus
