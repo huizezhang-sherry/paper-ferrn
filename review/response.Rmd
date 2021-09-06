@@ -28,6 +28,7 @@ The tool is likely to be of interest to the R community.  Most of my comments ar
 
 \textcolor{red}{With p-D bases, the correction of orientation is a bit more complicated. Take 2D as an example, two bases can be aligned in the first axis but not in the second. This would means there are $2^p$ possibility to check.}
 
+\textcolor{magenta}{Once you go to 2D you have to take into account rotation in addition to flips, so the thing to check would be if the two frames are spanning the same subspace, and aligning them will be a bit more work. Might be a good idea to add 1-2 sentences in the paper and rephrase the reply.}
 
 ### Minor comment
 
@@ -36,6 +37,8 @@ The tool is likely to be of interest to the R community.  Most of my comments ar
 \textcolor{red}{It is feasible to generalise the tour method for diagnosing other optimisers, providing the parameter space can be simulated. In our examples, the parameter to trace (projection base ($p \times d$) ) lives in an p-sphere, which can be simulated by the `geozoo` package. For other optimisers, reserachers need first to create a data collection object in a tibble that track the parameter during the optimisation, and then to use ferrn to produce the diagnostic plots as shown in the paper.}
 
 \textcolor{green}{providing --> given that the ...?}
+
+\textcolor{magenta}{Here could reiterate points about constrained optimisation and that we simulate from the allowed parameter space, in those cases using the tour method to visualize the trace is especially interesting. Is there any documentation of how the data structure needs to look like for ferrn input? It might be a good idea to point to that.}
 
 - Figure 4 "...All the bases in PD have been flipped for easier comparison of the final bases..."
   - This is related to the major comment. In the figure, PD flipped in sign but stopped at a basis representation similar to the destination of the CRS. Flipping the sign back, does it mean that PD and CRS diverged but stopped at the similar subspace with opposite basis representations? Also, given that PD and CRS have the same starting bases and one is flipped, why wouldn't the dashed line pass the origin (gray dot) in the figure?
@@ -51,6 +54,8 @@ The tool is likely to be of interest to the R community.  Most of my comments ar
   
 \textcolor{red}{We changed the wording of the sentence to "**a torus in the $p$-D space**"}
 
+\textcolor{magenta}{I think Di mentioned a reference to cite when you first mention the torus in the text, it should be added to the paper and mentioned here in the reply.}
+
 ### Writing
 
 - "Along with the bases recorded during the optimisation and a zero basis, the parameters (centre and radius) of the 2D space can be estimated by PCA. The centre of the circle is the first two PC coordinates of the zero matrix, and the radius is estimated as the largest distance from the centre to the basis."
@@ -59,6 +64,8 @@ The tool is likely to be of interest to the R community.  Most of my comments ar
 \textcolor{red}{The paragraph has now been updated to "We use PCA to estimate the 2D space that contains all the bases recorded and the zero basis. The centre of the 2D view is the first two PC coordinates of the zero matrix, and the radius is estimated as the largest distance from the centre to the basis."}
   
 \textcolor{green}{Change --> The paragraph has now been updated to...}
+  
+\textcolor{magenta}{You could be a bit more carful with the phrasing still, the PCA finds the 2D space that is best suited to visualize the bases (while any 2D projection will contain them).}
   
 - "Figure 6 shows some frames from the tour plot of the same two optimisations in its original 5D space."
   - I think this is the first mention of "5D space"/5D data in the main text (apart from the caption in Figure 4), so it may be worth clarifying what the original 5D space is. 
@@ -85,6 +92,8 @@ What about indices in other dimensions?
 
 \textcolor{red}{A paragraph further summarising the findings has been added in the second paragram in the conclusion}
 
+\textcolor{magenta}{The new paragraph should be improved a bit further. Can you connect how the method was useful to how other people might want to use it? I think Fig 10 is a nice example of how we understand the optimizers both in terms of how well they climb towards higher index values, how well they cover the search space and also how direct the path towards the optimum is. This lead to insights for the guided tour example, and would be useful generally when comparing optimizers on difficult problems.}
+
 1. Should refer to earlier work on scagnostic indices, page 3
 
 \textcolor{green}{New references have been added as follows:}
@@ -100,6 +109,8 @@ What about indices in other dimensions?
 \textcolor{red}{Fixed language. Added mention the color scale in the figure 2 caption:  "The color scale is from the customised botanical palette in the ferrn package."}
 
 \textcolor{green}{The caption has now been re-written and color scale explanation added}
+
+\textcolor{magenta}{You should mention what color is indicating here, is it just a way of distinguishing iterations or does it carry any additional information?}
 
 3. "with higher index value"  -> "with a higher index value". The word "the" is missing in a few other places in the paper.
 
@@ -121,7 +132,7 @@ What about indices in other dimensions?
 
 \textcolor{red}{Figure 8 and 9 focuses on different aspects: Figure 8 compares the effect of implementing an interruption while Figure 9 compares the effect of polishing. Cross comparing the two experiments is less meaningful.}
 
-
+\textcolor{magenta}{It would still be interesting to mention what was different, i.e. were all the settings the same and the better performance is just random (by different random seed), or did you change some setting of the optimizer that might have helped improve the performance?}
 
 8. "not the case for all the indexes" missing a "." page 11
 
