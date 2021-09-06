@@ -131,6 +131,8 @@ What about indices in other dimensions?
 
 \textcolor{green}{The Kolmogorov Smirnoff index here looks at the difference between a theoretical pdf and an empirical one based on the data. In our case we are not assuming normality on the theoretical pdf and that is the reason why we are not using normal quantiles.}
 
+\textcolor{purple}{I think the reviewer is confused here because in the text it is written Normal Kolmogorov. However, the definition is just the standard Kolmogorov Index, right? Shall we just changed to standard Kolmogorov Index instead?}
+
 
 
 
