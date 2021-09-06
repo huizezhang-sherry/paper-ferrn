@@ -42,7 +42,7 @@ The tool is likely to be of interest to the R community.  Most of my comments ar
 
 \textcolor{red}{Yes the reviewer is giving a decent explanation in describing the effect of flipping. The gray dot should land on the dashed line and this is a mistake due to the data not being updated after flipping in the code. This has now been corrected.}
 
-\textcolor{green}{Thanks for sharing your interpretation of the effects of flipping, that's right!...}
+\textcolor{green}{Thanks for sharing your interpretation on the effects of flipping, that's right!...}
 
   
 - "Recall that the columns in a 2D basis are orthogonal to each other, so the space of *p* × 2 bases is a *p*-D torus". 
@@ -66,7 +66,7 @@ The tool is likely to be of interest to the R community.  Most of my comments ar
 \textcolor{red}{The explanation of that data set is introduced in the subsection *Simulation setup* under *Diagnosing an optimiser*. However, to avoid ambiguity, we change the "original 5D space" to "original space" and give more details about the original space in the figure caption: "The basis space in this example is a 5D unit sphere ...".}
 
 \textcolor{green}{The data set is first introduced in subsection ....}
-\textcolor{green}{However, to avoid ambiguity --> However, to avoid ambiguity}
+\textcolor{green}{However, to avoid ambiguity --> However, to avoid confusion}
 
 - "While the previous few examples have looked at the space of 1D bases ...  2D bases"
   - I don't think the terms "1D bases" and "2D bases" are standard. Perhaps (orthonormal) "1-frames" and "2-frames"?
