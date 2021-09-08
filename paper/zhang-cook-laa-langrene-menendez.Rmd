@@ -33,7 +33,7 @@ preamble: >
   \usepackage{mathtools}
   \usepackage[ruled, linesnumbered]{algorithm2e}
 output: 
-  rjtools::rjournal_web_article
+  rjtools::rjournal_pdf_article
 bibliography: zhang-cook-laa-langrene-menendez.bib
 ---
 
@@ -63,39 +63,35 @@ knitr::read_chunk(
 #spelling::spell_check_files(here::here("paper/zhang-cook-laa-langrene-menendez.Rmd"), lang = "en-GB", ignore = spelling::get_wordlist())
 ```
 
-
 # Introduction
 
-Visualisation is widely used in exploratory data analysis [@tukey1977exploratory; @unwin2015graphical;  @healy2018data; @wilke2019fundamentals]. Presenting information in graphics often unveils insights that would otherwise not be discovered and provides a more comprehensive understanding of the problem at hand. Task specific tools such as @li2020visualizing show how visualisation can be used to understand, for instance, the behaviour of the optimisation for the example of neural network classification models. However, no general visualisation tool is available for diagnosing optimisation procedures. The work presented in this paper brings visualization tools into optimisation problems with the aim to better understand the performance of optimisers in practice.
+Visualisation is widely used in exploratory data analysis [@tukey1977exploratory; @unwin2015graphical; @healy2018data; @wilke2019fundamentals]. Presenting information in graphics often unveils insights that would otherwise not be discovered and provides a more comprehensive understanding of the problem at hand. Task specific tools such as @li2020visualizing show how visualisation can be used to understand, for instance, the behaviour of the optimisation for the example of neural network classification models. However, no general visualisation tool is available for diagnosing optimisation procedures. The work presented in this paper brings visualization tools into optimisation problems with the aim to better understand the performance of optimisers in practice.
 
 <!-- The goal of continuous optimisation is to find the best solution within the space of all feasible solutions where typically the best solution is defined via an objective function. Broadly speaking, optimization can be unconstrained or constrained [@kelley1999iterative]. The unconstrained problem can be formulated as a minimization (or maximization)  problem such as  -->
+
 <!-- $\min_{x} f(x)$ where $f:\mathbb{R}^n \rightarrow \mathbb{R}$ is an objective function with certain properties defined in an $L^p$ space. In this case, solutions rely on gradient descent or ascent methods. In the constrained optimization problem additional restrictions  are introduced via a set of functions that can be convex or non-convex: $g_i:\mathbb{R}^n \rightarrow \mathbb{R}$ for $i = 1, \ldots k$ and hence the problem can be written as -->
+
 <!-- $\min_{x} f(x)$ *subject to* $g_i(x) \leq 0$. Here methods such as multipliers and convex optimization methods including linear and quadratic programming can be used. -->
 
 The focus of this paper is on the optimisation problem arising in the projection pursuit guided tour [@buja2005computational], an exploratory data analysis technique used for detecting interesting structures in high-dimensional data through a set of lower-dimensional projections [@cook2008grand]. The goal of the optimisation is to identify the projection, represented by the projection matrix, that gives the most interesting low-dimensional view. A view is said to be interesting if it can show some structures of the data that depart from normality, such as bimodality, clustering, or outliers.
 
 The optimization challenges encountered in the projection pursuit guided tour problem are common to those of optimization in general. Examples include the existence of multiple optima (local and global), the trade-off between computational burden and proximity to the optima, or dealing with noisy objective functions that might be non-smooth and non-differentiable [@jones1998efficient]. The visualization tools, optimization methods and conceptual framework presented in this paper can therefore be applied to other optimization problems.
 
-The remainder of the paper is organised as follows. 
-The next section provides an overview of optimisation methods, specifically random search and line search methods.  A review of the projection pursuit guided tour, an overview of the optimisation problem and outlines of three existing algorithms follows.
-The third section presents the new visual diagnostics, including the design of a data structure to capture information during the optimisation, from which several diagnostic plots are created.
-An illustration of how the diagnostic plots can be used to examine the performance of different optimisers and guide improvements to existing algorithms is shown using simulated data.
-Finally, an explanation of the implementation in the R package, \CRANpkg{ferrn} [@ferrn], is provided.
-
+The remainder of the paper is organised as follows. The next section provides an overview of optimisation methods, specifically random search and line search methods. A review of the projection pursuit guided tour, an overview of the optimisation problem and outlines of three existing algorithms follows. The third section presents the new visual diagnostics, including the design of a data structure to capture information during the optimisation, from which several diagnostic plots are created. An illustration of how the diagnostic plots can be used to examine the performance of different optimisers and guide improvements to existing algorithms is shown using simulated data. Finally, an explanation of the implementation in the R package, \CRANpkg{ferrn} [@ferrn], is provided.
 
 # Optimisation methods {#optim}
 
 <!-- Optimisation problems are ubiquitous in many areas of study. While in some cases analytical solutions can be found, the majority of problems rely on numerical methods to find the optimal solution. These numerical methods follow iterative approaches that aim at finding the optimum by progressively improving the current solution until a desirable accuracy is achieved. Although this principle seems uncomplicated, a number of challenges arise such as the possible existence of multiple maxima (local and global), constraints and noisy objective function, and the trade-off between desirable accuracy and computational burden. In addition, the optimization results might depend on the algorithm starting values, affecting the consistency of results.  -->
 
-The type of optimisation problem considered in this paper is constrained optimization [@bertsekas2014constrained], assuming it is not possible to find a solution to the problem in the way of a closed-form. That is, the problem consists in finding the minimum or maximum of a function $f \in L^p$ in the constrained space $\mathcal{A}$. 
+The type of optimisation problem considered in this paper is constrained optimization [@bertsekas2014constrained], assuming it is not possible to find a solution to the problem in the way of a closed-form. That is, the problem consists in finding the minimum or maximum of a function $f \in L^p$ in the constrained space $\mathcal{A}$.
 
-Gradient-based methods are commonly used to optimise an objective function, with the most notable one being the gradient ascent (descent) method. Although these methods are popular, they rely on the availability of the objective function derivatives. As will be shown in the next section, the independent variables in our optimisation problem are the entries of a projection matrix, and the computational time required to perform differentiation on a matrix could impede the rendering of tour animation. In addition, some objective functions rely on the empirical distribution of the data, which makes it in general not possible to get the gradient. Hence, gradient-based methods are not the focus of this paper and consideration will be given to derivative-free methods. 
+Gradient-based methods are commonly used to optimise an objective function, with the most notable one being the gradient ascent (descent) method. Although these methods are popular, they rely on the availability of the objective function derivatives. As will be shown in the next section, the independent variables in our optimisation problem are the entries of a projection matrix, and the computational time required to perform differentiation on a matrix could impede the rendering of tour animation. In addition, some objective functions rely on the empirical distribution of the data, which makes it in general not possible to get the gradient. Hence, gradient-based methods are not the focus of this paper and consideration will be given to derivative-free methods.
 
-Derivative-free methods [@conn2009introduction; @rios2013derivative], which do not rely on the knowledge of the gradient, are more generally applicable. Derivative-free methods have been developed over the years, where the emphasis is on finding, in most cases, a near optimal solution. Here we consider three derivative-free methods, two of which are random search methods: creeping random search and simulated annealing, and the other one is pseudo-derivative search.  
+Derivative-free methods [@conn2009introduction; @rios2013derivative], which do not rely on the knowledge of the gradient, are more generally applicable. Derivative-free methods have been developed over the years, where the emphasis is on finding, in most cases, a near optimal solution. Here we consider three derivative-free methods, two of which are random search methods: creeping random search and simulated annealing, and the other one is pseudo-derivative search.
 
 Random search methods [@Romeijn2009; @zabinsky2013stochastic; @andradottir2015review] have a random sampling component as part of their algorithm and have been shown to have the ability to optimise non-convex and non-smooth functions. The initial random search algorithm, pure random search [@Brooks1958-zk], draws candidate points from the entire space without using any information of the current position and updates the current position when an improvement on the objective function is made. As the dimension of the space becomes larger, sufficient sampling from the entire space would require a long time for convergence to occur, despite a guaranteed global convergence [@spall2005introduction]. Various algorithms have thus been developed to improve pure random search by either concentrating on a narrower sampling space or using a different updating mechanism. Creeping random search [@White1971-ci] is such a variation, where a candidate point is generated within a neighbourhood of the current point. This makes creeping random search faster to compute, however, global convergence is no longer guaranteed. On the other hand, simulated annealing [@kirkpatrick1983optimization; @bertsimas1993simulated], introduces a different updating mechanism. Rather than only updating the current point when an improvement is made, simulated annealing uses a Metropolis acceptance criterion, where worse candidates still have a chance to be accepted. The convergence of simulated annealing algorithms has been widely researched [@mitra1986convergence; @granville1994simulated] and the global optimum can be attained under mild regularity conditions.
 
-Pseudo-derivative search uses a common search scheme in optimisation: line search. In line search methods, users are required to provide an initial estimate $x_{1}$ and, at each iteration, a search direction $S_k$ and a step size $\alpha_k$ are generated. Then one moves on to the next point following $x_{k+1} = x_k + \alpha_kS_k$ and the process is repeated until the desired convergence is reached. In derivative-free methods, local information of the objective function is used to determine the search direction. The choice of step size also needs consideration, as inadequate step sizes might prevent the optimisation method to converge to an optimum. An ideal step size can be chosen by finding the value of $\alpha_k \in \mathbb{R}$ that maximises $f(x_k + \alpha_kS_k)$ with respect to $\alpha_k$ at each iteration. 
+Pseudo-derivative search uses a common search scheme in optimisation: line search. In line search methods, users are required to provide an initial estimate $x_{1}$ and, at each iteration, a search direction $S_k$ and a step size $\alpha_k$ are generated. Then one moves on to the next point following $x_{k+1} = x_k + \alpha_kS_k$ and the process is repeated until the desired convergence is reached. In derivative-free methods, local information of the objective function is used to determine the search direction. The choice of step size also needs consideration, as inadequate step sizes might prevent the optimisation method to converge to an optimum. An ideal step size can be chosen by finding the value of $\alpha_k \in \mathbb{R}$ that maximises $f(x_k + \alpha_kS_k)$ with respect to $\alpha_k$ at each iteration.
 
 <!-- Several R implementations address optimization problems with both general purpose as well as task specifics solvers. The most prominent one within the general solvers is \code{optim()} in the \CRANpkg{stats} [@stats] package, which provides both gradient-based and derivative-free optimisation functions. Another general solver specialised in non-linear optimisation is \CRANpkg{nloptr} [@nloptr]. Specific solvers for simulated annealing include \code{optim(..., method  "SANN")} and package \CRANpkg{GenSA} [@gensa] that deals with more complicated objective functions. For other task specific solvers, readers are recommended to visit the relevant sections in CRAN task review on \ctv{optimisation and mathematical programming} [@crantaskreviewoptim]. -->
 
@@ -105,20 +101,20 @@ Projection pursuit guided tour combines two different methods (projection pursui
 
 Let $\mathbf{X}_{n \times p}$ be the data matrix with $n$ observations in $p$ dimensions. A $d$-dimensional projection is a linear transformation from $\mathbb{R}^p$ into $\mathbb{R}^d$ defined as $\mathbf{Y} = \mathbf{X} \cdot \mathbf{A}$, where $\mathbf{Y}_{n \times d}$ is the projected data and $\mathbf{A}_{p\times d}$ is the projection matrix. We define $f: \mathbb{R}^{n \times d} \mapsto \mathbb{R}$ to be an index function that maps the projected data $\mathbf{Y}$ onto a scalar value. This is commonly known as the projection pursuit index function, or just index function, and is used to measure the "interestingness" of a given projection. An interesting projection shows structures that are non-normal since theoretical proofs from @diaconis1984asymptotics have shown that projections tend to be normal, as $n$ and $p$ approach infinity under certain conditions. There have been many index functions proposed in the literature, here are a few examples: early indexes that can be categorised as measuring the $L^2$ distance between the projection and a normal distribution: Legendre index [@friedman1974projection], Hermite index [@hall1989polynomial], and natural Hermite index [@cook1993projection]; chi-square index [@posse1995projection] for detecting spiral structure; LDA index [@lee2005projection] and PDA [@lee2010projection] index for supervised classification; kurtosis index [@Loperfido2020] and skewness index [@Loperfido2018] for detecting outliers in financial time series; and most recently, scagnostic indexes [@laa2020using] for summarising structures in scatterplot matrices based on eight scagnostic measures [@scag; @WW08].
 
-As a general visualisation method, tour produces animations of high-dimensional data via rotations of low-dimensional planes. There are different versions depending on how the high-dimensional space is investigated: grand tour [@cook2008grand] selects the planes randomly to provide a general overview;  manual tour [@cook1997manual] gradually phases in and out one variable to understand the contribution of that variable in the projection. Guided tour, the main interest of this paper, chooses the planes with the aid of projection pursuit, to gradually reveal the most interesting projection. Given a random start, projection pursuit iteratively finds bases with higher index values and the guided tour constructs a geodesic interpolation between these planes to form a tour path. Figure \ref{fig:tour-path} shows a sketch of the tour path where the blue frames are produced by the projection pursuit optimisation and the white frames are interpolations between the blue frames. Mathematical details of the geodesic interpolation can be found in @buja2005computational. The aforementioned tour method has been implemented in the R package \CRANpkg{tourr} [@tourr].
+As a general visualisation method, tour produces animations of high-dimensional data via rotations of low-dimensional planes. There are different versions depending on how the high-dimensional space is investigated: grand tour [@cook2008grand] selects the planes randomly to provide a general overview; manual tour [@cook1997manual] gradually phases in and out one variable to understand the contribution of that variable in the projection. Guided tour, the main interest of this paper, chooses the planes with the aid of projection pursuit, to gradually reveal the most interesting projection. Given a random start, projection pursuit iteratively finds bases with higher index values and the guided tour constructs a geodesic interpolation between these planes to form a tour path. Figure \ref{fig:tour-path} shows a sketch of the tour path where the blue frames are produced by the projection pursuit optimisation and the white frames are interpolations between the blue frames. Mathematical details of the geodesic interpolation can be found in @buja2005computational. The aforementioned tour method has been implemented in the R package \CRANpkg{tourr} [@tourr].
 
 ```{r tour-path, out.width="70%", fig.cap="An illustration for demonstrating the frames in a tour path. Each square (frame) represents the projected data with a corresponding basis. Blue frames are returned by the projection pursuit optimisation and white frames are constructed between two blue frames by geodesic interpolation."}
 ```
 
 ## Optimisation in the tour {#tour-optim}
 
-In projection pursuit the optimisation aims at finding the global and local maxima that give interesting projections according to an index function. That is, it starts with a given randomly selected basis $\mathbf{A}_1$ and aims at finding an optimal final projection basis $\mathbf{A}_T$ that satisfies the following optimisation problem: 
+In projection pursuit the optimisation aims at finding the global and local maxima that give interesting projections according to an index function. That is, it starts with a given randomly selected basis $\mathbf{A}_1$ and aims at finding an optimal final projection basis $\mathbf{A}_T$ that satisfies the following optimisation problem:
 
-
+```{=tex}
 \begin{align}
 \arg \max_{\mathbf{A} \in \mathcal{A}} f(\mathbf{X} \cdot \mathbf{A})  ~~~ s.t. ~~~ \mathbf{A}^{\prime} \mathbf{A} = I_d
 \end{align}
-
+```
 \noindent where $f$ and $\mathbf{X}$ are defined as in the previous section, $\mathcal{A}$ is the set of all $p$-dimensional projection bases, $I_d$ is the $d$-dimensional identity matrix, and the constraint ensures the projection bases, $\mathbf{A}$, to be orthonormal. It is worth noticing the following: 1) The optimisation is constrained and the orthonormality constraint imposes a geometrical structure on the bases space: it forms a Stiefel manifold. 2) There may be index functions for which the objective function might not be differentiable. 3) While finding the global optimum is the goal of the optimisation problem, interesting projections may also appear in the local optimum. 4) The optimisation should be fast to compute since the tour animation is viewed by the users during the optimisation.
 
 ## Existing algorithms
@@ -131,12 +127,13 @@ Pseudo-derivative (PD) search uses a different strategy than CRS and SA. Rather 
 
 # Visual diagnostics {#vis-diag}
 
-A data structure for diagnosing optimisers in projection pursuit guided tour is first defined. With this data structure, four types of diagnostic plots are presented. 
+A data structure for diagnosing optimisers in projection pursuit guided tour is first defined. With this data structure, four types of diagnostic plots are presented.
 
-## Data structure for diagnostics 
+## Data structure for diagnostics
 
-Three main pieces of information are recorded during the projection pursuit optimisation: 1) projection bases $\mathbf{A}$, 2) index values $I$, and 3) state $S$. For CRS and SA, possible states include `random_search`,  `new_basis`, and `interpolation`. Pseudo-derivative (PD) has a wider variety of states including `new_basis`, `direction_search`, `best_direction_search`, `best_line_search`, and `interpolation`. Multiple iterators index the information collected at different levels: $t$ is a unique identifier prescribing the natural ordering of each observation;  $j$ and $l$ are the counter of the outer and inner loop respectively. Other parameters of interest recorded include `method` that tags the name of the optimiser, and `alpha` that indicates the sampling neighbourhood size for searching observations.  A matrix notation of the data structure is presented in equation \ref{eq:data-structure}.
+Three main pieces of information are recorded during the projection pursuit optimisation: 1) projection bases $\mathbf{A}$, 2) index values $I$, and 3) state $S$. For CRS and SA, possible states include `random_search`, `new_basis`, and `interpolation`. Pseudo-derivative (PD) has a wider variety of states including `new_basis`, `direction_search`, `best_direction_search`, `best_line_search`, and `interpolation`. Multiple iterators index the information collected at different levels: $t$ is a unique identifier prescribing the natural ordering of each observation; $j$ and $l$ are the counter of the outer and inner loop respectively. Other parameters of interest recorded include `method` that tags the name of the optimiser, and `alpha` that indicates the sampling neighbourhood size for searching observations. A matrix notation of the data structure is presented in equation \ref{eq:data-structure}.
 
+```{=tex}
 \begin{equation}
 \renewcommand\arraystretch{2}  % default value: 1.0
 \begin{pmatrix}
@@ -196,20 +193,21 @@ T^\prime & \mathbf{A}_{T^\prime} & I_{T^\prime} &S_{T^\prime}  & J+1 &  l_{J+1} 
 \end{pmatrix}
 \label{eq:data-structure}
 \end{equation}
-
+```
 \noindent where $T^{\prime} = T + k_{J}+ l_{J+1}$. Note that there is no output in iteration $J + 1$ since the optimiser does not find a better basis in the last iteration and terminates. The final basis found is $A_T$ with index value $I_T$.
 
 The data structure constructed above meets the tidy data principle [@wickham2014tidy] that requires each observation to form a row and each variable to form a column. With tidy data structure, data wrangling and visualisation can be significantly simplified by well-developed packages such as \CRANpkg{dplyr} [@dplyr] and \CRANpkg{ggplot2} [@ggplot2].
 
 ## Diagnostic 1: Checking how hard the optimiser is working
 
-A starting point of diagnosing an optimiser is to understand how many searches it has conducted, i.e. we want to summarise how the index is increasing over iterations and how many basis need to be sampled at each iteration. This is achieved using the function `explore_trace_search()`: a boxplot shows the distribution of index values for each try, where the accepted basis (corresponding to the highest index value) is always shown as a point. In the case of few tries at a given iteration, showing the data points directly may be preferred over the boxplot, this is controlled via the `cutoff` argument. Additional annotations are added to facilitate better reading of the plot and these include 1) the number of points searched in each iteration can be added as text label at the bottom of each iteration; 2) the anchor bases to interpolate are connected and highlighted in a larger size; and 3) the colour of the last iteration is in a greyscale to indicate no better basis found in this iteration. 
+A starting point of diagnosing an optimiser is to understand how many searches it has conducted, i.e. we want to summarise how the index is increasing over iterations and how many basis need to be sampled at each iteration. This is achieved using the function `explore_trace_search()`: a boxplot shows the distribution of index values for each try, where the accepted basis (corresponding to the highest index value) is always shown as a point. In the case of few tries at a given iteration, showing the data points directly may be preferred over the boxplot, this is controlled via the `cutoff` argument. Additional annotations are added to facilitate better reading of the plot and these include 1) the number of points searched in each iteration can be added as text label at the bottom of each iteration; 2) the anchor bases to interpolate are connected and highlighted in a larger size; and 3) the colour of the last iteration is in a greyscale to indicate no better basis found in this iteration.
 
+```{=html}
 <!-- One may want to simply plot the index value of the search points across its natural order. While such a point geometry may work well if each iteration has a similar number of points, when some iterations have considerably more points than others, it will over-emphasizes the iterations that have more search points and these iterations will occupy the vast majority of the plot space. An alternative is to summarise the search in each iteration using boxplots, with each iteration spaced out equally. Occasionally, one may still want to switch back to a point geometry if the number of points is small in a particular iteration and this can be achieved via the `cutoff` argument in the search plot function. Additional annotations are added to facilitate better reading of the plot and these include  
 1) the number of points searched in each iteration can be added as text label at the bottom of each iteration; 2) the anchor bases to interpolate are connected and highlighted in a larger size; and 3) the colour of the last iteration is in a grey scale to indicate no better basis found in this iteration. 
 -->
-
-Figure \ref{fig:toy-search} shows an example of the search plot for CRS (left) and SA (right). Both optimisers quickly find better bases in the first few iterations and then take longer to find one in the later iterations. The anchor bases, the ones found with the highest index value in each iteration, always have an increased index value in the optimiser CRS while this is not the case for SA. This feature gives CRS an advantage in this simple example to quickly find the optimum. 
+```
+Figure \ref{fig:toy-search} shows an example of the search plot for CRS (left) and SA (right). Both optimisers quickly find better bases in the first few iterations and then take longer to find one in the later iterations. The anchor bases, the ones found with the highest index value in each iteration, always have an increased index value in the optimiser CRS while this is not the case for SA. This feature gives CRS an advantage in this simple example to quickly find the optimum.
 
 ```{r toy-search, fig.cap="A comparison of the searches by two optimisers: CRS (left) and SA (right) on a 2D projection problem of a six-variable dataset, \\code{boa6} using the holes index. Both optimisers reach the final basis with a similar index value while it takes SA longer to find the final basis. In the earlier iterations, optimisers quickly find a better basis to proceed while in the later iterations, most sampled bases fail to make an improvement on the index value and a boxplot is used to summarise the distribution of the index values. There is no better basis found in the last iteration, 9 (left) and 15 (right), before reaching the maximum number of try and hence it is colored grey. The color scale is from the customised botanical palette in the ferrn package."}
 ```
@@ -225,13 +223,12 @@ Another interesting feature to examine is the changes in the index value between
 
 Apart from checking the search and progression of an optimiser, looking at where the bases are positioned in the basis space is also of interest. Given the orthonormality constraint, the space of projection bases $\mathbf{A}_{p \times d}$ is a Stiefel manifold. For one-dimensional projections, this forms a $p$-dimensional sphere. A dimensionality reduction method, e.g. principal component analysis is applied to first project all the bases onto a 2D space. In a projection pursuit guided tour optimisation, there are various types of bases involved: 1) The starting basis; 2) The search bases that the optimiser evaluated to produce the anchor bases; 3) The anchor bases that have the highest index value in each iteration; 4) The interpolating bases on the interpolation path; and finally, 5) the end basis. The importance of these bases differs and the most important ones are the starting, interpolating, and end bases. Sometimes, two optimisers can start with the same basis but finish with bases of opposite sign. This happens because the projection is invariant to the orientation of the basis and so is the index value. However, this creates difficulties for comparing the optimisers since the end bases will be symmetric to the origin. A sign flipping step is conducted to flip the signs of all the bases in one routine if different optimisations finish at opposite places.
 
-Several annotations have been made to help understanding this plot. As mentioned previously, the original basis space is a high-dimensional sphere and random bases on the sphere can be generated via the \CRANpkg{geozoo} [@geozoo] package. We use PCA to estimate the 2D space that contains all the bases recorded and the zero basis. The centre of the 2D view is the first two PC coordinates of the zero matrix, and the radius is estimated as the largest distance from the centre to the basis. The theoretical best basis is known for simulated data and can be labelled to compare how close the end basis found by the optimisers is to the theoretical best. Various aesthetics, i.e. size, alpha (transparency), and colour, are applicable to emphasize critical elements and adjust for the presentation. For example, anchor points and search points are less important and hence a smaller size and alpha are used. Alpha can also be applied on the interpolation paths to show the start to finish from transparent to opaque.
+Several annotations have been made to help understanding this plot. As mentioned previously, the original basis space is a high-dimensional sphere and random bases on the sphere can be generated via the \CRANpkg{geozoo} [@geozoo] package. We use PCA to estimate the 2D space that is best suited to visualise the bases. The centre of the 2D view is the first two PC coordinates of the zero matrix, and the radius is estimated as the largest distance from the centre to the basis. The theoretical best basis is known for simulated data and can be labelled to compare how close the end basis found by the optimisers is to the theoretical best. Various aesthetics, i.e. size, alpha (transparency), and colour, are applicable to emphasize critical elements and adjust for the presentation. For example, anchor points and search points are less important and hence a smaller size and alpha are used. Alpha can also be applied on the interpolation paths to show the start to finish from transparent to opaque.
 
 Figure \ref{fig:toy-pca} shows the PCA plot of CRS and PD for a 1D projection problem. Both optimisers find the optimum but PD gets closer. With the PCA plot, one can visually appreciate the nature of these two optimisers: PD first evaluates points in a small neighbourhood for a promising direction, while CRS evaluates points randomly in the search space to search for the next target. There are dashed lines annotated for CRS and it describes the interruption of the interpolation, which will be discussed in detail in Section \ref{monotonic}.
 
 ```{r toy-pca, fig.height = 4, fig.asp = 1, fig.cap = "Search paths of CRS (green) and PD (brown) in the PCA-reduced basis space for 1D projection problem on the five-variable dataset, \\code{boa5} using holes index. The basis space, a 5D unit sphere, is projected onto a 2D circle by PCA. The black star represents the theoretical best basis the optimisers aiming to find. All the bases in PD have been flipped for easier comparison of the final bases and a grey dashed line has been annotated to indicate the symmetry of the two start bases."}
 ```
-
 
 ## Diagnostic 3b: Animating the diagnostic plots
 
@@ -255,7 +252,7 @@ As mentioned previously, the original $p \times d$ dimension space can be simula
 
 ## Diagnostic 4b: Forming a torus
 
-While the previous few examples have looked at the space of 1-frames in a unit sphere, this section visualises the space of 2-frames. Recall that the columns in a 2D basis are orthogonal to each other, so the space of $p \times 2$ bases is a torus in the $p$-D space. For $p = 3$ one would see a classical 3D torus shape as shown by the grey points in Figure \ref{fig:toy-torus}. The two circles of the torus can be observed to be perpendicular to each other and this can be linked back to the orthogonality condition. Two paths from CRS and PD are plotted on top of the torus and coloured in green and brown respectively to match the previous plots. The final basis found by PD and CRS are shown in a larger shape  and printed below respectively:
+While the previous few examples have looked at the space of 1-frames in a unit sphere, this section visualises the space of 2-frames. Recall that the columns in a 2D basis are orthogonal to each other, so the space of $p \times 2$ bases is a torus in the $p$-D space. For $p = 3$ one would see a classical 3D torus shape as shown by the grey points in Figure \ref{fig:toy-torus}. The two circles of the torus can be observed to be perpendicular to each other and this can be linked back to the orthogonality condition. Two paths from CRS and PD are plotted on top of the torus and coloured in green and brown respectively to match the previous plots. The final basis found by PD and CRS are shown in a larger shape and printed below respectively:
 
 ```{r}
 holes_2d_geo_3var %>% get_best() %>% pull(basis) %>% .[[1]]
@@ -279,8 +276,9 @@ In this section, several examples will be presented to show how the diagnostic p
 
 ## Simulation setup
 
-Random variables with different distributions have been simulated and the distributional form of each variable is presented in equations \ref{eq:sim-norm} to \ref{eq:sim-x7}. Variables `x1`, `x8` to `x10` are normal noise with zero mean and unit variance and `x2` to `x7` are normal mixtures with varied weights and locations. All the variables have been scaled to have an overall unit variance before projection pursuit. The holes index [@cook2008grand], used for detecting bimodality of the variables, is used throughout the examples unless otherwise specified. 
+Random variables with different distributions have been simulated and the distributional form of each variable is presented in equations \ref{eq:sim-norm} to \ref{eq:sim-x7}. Variables `x1`, `x8` to `x10` are normal noise with zero mean and unit variance and `x2` to `x7` are normal mixtures with varied weights and locations. All the variables have been scaled to have an overall unit variance before projection pursuit. The holes index [@cook2008grand], used for detecting bimodality of the variables, is used throughout the examples unless otherwise specified.
 
+```{=tex}
 \begin{align}
 x_1 \overset{d}{=} x_8 \overset{d}{=} x_9 \overset{d}{=} x_{10}& \sim \mathcal{N}(0, 1) \label{eq:sim-norm} \\
 x_2 &\sim 0.5 \mathcal{N}(-3, 1) + 0.5 \mathcal{N}(3, 1)\label{eq:sim-x2}\\
@@ -295,7 +293,7 @@ x_6 &\sim 0.45 \mathcal{N}(-5, 1) + 0.1 \mathcal{N}(0, 1) + 0.45 \mathcal{N}(5, 
 x_7 &\sim 0.5 \mathcal{N}(-5, 1) + 0.5 \mathcal{N}(5, 1) 
 \label{eq:sim-x7}
 \end{align}
-
+```
 ## A problem of non-monotonicity {#monotonic}
 
 An example of non-monotonic interpolation has been given in Figure \ref{fig:toy-interp}: a path that passes bases with a higher index value than the target one. For SA, a non-monotonic interpolation is justified since target bases do not necessarily have a higher index value than the current one, while this is not the case for CRS. The original trace plot for a 2D projection problem, optimised by CRS, is shown on the left panel of Figure \ref{fig:interruption} and one can observe that the non-monotonic interpolation has undermined the optimiser to realise its full potential. Hence, an interruption is implemented to stop at the best basis found in the interpolation. The right panel of Figure \ref{fig:interruption} shows the trace plot after implementing the interruption and while the first two interpolations are identical, the basis at time 61 has a higher index value than the target in the third interpolation. Rather than starting the next iteration from the target basis on time 65, CRS starts the next iteration at time 61 on the right panel and reaches a better final basis.
@@ -305,26 +303,25 @@ An example of non-monotonic interpolation has been given in Figure \ref{fig:toy-
 
 ## Close but not close enough
 
-Once the final basis has been found by an optimiser, one may want to push further in the close neighbourhood to see if an even better basis can be found. A polish search takes the final basis of an optimiser as the start of a new guided tour to search for local improvements. The polish algorithm is similar to the CRS but with three distinctions: 1) a hundred rather than one candidate bases are generated each time in the inner loop; 2) the neighbourhood size is reduced in the inner loop, rather than in the outer loop; and 3) three more termination conditions have been added to ensure the new basis generated is distinguishable from the current one in terms of the distance in the space, the relative change in the index value, and neighbourhood size: 
+Once the final basis has been found by an optimiser, one may want to push further in the close neighbourhood to see if an even better basis can be found. A polish search takes the final basis of an optimiser as the start of a new guided tour to search for local improvements. The polish algorithm is similar to the CRS but with three distinctions: 1) a hundred rather than one candidate bases are generated each time in the inner loop; 2) the neighbourhood size is reduced in the inner loop, rather than in the outer loop; and 3) three more termination conditions have been added to ensure the new basis generated is distinguishable from the current one in terms of the distance in the space, the relative change in the index value, and neighbourhood size:
 
-1) the distance between the basis found and the current basis needs to be larger than 1e-3;
-2) the relative change of the index value needs to be larger than 1e-5; and
-3) the alpha parameter needs to be larger than 0.01
+1)  the distance between the basis found and the current basis needs to be larger than 1e-3;
+2)  the relative change of the index value needs to be larger than 1e-5; and
+3)  the alpha parameter needs to be larger than 0.01
 
 Figure \ref{fig:polish} presents the projected data and trace plot of a 2D projection, optimised by CRS and followed by the polish step. The top row shows the initial projection, the final projection after CRS, and the final projection after polish, respectively The end basis found by CRS reveals the four clusters in the data, but the edges of each cluster are not clean-cut. Polish works with this end basis and further pushes the index value to produce clearer edges of the cluster, especially along the vertical axis.
 
 ```{r polish, fig.height= 5, fig.cap = "Comparison of the projected data before and after using polishing for a 2D projection problem on \\code{boa6} data using holes index. The top row shows the initial projected data and the final views after CRS and polish search and the second row traces the index value. The clustering structure in the data is detected by CRS (top middle panel) but the polish step improves the index value and produces clearer boundaries of the clusters (top right panel), especially along the vertical axis."}
 ```
 
-## Seeing the signal in the noise 
+## Seeing the signal in the noise
 
-The holes index function used for all the examples before this section produces a smooth interpolation, while this is not the case for all the indexes. An example of a noisy index function for 1D projections compares the projected data, $\mathbf{Y}_{n \times 1}$, to a randomly generated normal distribution, $\mathcal{N}_{n \times 1}$, using the Kolmogorov test. Let $F_{.}(n)$ be the ECDF function (empirical cummulative distribution function), with two possible subscripts $Y$ and $\mathcal{N}$ representing the projected and randomly generated data, and $n$ denoting the number of observation, the Normal Kolmogorov index $I^{nk}(n)$, is defined as: 
+The holes index function used for all the examples before this section produces a smooth interpolation, while this is not the case for all the indexes. An example of a noisy index function for 1D projections compares the projected data, $\mathbf{Y}_{n \times 1}$, to a randomly generated normal distribution, $\mathcal{N}_{n \times 1}$, using the Kolmogorov test. Let $F_{.}(n)$ be the ECDF function (empirical cummulative distribution function), with two possible subscripts $Y$ and $\mathcal{N}$ representing the projected and randomly generated data, and $n$ denoting the number of observation, the Kolmogorov index $I^{nk}(n)$, is defined as:
 
-$$I^{K}(n) = \max \left[F_{Y}(n) - F_{\mathcal{N}}(n)\right].$$
-With a non-smooth index function, two research questions are raised: 
+$$I^{K}(n) = \max \left[F_{Y}(n) - F_{\mathcal{N}}(n)\right].$$ With a non-smooth index function, two research questions are raised:
 
-1) whether any optimiser fails to optimise this non-smooth index; and 
-2) whether the optimisers can find the global optimum despite the presence of a local optimum
+1)  whether any optimiser fails to optimise this non-smooth index; and
+2)  whether the optimisers can find the global optimum despite the presence of a local optimum
 
 Figure \ref{fig:noisy-better-geo} presents the trace and PCA plots of all three optimisers and as expected, none of the interpolated paths are smooth. There is barely any improvement made by PD, indicating its failure in optimising non-smooth index functions. While CRS and SA have managed to get close to the index value of the theoretical best, the trace plot shows that it takes SA much longer to find the final basis. This long interpolation path is partially due to the fluctuation in the early iterations, where SA tends to generously accept inferior bases before concentrating near the optimum. The PCA plot shows the interpolation path and search points excluding the last termination iteration. Pseudo-Derivative (PD) quickly gets stuck near the starting position. Comparing the amount of random search done by CRS and SA, it is surprising that SA does not carry as many samples as CRS. Combining the insights from both the trace and PCA plot, one can learn the two different search strategies by CRS and SA: CRS frequently samples in the space and only make a move when an improvement is guaranteed to be made, while SA first broadly accepts bases in the space and then starts the extensive sampling in a narrowed subspace. The specific decision of which optimiser to use will depend on the index curve in the basis space but if the basis space is non-smooth, accepting inferior bases at first, as SA has done here, can lead to a more efficient search, in terms of the overall number of points evaluated.
 
@@ -345,67 +342,72 @@ One interesting situation observed in the previous examples is that, for some si
 
 # Implementation {#implementation}
 
-This project contributes to the software development in two packages: a data collection object is implemented in \pkg{tourr} [@tourr], while the visual diagnostics of the optimisers is implemented in \pkg{ferrn} [@ferrn].  The functions in the \pkg{ferrn} [@ferrn] package are listed below: 
+This project contributes to the software development in two packages: a data collection object is implemented in \pkg{tourr} [@tourr], while the visual diagnostics of the optimisers is implemented in \pkg{ferrn} [@ferrn]. The functions in the \pkg{ferrn} [@ferrn] package are listed below:
 
-- Main plotting functions: 
+-   Main plotting functions:
 
-  - `explore_trace_search()` produces summary plots in Figure \ref{fig:toy-search}.
-  - `explore_trace_interp()` produces trace plots for the interpolation points in Figure \ref{fig:toy-interp}.
-  - `explore_space_pca()` produces the PCA plot of projection bases on the reduced space in Figure \ref{fig:toy-pca}. The animated version in Figure \ref{fig:toy-pca-animated} can be turned on via the argument `animate = TRUE`.
-   - `explore_space_pca()` produces the PCA plot of projection bases on the reduced space. Figure \ref{fig:toy-pca} includes the additional details of anchor and search bases, which can be turned on by the argument `details = TRUE`. The animated version in Figure \ref{fig:toy-pca-animated} is produced with argument `animate = TRUE`.
-  - `explore_space_tour()` produces animated tour view on the full space of the projection bases in Figure \ref{fig:toy-tour}.
+    -   `explore_trace_search()` produces summary plots in Figure \ref{fig:toy-search}.
+    -   `explore_trace_interp()` produces trace plots for the interpolation points in Figure \ref{fig:toy-interp}.
+    -   `explore_space_pca()` produces the PCA plot of projection bases on the reduced space in Figure \ref{fig:toy-pca}. The animated version in Figure \ref{fig:toy-pca-animated} can be turned on via the argument `animate = TRUE`.
+    -   `explore_space_pca()` produces the PCA plot of projection bases on the reduced space. Figure \ref{fig:toy-pca} includes the additional details of anchor and search bases, which can be turned on by the argument `details = TRUE`. The animated version in Figure \ref{fig:toy-pca-animated} is produced with argument `animate = TRUE`.
+    -   `explore_space_tour()` produces animated tour view on the full space of the projection bases in Figure \ref{fig:toy-tour}.
 
-- `get_*()` extracts and manipulates certain components from the existing data object.
-  - `get_anchor()` extracts target observations 
-  - `get_basis_matrix()` flattens all the bases into a matrix
-  - `get_best()` extracts the observation with the highest index value in the data object
-  - `get_dir_search()` extracts directional search observations for PD search
-  - `get_interp()` extracts interpolated observations
-  - `get_interp_last()` extracts the ending interpolated observations in each iteration
-  - `get_interrupt()` extracts the ending interpolated observations and the target observations if  the interpolation is interrupted
-  - `get_search()` extracts search observations 
-  - `get_search_count()` extracts the count of search observations 
-  - `get_space_param()` produces the coordinates of the centre and radius of the basis space
-  - `get_start()` extracts the starting observation
-  - `get_theo()` extracts the theoretical best observations, if given 
-  
+-   `get_*()` extracts and manipulates certain components from the existing data object.
 
-- `bind_*()` incorporates additional information outside the tour optimisation into the data object.
-  - `bind_theoretical()` binds the theoretical best observation in simulated experiment
-  - `bind_random()` binds randomly generated bases in the projection bases space to the data object
-  - `bind_random_matrix()` binds randomly generated bases and outputs in a matrix format
+    -   `get_anchor()` extracts target observations
+    -   `get_basis_matrix()` flattens all the bases into a matrix
+    -   `get_best()` extracts the observation with the highest index value in the data object
+    -   `get_dir_search()` extracts directional search observations for PD search
+    -   `get_interp()` extracts interpolated observations
+    -   `get_interp_last()` extracts the ending interpolated observations in each iteration
+    -   `get_interrupt()` extracts the ending interpolated observations and the target observations if the interpolation is interrupted
+    -   `get_search()` extracts search observations
+    -   `get_search_count()` extracts the count of search observations
+    -   `get_space_param()` produces the coordinates of the centre and radius of the basis space
+    -   `get_start()` extracts the starting observation
+    -   `get_theo()` extracts the theoretical best observations, if given
 
-- `add_*()` provides wrapper functions to create ggprotos for different components for the PCA plot
-  - `add_anchor()` for plotting anchor bases
-  - `add_anno()` for annotating the symmetry of start bases
-  - `add_dir_search()` for plotting the directional search bases with magnified distance
-  - `add_end()` for plotting end bases
-  - `add_interp()` for plotting the interpolation path
-  - `add_interp_last()` for plotting the last interpolation bases for comparing with target bases when interruption is used
-  - `add_interrupt()` for linking the last interpolation bases with target ones when interruption is used
-  - `add_search()` for plotting search bases
-  - `add_space()` for plotting the circular space 
-  - `add_start()` for plotting start bases
-  - `add_theo()` for plotting theoretical best bases, if applicable
+-   `bind_*()` incorporates additional information outside the tour optimisation into the data object.
 
-- Utilities
-  - `theme_fern()` and `format_label()` for better display of the grid lines and axis formatting
-  - `clean_method()` to clean up the name of the optimisers
-  - `botanical_palettes()` is a collection of colour palettes from Australian native plants. Quantitative palettes include daisy, banksia, and cherry and sequential palettes contain fern and acacia
-  - `botanical_pal()` as the colour interpolator 
-  - `scale_color_*()` and `scale_fill_*()` for scaling the colour and fill of the plot
+    -   `bind_theoretical()` binds the theoretical best observation in simulated experiment
+    -   `bind_random()` binds randomly generated bases in the projection bases space to the data object
+    -   `bind_random_matrix()` binds randomly generated bases and outputs in a matrix format
+
+-   `add_*()` provides wrapper functions to create ggprotos for different components for the PCA plot
+
+    -   `add_anchor()` for plotting anchor bases
+    -   `add_anno()` for annotating the symmetry of start bases
+    -   `add_dir_search()` for plotting the directional search bases with magnified distance
+    -   `add_end()` for plotting end bases
+    -   `add_interp()` for plotting the interpolation path
+    -   `add_interp_last()` for plotting the last interpolation bases for comparing with target bases when interruption is used
+    -   `add_interrupt()` for linking the last interpolation bases with target ones when interruption is used
+    -   `add_search()` for plotting search bases
+    -   `add_space()` for plotting the circular space
+    -   `add_start()` for plotting start bases
+    -   `add_theo()` for plotting theoretical best bases, if applicable
+
+-   Utilities
+
+    -   `theme_fern()` and `format_label()` for better display of the grid lines and axis formatting
+    -   `clean_method()` to clean up the name of the optimisers
+    -   `botanical_palettes()` is a collection of colour palettes from Australian native plants. Quantitative palettes include daisy, banksia, and cherry and sequential palettes contain fern and acacia
+    -   `botanical_pal()` as the colour interpolator
+    -   `scale_color_*()` and `scale_fill_*()` for scaling the colour and fill of the plot
 
 # Conclusion
 
 This paper has provided several visual diagnostics that can be used for diagnosing a complex optimisation procedure. The methods were illustrated using the optimisers available for projection pursuit guided tour. Here the constraint is the orthonormality condition of the projection bases. The approach used broadly applies to other constrained optimisers.
 
-Experiments in this paper have shown that random search algorithms tend to require larger search size for 2D indexes as compared to 1D indexes. All the three optimisers tend to work well for smooth indexes while PD fails generally fails for non-smooth indexes. This is due to the fact that derivative based methods are in general not suitable for optimising non-smooth functions.
+Experiments in this paper have shown that random search algorithms tend to require larger search size for 2D indexes as compared to 1D indexes. All the three optimisers tend to work well for smooth indexes while PD generally fails for non-smooth indexes. This is due to the fact that derivative based methods are in general not suitable for optimising non-smooth functions.
 
-This work might be considered an effort to bring transparency into algorithms. Although little attention is paid by algorithm developers to providing ways to output information during intermediate steps, this is an important component for enabling others to understand and diagnose the performance. Algorithms are an essential component of artificial intelligence that is used to make daily life easier. Interpretability of algorithms is important to guard against aspects like bias and inappropriate use. The data object underlying the visual diagnostics here is an example of what might be useful in algorithm development generally. 
+For other researchers, the tools implemented in the ferrn package can track the progression of the target function and monitor parameter coverage of the search space in both reduced 2D space and the full space. These visualisation can lead to insights for evaluating the performance of multiple optimisers in a specific problem, as the example shown for comparing the three optimisers when optimising the kolmogorov index in the paper.
+
+This work might be considered an effort to bring transparency into algorithms. Although little attention is paid by algorithm developers to providing ways to output information during intermediate steps, this is an important component for enabling others to understand and diagnose the performance. Algorithms are an essential component of artificial intelligence that is used to make daily life easier. Interpretability of algorithms is important to guard against aspects like bias and inappropriate use. The data object underlying the visual diagnostics here is an example of what might be useful in algorithm development generally.
 
 # Acknowledgements
 
-This article is created using \CRANpkg{knitr} [@knitr] and \CRANpkg{rmarkdown} [@rmarkdown]  in R. The source code for reproducing this paper can be found at: \url{https://github.com/huizezhang-sherry/paper-tour-vis}.
+This article is created using \CRANpkg{knitr} [@knitr] and \CRANpkg{rmarkdown} [@rmarkdown] in R. The source code for reproducing this paper can be found at: \url{https://github.com/huizezhang-sherry/paper-tour-vis}.
 
 \newpage
 
@@ -413,6 +415,7 @@ This article is created using \CRANpkg{knitr} [@knitr] and \CRANpkg{rmarkdown} [
 
 Three algorithms (creeping random search, simulated annealing, and pseudo-derivative) used in projection pursuit guided tour optimisation.
 
+```{=tex}
 \begin{algorithm}
 \SetAlgoLined
   \SetKwInOut{input}{input}
@@ -434,7 +437,8 @@ Three algorithms (creeping random search, simulated annealing, and pseudo-deriva
   \caption{Creeping random search (CRS)}
   \label{random-search}
 \end{algorithm}
-
+```
+```{=tex}
 \begin{algorithm}
 \SetAlgoLined
 \Repeat{$l > l_{\max}$ or $I_{l} > I_{\text{cur}}$ or $P > U$}{
@@ -446,8 +450,8 @@ Three algorithms (creeping random search, simulated annealing, and pseudo-deriva
   \caption{Simulated annealing (SA)}
   \label{simulated-annealing}
 \end{algorithm}
-
-
+```
+```{=tex}
 \begin{algorithm}
 \SetAlgoLined
 \Repeat{$l > l_{\max}$ or $p_{\text{diff}} > 0.001$}{
@@ -462,3 +466,4 @@ Three algorithms (creeping random search, simulated annealing, and pseudo-deriva
 \caption{Pseudo-derivative (PD)}
 \label{search-geodesic}
 \end{algorithm}
+```

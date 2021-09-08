@@ -211,7 +211,7 @@ implemented in the R package \CRANpkg{tourr} \citep{tourr}.
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=0.7\linewidth]{/Users/huizezhang/Documents/research/paper-tour-vis/figs/tour-path} 
+{\centering \includegraphics[width=0.7\linewidth]{/Users/sherryzhang/Documents/researh/paper-tour-vis/figs/tour-path} 
 
 }
 
@@ -425,7 +425,7 @@ an advantage in this simple example to quickly find the optimum.
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{/Users/huizezhang/Documents/research/paper-tour-vis/figs/toy-search} 
+{\centering \includegraphics[width=1\linewidth]{/Users/sherryzhang/Documents/researh/paper-tour-vis/figs/toy-search} 
 
 }
 
@@ -457,7 +457,7 @@ improving the non-monotonic interpolation for CRS.
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{/Users/huizezhang/Documents/research/paper-tour-vis/figs/toy-interp-1} 
+{\centering \includegraphics[width=1\linewidth]{/Users/sherryzhang/Documents/researh/paper-tour-vis/figs/toy-interp-1} 
 
 }
 
@@ -494,17 +494,17 @@ Several annotations have been made to help understanding this plot. As
 mentioned previously, the original basis space is a high-dimensional
 sphere and random bases on the sphere can be generated via the
 \CRANpkg{geozoo} \citep{geozoo} package. We use PCA to estimate the 2D
-space that contains all the bases recorded and the zero basis. The
-centre of the 2D view is the first two PC coordinates of the zero
-matrix, and the radius is estimated as the largest distance from the
-centre to the basis. The theoretical best basis is known for simulated
-data and can be labelled to compare how close the end basis found by the
-optimisers is to the theoretical best. Various aesthetics, i.e.~size,
-alpha (transparency), and colour, are applicable to emphasize critical
-elements and adjust for the presentation. For example, anchor points and
-search points are less important and hence a smaller size and alpha are
-used. Alpha can also be applied on the interpolation paths to show the
-start to finish from transparent to opaque.
+space that is best suited to visualise the bases. The centre of the 2D
+view is the first two PC coordinates of the zero matrix, and the radius
+is estimated as the largest distance from the centre to the basis. The
+theoretical best basis is known for simulated data and can be labelled
+to compare how close the end basis found by the optimisers is to the
+theoretical best. Various aesthetics, i.e.~size, alpha (transparency),
+and colour, are applicable to emphasize critical elements and adjust for
+the presentation. For example, anchor points and search points are less
+important and hence a smaller size and alpha are used. Alpha can also be
+applied on the interpolation paths to show the start to finish from
+transparent to opaque.
 
 Figure \ref{fig:toy-pca} shows the PCA plot of CRS and PD for a 1D
 projection problem. Both optimisers find the optimum but PD gets closer.
@@ -518,7 +518,7 @@ will be discussed in detail in Section \ref{monotonic}.
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{/Users/huizezhang/Documents/research/paper-tour-vis/figs/toy-pca} 
+{\centering \includegraphics[width=1\linewidth]{/Users/sherryzhang/Documents/researh/paper-tour-vis/figs/toy-pca} 
 
 }
 
@@ -541,7 +541,7 @@ is still making more progress.
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{/Users/huizezhang/Documents/research/paper-tour-vis/figs/toy-pca-animated-1} 
+{\centering \includegraphics[width=1\linewidth]{/Users/sherryzhang/Documents/researh/paper-tour-vis/figs/toy-pca-animated-1} 
 
 }
 
@@ -564,7 +564,7 @@ same two optimisations in its original space.
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{/Users/huizezhang/Documents/research/paper-tour-vis/figs/toy-tour-1} 
+{\centering \includegraphics[width=1\linewidth]{/Users/sherryzhang/Documents/researh/paper-tour-vis/figs/toy-tour-1} 
 
 }
 
@@ -619,7 +619,7 @@ two circles are rotated into a line from our view.
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{/Users/huizezhang/Documents/research/paper-tour-vis/figs/toy-torus-1} 
+{\centering \includegraphics[width=1\linewidth]{/Users/sherryzhang/Documents/researh/paper-tour-vis/figs/toy-torus-1} 
 
 }
 
@@ -685,7 +685,7 @@ panel and reaches a better final basis.
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{/Users/huizezhang/Documents/research/paper-tour-vis/figs/interruption-1} 
+{\centering \includegraphics[width=1\linewidth]{/Users/sherryzhang/Documents/researh/paper-tour-vis/figs/interruption-1} 
 
 }
 
@@ -734,7 +734,7 @@ along the vertical axis.
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{/Users/huizezhang/Documents/research/paper-tour-vis/figs/polish-1} 
+{\centering \includegraphics[width=1\linewidth]{/Users/sherryzhang/Documents/researh/paper-tour-vis/figs/polish-1} 
 
 }
 
@@ -754,8 +754,8 @@ generated normal distribution, \(\mathcal{N}_{n \times 1}\), using the
 Kolmogorov test. Let \(F_{.}(n)\) be the ECDF function (empirical
 cummulative distribution function), with two possible subscripts \(Y\)
 and \(\mathcal{N}\) representing the projected and randomly generated
-data, and \(n\) denoting the number of observation, the Normal
-Kolmogorov index \(I^{nk}(n)\), is defined as:
+data, and \(n\) denoting the number of observation, the Kolmogorov index
+\(I^{nk}(n)\), is defined as:
 
 \[I^{K}(n) = \max \left[F_{Y}(n) - F_{\mathcal{N}}(n)\right].\] With a
 non-smooth index function, two research questions are raised:
@@ -796,7 +796,7 @@ the overall number of points evaluated.
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{/Users/huizezhang/Documents/research/paper-tour-vis/figs/noisy-better-geo} 
+{\centering \includegraphics[width=1\linewidth]{/Users/sherryzhang/Documents/researh/paper-tour-vis/figs/noisy-better-geo} 
 
 }
 
@@ -828,7 +828,7 @@ towards the global optimum.
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{/Users/huizezhang/Documents/research/paper-tour-vis/figs/kol-result} 
+{\centering \includegraphics[width=1\linewidth]{/Users/sherryzhang/Documents/researh/paper-tour-vis/figs/kol-result} 
 
 }
 
@@ -858,7 +858,7 @@ interpolation no longer exists.
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{/Users/huizezhang/Documents/research/paper-tour-vis/figs/flip-sign} 
+{\centering \includegraphics[width=1\linewidth]{/Users/sherryzhang/Documents/researh/paper-tour-vis/figs/flip-sign} 
 
 }
 
@@ -1026,9 +1026,17 @@ optimisers.
 Experiments in this paper have shown that random search algorithms tend
 to require larger search size for 2D indexes as compared to 1D indexes.
 All the three optimisers tend to work well for smooth indexes while PD
-fails generally fails for non-smooth indexes. This is due to the fact
-that derivative based methods are in general not suitable for optimising
+generally fails for non-smooth indexes. This is due to the fact that
+derivative based methods are in general not suitable for optimising
 non-smooth functions.
+
+For other researchers, the tools implemented in the ferrn package can
+track the progression of the target function and monitor parameter
+coverage of the search space in both reduced 2D space and the full
+space. These visualisation can lead to insights for evaluating the
+performance of multiple optimisers in a specific problem, as the example
+shown for comparing the three optimisers when optimising the kolmogorov
+index in the paper.
 
 This work might be considered an effort to bring transparency into
 algorithms. Although little attention is paid by algorithm developers to
