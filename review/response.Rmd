@@ -27,7 +27,7 @@ The tool is likely to be of interest to the R community. Most of my comments are
 
 \textcolor{red}{With p-D bases, the correction of orientation is a bit more complicated since both rotation and flip need to be taken into account. For 2D bases, one need to check if the two frames are spanning the same subspace and pointing at the same direction.}
 
-\textcolor{magenta}{Once you go to 2D you have to take into account rotation in addition to flips, so the thing to check would be if the two frames are spanning the same subspace, and aligning them will be a bit more work. Might be a good idea to add 1-2 sentences in the paper and rephrase the reply.}
+\textcolor{magenta}{We agree that most index functions should be rotation invariant (this is in fact a desirable property, but there are exceptions where indexes can still be very useful but not rotation invariant, see discussion in Laa, Cook (2020)). Thus when comparing frames defining projections to d>=2 dimensions, we may want to introduce a rotation that will align the bases as much as possible within the common subspace, while potentially quantifying e.g. the angle between two planes. This is an interesting problem, however the implementation of this general approach is beyond the scope of the current paper. XXX do you want to mention something about this in the paper?}
 
 ### Minor comment
 
