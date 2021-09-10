@@ -33,7 +33,7 @@ preamble: >
   \usepackage{mathtools}
   \usepackage[ruled, linesnumbered]{algorithm2e}
 output: 
-  rjtools::rjournal_pdf_article
+  rjtools::rjournal_web_article
 bibliography: zhang-cook-laa-langrene-menendez.bib
 ---
 
