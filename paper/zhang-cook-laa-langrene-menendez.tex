@@ -579,14 +579,15 @@ torus}\label{diagnostic-4b-forming-a-torus}}
 While the previous few examples have looked at the space of 1-frames in
 a unit sphere, this section visualises the space of 2-frames. Recall
 that the columns in a 2D basis are orthogonal to each other, so the
-space of \(p \times 2\) bases is a torus in the \(p\)-D space. For
-\(p = 3\) one would see a classical 3D torus shape as shown by the grey
-points in Figure \ref{fig:toy-torus}. The two circles of the torus can
-be observed to be perpendicular to each other and this can be linked
-back to the orthogonality condition. Two paths from CRS and PD are
-plotted on top of the torus and coloured in green and brown respectively
-to match the previous plots. The final basis found by PD and CRS are
-shown in a larger shape and printed below respectively:
+space of \(p \times 2\) bases is a torus in the \(p\)-D space
+\citep{Buja1986-sw}. For \(p = 3\) one would see a classical 3D torus
+shape as shown by the grey points in Figure \ref{fig:toy-torus}. The two
+circles of the torus can be observed to be perpendicular to each other
+and this can be linked back to the orthogonality condition. Two paths
+from CRS and PD are plotted on top of the torus and coloured in green
+and brown respectively to match the previous plots. The final basis
+found by PD and CRS are shown in a larger shape and printed below
+respectively:
 
 \begin{Schunk}
 \begin{Soutput}
@@ -844,16 +845,19 @@ One interesting situation observed in the previous examples is that, for
 some simulations, as shown on the left panel of Figure
 \ref{fig:flip-sign}, the target basis is generated on the other half of
 the basis space and the interpolator seems to draw a straight line to
-interpolate. As mentioned previously, bases with opposite signs do not
-affect the projection and index value, but clearly, we prefer the target
-to have the same orientation as the current basis. The orientation of
-two bases can be checked via calculating the determinant and a negative
-value indicates opposite direction. Hence an orientation check is
-carried out once a new target basis is generated and the sign in the
-target basis will be flipped if a negative determinant is obtained. The
-interpolation after implementing the orientation check is shown on the
-right panel of Figure \ref{fig:flip-sign} where the unsatisfactory
-interpolation no longer exists.
+interpolate. Bases with opposite signs do not affect the projection and
+index value, but we would prefer the target to have the same orientation
+as the current basis. The orientation of two bases can be checked via
+calculating the determinant and a negative value suggests the two bases
+having different orientation. For 1D bases, this can be corrected by
+flipping the sign in one of the basis while the correction for a general
+p-D bases is more complex and beyond the scope of this paper. Here an
+orientation check is carried out once a new target basis is generated
+and the sign in the target basis will be flipped if a negative
+determinant is obtained. The interpolation after implementing the
+orientation check is shown on the right panel of Figure
+\ref{fig:flip-sign} where the unsatisfactory interpolation no longer
+exists.
 
 \begin{Schunk}
 \begin{figure}
@@ -1023,20 +1027,19 @@ tour. Here the constraint is the orthonormality condition of the
 projection bases. The approach used broadly applies to other constrained
 optimisers.
 
-Experiments in this paper have shown that random search algorithms tend
-to require larger search size for 2D indexes as compared to 1D indexes.
-All the three optimisers tend to work well for smooth indexes while PD
-generally fails for non-smooth indexes. This is due to the fact that
-derivative based methods are in general not suitable for optimising
-non-smooth functions.
-
-For other researchers, the tools implemented in the ferrn package can
-track the progression of the target function and monitor parameter
-coverage of the search space in both reduced 2D space and the full
-space. These visualisation can lead to insights for evaluating the
-performance of multiple optimisers in a specific problem, as the example
-shown for comparing the three optimisers when optimising the kolmogorov
-index in the paper.
+The tools were implemented in the ferrn package and can track the
+progression of the target function and monitor parameter coverage of the
+search space in both reduced 2D space and the full space. These
+visualisation can lead to insights for evaluating and comparing the
+performance of multiple optimisers in a specific problem. They can
+provide better understanding of existing methods or motivate the
+development of new approaches. For example, we have compared how three
+optimisers perform when maximising a non-smooth index function and
+illustrated how the pseudo-derivative search fails in this setting. The
+observations from our experiments have also been translated into
+improved optimisation methods for the guided tour, e.g.~we introduced
+the option to interrupt the search if a better basis is found along the
+path.
 
 This work might be considered an effort to bring transparency into
 algorithms. Although little attention is paid by algorithm developers to
