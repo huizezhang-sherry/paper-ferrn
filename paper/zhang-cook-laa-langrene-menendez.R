@@ -39,7 +39,7 @@ knitr::read_chunk(
 ## ----toy-pca-animated, fig.cap = "Six frames selected from the animated version of the previous plot. With animation, the progression of the search paths from start to finish is better identified. CRS (green) finishes the optimisation quicker than PD (brown) since there is no further movement for CRS in the sixth frame. The full video of the animation can be found in the html version of the paper.", eval=knitr::is_latex_output()----
 
 
-## ----toy-pca-animated-interactive,  out.wdith= "100px", fig.cap = "Animated version of Figure \\ref{fig:toy-pca}. With animation, the progression of the search paths from start to finish can better identified and CRS (green) finishes the optimisation quicker than PD (brown).", eval=knitr::is_html_output()----
+## ----toy-pca-animated-interactive,  out.wdith= "100px", fig.cap = "Animated version of Figure \\\\ref{fig:toy-pca}. With animation, the progression of the search paths from start to finish can better identified and CRS (green) finishes the optimisation quicker than PD (brown).", eval=knitr::is_html_output()----
 #> NA
 
 

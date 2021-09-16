@@ -211,7 +211,7 @@ implemented in the R package \CRANpkg{tourr} \citep{tourr}.
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=0.7\linewidth]{/Users/sherryzhang/Documents/researh/paper-tour-vis/figs/tour-path} 
+{\centering \includegraphics[width=0.7\linewidth]{/Users/sherryzhang/Documents/research/paper-tour-vis/figs/tour-path} 
 
 }
 
@@ -425,7 +425,7 @@ an advantage in this simple example to quickly find the optimum.
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{/Users/sherryzhang/Documents/researh/paper-tour-vis/figs/toy-search} 
+{\centering \includegraphics[width=1\linewidth]{/Users/sherryzhang/Documents/research/paper-tour-vis/figs/toy-search} 
 
 }
 
@@ -457,7 +457,7 @@ improving the non-monotonic interpolation for CRS.
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{/Users/sherryzhang/Documents/researh/paper-tour-vis/figs/toy-interp-1} 
+{\centering \includegraphics[width=1\linewidth]{/Users/sherryzhang/Documents/research/paper-tour-vis/figs/toy-interp-1} 
 
 }
 
@@ -518,7 +518,7 @@ will be discussed in detail in Section \ref{monotonic}.
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{/Users/sherryzhang/Documents/researh/paper-tour-vis/figs/toy-pca} 
+{\centering \includegraphics[width=1\linewidth]{/Users/sherryzhang/Documents/research/paper-tour-vis/figs/toy-pca} 
 
 }
 
@@ -541,7 +541,7 @@ is still making more progress.
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{/Users/sherryzhang/Documents/researh/paper-tour-vis/figs/toy-pca-animated-1} 
+{\centering \includegraphics[width=1\linewidth]{/Users/sherryzhang/Documents/research/paper-tour-vis/figs/toy-pca-animated-1} 
 
 }
 
@@ -564,7 +564,7 @@ same two optimisations in its original space.
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{/Users/sherryzhang/Documents/researh/paper-tour-vis/figs/toy-tour-1} 
+{\centering \includegraphics[width=1\linewidth]{/Users/sherryzhang/Documents/research/paper-tour-vis/figs/toy-tour-1} 
 
 }
 
@@ -620,7 +620,7 @@ two circles are rotated into a line from our view.
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{/Users/sherryzhang/Documents/researh/paper-tour-vis/figs/toy-torus-1} 
+{\centering \includegraphics[width=1\linewidth]{/Users/sherryzhang/Documents/research/paper-tour-vis/figs/toy-torus-1} 
 
 }
 
@@ -686,7 +686,7 @@ panel and reaches a better final basis.
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{/Users/sherryzhang/Documents/researh/paper-tour-vis/figs/interruption-1} 
+{\centering \includegraphics[width=1\linewidth]{/Users/sherryzhang/Documents/research/paper-tour-vis/figs/interruption-1} 
 
 }
 
@@ -735,7 +735,7 @@ along the vertical axis.
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{/Users/sherryzhang/Documents/researh/paper-tour-vis/figs/polish-1} 
+{\centering \includegraphics[width=1\linewidth]{/Users/sherryzhang/Documents/research/paper-tour-vis/figs/polish-1} 
 
 }
 
@@ -797,7 +797,7 @@ the overall number of points evaluated.
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{/Users/sherryzhang/Documents/researh/paper-tour-vis/figs/noisy-better-geo} 
+{\centering \includegraphics[width=1\linewidth]{/Users/sherryzhang/Documents/research/paper-tour-vis/figs/noisy-better-geo} 
 
 }
 
@@ -829,7 +829,7 @@ towards the global optimum.
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{/Users/sherryzhang/Documents/researh/paper-tour-vis/figs/kol-result} 
+{\centering \includegraphics[width=1\linewidth]{/Users/sherryzhang/Documents/research/paper-tour-vis/figs/kol-result} 
 
 }
 
@@ -851,7 +851,7 @@ as the current basis. The orientation of two bases can be checked via
 calculating the determinant and a negative value suggests the two bases
 having different orientation. For 1D bases, this can be corrected by
 flipping the sign in one of the basis while the correction for a general
-p-D bases is more complex and beyond the scope of this paper. Here an
+p-D bases is more complex and beyond the scope of this work. Here an
 orientation check is carried out once a new target basis is generated
 and the sign in the target basis will be flipped if a negative
 determinant is obtained. The interpolation after implementing the
@@ -862,7 +862,7 @@ exists.
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{/Users/sherryzhang/Documents/researh/paper-tour-vis/figs/flip-sign} 
+{\centering \includegraphics[width=1\linewidth]{/Users/sherryzhang/Documents/research/paper-tour-vis/figs/flip-sign} 
 
 }
 
@@ -1021,20 +1021,21 @@ while the visual diagnostics of the optimisers is implemented in
 \section{Conclusion}\label{conclusion}}
 
 This paper has provided several visual diagnostics that can be used for
-diagnosing a complex optimisation procedure. The methods were
-illustrated using the optimisers available for projection pursuit guided
-tour. Here the constraint is the orthonormality condition of the
-projection bases. The approach used broadly applies to other constrained
-optimisers.
+understanding a complex optimisation procedure and are implemented in
+the ferrn package. The methods were illustrated using the optimisers
+available for projection pursuit guided tour. Here the constraint is the
+orthonormality condition of the projection bases. The approach used
+broadly applies to other constrained optimisers, by saving the path of
+the optimiser in a form required to input into the ferrn package. These
+high-dimensional data objects can then be viewed using the tour.
 
-The tools were implemented in the ferrn package and can track the
-progression of the target function and monitor parameter coverage of the
-search space in both reduced 2D space and the full space. These
-visualisation can lead to insights for evaluating and comparing the
-performance of multiple optimisers in a specific problem. They can
-provide better understanding of existing methods or motivate the
-development of new approaches. For example, we have compared how three
-optimisers perform when maximising a non-smooth index function and
+The progressive optimisation of a target function and it's coverage of
+the search space can be viewed in both reduced 2D space and the full
+space. These visualisation can lead to insights for evaluating and
+comparing the performance of multiple optimisers in a specific problem.
+They can provide better understanding of existing methods or motivate
+the development of new approaches. For example, we have compared how
+three optimisers perform when maximising a non-smooth index function and
 illustrated how the pseudo-derivative search fails in this setting. The
 observations from our experiments have also been translated into
 improved optimisation methods for the guided tour, e.g.~we introduced

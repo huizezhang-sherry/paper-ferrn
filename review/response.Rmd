@@ -9,7 +9,9 @@ output: pdf_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-Many thanks for reviewing the manuscript and for your comments and suggestions. Please see below the answers to your review comments.
+\textcolor{red}{We really appreciate the helpful comments and feedback. Below is a point-by-point explanation of how we have changed the paper. The reviewer comments are in black and our responses are in red.}
+
+\textcolor{red}{In our revision, we have used the new format for the journal and produced both a pdf format and an html format. The html format includes interactive graphics whenever appropriate.}
 
 # Reviewer 1
 
@@ -25,19 +27,19 @@ The tool is likely to be of interest to the R community. Most of my comments are
 
     -   For 1D projections, flipping the sign is sufficient. For p-D projections of $\mathbb{R}^n$​, one may need a little more. To my knowledge most index functions are invariant to any rotations that happens within the p-subspace. This makes me wonder that in general, one may want to align two bases so that their difference does not contain any "within-subspace" components. In other words, one may want to compare representations in the Grassmannian manifold (space of k-subspaces) instead of in the Stiefel manifold (space of orthonormal k-frames).
 
-\textcolor{red}{We agree that most index functions should be rotation invariant (this is in fact a desirable property, but there are exceptions where indexes can still be very useful but not rotation invariant, see discussion in Laa, Cook (2020)). Thus when comparing frames defining projections to d>=2 dimensions, we may want to introduce a rotation that will align the bases as much as possible within the common subspace, while potentially quantifying e.g. the angle between two planes. This is an interesting problem, however the implementation of this general approach is beyond the scope of the current paper.}
+\textcolor{red}{We agree that most index functions should be rotation invariant (this is in fact a desirable property, but there are exceptions where indexes can still be very useful but not rotation invariant, see discussion in Laa, Cook (2020)). Thus when comparing frames defining projections to d>=2 dimensions, we may want to introduce a rotation that will align the bases as much as possible within the common subspace, while potentially quantifying e.g. the angle between two planes. This is an interesting problem, however the implementation of this general approach is beyond the scope of the current paper. The text in section "Reconciling the orientation" has been updated to reflect this explanation.}
 
 ### Minor comment
 
 -   The software seems to be specific to projection pursuit. I wish the authors could comment more on its potential generality to other optimizations. For example, can one generalizes the tour method to visualize any parameter trace of an optimizer?
 
-\textcolor{red}{It is feasible to generalise the tour method for diagnosing other optimisers, given that the parameter space can be simulated. In our examples, the orthonormality constraint regulates the parameter space of the projection basis ($p \times d$) to be an p-sphere, which can be simulated by the geozoo package. For other optimisers, reserachers need first to create a data collection object in a tibble that tracks the parameter during the optimisation, and then to use ferrn to produce the diagnostic plots as shown in the paper. Some examples of the data collection objects that we created are included in the ferrn package and should be referred to as the format for inputs into the expore\_\* functions.}
+\textcolor{red}{It is feasible to generalise the tour method for diagnosing other optimisers, given that the parameter space can be simulated. In our examples, the orthonormality constraint regulates the parameter space of the projection basis ($p \times d$) to be an p-sphere, which can be simulated by the geozoo package. For other optimisers, reserachers need first to create a data collection object in a tibble that tracks the parameter during the optimisation, and then to use ferrn to produce the diagnostic plots as shown in the paper. Some examples of the data collection objects that we created are included in the ferrn package and should be referred to as the format for inputs into the explore_* functions. we have added a sentence in the conclusion to point to this possibility. }
 
 -   Figure 4 "...All the bases in PD have been flipped for easier comparison of the final bases..."
 
     -   This is related to the major comment. In the figure, PD flipped in sign but stopped at a basis representation similar to the destination of the CRS. Flipping the sign back, does it mean that PD and CRS diverged but stopped at the similar subspace with opposite basis representations? Also, given that PD and CRS have the same starting bases and one is flipped, why wouldn't the dashed line pass the origin (gray dot) in the figure?
 
-\textcolor{red}{Thanks for sharing your interpretation on the effects of flipping, that's right! The reviewer is giving a decent explanation in describing the effect of flipping. The gray dot should land on the dashed line and this is a mistake due to the data not being updated after flipping in the code. This has now been corrected.}
+\textcolor{red}{Thanks for sharing your interpretation on the effects of flipping, that's right! The gray dot should land on the dashed line and this is a mistake due to the data not being updated after flipping in the code. This has now been corrected.}
 
 -   "Recall that the columns in a 2D basis are orthogonal to each other, so the space of *p* × 2 bases is a *p*-D torus".
 
@@ -74,8 +76,6 @@ These experiments are interesting and so is the methodology. The conclusions cou
 1.  Should refer to earlier work on scagnostic indices, page 3
 
 \textcolor{red}{New references have been added as follows:}
-
-\textcolor{red}{Added reference of (Wilkinson et al., 2005) and  (Wilkinson and Wills, 2008):}
 
 \textcolor{red}{L. Wilkinson and G. Wills. Scagnostics distributions. Journal of Computational and Graphical Statistics, 17 (2):473–491, 2008}
 
