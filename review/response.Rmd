@@ -33,19 +33,19 @@ The tool is likely to be of interest to the R community. Most of my comments are
 
 -   The software seems to be specific to projection pursuit. I wish the authors could comment more on its potential generality to other optimizations. For example, can one generalizes the tour method to visualize any parameter trace of an optimizer?
 
-\textcolor{red}{It is feasible to generalise the tour method for diagnosing other optimisers, given that the parameter space can be simulated. In our examples, the orthonormality constraint regulates the parameter space of the projection basis ($p \times d$) to be an p-sphere, which can be simulated by the geozoo package. For other optimisers, reserachers need first to create a data collection object in a tibble that tracks the parameter during the optimisation, and then to use ferrn to produce the diagnostic plots as shown in the paper. Some examples of the data collection objects that we created are included in the ferrn package and should be referred to as the format for inputs into the explore_* functions. we have added a sentence in the conclusion to point to this possibility. }
+\textcolor{red}{It is feasible to generalise the tour method for diagnosing other optimisers, given that the parameter space can be simulated. In our examples, the orthonormality constraint regulates the parameter space of the projection basis ($p \times d$) to be an p-sphere, which can be simulated by the geozoo package. For other optimisers, reserachers need first to create a data collection object in a tibble that tracks the parameter during the optimisation, and then to use ferrn to produce the diagnostic plots as shown in the paper. Some examples of the data collection objects that we created are included in the ferrn package and should be referred to as the format for inputs into the explore functions. we have added a sentence in the conclusion to point to this possibility.}
 
 -   Figure 4 "...All the bases in PD have been flipped for easier comparison of the final bases..."
 
     -   This is related to the major comment. In the figure, PD flipped in sign but stopped at a basis representation similar to the destination of the CRS. Flipping the sign back, does it mean that PD and CRS diverged but stopped at the similar subspace with opposite basis representations? Also, given that PD and CRS have the same starting bases and one is flipped, why wouldn't the dashed line pass the origin (gray dot) in the figure?
 
-\textcolor{red}{Thanks for sharing your interpretation on the effects of flipping, that's right! The gray dot should land on the dashed line and this is a mistake due to the data not being updated after flipping in the code. This has now been corrected.}
+\textcolor{red}{Thanks for sharing your interpretation on the effects of flipping, that's right! The gray dot should land on the dashed line and this is a mistake due to the data not being updated after flipping in the code. This has now been corrected in the package and Figure 4 has been updated accordingly.}
 
 -   "Recall that the columns in a 2D basis are orthogonal to each other, so the space of *p* × 2 bases is a *p*-D torus".
 
     -   It is not clear to me why "so". For p=2, the space of 2x2 bases is a pair of 1-D tori instead of just one (because you have two orientations for a pair of orthogonal vectors), right? For p=3, the space of 3x2 bases is SO(3), which is not a 3-D torus? Ref: <https://en.wikipedia.org/wiki/Stiefel_manifold>
 
-\textcolor{red}{We changed the wording of the sentence to: "a torus in the $p$-D space" and provide a reference for this statement: (Buja and Asimov, 1986).}
+\textcolor{red}{We changed the wording of the sentence to: "a torus in the $p$-D space" and provide a reference for this statement.}
 
 ### Writing
 
@@ -53,13 +53,13 @@ The tool is likely to be of interest to the R community. Most of my comments are
 
     -   It took me multiple passes to get what this means. Perhaps instead starting with something like: "We use PCA to project and visualize the parameters/bases in 2D. The centre of the 2D view is..."?
 
-\textcolor{red}{Changed to "We use PCA to estimate the 2D space that is best suited to visualise the bases. The centre of the 2D view is the first two PC coordinates of the zero matrix, and the radius is estimated as the largest distance from the centre to the basis."}
+\textcolor{red}{The sentence has been re-phrased into: "We use PCA to estimate the 2D space that is best suited to visualise the bases. The centre of the 2D view is the first two PC coordinates of the zero matrix, and the radius is estimated as the largest distance from the centre to the basis."}
 
 -   "Figure 6 shows some frames from the tour plot of the same two optimisations in its original 5D space."
 
     -   I think this is the first mention of "5D space"/5D data in the main text (apart from the caption in Figure 4), so it may be worth clarifying what the original 5D space is.
 
-\textcolor{red}{The data set is first introduced in the subsection *Simulation setup* under *Diagnosing an optimiser*. However, to avoid confusion, we change the "original 5D space" to "original space" and give more details about the original space in the figure caption: "The basis space in this example is a 5D unit sphere ...".}
+\textcolor{red}{The data set is first introduced in the subsection Simulation setup under Diagnosing an optimiser. To avoid confusion, we change the wording from "original 5D space" to "original space" and give more details about the original space in the figure caption: "The basis space in this example is a 5D unit sphere ...".}
 
 -   "While the previous few examples have looked at the space of 1D bases ... 2D bases"
 
@@ -71,43 +71,39 @@ The tool is likely to be of interest to the R community. Most of my comments are
 
 These experiments are interesting and so is the methodology. The conclusions could do with beefing up What can we learn about how to optimise the holes index for 1 and 2d? Does this apply to other smooth indices? What about non-smooth indices? What about indices in other dimensions?
 
-\textcolor{red}{A paragraph further summarising the findings has been added in the second paragram in the conclusion}
+\textcolor{red}{A paragraph further summarising the findings has been added in the second paragram in the conclusion.}
 
 1.  Should refer to earlier work on scagnostic indices, page 3
 
-\textcolor{red}{New references have been added as follows:}
-
-\textcolor{red}{L. Wilkinson and G. Wills. Scagnostics distributions. Journal of Computational and Graphical Statistics, 17 (2):473–491, 2008}
-
-\textcolor{red}{L. Wilkinson, A. Anand, and R. Grossman. Graph-theoretic scagnostics. In IEEE Symposium on Information Visualization, 2005. INFOVIS 2005., pages 157–164, Oct 2005.}
+\textcolor{red}{Two references of Wilkinson work on scagnostics have been added. }
 
 2.  figure 2 caption "using the holes index" "and a boxplot". What is the colour scale for the points? The text related to figure 2 in the bottom of page 5 should mention the dataset and the index, giving references if needed.
 
-\textcolor{red}{The caption has now been re-written and color scale explanation added: "The color scale is from the customised botanical palette in the ferrn package."}
+\textcolor{red}{The caption has now been updated and explanation for the color scale is added: "The color scale is from the customised botanical palette in the ferrn package."}
 
 3.  "with higher index value" -\> "with a higher index value". The word "the" is missing in a few other places in the paper.
 
-\textcolor{red}{That has now been corrected.}
+\textcolor{red}{Corrected.}
 
 4.  In Figure 3 would be better if the y-axes scales were the same for the two graphs.
 
-\textcolor{red}{It is now fixed}
+\textcolor{red}{Fixed.}
 
 5.  What is the star in figures 4 and 5? This is not mentioned in the text or caption
 
-\textcolor{red}{The caption has now been ammended to: "The black star represents the theoretical best basis the optimisers aiming to find." in the caption of figure 4.}
+\textcolor{red}{The black star represents the theoretical best basis the optimisers aiming to find. This has been added in the caption of Figure 4.}
 
 6.  In the text you say things like "details=TRUE" and "animate=TRUE" but what functions are you referring to?
 
-\textcolor{red}{Mention of "details=TRUE" and "animate=TRUE" is removed from subsection diagnostic 3a and 3b to the implementation section: `explore\_space\_pca()` produces the PCA plot of projection bases on the reduced space. Figure 4 includes the additional details of anchor and search bases, which can be turned on by the argument `details = TRUE`. The animated version in Figure 5 is produced with argument `animate = TRUE`.}
+\textcolor{red}{"details=TRUE" and "animate=TRUE" refers to the function "explore space pca". These two arguments are now mentioned in the impelmentation section under function "explore space pca", instead of subsection Diagnostic 3a and 3b.}
 
 7.  In Figure 9, it seems CRS is doing better here than in Figure 8-- maybe this could be mentioned.
 
-\textcolor{red}{Figure 8 and 9 focuses on different aspects: Figure 8 compares the effect of implementing an interruption while Figure 9 compares the effect of polishing. In the experiment of Figure 9, the parameter `max.tries` is set to 400 to allow guided tour to do its best instead of a default 25 in Figure 8. Cross comparing the two experiments is less meaningful.}
+\textcolor{red}{Figure 8 and 9 focuses on different aspects: Figure 8 compares the effect of implementing an interruption while Figure 9 compares the effect of polishing. In the experiment of Figure 9, the parameter "max.tries" is set to 400 to allow guided tour to do its best instead of a default 25 as in Figure 8. Cross comparing the two experiments is less meaningful.}
 
 8.  "not the case for all the indexes" missing a "." page 11
 
-\textcolor{red}{It has now been added}
+\textcolor{red}{Added.}
 
 9.  For the Kolmogorov index, why are you using randomly generated data instead of normal quantiles?
 
