@@ -99,7 +99,7 @@ These experiments are interesting and so is the methodology. The conclusions cou
 
 7.  In Figure 9, it seems CRS is doing better here than in Figure 8-- maybe this could be mentioned.
 
-\textcolor{red}{Figure 8 and 9 focuses on different aspects: Figure 8 compares the effect of implementing an interruption while Figure 9 compares the effect of polishing. In the experiment of Figure 9, the parameter "max.tries" is set to 400 to allow guided tour to do its best instead of a default 25 as in Figure 8. Cross comparing the two experiments is less meaningful.}
+\textcolor{red}{In the experiment of Figure 9, the parameter "max.tries" is set to 400 to allow guided tour to do its best instead of a default 25 as in Figure 8. A sentence in the Figure 9 captions is added to reflect this.}
 
 8.  "not the case for all the indexes" missing a "." page 11
 
