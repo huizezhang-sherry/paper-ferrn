@@ -1,4 +1,4 @@
-# paper-tour-vis
+# paper-ferrn
 
 Visual diagnostics for constrained optimisation with application to guided tours
 
