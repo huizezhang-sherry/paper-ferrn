@@ -30,13 +30,14 @@ abstract: >
   A guided tour helps to visualise high-dimensional data by showing low-dimensional projections along a projection pursuit optimisation path. Projection pursuit is a generalisation of principal component analysis, in the sense that different indexes are used to define the interestingness of the projected data. While much work has been done in developing new indexes in the literature, less has been done on understanding the optimisation. Index functions can be noisy, might have multiple local maxima as well as an optimal maximum, and are constrained to generate orthonormal projection frames, which complicates the optimization. In addition, projection pursuit is primarily used for exploratory data analysis, and finding the local maxima is also useful. The guided tour is especially useful for exploration, because it conducts geodesic interpolation connecting steps in the optimisation and shows how the projected data changes as a maxima is approached. This work provides new visual diagnostics for examining a choice of optimisation procedure, based on the provision of a new data object which collects information throughout the optimisation. It has helped to diagnose and fix several problems with projection pursuit guided tour. This work might be useful more broadly for diagnosing optimisers, and comparing their performance. The diagnostics are implemented in the R package [ferrn](https://github.com/huizezhang-sherry/ferrn).
 keywords: graphics, multivariate, optimization
 preamble: >
-  \usepackage{mathtools}
+  \usepackage{mathtools, longtable}
   \usepackage[ruled, linesnumbered]{algorithm2e}
 type: package
 csl: "biostats.csl"
 creative_commons: CC BY
 output: 
-  rjtools::rjournal_web_article
+  rjtools::rjournal_web_article:
+    css: "style.css"
 bibliography: zhang-cook-laa-langrene-menendez.bib
 ---
 
@@ -50,8 +51,7 @@ knitr::opts_chunk$set(echo = FALSE,
                       fig.align = "center",
                       fig.height = 3,
                       fig.retina = 5,
-                      out.width = "100%",
-                      fig.cap = TRUE)
+                      out.width = "100%")
 ```
 
 ```{r external, include = FALSE, cache = FALSE}
@@ -191,11 +191,8 @@ Several annotations have been made to help understanding this plot. As mentioned
 
 Figure \ref{fig:toy-pca} shows the PCA plot of CRS and PD for a 1D projection problem. Both optimisers find the optimum but PD gets closer. With the PCA plot, one can visually appreciate the nature of these two optimisers: PD first evaluates points in a small neighbourhood for a promising direction, while CRS evaluates points randomly in the search space to search for the next target. There are dashed lines annotated for CRS and it describes the interruption of the interpolation, which will be discussed in detail in Section \ref{monotonic}.
 
-<<<<<<< HEAD
+
 ```{r toy-pca, fig.cap = "Search paths of CRS (green) and PD (brown) in the PCA-reduced basis space for 1D projection problem on the five-variable dataset, \\code{boa5} using holes index. The basis space, a 5D unit sphere, is projected onto a 2D circle by PCA. The black star represents the theoretical best basis the optimisers aiming to find. All the bases in PD have been flipped for easier comparison of the final bases and a grey dashed line has been annotated to indicate the symmetry of the two start bases."}
-=======
-```{r toy-pca, fig.height = 4, fig.asp = 1, fig.cap = "Search paths of CRS (green) and PD (brown) in the PCA-reduced basis space for 1D projection problem on the five-variable dataset, \\code{boa5} using holes index. The basis space, a 5D unit sphere, is projected onto a 2D circle by PCA. The theoretical best basis is indicated by the black star. All the bases in PD have been flipped for easier comparison of the final bases and a grey dashed line has been annotated to indicate the symmetry of the two start bases."}
->>>>>>> d901bb962aba76eb25d0b574676177746933b21f
 ```
 
 ## Diagnostic 3b: Animating the diagnostic plots

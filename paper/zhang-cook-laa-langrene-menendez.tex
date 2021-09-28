@@ -488,13 +488,14 @@ one routine if different optimisations finish at opposite places.
 Several annotations have been made to help understanding this plot. As
 mentioned previously, the original basis space is a high-dimensional
 sphere and random bases on the sphere can be generated via the
-\CRANpkg{geozoo} \citep{geozoo} package. We use PCA to estimate the 2D
-space that is best suited to visualise the bases. The centre of the 2D
-view is the first two PC coordinates of the zero matrix, and the radius
-is estimated as the largest distance from the centre to the basis. The
-theoretical best basis is known for simulated data and can be labelled
-to compare how close the end basis found by the optimisers is to the
-theoretical best. Various aesthetics, i.e.~size, alpha (transparency),
+\CRANpkg{geozoo} \citep{geozoo} package. We use PCA to project and
+visualize the parameters/bases in 2D. The centre of the 2D view is the
+first two PCs of the data matrix. It theoretically should be a circle,
+but may have some irregular edges due to finite sampling. Thus the edge
+is smoothed by using a radius estimated as the largest distance from the
+centre to any basis. In the simulation, the theoretical best basis is
+known and can be labelled to compare how close to this that the
+optimisers stopped. Various aesthetics, i.e.~size, alpha (transparency),
 and colour, are applicable to emphasize critical elements and adjust for
 the presentation. For example, anchor points and search points are less
 important and hence a smaller size and alpha are used. Alpha can also be
@@ -842,15 +843,16 @@ some simulations, as shown on the left panel of Figure
 the basis space and the interpolator seems to draw a straight line to
 interpolate. Bases with opposite signs do not affect the projection and
 index value, but we would prefer the target to have the same orientation
-as the current basis. The orientation of two bases can be checked via
-calculating the determinant and a negative value suggests the two bases
-having different orientation. For 1D bases, this can be corrected by
-flipping the sign in one of the basis while the correction for a general
-p-D bases is more complex and beyond the scope of this work. Here an
-orientation check is carried out once a new target basis is generated
-and the sign in the target basis will be flipped if a negative
-determinant is obtained. The interpolation after implementing the
-orientation check is shown on the right panel of Figure
+as the current basis. The orientation of two bases can be
+computationally checked by calculating the determinant -- a negative
+value suggests the two bases having different orientation. For 1D bases,
+this can be corrected by flipping the sign in one basis. For higher
+dimensions, it can be a bit more difficult because the orthonormality of
+the basis needs to be maintained also when an individual vector is
+flipped. Here an orientation check is carried out once a new target
+basis is generated and the sign in the target basis will be flipped if a
+negative determinant is obtained. The interpolation after implementing
+the orientation check is shown on the right panel of Figure
 \ref{fig:flip-sign} where the unsatisfactory interpolation no longer
 exists.
 
@@ -1019,23 +1021,28 @@ This paper has provided several visual diagnostics that can be used for
 understanding a complex optimisation procedure and are implemented in
 the ferrn package. The methods were illustrated using the optimisers
 available for projection pursuit guided tour. Here the constraint is the
-orthonormality condition of the projection bases. The approach used
-broadly applies to other constrained optimisers, by saving the path of
-the optimiser in a form required to input into the ferrn package. These
+orthonormality condition of the projection bases, which corresponds to
+optimisation over spheres and torii. The approach described broadly
+applies to other constrained optimisers. Although the manifold in
+\(p\)-space might be different the diagnostic techniques are the same. A
+researcher would begin by saving the path of the optimiser in a form
+required to input into the ferrn package, as described in this paper.
+One might generally make more samples from the constrained space upon
+which to assess and compare the optimisation paths. These
 high-dimensional data objects can then be viewed using the tour.
 
 The progressive optimisation of a target function and it's coverage of
 the search space can be viewed in both reduced 2D space and the full
-space. These visualisation can lead to insights for evaluating and
-comparing the performance of multiple optimisers in a specific problem.
-They can provide better understanding of existing methods or motivate
-the development of new approaches. For example, we have compared how
-three optimisers perform when maximising a non-smooth index function and
-illustrated how the pseudo-derivative search fails in this setting. The
-observations from our experiments have also been translated into
-improved optimisation methods for the guided tour, e.g.~we introduced
-the option to interrupt the search if a better basis is found along the
-path.
+space. These visualisations can lead to insights for evaluating and
+comparing the performance of multiple optimisers operating on the same
+task. They can provide better understanding of existing methods or
+motivate the development of new approaches. For example, we have
+compared how three optimisers perform when maximising a non-smooth index
+function and illustrated how the pseudo-derivative search fails in this
+setting. The observations from our experiments have also been translated
+into improved optimisation methods for the guided tour, e.g.~we
+introduced the option to interrupt the search if a better basis is found
+along the path.
 
 This work might be considered an effort to bring transparency into
 algorithms. Although little attention is paid by algorithm developers to

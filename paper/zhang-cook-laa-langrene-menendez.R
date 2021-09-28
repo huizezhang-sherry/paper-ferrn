@@ -8,8 +8,7 @@ knitr::opts_chunk$set(echo = FALSE,
                       fig.align = "center",
                       fig.height = 3,
                       fig.retina = 5,
-                      out.width = "100%",
-                      fig.cap = TRUE)
+                      out.width = "100%")
 
 
 ## ----external, include = FALSE, cache = FALSE---------------------------------
