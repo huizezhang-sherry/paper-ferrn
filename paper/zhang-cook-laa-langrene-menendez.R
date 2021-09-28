@@ -8,7 +8,8 @@ knitr::opts_chunk$set(echo = FALSE,
                       fig.align = "center",
                       fig.height = 3,
                       fig.retina = 5,
-                      out.width = "100%")
+                      out.width = "100%",
+                      fig.cap = TRUE)
 
 
 ## ----external, include = FALSE, cache = FALSE---------------------------------
@@ -24,7 +25,7 @@ knitr::read_chunk(
 #spelling::spell_check_files(here::here("paper/zhang-cook-laa-langrene-menendez.Rmd"), lang = "en-GB", ignore = spelling::get_wordlist())
 
 
-## ----tour-path, out.width="70%", fig.cap="An illustration for demonstrating the frames in a tour path. Each square (frame) represents the projected data with a corresponding basis. Blue frames are returned by the projection pursuit optimisation and white frames are constructed between two blue frames by geodesic interpolation."----
+## ----tour-path, out.width="70%", fig.cap="\\label{fig:tour-path} An illustration for demonstrating the frames in a tour path. Each square (frame) represents the projected data with a corresponding basis. Blue frames are returned by the projection pursuit optimisation and white frames are constructed between two blue frames by geodesic interpolation."----
 
 
 ## ----toy-search, fig.cap="A comparison of the searches by two optimisers: CRS (left) and SA (right) on a 2D projection problem of a six-variable dataset, \\code{boa6} using the holes index. Both optimisers reach the final basis with a similar index value while it takes SA longer to find the final basis. In the earlier iterations, optimisers quickly find a better basis to proceed while in the later iterations, most sampled bases fail to make an improvement on the index value and a boxplot is used to summarise the distribution of the index values. There is no better basis found in the last iteration, 9 (left) and 15 (right), before reaching the maximum number of try and hence it is colored grey. The color scale is from the customised botanical palette in the ferrn package."----
@@ -39,14 +40,14 @@ knitr::read_chunk(
 ## ----toy-pca-animated, fig.cap = "Six frames selected from the animated version of the previous plot. With animation, the progression of the search paths from start to finish is better identified. CRS (green) finishes the optimisation quicker than PD (brown) since there is no further movement for CRS in the sixth frame. The full video of the animation can be found in the html version of the paper.", eval=knitr::is_latex_output()----
 
 
-## ----toy-pca-animated-interactive, fig.cap = "Animated version of Figure 4. With animation, the progression of the search paths from start to finish can better identified and CRS (green) finishes the optimisation quicker than PD (brown).", eval=knitr::is_html_output()----
+## ----toy-pca-animated-interactive, out.extra="id = 'gif'", fig.cap = "Animated version of Figure 4. With animation, the progression of the search paths from start to finish can better identified and CRS (green) finishes the optimisation quicker than PD (brown).", eval=knitr::is_html_output()----
 #> NA
 
 
 ## ----toy-tour, fig.cap="Six frames selected from rotating the high-dimensional basis space, along with the same two search paths from Figure \\@ref(fig:toy-pca) and \\@ref(fig:toy-pca-animated). The basis space in this example is a 5D unit sphere, on which points (grey) are randomly generated via the CRAN package geozoo. The full animation can be seen in the html version of the paper.", eval = knitr::is_latex_output()----
 
 
-## ----toy-tour-interactive, fig.cap="Animating the two paths from Figure 4 and 5 in the full basis space. The full basis space in this example is a 5D unit sphere, on which points (grey) are randomly generated via the CRAN package geozoo.", eval = knitr::is_html_output()----
+## ----toy-tour-interactive, out.extra="id = 'tour-gif'",fig.cap="Animating the two paths from Figure 4 and 5 in the full basis space. The full basis space in this example is a 5D unit sphere, on which points (grey) are randomly generated via the CRAN package geozoo.", eval = knitr::is_html_output()----
 #> NA
 
 
@@ -61,7 +62,7 @@ holes_2d_better_3var %>% get_best() %>% pull(basis) %>% .[[1]]
 ## ----toy-torus, fig.cap="Six frames selected from rotating the 2D basis space along with two search paths optimised by PD (brown) and CRS (green). The projection problem is a 2D projection with three variables using the holes index. The grey points are randomly generated 2D projection bases in the space and it can be observed that these points form a torus. The full video of the animation can be found in the html version of the paper.", eval = knitr::is_latex_output()----
 
 
-## ----toy-torus-interactive, fig.cap="Animation of rotating the 2D basis space along with two search paths optimised by PD (brown) and CRS (green). The projection problem is a 2D projection with three variables using the holes index. The grey points are randomly generated 2D projection bases in the space and it can be observed that these points form a torus.", eval = knitr::is_html_output()----
+## ----toy-torus-interactive, out.extra="id = 'tour-gif'", fig.cap="Animation of rotating the 2D basis space along with two search paths optimised by PD (brown) and CRS (green). The projection problem is a 2D projection with three variables using the holes index. The grey points are randomly generated 2D projection bases in the space and it can be observed that these points form a torus.", eval = knitr::is_html_output()----
 #> NA
 
 

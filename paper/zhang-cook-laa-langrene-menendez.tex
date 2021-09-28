@@ -203,7 +203,7 @@ of projection pursuit, to gradually reveal the most interesting
 projection. Given a random start, projection pursuit iteratively finds
 bases with higher index values and the guided tour constructs a geodesic
 interpolation between these planes to form a tour path. Figure
-@ref(fig:tour-path) shows a sketch of the tour path where the blue
+\ref{fig:tour-path} shows a sketch of the tour path where the blue
 frames are produced by the projection pursuit optimisation and the white
 frames are interpolations between the blue frames. Mathematical details
 of the geodesic interpolation can be found in
@@ -217,7 +217,7 @@ implemented in the R package \CRANpkg{tourr} \citep{tourr}.
 
 }
 
-\caption[An illustration for demonstrating the frames in a tour path]{An illustration for demonstrating the frames in a tour path. Each square (frame) represents the projected data with a corresponding basis. Blue frames are returned by the projection pursuit optimisation and white frames are constructed between two blue frames by geodesic interpolation.}(\#fig:tour-path)
+\caption{\label{fig:tour-path} An illustration for demonstrating the frames in a tour path. Each square (frame) represents the projected data with a corresponding basis. Blue frames are returned by the projection pursuit optimisation and white frames are constructed between two blue frames by geodesic interpolation.}(\#fig:tour-path)
 \end{figure}
 \end{Schunk}
 
@@ -323,6 +323,8 @@ interest recorded, \(V\), include \texttt{method} that tags the name of
 the optimiser, and \texttt{alpha} that indicates the sampling
 neighbourhood size for searching observations. A matrix notation of the
 data structure is presented in the table below.
+
+\newpage
 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\columnwidth - 16\tabcolsep) * \real{0.10}}
@@ -452,7 +454,7 @@ improving the non-monotonic interpolation for CRS.
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{/Users/sherryzhang/Documents/research/paper-ferrn/figs/toy-interp-1} 
+{\centering \includegraphics[width=1\linewidth]{/Users/sherryzhang/Documents/research/paper-ferrn/figs/toy-interp} 
 
 }
 
@@ -682,7 +684,7 @@ panel and reaches a better final basis.
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{/Users/sherryzhang/Documents/research/paper-ferrn/figs/interruption-1} 
+{\centering \includegraphics[width=1\linewidth]{/Users/sherryzhang/Documents/research/paper-ferrn/figs/interrupt} 
 
 }
 
@@ -710,7 +712,7 @@ change in the index value, and neighbourhood size:
 \def\labelenumi{\arabic{enumi})}
 \tightlist
 \item
-  the distance between the basis found and the current basis needs to be
+  the distance between the basis found and the current needs to be
   larger than 1e-3;
 \item
   the relative change of the index value needs to be larger than 1e-5;
@@ -731,7 +733,7 @@ along the vertical axis.
 \begin{Schunk}
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{/Users/sherryzhang/Documents/research/paper-ferrn/figs/polish-1} 
+{\centering \includegraphics[width=1\linewidth]{/Users/sherryzhang/Documents/research/paper-ferrn/figs/polish} 
 
 }
 

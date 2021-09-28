@@ -29,17 +29,23 @@ knitr::include_graphics(here::here("figs/tour-path.png"))
 knitr::include_graphics(here::here("figs/toy-search.svg"))
 
 ## ---- toy-interp
-p1 <- holes_2d_better_max_tries %>%
-  mutate(group = "Algorithm 1") %>%
-  explore_trace_interp(accuracy_x = 4) +
-  scale_color_continuous_botanical()
+# p1 <- holes_2d_better_max_tries %>%
+#   mutate(group = "Algorithm 1") %>%
+#   explore_trace_interp(accuracy_x = 4) +
+#   scale_color_continuous_botanical()
+#
+# p2 <- holes_2d_better_random %>%
+#   mutate(group = "Algorithm 3") %>%
+#   explore_trace_interp( accuracy_x = 14) +
+#   scale_color_continuous_botanical()
+#
+# p <- (p1 | p2) & ylim(0.8, 0.96)
+#
+# ggsave(p, filename = "toy-interp.svg",
+#        path = here::here("figs"), device = "svg",
+#        width = 10, height = 5)
 
-p2 <- holes_2d_better_random %>%
-  mutate(group = "Algorithm 3") %>%
-  explore_trace_interp( accuracy_x = 14) +
-  scale_color_continuous_botanical()
-
-(p1 | p2) & ylim(0.8, 0.96)
+knitr::include_graphics(here::here("figs/toy-interp.svg"))
 
 ## ----toy-pca
 # p <- bind_rows(holes_1d_geo, holes_1d_better) %>%
@@ -282,30 +288,35 @@ knitr::include_graphics(here::here("anim/torus.gif"))
 # save(before, file = here::here("data", "before.rda"))
 # save(after, file = here::here("data", "after.rda"))
 
-interp <- before %>% get_interp()
+# interp <- before %>% get_interp()
+#
+# p1_anno <- bind_rows(
+#   interp %>% filter(tries == 4, info == "interpolation") %>%
+#     filter(index_val == max(index_val)) %>%
+#     mutate(anno = "interpolation basis"),
+#   interp %>% get_interp_last %>% filter(tries %in% c(3, 4)) %>%
+#     mutate(anno = c("current basis", "target basis"))
+# ) %>% arrange(id)
+# #
+# p1 <- before %>%
+#   explore_trace_interp(accuracy_y = 0.001) +
+#   scale_color_continuous_botanical() +
+#   geom_hline(data = get_best(after) %>% mutate(id = 78), aes(yintercept = index_val), color = "grey90") +
+#   ggrepel::geom_label_repel(data = p1_anno, aes(label = anno), box.padding = 0.5, alpha = 0.5) +
+#   ggtitle("without interruption")
+#
+# p2 <- after %>%
+#   explore_trace_interp(accuracy_y = 0.001) +
+#
+#   ggtitle("with interruption") +
+#   scale_color_continuous_botanical()
+#
+# p <- (p1 | p2) & ylim(0.8, 0.9)
+#
+# ggsave(p, filename = "interrupt.svg",
+#        path = here::here("figs"), width = 10, height = 5)
 
-p1_anno <- bind_rows(
-  interp %>% filter(tries == 4, info == "interpolation") %>%
-    filter(index_val == max(index_val)) %>%
-    mutate(anno = "interpolation basis"),
-  interp %>% get_interp_last %>% filter(tries %in% c(3, 4)) %>%
-    mutate(anno = c("current basis", "target basis"))
-) %>% arrange(id)
-
-p1 <- before %>%
-  explore_trace_interp(accuracy_y = 0.001) +
-  scale_color_continuous_botanical() +
-  geom_hline(data = get_best(after) %>% mutate(id = 78), aes(yintercept = index_val), color = "grey90") +
-  ggrepel::geom_label_repel(data = p1_anno, aes(label = anno), box.padding = 0.5, alpha = 0.5) +
-  ggtitle("without interruption")
-
-p2 <- after %>%
-  explore_trace_interp(accuracy_y = 0.001) +
-
-  ggtitle("with interruption") +
-  scale_color_continuous_botanical()
-
-(p1 | p2) & ylim(0.8, 0.9)
+knitr::include_graphics(here::here("figs/interrupt.svg"))
 
 ## ----polish
 # set.seed(123456)
@@ -347,26 +358,31 @@ p2 <- after %>%
 #   file = here::here("anim","polish", "after%03d.png")
 # )
 
-p1 <- bind_rows(holes_2d_better, holes_2d_better_polish) %>%
-  clean_method() %>%
-  mutate(method = factor(method, levels = c("CRS", "polish"))) %>%
-  get_interp() %>%
-  explore_trace_interp(color = method, cutoff = 100, target_size = 2, interp_size = 2) +
-  scale_color_discrete_botanical(breaks = c("CRS", "polish"), label = c("CRS", "polish")) +
-  theme(legend.position = "bottom")
-wrap <- function(path) png::readPNG(path) %>% grid::rasterGrob() %>% wrap_plots()
+# p1 <- bind_rows(holes_2d_better, holes_2d_better_polish) %>%
+#   clean_method() %>%
+#   mutate(method = factor(method, levels = c("CRS", "polish"))) %>%
+#   get_interp() %>%
+#   explore_trace_interp(color = method, cutoff = 100, target_size = 2, interp_size = 2) +
+#   scale_color_discrete_botanical(breaks = c("CRS", "polish"), label = c("CRS", "polish")) +
+#   theme(legend.position = "bottom")
+# wrap <- function(path) png::readPNG(path) %>% grid::rasterGrob() %>% wrap_plots()
+#
+# first <- here::here("anim","polish", "before001.png")
+# before <- here::here("anim","polish", "before073.png")
+# after <- here::here("anim","polish", "after006.png")
+# file <- c(first, before, after)
+# rl <- lapply(file, png::readPNG)
+# gl <-  lapply(rl, grid::rasterGrob)
+#
+# lay <- rbind(c(1,2,3),
+#              c(4,4,4))
+#
+# p <- gridExtra::grid.arrange(gl[[1]], gl[[2]], gl[[3]], p1, layout_matrix = lay)
+#
+# ggsave(p, filename = "polish.svg",
+#        path = here::here("figs"), width = 10, height = 8)
 
-first <- here::here("anim","polish", "before001.png")
-before <- here::here("anim","polish", "before073.png")
-after <- here::here("anim","polish", "after006.png")
-file <- c(first, before, after)
-rl <- lapply(file, png::readPNG)
-gl <-  lapply(rl, grid::rasterGrob)
-
-lay <- rbind(c(1,2,3),
-             c(4,4,4))
-
-gridExtra::grid.arrange(gl[[1]], gl[[2]], gl[[3]], p1, layout_matrix = lay)
+knitr::include_graphics(here::here("figs/polish.svg"))
 
 ## ---- noisy-better-geo
 ## code for generating kol_1d_geo, kol_1d_better and kol_1d_better_polish

@@ -1,5 +1,24 @@
 ul li {
-  line-height: 1.4;
+  line-height: 1.6;
   margin-top: 0em;
   margin-bottom: 0em;
+}
+
+ol li{
+   line-height: 1.6;
+  margin-top: 0em;
+  margin-bottom: 0em;
+  list-style-position: inside;
+}
+
+p {
+  text-align: justify;
+}
+
+#gif{
+  max-width: 70% !important;
+}
+
+#tour-gif{
+  max-width: 60% !important;
 }
