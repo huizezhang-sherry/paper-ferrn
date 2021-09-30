@@ -11,14 +11,11 @@ ol li{
   list-style-position: inside;
 }
 
-p {
-  text-align: justify;
+.gif{
+max-width: 70% !important;
 }
 
-#gif{
-  max-width: 70% !important;
-}
 
-#tour-gif{
+.tour-gif{
   max-width: 60% !important;
 }

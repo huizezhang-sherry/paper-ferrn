@@ -577,7 +577,7 @@ knitr::include_graphics(here::here("figs", "noisy-better-geo.svg"))
 #         legend.text = element_text(size = "10pt"))
 #
 # ggsave(p, filename = "kol-result.svg",
-#        path = here::here("figs"))
+#        path = here::here("figs"), width = 10, height = 10)
 knitr::include_graphics(here::here("figs", "kol-result.svg"))
 
 ## ---- flip-sign
@@ -598,7 +598,7 @@ knitr::include_graphics(here::here("figs", "kol-result.svg"))
 #
 # save(orientation_corrected, file = here::here("data", "orientation_corrected.rda"))
 # save(orientation_different, file = here::here("data", "orientation_different.rda"))
-
+#
 # dt <- bind_rows(orientation_corrected %>% mutate(sign = "flipped"),
 #                 orientation_different %>% mutate(sign = "original")) %>%
 #   compute_pca() %>%
@@ -614,5 +614,5 @@ knitr::include_graphics(here::here("figs", "kol-result.svg"))
 #         legend.text = element_text(size = "10pt"))
 #
 # ggsave(p, filename = "flip-sign.svg",
-#        path = here::here("figs"), width = 10, height = 5)
+#        path = here::here("figs"))
 knitr::include_graphics(here::here("figs", "flip-sign.svg"))
