@@ -1,7 +1,6 @@
 ---
-title: "Response"
-author: "H. Sherry Zhang"
-date: "22/08/2021"
+title: "Response to reviewer"
+author: "Article ID: 2021-69"
 output: pdf_document
 ---
 
@@ -67,7 +66,7 @@ The tool is likely to be of interest to the R community. Most of my comments are
 
     -   I don't think the terms "1D bases" and "2D bases" are standard. Perhaps (orthonormal) "1-frames" and "2-frames"?
 
-\textcolor{red}{Changed to "While the previous few examples have looked at the space of 1-frames in a unit sphere, this section visualises the space of 2-frames."}
+\textcolor{red}{We keep the term "1D bases" and "2D basis" in the paper since 1) "frame" is conventinally "basis", and 2) we use this term also in the software. To make this clearer, a sentence is added at the end of section "Projection pursuit guided tour" to note this.}
 
 # Reviewer 2
 
@@ -83,13 +82,9 @@ These experiments are interesting and so is the methodology. The conclusions cou
 
 \textcolor{red}{The caption has now been updated and explanation for the color scale is added."}
 
-3.  "with higher index value" -\> "with a higher index value". The word "the" is missing in a few other places in the paper.
+3.  "with higher index value" -\> "with a higher index value". The word "the" is missing in a few other places in the paper. \textcolor{red}{Corrected.}
 
-\textcolor{red}{Corrected.}
-
-4.  In Figure 3 would be better if the y-axes scales were the same for the two graphs.
-
-\textcolor{red}{Fixed.}
+4.  In Figure 3 would be better if the y-axes scales were the same for the two graphs. \textcolor{red}{Fixed.}
 
 5.  What is the star in figures 4 and 5? This is not mentioned in the text or caption
 
@@ -103,14 +98,10 @@ These experiments are interesting and so is the methodology. The conclusions cou
 
 \textcolor{red}{In the experiment of Figure 9, the parameter "max.tries" is set to 400 to allow guided tour to do its best instead of a default 25 as in Figure 8. A sentence in the Figure 9 captions is added to reflect this.}
 
-8.  "not the case for all the indexes" missing a "." page 11
-
-\textcolor{red}{Added.}
+8.  "not the case for all the indexes" missing a "." page 11 \textcolor{red}{Added.}
 
 9.  For the Kolmogorov index, why are you using randomly generated data instead of normal quantiles?
 
 \textcolor{red}{The Kolmogorov Smirnoff index here looks at the difference between a theoretical pdf and an empirical one based on the data. In our case we are not assuming normality on the theoretical pdf and that is the reason why we are not using normal quantiles. To make it clearer, we change the wording from "Normal Kolmogorov Index" to "Kolmogorov Index".}
 
-10. Fix references with "et al"
-
-\textcolor{red}{Fixed!}
+10. Fix references with "et al" \textcolor{red}{Fixed!}

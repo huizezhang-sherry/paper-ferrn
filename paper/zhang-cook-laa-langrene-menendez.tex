@@ -207,8 +207,10 @@ interpolation between these planes to form a tour path. Figure
 frames are produced by the projection pursuit optimisation and the white
 frames are interpolations between the blue frames. Mathematical details
 of the geodesic interpolation can be found in
-\citet{buja2005computational}. The aforementioned tour method has been
-implemented in the R package \CRANpkg{tourr} \citep{tourr}.
+\citet{buja2005computational}. Notice that the term \emph{frame} used in
+Buja's paper is conventionally called \emph{basis}, which is used in
+this paper and the associated software. The aforementioned tour method
+has been implemented in the R package \CRANpkg{tourr} \citep{tourr}.
 
 \begin{Schunk}
 \begin{figure}
@@ -337,7 +339,7 @@ data structure is presented in the table below.
   >{\raggedright\arraybackslash}p{(\columnwidth - 16\tabcolsep) * \real{0.23}}@{}}
 \toprule
 \(t\) & \(\mathbf{A}\) & \(I\) & \(S\) & \(j\) & \(l\) & \(V_{1}\) &
-\(V_{2}\) & Notes \\
+\(V_{2}\) & Description \\
 \midrule
 \endhead
 \(1\) & \(\mathbf{A}_1\) & \(I_1\) & \(S_1\) & 1 & 1 & \(V_{11}\) &
@@ -575,8 +577,8 @@ same two optimisations in its original space.
 \subsection{Diagnostic 4b: Forming a
 torus}\label{diagnostic-4b-forming-a-torus}}
 
-While the previous few examples have looked at the space of 1-frames in
-a unit sphere, this section visualises the space of 2-frames. Recall
+While the previous few examples have looked at the space of 1D basis in
+a unit sphere, this section visualises the space of 2D basis. Recall
 that the columns in a 2D basis are orthogonal to each other, so the
 space of \(p \times 2\) bases is a torus in the \(p\)-D space
 \citep{Buja1986-sw}. For \(p = 3\) one would see a classical 3D torus
