@@ -79,3 +79,5 @@ holes_2d_better_3var %>% get_best() %>% pull(basis) %>% .[[1]]
 
 ## ----flip-sign, fig.cap = "Comparison of the interpolation in the PCA-projected basis space before and after reconciling the orientation of the target basis. Optimisation is on the 1D projection index, $I^{nk}(n)$, for boa6 data using CRS with seed 2463. The dots represent the target basis in each iteration and the path shows the interpolation. On the left panel, one target basis is generated with an opposite orientation to the current basis (hence appear on the other side of the basis space) and the interpolator crosses the origin to perform the interpolation. The right panel shows the same interpolation after implementing an orientation check and the undesirable interpolation disappears."----
 
+```{.r .distill-force-highlighting-css}
+```

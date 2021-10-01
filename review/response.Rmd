@@ -66,7 +66,7 @@ The tool is likely to be of interest to the R community. Most of my comments are
 
     -   I don't think the terms "1D bases" and "2D bases" are standard. Perhaps (orthonormal) "1-frames" and "2-frames"?
 
-\textcolor{red}{We keep the term "1D bases" and "2D basis" in the paper since 1) "frame" is conventinally "basis", and 2) we use this term also in the software. To make this clearer, a sentence is added at the end of section "Projection pursuit guided tour" to note this.}
+\textcolor{red}{You are right that we could use frame instead of basis, and both are used conventionally. We have elected to stay with the use of basis, and have  some sentences in the section titled "Projection pursuit guided tour" to explain the terminology.}
 
 # Reviewer 2
 
