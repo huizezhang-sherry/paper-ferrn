@@ -669,7 +669,7 @@ where the two circles are rotated into a line from our view.
 
 }
 
-\caption[Six frames selected from rotating the 2D basis space along with two search paths optimised by PD (brown) and CRS (green)]{Six frames selected from rotating the 2D basis space along with two search paths optimised by PD (brown) and CRS (green). The projection problem is a 2D projection with three variables using the holes index. The grey points are randomly generated 2D projection bases in the space and it can be observed that these points form a torus. The full video of the animation can be found in the html version of the paper.}\label{fig:toy-torus}
+\caption[Six frames selected from rotating the 2D basis space along with two search paths optimised by PD (brown) and CRS (green)]{Six frames selected from rotating the 2D basis space along with two search paths optimised by PD (brown) and CRS (green). The projection problem is a 2D projection with three variables using the holes index. The grey points are randomly generated 2D projection bases in the space, and it can be observed that these points form a torus. The full video of the animation can be found in the html version of the paper.}\label{fig:toy-torus}
 \end{figure}
 \end{Schunk}
 
@@ -683,12 +683,12 @@ optimisation, and guide the implementation of new features.
 \hypertarget{simulation-setup}{%
 \subsection{Simulation setup}\label{simulation-setup}}
 
-Random variables with different distributions have been simulated and
+Random variables with different distributions have been simulated, and
 the distributional form of each variable is presented in equations
 \ref{eq:sim-norm} to \ref{eq:sim-x7}. Variables \texttt{x1}, \texttt{x8}
-to \texttt{x10} are normal noise with zero mean and unit variance and
+to \texttt{x10} are normal noise with zero mean, and unit variance and
 \texttt{x2} to \texttt{x7} are normal mixtures with varied weights and
-locations. All the variables have been scaled to have an overall unit
+locations. All the variables have been scaled to have overall unit
 variance before projection pursuit. The holes index
 \citep{cook2008grand}, used for detecting bimodality of the variables,
 is used throughout the examples unless otherwise specified.
@@ -717,12 +717,12 @@ than the target one. For SA, a non-monotonic interpolation is justified
 since target bases do not necessarily have a higher index value than the
 current one, while this is not the case for CRS. The original trace plot
 for a 2D projection problem, optimised by CRS, is shown on the left
-panel of Figure \ref{fig:interruption} and one can observe that the
+panel of Figure \ref{fig:interruption}, and one can observe that the
 non-monotonic interpolation has undermined the optimiser to realise its
 full potential. Hence, an interruption is implemented to stop at the
 best basis found in the interpolation. The right panel of Figure
 \ref{fig:interruption} shows the trace plot after implementing the
-interruption and while the first two interpolations are identical, the
+interruption, and while the first two interpolations are identical, the
 basis at time 61 has a higher index value than the target in the third
 interpolation. Rather than starting the next iteration from the target
 basis on time 65, CRS starts the next iteration at time 61 on the right
@@ -735,7 +735,7 @@ panel and reaches a better final basis.
 
 }
 
-\caption[Comparison of the interpolation before and after implementing the interruption for the 2D projection problem on \code{boa6} data using holes index, optimised by CRS]{Comparison of the interpolation before and after implementing the interruption for the 2D projection problem on \code{boa6} data using holes index, optimised by CRS. On the left panel, basis with a higher index value is found during the interpolation but not used. On the right panel, the interruption stops the interpolation at the basis with the highest index value for each iteration and results in a final basis with a higher index value, as shown on the right panel.}\label{fig:interruption}
+\caption[Comparison of the interpolation before and after implementing the interruption for the 2D projection problem on \code{boa6} data using holes index, optimised by CRS]{Comparison of the interpolation before and after implementing the interruption for the 2D projection problem on \code{boa6} data using holes index, optimised by CRS. On the left panel, the basis with a higher index value is found during the interpolation but not used. On the right panel, the interruption stops the interpolation at the basis with the highest index value for each iteration and results in a final basis with a higher index value, as shown on the right panel.}\label{fig:interruption}
 \end{figure}
 \end{Schunk}
 
@@ -765,13 +765,13 @@ change in the index value, and neighbourhood size:
   the relative change of the index value needs to be larger than 1e-5;
   and
 \item
-  the alpha parameter needs to be larger than 0.01
+  the alpha parameter needs to be larger than 0.01.
 \end{enumerate}
 
 Figure \ref{fig:polish} presents the projected data and trace plot of a
 2D projection, optimised by CRS and followed by the polish step. The top
 row shows the initial projection, the final projection after CRS, and
-the final projection after polish, respectively The end basis found by
+the final projection after polish, respectively. The end basis found by
 CRS reveals the four clusters in the data, but the edges of each cluster
 are not clean-cut. Polish works with this end basis and further pushes
 the index value to produce clearer edges of the cluster, especially
@@ -784,7 +784,7 @@ along the vertical axis.
 
 }
 
-\caption{Comparison of the projected data before and after using polishing for a 2D projection problem on \code{boa6} data using holes index. The top row shows the initial projected data and the final views after CRS and polish search and the second row traces the index value. The clustering structure in the data is detected by CRS (top middle panel) but the polish step improves the index value and produces clearer boundaries of the clusters (top right panel), especially along the vertical axis. Note that the parameter \code{max.tries} is set to 400 in this experiment for CRS to do its best. }\label{fig:polish}
+\caption{Comparison of the projected data before and after using polishing for a 2D projection problem on \code{boa6} data using holes index. The top row shows the initial projected data and the final views after CRS and polish search, and the second row traces the index value. The clustering structure in the data is detected by CRS (top middle panel), but the polish step improves the index value and produces clearer boundaries of the clusters (top right panel), especially along the vertical axis. Note that the parameter \code{max.tries} is set to 400 in this experiment for CRS to do its best. }\label{fig:polish}
 \end{figure}
 \end{Schunk}
 
@@ -797,10 +797,10 @@ produces a smooth interpolation, while this is not the case for all the
 indexes. An example of a noisy index function for 1D projections
 compares the projected data, \(\mathbf{Y}_{n \times 1}\), to a randomly
 generated normal distribution, \(\mathcal{N}_{n \times 1}\), using the
-Kolmogorov test. Let \(F_{.}(n)\) be the ECDF function (empirical
-cummulative distribution function), with two possible subscripts \(Y\)
-and \(\mathcal{N}\) representing the projected and randomly generated
-data, and \(n\) denoting the number of observation, the Kolmogorov index
+Kolmogorov test. Let \(F_{.}(n)\) be the empirical cumulative
+distribution function (ECDF) with two possible subscripts, \(Y\) and
+\(\mathcal{N}\), representing the projected and randomly generated data,
+and \(n\) denoting the number of observations, the Kolmogorov index
 \(I^{nk}(n)\), is defined as:
 
 \[I^{K}(n) = \max \left[F_{Y}(n) - F_{\mathcal{N}}(n)\right].\] With a
@@ -813,19 +813,19 @@ non-smooth index function, two research questions are raised:
   whether any optimiser fails to optimise this non-smooth index; and
 \item
   whether the optimisers can find the global optimum despite the
-  presence of a local optimum
+  presence of a local optimum.
 \end{enumerate}
 
 Figure \ref{fig:noisy-better-geo} presents the trace and PCA plots of
-all three optimisers and as expected, none of the interpolated paths are
-smooth. There is barely any improvement made by PD, indicating its
+all three optimisers, and as expected, none of the interpolated paths
+are smooth. There is barely any improvement made by PD, indicating its
 failure in optimising non-smooth index functions. While CRS and SA have
 managed to get close to the index value of the theoretical best, the
 trace plot shows that it takes SA much longer to find the final basis.
 This long interpolation path is partially due to the fluctuation in the
 early iterations, where SA tends to generously accept inferior bases
 before concentrating near the optimum. The PCA plot shows the
-interpolation path and search points excluding the last termination
+interpolation path and search points, excluding the last termination
 iteration. Pseudo-Derivative (PD) quickly gets stuck near the starting
 position. Comparing the amount of random search done by CRS and SA, it
 is surprising that SA does not carry as many samples as CRS. Combining
@@ -834,10 +834,10 @@ different search strategies by CRS and SA: CRS frequently samples in the
 space and only make a move when an improvement is guaranteed to be made,
 while SA first broadly accepts bases in the space and then starts the
 extensive sampling in a narrowed subspace. The specific decision of
-which optimiser to use will depend on the index curve in the basis space
-but if the basis space is non-smooth, accepting inferior bases at first,
-as SA has done here, can lead to a more efficient search, in terms of
-the overall number of points evaluated.
+which optimiser to use will depend on the index curve in the basis
+space, but if the basis space is non-smooth, accepting inferior bases at
+first, as SA has done here, can lead to a more efficient search in terms
+of the overall number of points evaluated.
 
 \begin{Schunk}
 \begin{figure}
@@ -851,25 +851,25 @@ the overall number of points evaluated.
 \end{Schunk}
 
 The next experiment compares the performance of CRS and SA when a local
-maximum exists. Two search neighbourhood sizes: 0.5 and 0.7 are compared
-to understand how a large search neighbourhood would affect the final
-basis and the length of the search. Figure \ref{fig:kol-result} shows 80
-paths simulated using 20 seeds in the PCA plot, faceted by the optimiser
-and search size. With CRS and a search size of 0.5, despite being the
-simplest and fastest, the optimiser fails in three instances where the
-final basis lands neither near the local nor the global optimum. With a
-larger search size of 0.7, more seeds have found the global maximum.
-Comparing CRS and SA for a search size of 0.5, SA does not seem to
-improve the final basis found, despite having longer interpolation
-paths. However, the denser paths near the local maximum is an indicator
-that SA is working hard to examine if there is any other optimum in the
-basis space but the relatively small search size has diminished its
-ability to reach the global maximum. With a larger search size, almost
-all the seeds (16 out of 20) have found the global maximum and some
-final bases are much closer to the theoretical best, as compared to the
-three other cases. This indicates that SA, with a reasonable large
-search window, is able to overcome the local optimum and optimise close
-towards the global optimum.
+maximum exists. Two search neighbourhood sizes, 0.5 and 0.7, are
+compared to understand how a large search neighbourhood would affect the
+final basis and the length of the search. Figure \ref{fig:kol-result}
+shows 80 paths simulated using 20 seeds in the PCA plot, faceted by the
+optimiser and search size. With CRS and a search size of 0.5, despite
+being the simplest and fastest, the optimiser fails in three instances
+where the final basis lands neither near the local nor the global
+optimum. With a larger search size of 0.7, more seeds have found the
+global maximum. Comparing CRS and SA for a search size of 0.5, SA does
+not seem to improve the final basis found, despite having longer
+interpolation paths. However, the denser paths near the local maximum
+are an indicator that SA is working hard to examine if there is any
+other optimum in the basis space, but the relatively small search size
+has diminished its ability to reach the global maximum. With a larger
+search size, almost all the seeds (16 out of 20) have found the global
+maximum, and some final bases are much closer to the theoretical best,
+as compared to the three other cases. This indicates that SA, with a
+reasonable large search window, is able to overcome the local optimum
+and optimise close towards the global optimum.
 
 \begin{Schunk}
 \begin{figure}
@@ -889,20 +889,20 @@ orientation}\label{reconciling-the-orientation}}
 One interesting situation observed in the previous examples is that, for
 some simulations, as shown on the left panel of Figure
 \ref{fig:flip-sign}, the target basis is generated on the other half of
-the basis space and the interpolator seems to draw a straight line to
+the basis space, and the interpolator seems to draw a straight line to
 interpolate. Bases with opposite signs do not affect the projection and
 index value, but we would prefer the target to have the same orientation
 as the current basis. The orientation of two bases can be
 computationally checked by calculating the determinant -- a negative
-value suggests the two bases having different orientation. For 1D bases,
-this can be corrected by flipping the sign in one basis. For higher
+value suggests the two bases have a different orientation. For 1D bases,
+this can be corrected by flipping the sign on one basis. For higher
 dimensions, it can be a bit more difficult because the orthonormality of
-the basis needs to be maintained also when an individual vector is
-flipped. Here an orientation check is carried out once a new target
-basis is generated and the sign in the target basis will be flipped if a
-negative determinant is obtained. The interpolation after implementing
+the basis needs to be also maintained when an individual vector is
+flipped. Here, an orientation check is carried out once a new target
+basis is generated, and the sign in the target basis will be flipped if
+a negative determinant is obtained. The interpolation after implementing
 the orientation check is shown on the right panel of Figure
-\ref{fig:flip-sign} where the unsatisfactory interpolation no longer
+\ref{fig:flip-sign}, where the unsatisfactory interpolation no longer
 exists.
 
 \begin{Schunk}
@@ -912,7 +912,7 @@ exists.
 
 }
 
-\caption[Comparison of the interpolation in the PCA-projected basis space before and after reconciling the orientation of the target basis]{Comparison of the interpolation in the PCA-projected basis space before and after reconciling the orientation of the target basis. Optimisation is on the 1D projection index, $I^{nk}(n)$, for boa6 data using CRS with seed 2463. The dots represent the target basis in each iteration and the path shows the interpolation. On the left panel, one target basis is generated with an opposite orientation to the current basis (hence appear on the other side of the basis space) and the interpolator crosses the origin to perform the interpolation. The right panel shows the same interpolation after implementing an orientation check and the undesirable interpolation disappears.}\label{fig:flip-sign}
+\caption[Comparison of the interpolation in the PCA-projected basis space before and after reconciling the orientation of the target basis]{Comparison of the interpolation in the PCA-projected basis space before and after reconciling the orientation of the target basis. Optimisation is on the 1D projection index, $I^{nk}(n)$, for boa6 data using CRS with seed 2463. The dots represent the target basis in each iteration, and the path shows the interpolation. On the left panel, one target basis is generated with an opposite orientation to the current basis (hence appear on the other side of the basis space), and the interpolator crosses the origin to perform the interpolation. The right panel shows the same interpolation after implementing an orientation check, and the undesirable interpolation disappears.}\label{fig:flip-sign}
 \end{figure}
 \end{Schunk}
 
@@ -955,37 +955,37 @@ while the visual diagnostics of the optimisers is implemented in
   \begin{itemize}
   \tightlist
   \item
-    \texttt{get\_anchor()} extracts target observations
+    \texttt{get\_anchor()} extracts target observations.
   \item
-    \texttt{get\_basis\_matrix()} flattens all the bases into a matrix
+    \texttt{get\_basis\_matrix()} flattens all the bases into a matrix.
   \item
     \texttt{get\_best()} extracts the observation with the highest index
-    value in the data object
+    value in the data object.
   \item
     \texttt{get\_dir\_search()} extracts directional search observations
-    for PD search
+    for PD search.
   \item
-    \texttt{get\_interp()} extracts interpolated observations
+    \texttt{get\_interp()} extracts interpolated observations.
   \item
     \texttt{get\_interp\_last()} extracts the ending interpolated
-    observations in each iteration
+    observations in each iteration.
   \item
     \texttt{get\_interrupt()} extracts the ending interpolated
     observations and the target observations if the interpolation is
-    interrupted
+    .interrupted
   \item
-    \texttt{get\_search()} extracts search observations
+    \texttt{get\_search()} extracts search observations.
   \item
     \texttt{get\_search\_count()} extracts the count of search
-    observations
+    observations.
   \item
     \texttt{get\_space\_param()} produces the coordinates of the centre
-    and radius of the basis space
+    and radius of the basis space.
   \item
-    \texttt{get\_start()} extracts the starting observation
+    \texttt{get\_start()} extracts the starting observation.
   \item
     \texttt{get\_theo()} extracts the theoretical best observations, if
-    given
+    given.
   \end{itemize}
 \item
   \texttt{bind\_*()} incorporates additional information outside the
@@ -995,13 +995,13 @@ while the visual diagnostics of the optimisers is implemented in
   \tightlist
   \item
     \texttt{bind\_theoretical()} binds the theoretical best observation
-    in simulated experiment
+    in simulated experiment.
   \item
     \texttt{bind\_random()} binds randomly generated bases in the
-    projection bases space to the data object
+    projection bases space to the data object.
   \item
     \texttt{bind\_random\_matrix()} binds randomly generated bases and
-    outputs in a matrix format
+    outputs in a matrix format.
   \end{itemize}
 \item
   \texttt{add\_*()} provides wrapper functions to create ggprotos for
@@ -1010,31 +1010,31 @@ while the visual diagnostics of the optimisers is implemented in
   \begin{itemize}
   \tightlist
   \item
-    \texttt{add\_anchor()} for plotting anchor bases
+    \texttt{add\_anchor()} for plotting anchor bases.
   \item
-    \texttt{add\_anno()} for annotating the symmetry of start bases
+    \texttt{add\_anno()} for annotating the symmetry of start bases.
   \item
     \texttt{add\_dir\_search()} for plotting the directional search
-    bases with magnified distance
+    bases with magnified distance.
   \item
-    \texttt{add\_end()} for plotting end bases
+    \texttt{add\_end()} for plotting end bases.
   \item
-    \texttt{add\_interp()} for plotting the interpolation path
+    \texttt{add\_interp()} for plotting the interpolation path.
   \item
     \texttt{add\_interp\_last()} for plotting the last interpolation
-    bases for comparing with target bases when interruption is used
+    bases for comparing with target bases when interruption is used.
   \item
     \texttt{add\_interrupt()} for linking the last interpolation bases
-    with target ones when interruption is used
+    with target ones when interruption is used.
   \item
-    \texttt{add\_search()} for plotting search bases
+    \texttt{add\_search()} for plotting search bases.
   \item
-    \texttt{add\_space()} for plotting the circular space
+    \texttt{add\_space()} for plotting the circular space.
   \item
-    \texttt{add\_start()} for plotting start bases
+    \texttt{add\_start()} for plotting start bases.
   \item
     \texttt{add\_theo()} for plotting theoretical best bases, if
-    applicable
+    applicable.
   \end{itemize}
 \item
   Utilities
@@ -1043,18 +1043,19 @@ while the visual diagnostics of the optimisers is implemented in
   \tightlist
   \item
     \texttt{theme\_fern()} and \texttt{format\_label()} for better
-    display of the grid lines and axis formatting
+    display of the grid lines and axis formatting.
   \item
-    \texttt{clean\_method()} to clean up the name of the optimisers
+    \texttt{clean\_method()} to clean up the name of the optimisers.
   \item
     \texttt{botanical\_palettes()} is a collection of colour palettes
     from Australian native plants. Quantitative palettes include daisy,
-    banksia, and cherry and sequential palettes contain fern and acacia
+    banksia, and cherry, and sequential palettes contain fern and
+    acacia.
   \item
-    \texttt{botanical\_pal()} as the colour interpolator
+    \texttt{botanical\_pal()} as the colour interpolator.
   \item
     \texttt{scale\_color\_*()} and \texttt{scale\_fill\_*()} for scaling
-    the colour and fill of the plot
+    the colour and fill of the plot.
   \end{itemize}
 \end{itemize}
 
@@ -1063,30 +1064,30 @@ while the visual diagnostics of the optimisers is implemented in
 
 This paper has provided several visual diagnostics that can be used for
 understanding a complex optimisation procedure and are implemented in
-the ferrn package. The methods were illustrated using the optimisers
-available for projection pursuit guided tour. Here the constraint is the
-orthonormality condition of the projection bases, which corresponds to
-optimisation over spheres and torii. The approach described broadly
-applies to other constrained optimisers. Although the manifold in
-\(p\)-space might be different the diagnostic techniques are the same. A
-researcher would begin by saving the path of the optimiser in a form
-required to input into the ferrn package, as described in this paper.
-One might generally make more samples from the constrained space upon
-which to assess and compare the optimisation paths. These
+the \textbf{ferrn} package. The methods were illustrated using the
+optimisers available for projection pursuit guided tour. Here the
+constraint is the orthonormality condition of the projection bases,
+which corresponds to optimisation over spheres and torii. The approach
+described broadly applies to other constrained optimisers. Although the
+manifold in \(p\)-space might be different the diagnostic techniques are
+the same. A researcher would begin by saving the path of the optimiser
+in a form required to input into the ferrn package, as described in this
+paper. One might generally make more samples from the constrained space
+upon which to assess and compare the optimisation paths. These
 high-dimensional data objects can then be viewed using the tour.
 
-The progressive optimisation of a target function and it's coverage of
+The progressive optimisation of a target function and its coverage of
 the search space can be viewed in both reduced 2D space and the full
 space. These visualisations can lead to insights for evaluating and
 comparing the performance of multiple optimisers operating on the same
-task. They can provide better understanding of existing methods or
+task. They can provide a better understanding of existing methods or
 motivate the development of new approaches. For example, we have
 compared how three optimisers perform when maximising a non-smooth index
-function and illustrated how the pseudo-derivative search fails in this
-setting. The observations from our experiments have also been translated
-into improved optimisation methods for the guided tour, e.g.~we
-introduced the option to interrupt the search if a better basis is found
-along the path.
+function and have illustrated how the pseudo-derivative search fails in
+this setting. The observations from our experiments have also been
+translated into improved optimisation methods for the guided tour, e.g.,
+we introduced the option to interrupt the search if a better basis is
+found along the path.
 
 This work might be considered an effort to bring transparency into
 algorithms. Although little attention is paid by algorithm developers to
@@ -1105,9 +1106,7 @@ generally.
 This article is created using \CRANpkg{knitr} \citep{knitr} and
 \CRANpkg{rmarkdown} \citep{rmarkdown} in R. The source code for
 reproducing this paper can be found at:
-\url{https://github.com/huizezhang-sherry/paper-tour-vis}.
-
-\newpage
+\url{https://github.com/huizezhang-sherry/paper-ferrn}.
 
 \bibliography{zhang-cook-laa-langrene-menendez.bib}
 
