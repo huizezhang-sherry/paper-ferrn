@@ -1,43 +1,46 @@
 ---
 title: "Visual Diagnostics for Constrained Optimisation with Application to Guided Tours"
 author:
-  - name: H.Sherry Zhang
+  - name: H. Sherry Zhang
     affiliation: Monash University 
-    address: Department of Econometrics and Business Statistics 
-    url: Melbourne, Australia
-    email:  huize.zhang@monash.edu
+    address: 
+      - Department of Econometrics and Business Statistics
+      - Melbourne, Australia
+    email: huize.zhang@monash.edu
   - name: Dianne Cook
     affiliation: Monash University 
-    address: Department of Econometrics and Business Statistics
-    url: Melbourne, Australia
-    email:  dicook@monash.edu
+    address: 
+      - Department of Econometrics and Business Statistics
+      - Melbourne, Australia
+    email: dicook@monash.edu
   - name: Ursula Laa
     affiliation: University of Natural Resources and Life Sciences
-    address: Institute of Statistics
-    url: Vienna, Austria
-    email:  ursula.laa@boku.ac.at  
+    address: 
+      - Institute of Statistics
+      - Vienna, Austria
+    email: ursula.laa@boku.ac.at  
   - name: Nicolas Langrené
     affiliation: CSIRO Data61 
-    address: 34 Village Street, Docklands VIC 3008 Australia
-    url: Melbourne, Australia
+    address: 
+       - 34 Village Street, Docklands VIC 3008 Australia
+       - Melbourne, Australia
     email: nicolas.langrene@csiro.au
   - name: Patricia Menéndez
     affiliation: Monash University 
-    address: Department of Econometrics and Business Statistics
-    url: Melbourne, Australia
-    email:  patricia.menendez@monash.edu 
+    address: 
+      - Department of Econometrics and Business Statistics
+      - Melbourne, Australia
+    email: patricia.menendez@monash.edu 
 abstract: >
-  A guided tour helps to visualise high-dimensional data by showing low-dimensional projections along a projection pursuit optimisation path. Projection pursuit is a generalisation of principal component analysis, in the sense that different indexes are used to define the interestingness of the projected data. While much work has been done in developing new indexes in the literature, less has been done on understanding the optimisation. Index functions can be noisy, might have multiple local maxima as well as an optimal maximum, and are constrained to generate orthonormal projection frames, which complicates the optimization. In addition, projection pursuit is primarily used for exploratory data analysis, and finding the local maxima is also useful. The guided tour is especially useful for exploration, because it conducts geodesic interpolation connecting steps in the optimisation and shows how the projected data changes as a maxima is approached. This work provides new visual diagnostics for examining a choice of optimisation procedure, based on the provision of a new data object which collects information throughout the optimisation. It has helped to diagnose and fix several problems with projection pursuit guided tour. This work might be useful more broadly for diagnosing optimisers, and comparing their performance. The diagnostics are implemented in the R package [ferrn](https://github.com/huizezhang-sherry/ferrn).
+  A guided tour helps to visualise high-dimensional data by showing low-dimensional projections along a projection pursuit optimisation path. Projection pursuit is a generalisation of principal component analysis in the sense that different indexes are used to define the interestingness of the projected data. While much work has been done in developing new indexes in the literature, less has been done on understanding the optimisation. Index functions can be noisy, might have multiple local maxima as well as an optimal maximum, and are constrained to generate orthonormal projection frames, which complicates the optimization. In addition, projection pursuit is primarily used for exploratory data analysis, and finding the local maxima is also useful. The guided tour is especially useful for exploration because it conducts geodesic interpolation connecting steps in the optimisation and shows how the projected data changes as a maxima is approached. This work provides new visual diagnostics for examining a choice of optimisation procedure based on the provision of a new data object which collects information throughout the optimisation. It has helped to diagnose and fix several problems with projection pursuit guided tour. This work might be useful more broadly for diagnosing optimisers and comparing their performance. The diagnostics are implemented in the R package [ferrn](https://github.com/huizezhang-sherry/ferrn).
 keywords: graphics, multivariate, optimization
 preamble: >
   \usepackage{mathtools, longtable}
   \usepackage[ruled, linesnumbered]{algorithm2e}
 type: package
-csl: "biostats.csl"
-creative_commons: CC BY
 output: 
-  rjtools::rjournal_web_article:
-    css: "style.css"
+  rjtools::rjournal_web_article
+css: "style.css"
 bibliography: zhang-cook-laa-langrene-menendez.bib
 ---
 
@@ -105,7 +108,7 @@ A projection pursuit guided tour combines two different methods (projection purs
 
 Let $\mathbf{X}_{n \times p}$ be the data matrix with $n$ observations in $p$ dimensions. A $d$-dimensional projection is a linear transformation from $\mathbb{R}^p$ into $\mathbb{R}^d$ defined as $\mathbf{Y} = \mathbf{X} \cdot \mathbf{A}$, where $\mathbf{Y}_{n \times d}$ is the projected data and $\mathbf{A}_{p\times d}$ is the projection matrix. We define $f: \mathbb{R}^{n \times d} \mapsto \mathbb{R}$ to be an index function that maps the projected data $\mathbf{Y}$ onto a scalar value. This is commonly known as the projection pursuit index function, or just index function, and is used to measure the "interestingness" of a given projection. An interesting projection shows structures that are non-normal since theoretical proofs from @diaconis1984asymptotics have shown that projections tend to be normal, as $n$ and $p$ approach infinity under certain conditions. There have been many index functions proposed in the literature, here are a few examples: early indexes that can be categorised as measuring the $L^2$ distance between the projection and a normal distribution: Legendre index [@friedman1974projection], Hermite index [@hall1989polynomial], and natural Hermite index [@cook1993projection]; chi-square index [@posse1995projection] for detecting spiral structure; LDA index [@lee2005projection] and PDA [@lee2010projection] index for supervised classification; kurtosis index [@Loperfido2020] and skewness index [@Loperfido2018] for detecting outliers in financial time series; and most recently, scagnostic indexes [@laa2020using] for summarising structures in scatterplot matrices based on eight scagnostic measures [@scag; @WW08].
 
-As a general visualisation method, tour produces animations of high-dimensional data via rotations of low-dimensional planes. There are different versions depending on how the high-dimensional space is investigated: grand tour [@cook2008grand] selects the planes randomly to provide a general overview; manual tour [@cook1997manual] gradually phases in and out one variable to understand the contribution of that variable in the projection. Guided tour, the main interest of this paper, chooses the planes with the aid of projection pursuit, to gradually reveal the most interesting projection. Given a random start, projection pursuit iteratively finds bases with higher index values and the guided tour constructs a geodesic interpolation between these planes to form a tour path. Figure `r knitr::asis_output(ifelse(knitr::is_latex_output(), '\\ref{fig:tour-path}','\\@ref(fig:tour-path)'))` shows a sketch of the tour path where the blue squares represent planes (targets) selected by the projection pursuit optimisation and the white squares represent planes in the geodesic interpolation between targets. Mathematical details of the geodesic interpolation can be found in @buja2005computational. (Note that the term *frame* used in Buja's paper to refer to a particular set of orthonormal vectors defining a plane. This is also conventionally referred to as a basis, which is used in this paper and the associated software.) The aforementioned tour method has been implemented in the R package \CRANpkg{tourr} [@tourr].
+As a general visualisation method, tour produces animations of high-dimensional data via rotations of low-dimensional planes. There are different versions depending on how the high-dimensional space is investigated: grand tour [@cook2008grand] selects the planes randomly to provide a general overview; manual tour [@cook1997manual] gradually phases in and out one variable to understand the contribution of that variable in the projection. Guided tour, the main interest of this paper, chooses the planes with the aid of projection pursuit, to gradually reveal the most interesting projection. Given a random start, projection pursuit iteratively finds bases with higher index values and the guided tour constructs a geodesic interpolation between these planes to form a tour path. Figure \@ref(fig:tour-path)  shows a sketch of the tour path where the blue squares represent planes (targets) selected by the projection pursuit optimisation and the white squares represent planes in the geodesic interpolation between targets. Mathematical details of the geodesic interpolation can be found in @buja2005computational. (Note that the term *frame* used in Buja's paper to refer to a particular set of orthonormal vectors defining a plane. This is also conventionally referred to as a basis, which is used in this paper and the associated software.) The aforementioned tour method has been implemented in the R package \CRANpkg{tourr} [@tourr].
 
 ```{r tour-path, fig.cap="An illustration for demonstrating the frames in a tour path. Each square (frame) represents the projected data with a corresponding basis. Blue frames are returned by the projection pursuit optimisation and white frames are constructed between two blue frames by geodesic interpolation."}
 ```
