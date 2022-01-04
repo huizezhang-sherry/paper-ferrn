@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.23 (TeX Live 2022/dev) (preloaded format=pdflatex 2022.1.4)  4 JAN 2022 21:34
+This is pdfTeX, Version 3.141592653-2.6-1.40.23 (TeX Live 2022/dev) (preloaded format=pdflatex 2022.1.4)  4 JAN 2022 22:00
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -893,34 +893,34 @@ File: /Users/sherryzhang/Documents/research/paper-ferrn/figs/toy-torus-1.pdf Gra
 Package pdftex.def Info: /Users/sherryzhang/Documents/research/paper-ferrn/figs/toy-torus-1.pdf  used on input line 668.
 (pdftex.def)             Requested size: 398.33858pt x 201.13383pt.
 [9 </Users/sherryzhang/Documents/research/paper-ferrn/figs/toy-tour-1.pdf>]
-</Users/sherryzhang/Documents/research/paper-ferrn/figs/interrupt.pdf, id=460, 452.69125pt x 193.72375pt>
+</Users/sherryzhang/Documents/research/paper-ferrn/figs/interrupt.pdf, id=458, 452.69125pt x 193.72375pt>
 File: /Users/sherryzhang/Documents/research/paper-ferrn/figs/interrupt.pdf Graphic file (type pdf)
 <use /Users/sherryzhang/Documents/research/paper-ferrn/figs/interrupt.pdf>
-Package pdftex.def Info: /Users/sherryzhang/Documents/research/paper-ferrn/figs/interrupt.pdf  used on input line 734.
+Package pdftex.def Info: /Users/sherryzhang/Documents/research/paper-ferrn/figs/interrupt.pdf  used on input line 733.
 (pdftex.def)             Requested size: 398.33858pt x 170.46263pt.
-</Users/sherryzhang/Documents/research/paper-ferrn/figs/polish.pdf, id=462, 469.755pt x 335.2525pt>
+</Users/sherryzhang/Documents/research/paper-ferrn/figs/polish.pdf, id=460, 469.755pt x 335.2525pt>
 File: /Users/sherryzhang/Documents/research/paper-ferrn/figs/polish.pdf Graphic file (type pdf)
 <use /Users/sherryzhang/Documents/research/paper-ferrn/figs/polish.pdf>
-Package pdftex.def Info: /Users/sherryzhang/Documents/research/paper-ferrn/figs/polish.pdf  used on input line 783.
+Package pdftex.def Info: /Users/sherryzhang/Documents/research/paper-ferrn/figs/polish.pdf  used on input line 782.
 (pdftex.def)             Requested size: 398.33858pt x 284.2856pt.
 [10 </Users/sherryzhang/Documents/research/paper-ferrn/figs/toy-torus-1.pdf>] [11 </Users/sherryzhang/Documents/research/paper-ferrn/figs/interrupt.pdf> </Users/sherryzhang/Documents/research/paper-ferrn/figs/polish.pdf>]
-</Users/sherryzhang/Documents/research/paper-ferrn/figs/noisy-better-geo.pdf, id=515, 722.7pt x 578.16pt>
+</Users/sherryzhang/Documents/research/paper-ferrn/figs/noisy-better-geo.pdf, id=513, 722.7pt x 578.16pt>
 File: /Users/sherryzhang/Documents/research/paper-ferrn/figs/noisy-better-geo.pdf Graphic file (type pdf)
 <use /Users/sherryzhang/Documents/research/paper-ferrn/figs/noisy-better-geo.pdf>
-Package pdftex.def Info: /Users/sherryzhang/Documents/research/paper-ferrn/figs/noisy-better-geo.pdf  used on input line 845.
+Package pdftex.def Info: /Users/sherryzhang/Documents/research/paper-ferrn/figs/noisy-better-geo.pdf  used on input line 844.
 (pdftex.def)             Requested size: 398.33858pt x 318.66827pt.
 [12 </Users/sherryzhang/Documents/research/paper-ferrn/figs/noisy-better-geo.pdf>]
-</Users/sherryzhang/Documents/research/paper-ferrn/figs/kol-result.pdf, id=640, 705.63625pt x 522.95375pt>
+</Users/sherryzhang/Documents/research/paper-ferrn/figs/kol-result.pdf, id=638, 705.63625pt x 522.95375pt>
 File: /Users/sherryzhang/Documents/research/paper-ferrn/figs/kol-result.pdf Graphic file (type pdf)
 <use /Users/sherryzhang/Documents/research/paper-ferrn/figs/kol-result.pdf>
-Package pdftex.def Info: /Users/sherryzhang/Documents/research/paper-ferrn/figs/kol-result.pdf  used on input line 877.
+Package pdftex.def Info: /Users/sherryzhang/Documents/research/paper-ferrn/figs/kol-result.pdf  used on input line 876.
 (pdftex.def)             Requested size: 398.33858pt x 295.21407pt.
-</Users/sherryzhang/Documents/research/paper-ferrn/figs/flip-sign.pdf, id=643, 722.7pt x 361.35pt>
+</Users/sherryzhang/Documents/research/paper-ferrn/figs/flip-sign.pdf, id=641, 722.7pt x 361.35pt>
 File: /Users/sherryzhang/Documents/research/paper-ferrn/figs/flip-sign.pdf Graphic file (type pdf)
 <use /Users/sherryzhang/Documents/research/paper-ferrn/figs/flip-sign.pdf>
-Package pdftex.def Info: /Users/sherryzhang/Documents/research/paper-ferrn/figs/flip-sign.pdf  used on input line 911.
+Package pdftex.def Info: /Users/sherryzhang/Documents/research/paper-ferrn/figs/flip-sign.pdf  used on input line 910.
 (pdftex.def)             Requested size: 398.33858pt x 199.16766pt.
-LaTeX Font Info:    Trying to load font information for TS1+ppl on input line 930.
+LaTeX Font Info:    Trying to load font information for TS1+ppl on input line 929.
 (/Users/sherryzhang/Library/TinyTeX/texmf-dist/tex/latex/psnfss/ts1ppl.fd
 File: ts1ppl.fd 2001/06/04 font definitions for TS1/ppl.
 ) [13 </Users/sherryzhang/Documents/research/paper-ferrn/figs/kol-result.pdf>] [14 </Users/sherryzhang/Documents/research/paper-ferrn/figs/flip-sign.pdf>] (./RJwrapper.bbl (./RJwrapper.brf)
@@ -930,11 +930,11 @@ File: ts1ppl.fd 2001/06/04 font definitions for TS1/ppl.
 [15] [16])
 
 LaTeX Font Warning: Font shape `T1/zi4/m/it' undefined
-(Font)              using `T1/zi4/m/n' instead on input line 1122.
+(Font)              using `T1/zi4/m/n' instead on input line 1121.
 
 [17]
 LaTeX Font Info:    Font shape `T1/zi4/m/it' will be
-(Font)              scaled to size 9.18004pt on input line 1133.
+(Font)              scaled to size 9.18004pt on input line 1132.
 ) [18] (./RJwrapper.aux)
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
@@ -942,21 +942,21 @@ LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 Package rerunfilecheck Info: File `RJwrapper.out' has not changed.
 (rerunfilecheck)             Checksum: 5867C06FDF16F665417D641A0CB11E92;5167.
 Package rerunfilecheck Info: File `RJwrapper.brf' has not changed.
-(rerunfilecheck)             Checksum: FA681FB7E5DCCDE10F216E6D61F5D641;2831.
+(rerunfilecheck)             Checksum: E35E935CA54BC450469BFD143B1E1283;2829.
  ) 
 Here is how much of TeX's memory you used:
- 28743 strings out of 480313
- 535770 string characters out of 5896116
- 862316 words of memory out of 5000000
- 45619 multiletter control sequences out of 15000+600000
+ 28736 strings out of 480313
+ 535691 string characters out of 5896116
+ 862008 words of memory out of 5000000
+ 45612 multiletter control sequences out of 15000+600000
  452618 words of font info for 294 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
  115i,19n,131p,1006b,733s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/Users/sherryzhang/Library/TinyTeX/texmf-dist/fonts/enc/dvips/inconsolata/i4-t1-0.enc}{/Users/sherryzhang/Library/TinyTeX/texmf-dist/fonts/enc/dvips/base/8r.enc}</Users/sherryzhang/Library/TinyTeX/texmf-dist/fonts/type1/public/inconsolata/Inconsolata-zi4r.pfb></Users/sherryzhang/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></Users/sherryzhang/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></Users/sherryzhang/Library/TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></Users/sherryzhang/Library/TinyTeX/texmf-dist/fonts/type1/public/mathpazo/fplmbb.pfb></Users/sherryzhang/Library/TinyTeX/texmf-dist/fonts/type1/public/mathpazo/fplmri.pfb></Users/sherryzhang/Library/TinyTeX/texmf-dist/fonts/type1/urw/palatino/uplb8a.pfb></Users/sherryzhang/Library/TinyTeX/texmf-dist/fonts/type1/urw/palatino/uplr8a.pfb></Users/sherryzhang/Library/TinyTeX/texmf-dist/fonts/type1/urw/palatino/uplri8a.pfb>
-Output written on RJwrapper.pdf (18 pages, 1622294 bytes).
+Output written on RJwrapper.pdf (18 pages, 1622137 bytes).
 PDF statistics:
- 1145 PDF objects out of 1200 (max. 8388607)
- 1043 compressed objects within 11 object streams
+ 1143 PDF objects out of 1200 (max. 8388607)
+ 1041 compressed objects within 11 object streams
  136 named destinations out of 1000 (max. 500000)
  63233 words of extra memory for PDF output out of 74296 (max. 10000000)
 

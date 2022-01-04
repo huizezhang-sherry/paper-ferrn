@@ -683,30 +683,29 @@ optimisation, and guide the implementation of new features.
 \hypertarget{simulation-setup}{%
 \subsection{Simulation setup}\label{simulation-setup}}
 
-Random variables with different distributions have been simulated, and
-the distributional form of each variable is presented in equations
-\ref{eq:sim-norm} to \ref{eq:sim-x7}. Variables \texttt{x1}, \texttt{x8}
-to \texttt{x10} are normal noise with zero mean, and unit variance and
-\texttt{x2} to \texttt{x7} are normal mixtures with varied weights and
-locations. All the variables have been scaled to have overall unit
-variance before projection pursuit. The holes index
-\citep{cook2008grand}, used for detecting bimodality of the variables,
-is used throughout the examples unless otherwise specified.
+Random variables with different distributions have been simulated as
+follows:
 
 \begin{align}
-x_1 \overset{d}{=} x_8 \overset{d}{=} x_9 \overset{d}{=} x_{10}& \sim \mathcal{N}(0, 1) \label{eq:sim-norm} \\
-x_2 &\sim 0.5 \mathcal{N}(-3, 1) + 0.5 \mathcal{N}(3, 1)\label{eq:sim-x2}\\
+x_1 \overset{d}{=} x_8 \overset{d}{=} x_9 \overset{d}{=} x_{10}& \sim \mathcal{N}(0, 1) \\
+x_2 &\sim 0.5 \mathcal{N}(-3, 1) + 0.5 \mathcal{N}(3, 1)\\
 \Pr(x_3) &= 
 \begin{cases}
 0.5 & \text{if $x_3 = -1$ or $1$}\\
 0 & \text{otherwise}
-\end{cases}\label{eq:sim-x3}\\
-x_4 &\sim 0.25 \mathcal{N}(-3, 1) + 0.75 \mathcal{N}(3, 1) \label{eq:sim-x4}\\
-x_5 &\sim \frac{1}{3} \mathcal{N}(-5, 1) + \frac{1}{3} \mathcal{N}(0, 1) + \frac{1}{3} \mathcal{N}(5, 1)\label{eq:sim-x5}\\
-x_6 &\sim 0.45 \mathcal{N}(-5, 1) + 0.1 \mathcal{N}(0, 1) + 0.45 \mathcal{N}(5, 1)\label{eq:sim-x6}\\
+\end{cases}\\
+x_4 &\sim 0.25 \mathcal{N}(-3, 1) + 0.75 \mathcal{N}(3, 1)\\
+x_5 &\sim \frac{1}{3} \mathcal{N}(-5, 1) + \frac{1}{3} \mathcal{N}(0, 1) + \frac{1}{3} \mathcal{N}(5, 1)\\
+x_6 &\sim 0.45 \mathcal{N}(-5, 1) + 0.1 \mathcal{N}(0, 1) + 0.45 \mathcal{N}(5, 1)\\
 x_7 &\sim 0.5 \mathcal{N}(-5, 1) + 0.5 \mathcal{N}(5, 1) 
-\label{eq:sim-x7}
 \end{align}
+
+Variables \texttt{x1}, \texttt{x8} to \texttt{x10} are normal noise with
+zero mean, and unit variance and \texttt{x2} to \texttt{x7} are normal
+mixtures with varied weights and locations. All the variables have been
+scaled to have overall unit variance before projection pursuit. The
+holes index \citep{cook2008grand}, used for detecting bimodality of the
+variables, is used throughout the examples unless otherwise specified.
 
 \hypertarget{monotonic}{%
 \subsection{A problem of non-monotonicity}\label{monotonic}}

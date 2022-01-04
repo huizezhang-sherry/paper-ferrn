@@ -8,9 +8,9 @@ fromphone: +61 4 6854 1397
 fromsignature: sig.png
 toaddress: R Journal
 opening: Dear Editor
-closing: Regards
+closing: Regards,
 spacing: 1.4
-output: MonashEBSTemplates::letter
+output: monash::letter
 ---
 
 Please consider our manuscript "Visual Diagnostics for Constrained Optimisation with Application to Guided Tours" for publication in the R Journal.
