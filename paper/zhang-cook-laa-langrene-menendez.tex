@@ -37,7 +37,7 @@ Visualisation is widely used in exploratory data analysis
 \citep{tukey1977exploratory, unwin2015graphical, healy2018data, wilke2019fundamentals}.
 Presenting information in graphics often unveils insights that would
 otherwise not be discovered and provides a more comprehensive
-understanding of the problem at hand. Task specific tools such as
+understanding of the problem at hand. Task-specific tools such as
 \citet{li2020visualizing} show how visualisation can be used to
 understand, for instance, the behaviour of the optimisation for the
 example of neural network classification models. However, no general
@@ -62,13 +62,13 @@ include the existence of multiple optima (local and global), the
 trade-off between computational burden and proximity to the optima, or
 dealing with noisy objective functions that might be non-smooth and
 non-differentiable \citep{jones1998efficient}. The visualization tools,
-optimization methods and conceptual framework presented in this paper
+optimization methods, and conceptual framework presented in this paper
 can therefore be applied to other optimization problems.
 
 The remainder of the paper is organised as follows. The next section
 provides an overview of optimisation methods, specifically random search
 and line search methods. A review of the projection pursuit guided tour,
-an overview of the optimisation problem and outlines of three existing
+an overview of the optimisation problem and, outlines of three existing
 algorithms follows. The third section presents the new visual
 diagnostics, including the design of a data structure to capture
 information during the optimisation, from which several diagnostic plots
@@ -87,7 +87,7 @@ possible to find a solution to the problem in the way of a closed-form.
 That is, the problem consists in finding the minimum or maximum of a
 function \(f \in L^p\) in the constrained space \(\mathcal{A}\), where
 \(L^p\) defines the vector space of function \(f\), whose \(p\)th power
-are integrable.
+is integrable.
 
 Gradient-based methods are commonly used to optimise an objective
 function, with the most notable one being the gradient ascent (descent)
@@ -99,21 +99,21 @@ required to perform differentiation on a matrix could impede the
 rendering of tour animation. In addition, some objective functions rely
 on the empirical distribution of the data, which makes it in general not
 possible to get the gradient. Hence, gradient-based methods are not the
-focus of this paper and consideration will be given to derivative-free
+focus of this paper, and consideration will be given to derivative-free
 methods.
 
 Derivative-free methods
 \citep{conn2009introduction, rios2013derivative}, which do not rely on
 the knowledge of the gradient, are more generally applicable.
 Derivative-free methods have been developed over the years, where the
-emphasis is on finding, in most cases, a near optimal solution. Here we
+emphasis is on finding, in most cases, a near-optimal solution. Here we
 consider three derivative-free methods, two of which are random search
 methods: creeping random search and simulated annealing, and the other
 one is pseudo-derivative search.
 
 Random search methods
 \citep{Romeijn2009, zabinsky2013stochastic, andradottir2015review} have
-a random sampling component as part of their algorithm and have been
+a random sampling component as part of their algorithms and have been
 shown to have the ability to optimise non-convex and non-smooth
 functions. The initial random search algorithm, pure random search
 \citep{Brooks1958-zk}, draws candidate points from the entire space
@@ -127,28 +127,29 @@ search by either concentrating on a narrower sampling space or using a
 different updating mechanism. Creeping random search
 \citep{White1971-ci} is such a variation, where a candidate point is
 generated within a neighbourhood of the current point. This makes
-creeping random search faster to compute, however, global convergence is
-no longer guaranteed. On the other hand, simulated annealing
+creeping random search faster to compute but global convergence is no
+longer guaranteed. On the other hand, simulated annealing
 \citep{kirkpatrick1983optimization, bertsimas1993simulated}, introduces
 a different updating mechanism. Rather than only updating the current
-point when an improvement is made, simulated annealing uses a Metropolis
-acceptance criterion, where worse candidates still have a chance to be
-accepted. The convergence of simulated annealing algorithms has been
-widely researched \citep{mitra1986convergence, granville1994simulated}
-and the global optimum can be attained under mild regularity conditions.
+point when an improvement is made, it uses a Metropolis acceptance
+criterion, where worse candidates still have a chance to be accepted.
+The convergence of simulated annealing algorithms has been widely
+researched \citep{mitra1986convergence, granville1994simulated} and the
+global optimum can be attained under mild regularity conditions.
 
-Pseudo-derivative search uses a common search scheme in optimisation:
-line search. In line search methods, users are required to provide an
-initial estimate \(x_{1}\) and, at each iteration, a search direction
-\(S_k\) and a step size \(\alpha_k\) are generated. Then one moves on to
-the next point following \(x_{k+1} = x_k + \alpha_kS_k\) and the process
-is repeated until the desired convergence is reached. In derivative-free
-methods, local information of the objective function is used to
-determine the search direction. The choice of step size also needs
-consideration, as inadequate step sizes might prevent the optimisation
-method to converge to an optimum. An ideal step size can be chosen by
-finding the value of \(\alpha_k \in \mathbb{R}\) that maximises
-\(f(x_k + \alpha_kS_k)\) with respect to \(\alpha_k\) at each iteration.
+The pseudo-derivative search uses a common search scheme in
+optimisation: line search. In line search methods, users are required to
+provide an initial estimate \(x_{1}\) and, at each iteration, a search
+direction \(S_k\) and a step size \(\alpha_k\) are generated. Then one
+moves on to the next point following \(x_{k+1} = x_k + \alpha_kS_k\) and
+the process is repeated until the desired convergence is reached. In
+derivative-free methods, local information of the objective function is
+used to determine the search direction. The choice of step size also
+needs consideration, as inadequate step sizes might prevent the
+optimisation method from converging to an optimum. An ideal step size
+can be chosen by finding the value of \(\alpha_k \in \mathbb{R}\) that
+maximises \(f(x_k + \alpha_kS_k)\) with respect to \(\alpha_k\) at each
+iteration.
 
 \hypertarget{projection-pursuit-guided-tour}{%
 \section{Projection pursuit guided
@@ -157,8 +158,8 @@ tour}\label{projection-pursuit-guided-tour}}
 A projection pursuit guided tour combines two different methods
 (projection pursuit and guided tour) to explore interesting features in
 a high-dimensional space. Projection pursuit, coined by
-\citet{friedman1974projection}, detects interesting structures
-(e.g.~clustering, outliers and skewness) in multivariate data via
+\citet{friedman1974projection}, detects interesting structures (e.g.,
+clustering, outliers, and skewness) in multivariate data via
 low-dimensional projections. Guided tour \citep{cook1995grand} is one
 variation of a broader class of data visualisation methods, tour
 \citep{buja2005computational}, which displays high-dimensional data
@@ -177,12 +178,12 @@ or just index function, and is used to measure the ``interestingness''
 of a given projection. An interesting projection shows structures that
 are non-normal since theoretical proofs from
 \citet{diaconis1984asymptotics} have shown that projections tend to be
-normal, as \(n\) and \(p\) approach infinity under certain conditions.
+normal as \(n\) and \(p\) approach infinity under certain conditions.
 There have been many index functions proposed in the literature, here
 are a few examples: early indexes that can be categorised as measuring
 the \(L^2\) distance between the projection and a normal distribution:
-Legendre index \citep{friedman1974projection}, Hermite index
-\citep{hall1989polynomial}, and natural Hermite index
+Legendre index \citep{friedman1974projection}; Hermite index
+\citep{hall1989polynomial}; natural Hermite index
 \citep{cook1993projection}; chi-square index \citep{posse1995projection}
 for detecting spiral structure; LDA index \citep{lee2005projection} and
 PDA \citep{lee2010projection} index for supervised classification;
@@ -200,17 +201,17 @@ randomly to provide a general overview; manual tour
 \citep{cook1997manual} gradually phases in and out one variable to
 understand the contribution of that variable in the projection. Guided
 tour, the main interest of this paper, chooses the planes with the aid
-of projection pursuit, to gradually reveal the most interesting
+of projection pursuit to gradually reveal the most interesting
 projection. Given a random start, projection pursuit iteratively finds
-bases with higher index values and the guided tour constructs a geodesic
-interpolation between these planes to form a tour path. Figure
+bases with higher index values, and the guided tour constructs a
+geodesic interpolation between these planes to form a tour path. Figure
 @ref(fig:tour-path) shows a sketch of the tour path where the blue
 squares represent planes (targets) selected by the projection pursuit
-optimisation and the white squares represent planes in the geodesic
+optimisation, and the white squares represent planes in the geodesic
 interpolation between targets. Mathematical details of the geodesic
 interpolation can be found in \citet{buja2005computational}. (Note that
-the term \emph{frame} used in Buja's paper to refer to a particular set
-of orthonormal vectors defining a plane. This is also conventionally
+the term \emph{frame} used in Buja's paper refers to a particular set of
+orthonormal vectors defining a plane. This is also conventionally
 referred to as a basis, which is used in this paper and the associated
 software.) The aforementioned tour method has been implemented in the R
 package \CRANpkg{tourr} \citep{tourr}.
@@ -229,14 +230,14 @@ package \CRANpkg{tourr} \citep{tourr}.
 \hypertarget{tour-optim}{%
 \subsection{Optimisation in the tour}\label{tour-optim}}
 
-In projection pursuit the optimisation aims at finding the global and
+In projection pursuit, the optimisation aims at finding the global and
 local maxima that give interesting projections according to an index
 function. That is, it starts with a given randomly selected basis
 \(\mathbf{A}_1\) and aims at finding an optimal final projection basis
 \(\mathbf{A}_T\) that satisfies the following optimisation problem:
 
 \begin{align}
-\arg \max_{\mathbf{A} \in \mathcal{A}} f(\mathbf{X} \cdot \mathbf{A})  ~~~ s.t. ~~~ \mathbf{A}^{\prime} \mathbf{A} = I_d
+\arg \max_{\mathbf{A} \in \mathcal{A}} f(\mathbf{X} \cdot \mathbf{A})  ~~~ s.t. ~~~ \mathbf{A}^{\prime} \mathbf{A} = I_d \,,
 \end{align}
 
 \noindent where \(f\) and \(\mathbf{X}\) are defined as in the previous
@@ -244,7 +245,7 @@ section, \(\mathcal{A}\) is the set of all \(p\)-dimensional projection
 bases, \(I_d\) is the \(d\)-dimensional identity matrix, and the
 constraint ensures the projection bases, \(\mathbf{A}\), to be
 orthonormal. It is worth noticing the following: 1) The optimisation is
-constrained and the orthonormality constraint imposes a geometrical
+constrained, and the orthonormality constraint imposes a geometrical
 structure on the bases space: it forms a Stiefel manifold. 2) There may
 be index functions for which the objective function might not be
 differentiable. 3) While finding the global optimum is the goal of the
@@ -266,14 +267,14 @@ neighbourhood and \(\mathbf{A}_{\text{rand}}\) is generated randomly.
 \(\mathbf{A}_{l}\) is then orthonormalised to fulfil the basis
 constraint. If \(\mathbf{A}_{l}\) has an index value higher than the
 current basis \(\mathbf{A}_{\text{cur}}\), the optimiser outputs
-\(\mathbf{A}_{l}\) for guided tour to construct an interpolation path.
+\(\mathbf{A}_{l}\) for a guided tour to construct an interpolation path.
 The neighbourhood parameter \(\alpha\) is adjusted by a cooling
 parameter: \(\alpha_{j+1} = \alpha_j * \text{cooling}\) before the next
 iteration starts. The optimiser terminates when the maximum number of
 iteration \(l_{\max}\) is reached before a better basis can be found.
 The algorithm of CRS can be found in the appendix.
 \citet{posse1995projection} has proposed a slightly different cooling
-scheme by introducing a halving parameter \(c\). In his proposal
+scheme by introducing a halving parameter \(c\). In his proposal,
 \(\alpha\) is only adjusted if the last iteration takes more than \(c\)
 times to find a better basis.
 
@@ -284,18 +285,18 @@ the ``temperature'' at iteration \(l\) is defined as
 \(T(l) = \frac{T_0}{\log(l + 1)}\). When a candidate basis fails to have
 an index value larger than the current basis, SA gives it a second
 chance to be accepted with probability
-\[P= \min\left\{\exp\left[-\frac{\mid I_{\text{cur}} - I_{l} \mid}{T(l)}\right],1\right\}\]
+\[P= \min\left\{\exp\left[-\frac{\mid I_{\text{cur}} - I_{l} \mid}{T(l)}\right],1\right\} \,,\]
 where \(I_{(\cdot)} \in \mathbb{R}\) denotes the index value of a given
 basis. This implementation allows the optimiser to make a move and
 explore the basis space even if the candidate basis does not have a
-higher index value and hence enables the optimiser to jump out of a
+higher index value. Hence it enables the optimiser to jump out of a
 local optimum. The second algorithm in the appendix highlights how SA
 differs from CRS in the inner loop.
 
 Pseudo-derivative (PD) search uses a different strategy than CRS and SA.
 Rather than randomly sample the basis space, PD first computes a search
-direction by evaluating bases close to the current basis. A step size is
-then chosen along the corresponding geodesic by another optimisation
+direction by evaluating bases close to the current basis. The step size
+is then chosen along the corresponding geodesic by another optimisation
 over a 90 degree angle from \(-\pi/4\) to \(\pi/4\). The resulting
 candidate basis \(\mathbf{A}_{**}\) is returned for the current
 iteration if it has a higher index value than the current one. The third
@@ -317,12 +318,12 @@ pursuit optimisation: 1) projection bases \(\mathbf{A}\), 2) index
 values \(I\), and 3) state \(S\). For CRS and SA, possible states
 include \texttt{random\_search}, \texttt{new\_basis}, and
 \texttt{interpolation}. Pseudo-derivative (PD) has a wider variety of
-states including \texttt{new\_basis}, \texttt{direction\_search},
+states, including \texttt{new\_basis}, \texttt{direction\_search},
 \texttt{best\_direction\_search}, \texttt{best\_line\_search}, and
 \texttt{interpolation}. Multiple iterators index the information
 collected at different levels: \(t\) is a unique identifier prescribing
 the natural ordering of each observation; \(j\) and \(l\) are the
-counter of the outer and inner loop respectively. Other parameters of
+counter of the outer and inner loop, respectively. Other parameters of
 interest recorded, \(V\), include \texttt{method} that tags the name of
 the optimiser, and \texttt{alpha} that indicates the sampling
 neighbourhood size for searching observations. A matrix notation of the
@@ -340,6 +341,30 @@ data structure is presented in the table below.
   >{\raggedright\arraybackslash}p{(\columnwidth - 16\tabcolsep) * \real{0.0968}}
   >{\raggedright\arraybackslash}p{(\columnwidth - 16\tabcolsep) * \real{0.0968}}
   >{\raggedright\arraybackslash}p{(\columnwidth - 16\tabcolsep) * \real{0.2258}}@{}}
+\caption{Data structure of the information recorded for visual
+diagnostics.}\tabularnewline
+\toprule
+\begin{minipage}[b]{\linewidth}\raggedright
+\(t\)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\(\mathbf{A}\)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\(I\)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\(S\)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\(j\)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\(l\)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\(V_{1}\)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\(V_{2}\)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Description
+\end{minipage} \\
+\midrule
+\endfirsthead
 \toprule
 \begin{minipage}[b]{\linewidth}\raggedright
 \(t\)

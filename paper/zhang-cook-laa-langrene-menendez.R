@@ -20,10 +20,6 @@ knitr::read_chunk(
 ## ----load-pkg-----------------------------------------------------------------
 
 
-## -----------------------------------------------------------------------------
-#spelling::spell_check_files(here::here("paper/zhang-cook-laa-langrene-menendez.Rmd"), lang = "en-GB", ignore = spelling::get_wordlist())
-
-
 ## ----tour-path, fig.cap="An illustration for demonstrating the frames in a tour path. Each square (frame) represents the projected data with a corresponding basis. Blue frames are returned by the projection pursuit optimisation and white frames are constructed between two blue frames by geodesic interpolation."----
 
 
