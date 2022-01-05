@@ -7,7 +7,7 @@ files <- paste0("data/", list.files(here::here("data")))
 purrr::walk(.x = files, ~load(here::here(.x), env = globalenv()))
 
 ## ----tour-path
-knitr::include_graphics(here::here("figs/tour-path.png"))
+knitr::include_graphics("figs/tour-path.png")
 
 ## ---- toy-search
 # p1 <- holes_2d_better_max_tries %>%
@@ -26,7 +26,7 @@ knitr::include_graphics(here::here("figs/tour-path.png"))
 #        path = here::here("figs"), device = "svg",
 #        width = 10, height = 5)
 
-knitr::include_graphics(here::here("figs/toy-search.svg"))
+knitr::include_graphics("figs/toy-search.svg")
 
 ## ---- toy-interp
 # p1 <- holes_2d_better_max_tries %>%
@@ -45,7 +45,7 @@ knitr::include_graphics(here::here("figs/toy-search.svg"))
 #        path = here::here("figs"), device = "svg",
 #        width = 10, height = 5)
 
-knitr::include_graphics(here::here("figs/toy-interp.svg"))
+knitr::include_graphics("figs/toy-interp.svg")
 
 ## ----toy-pca
 # p <- bind_rows(holes_1d_geo, holes_1d_better) %>%
@@ -58,7 +58,7 @@ knitr::include_graphics(here::here("figs/toy-interp.svg"))
 #
 # ggsave(p, filename = "toy-pca.svg",
 #        path = here::here("figs"))
-knitr::include_graphics(here::here("figs", "toy-pca.svg"))
+knitr::include_graphics("figs/toy-pca.svg")
 
 
 ## ----toy-pca-animated
@@ -89,7 +89,7 @@ wrap_plots(gl)
 # anim_save(ani,
 #           filename = here::here("anim/toy-pca-animated.gif"),
 #           renderer = gifski_renderer(width = 500, height = 500))
-knitr::include_graphics(here::here("anim/toy-pca-animated.gif"))
+knitr::include_graphics("anim/toy-pca-animated.gif")
 
 
 ## ----toy-tour
@@ -132,7 +132,7 @@ wrap_plots(gl)
 #   frames = 100,
 #   gif_file = here::here("anim","tour.gif")
 # )
-knitr::include_graphics(here::here("anim/tour.gif"))
+knitr::include_graphics("anim/tour.gif")
 
 ## ----toy-torus
 # generate 2D paths
@@ -242,7 +242,7 @@ wrap_plots(gl)
 #   frames = 100,
 #   gif_file = here::here("anim","torus.gif")
 # )
-knitr::include_graphics(here::here("anim/torus.gif"))
+knitr::include_graphics("anim/torus.gif")
 
 
 ## ----interruption
@@ -316,7 +316,7 @@ knitr::include_graphics(here::here("anim/torus.gif"))
 # ggsave(p, filename = "interrupt.svg",
 #        path = here::here("figs"), width = 10, height = 5)
 
-knitr::include_graphics(here::here("figs/interrupt.svg"))
+knitr::include_graphics("figs/interrupt.svg")
 
 ## ----polish
 # set.seed(123456)
@@ -382,7 +382,7 @@ knitr::include_graphics(here::here("figs/interrupt.svg"))
 # ggsave(p, filename = "polish.svg",
 #        path = here::here("figs"), width = 10, height = 8)
 
-knitr::include_graphics(here::here("figs/polish.svg"))
+knitr::include_graphics("figs/polish.svg")
 
 ## ---- noisy-better-geo
 ## code for generating kol_1d_geo, kol_1d_better and kol_1d_better_polish
@@ -458,7 +458,7 @@ knitr::include_graphics(here::here("figs/polish.svg"))
 #
 # ggsave(p, filename = "noisy-better-geo.svg",
 #        path = here::here("figs"), width = 10, height = 8)
-knitr::include_graphics(here::here("figs", "noisy-better-geo.svg"))
+knitr::include_graphics("figs/noisy-better-geo.svg")
 
 #
 # compute_kol_sim <- function(optim_data, polish_data, search_f, alpha = 0.5, max.tries = 200){
@@ -578,7 +578,7 @@ knitr::include_graphics(here::here("figs", "noisy-better-geo.svg"))
 #
 # ggsave(p, filename = "kol-result.svg",
 #        path = here::here("figs"), width = 10, height = 10)
-knitr::include_graphics(here::here("figs", "kol-result.svg"))
+knitr::include_graphics("figs/kol-result.svg")
 
 ## ---- flip-sign
 # set.seed(2463)
@@ -615,4 +615,4 @@ knitr::include_graphics(here::here("figs", "kol-result.svg"))
 #
 # ggsave(p, filename = "flip-sign.svg",
 #        path = here::here("figs"))
-knitr::include_graphics(here::here("figs", "flip-sign.svg"))
+knitr::include_graphics("figs/flip-sign.svg")
