@@ -69,9 +69,9 @@ knitr::include_graphics("figs/toy-pca.svg")
 #   explore_space_pca(group = method, animate = TRUE, interp_size = 3,
 #                     theo_size = 45, start_size = 10, end_size = 20) +
 #   theme(legend.position = "none") +
-#   scale_color_continuous_botanical(palette = "fern")
-# animate(ani, nframes = 100, device = "png",
-#         renderer = file_renderer("anim/pca/",
+#   scale_color_discrete_botanical(palette = "fern")
+# gganimate::animate(ani, nframes = 100, device = "png",
+#         renderer = gganimate::file_renderer("anim/pca/",
 #                                  prefix = "pca", overwrite = TRUE))
 
 frames <- c("0001", "0038", "0046", "0079", "0086", "0100")
